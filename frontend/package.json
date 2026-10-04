@@ -1,0 +1,22 @@
+{
+  "name": "formai-hub",
+  "private": true,
+  "version": "0.0.0",
+  "description": "formai, the hub for formcut, formvis and formwav",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.2"
+  }
+}

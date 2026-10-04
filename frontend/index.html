@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" data-route="apps" data-source="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>formai</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/inter-4-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <script src="/prepaint.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <div id="app" class="shell">
+      <nav class="rail" aria-label="Sections">
+        <div class="rail-brand">
+          <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="mark-cut" fill="currentColor" d="M4 5h16a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-vis" fill="currentColor" d="M4 10.5h11a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-wav" fill="currentColor" d="M4 16h6a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/></svg>
+          <span class="rail-label">formai</span>
+        </div>
+        <ul class="rail-list">
+          <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Apps</span></button></li>
+          <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
+          <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
+          <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span></button></li>
+        </ul>
+        <div class="rail-end">
+          <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
+          <p class="rail-foot"><span class="rail-label">formai </span>v%fact:version%</p>
+        </div>
+      </nav>
+
+      <main class="stage">
+        <section class="pane" data-pane="apps" aria-labelledby="h-apps">
+          <header class="pane-head">
+            <h1 id="h-apps" class="pane-title">Apps</h1>
+            <p class="pane-sub">The three editors. Each one also downloads and runs on its own.</p>
+          </header>
+          <ul class="rows">
+            <li class="row" data-row="stable" data-product="formcut">
+              <span class="mark">%icon:formcut:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formcut</h2><p class="row-kind">Video editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+            <li class="row" data-row="stable" data-product="formvis">
+              <span class="mark">%icon:formvis:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formvis</h2><p class="row-kind">Image editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+            <li class="row" data-row="stable" data-product="formwav">
+              <span class="mark">%icon:formwav:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formwav</h2><p class="row-kind">Audio editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+          </ul>
+          <p class="pane-note">Installing, opening and updating from here arrive in a later build. This build reads the catalogue and shows what is published.</p>
+        </section>
+
+        <section class="pane" data-pane="beta" aria-labelledby="h-beta">
+          <header class="pane-head">
+            <h1 id="h-beta" class="pane-title">Beta</h1>
+            <p class="pane-sub">Builds that are still being tested. A beta installs beside the stable build with its own settings, and it can be unstable.</p>
+          </header>
+          <ul class="rows">
+            <li class="row" data-row="beta" data-product="formcut">
+              <span class="mark">%icon:formcut:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formcut Beta</h2><p class="row-kind">Video editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+            <li class="row" data-row="beta" data-product="formvis">
+              <span class="mark">%icon:formvis:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formvis Beta</h2><p class="row-kind">Image editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+            <li class="row" data-row="beta" data-product="formwav">
+              <span class="mark">%icon:formwav:ic-m%</span>
+              <div class="row-text"><h2 class="row-name">formwav Beta</h2><p class="row-kind">Audio editor</p></div>
+              <p class="row-status" data-field="status"></p>
+              <p class="row-version" data-field="version"></p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="pane" data-pane="extensions" aria-labelledby="h-extensions">
+          <header class="pane-head">
+            <h1 id="h-extensions" class="pane-title">Extensions</h1>
+            <p class="pane-sub">Effects, looks, templates and plugins from the open catalogue. Each one says what it can use.</p>
+          </header>
+          <ul class="rows" data-ext-list></ul>
+          <p class="pane-note" data-ext-empty>The catalogue lists no extensions yet.</p>
+          <template id="ext-row">
+            <li class="row row-ext">
+              <span class="mark">%icon:formcut:ic-m ic-formcut%%icon:formvis:ic-m ic-formvis%%icon:formwav:ic-m ic-formwav%%icon:formai:ic-m ic-formai%</span>
+              <div class="row-text">
+                <h2 class="row-name" data-field="name"></h2>
+                <p class="row-kind" data-field="meta"></p>
+                <p class="row-sum" data-field="description"></p>
+                <p class="row-fine" data-field="permissions"></p>
+              </div>
+              <p class="row-status" data-field="trust"></p>
+            </li>
+          </template>
+        </section>
+
+        <section class="pane" data-pane="updates" aria-labelledby="h-updates">
+          <header class="pane-head">
+            <h1 id="h-updates" class="pane-title">Updates</h1>
+            <p class="pane-sub">Nothing is installed through formai yet, so there is nothing to update.</p>
+          </header>
+        </section>
+
+        <section class="pane" data-pane="settings" aria-labelledby="h-settings">
+          <header class="pane-head">
+            <h1 id="h-settings" class="pane-title">Settings</h1>
+          </header>
+          <dl class="settings">
+            <div class="setting">
+              <dt>Appearance</dt>
+              <dd class="seg" role="group" aria-label="Appearance">
+                <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="true">%icon:moon:ic-s%<span>Dark</span></button>
+                <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
+              </dd>
+            </div>
+            <div class="setting">
+              <dt>Catalogue</dt>
+              <dd><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></dd>
+            </div>
+            <div class="setting">
+              <dt>This computer</dt>
+              <dd data-setting="platform"></dd>
+            </div>
+            <div class="setting">
+              <dt>Version</dt>
+              <dd>%fact:version%</dd>
+            </div>
+          </dl>
+        </section>
+      </main>
+    </div>
+    <div id="overlay-root"></div>
+    <div id="toast-root"></div>
+  </body>
+</html>
