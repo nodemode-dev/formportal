@@ -823,7 +823,7 @@ dependencies = [
 
 [[package]]
 name = "formai"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "formai-core",
  "tauri",
@@ -832,7 +832,7 @@ dependencies = [
 
 [[package]]
 name = "formai-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
