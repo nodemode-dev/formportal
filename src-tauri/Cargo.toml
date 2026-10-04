@@ -1,0 +1,14 @@
+[package]
+name = "formai"
+version = "0.0.0"
+description = "formai, the hub for formcut, formvis and formwav: a Tauri shell over formai-core"
+authors = ["nodemode-ai"]
+license = "GPL-3.0-only"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+formai-core = { path = "../core" }

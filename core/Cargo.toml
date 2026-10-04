@@ -1,0 +1,11 @@
+[package]
+name = "formai-core"
+version = "0.0.0"
+description = "The formai hub's core: the catalogue and what it offers a computer. No window, no interface."
+authors = ["nodemode-ai"]
+license = "GPL-3.0-only"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
