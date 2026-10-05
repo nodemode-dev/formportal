@@ -1,7 +1,7 @@
 {
   "name": "formai-hub",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "formai, the hub for formcut, formvis and formwav",
   "license": "GPL-3.0-only",
   "type": "module",
