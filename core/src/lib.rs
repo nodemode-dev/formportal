@@ -3,6 +3,15 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+pub mod download;
+pub mod error;
+pub mod hub;
+pub mod state;
+
+pub use error::CoreError;
+pub use hub::Hub;
+pub use state::{Install, InstalledVersion, State};
+
 pub const CORE_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const CATALOG_FORMAT: &str = "formai-catalog";
 pub const CATALOG_FORMAT_VERSION: u32 = 1;

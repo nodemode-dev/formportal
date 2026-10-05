@@ -2,8 +2,8 @@
 
 Living log for `formai-core`, the hub's engine in Rust. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.1.0
-Last updated: 2026-10-04 · scaffold
+Current build version: v0.9.0
+Last updated: 2026-10-05 · download, verify, install, launch, roll back, uninstall
 
 ---
 
@@ -14,9 +14,16 @@ hub/
 ├── Cargo.toml              the workspace: core and src-tauri; release profile
 ├── Cargo.lock              committed, the hub is an application
 └── core/
-    ├── Cargo.toml          formai-core; serde and serde_json only
-    ├── src/lib.rs          the catalogue's types, parsing, and the channel view
-    └── examples/catalog.rs prints what a catalogue file offers this computer
+    ├── Cargo.toml          formai-core; serde, serde_json, sha2, ureq, zip
+    ├── src/
+    │   ├── lib.rs          the catalogue's types, parsing, the channel view; declares the modules
+    │   ├── error.rs        CoreError: one sentence a person can read per failure
+    │   ├── download.rs     which addresses are fetched; download with resume; SHA-256
+    │   ├── state.rs        installed.json: what is installed, and the version kept behind it
+    │   └── hub.rs          Hub: install, roll back, uninstall, find what to open, open it
+    └── examples/
+        ├── catalog.rs      prints what a catalogue file offers this computer
+        └── install.rs      installs, opens, rolls back and removes from the command line
 ```
 
 ---
@@ -78,6 +85,81 @@ The same rule as the interface's `Engine.view`, so the two cannot disagree once 
 Decided at compile time from the target, which is the right answer for a native binary: an x86-64 build of the hub running under translation reports x86-64 and is offered x86-64 apps.
 
 ---
+
+## src/download.rs {#download}
+
+### src/download.rs · check_url
+- refers-to: src/download.rs :: check_url, LOOPBACK
+- kind: warning-context
+- logged: v0.9.0 · 2026-10-05
+
+Every address the core fetches passes through this. It allows `https://` and, for development, plain `http://` to `127.0.0.1` or `localhost` only. Anything else is refused before a connection is made, with the address in the message. The loopback exception exists so the core can be exercised against a local server; a catalogue in the wild is https by its schema.
+
+### src/download.rs · download
+- refers-to: src/download.rs :: download, sha256_file
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+Writes to `<name>.part` beside the final name. If a part file exists, it asks for the rest with a `Range` header; a server that answers 206 is appended to, one that answers anything else restarts the file. A finished file already present with the right hash is used as it is. When the bytes are all there the whole file is hashed and compared with the catalogue's SHA-256: a mismatch deletes the part file and returns `CoreError::Hash`, and nothing is ever unpacked from a file that failed. Only then is the part renamed to the final name. `progress` is called with bytes so far and the catalogue's size. TLS is rustls with the bundled web roots (`ureq`'s `tls` feature), so the core needs no system library to fetch.
+
+Not here yet: a check of the catalogue's own signature. The hash protects a file against the catalogue; the signature will protect the catalogue against whoever serves it. That waits on the signing key's owner and lands with the site's half.
+
+## src/state.rs {#state}
+
+### src/state.rs · State
+- refers-to: src/state.rs :: State, Install, InstalledVersion
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+`installed.json` in the hub's folder. One `Install` per product and channel: the `current` version and, when there is one, the `previous` it replaced, each with its folder, the hash it was verified against and when. Saved by writing a sibling file and renaming it over the old one, so a crash mid-write leaves the last good record. A missing file is an empty record, not an error.
+
+## src/hub.rs {#hub}
+
+### src/hub.rs · where things go
+- refers-to: src/hub.rs :: Hub::default_root, Hub::install
+- kind: rationale
+- logged: v0.9.0 · 2026-10-05
+
+One per-user folder, no administrator: `~/Library/Application Support/dev.formai.hub` on macOS, `%LOCALAPPDATA%\formai` on Windows, `$XDG_DATA_HOME/formai` or `~/.local/share/formai` on Linux. Inside it: `apps/<product>/<channel>/<version>/`, `downloads/`, `installed.json`. The plan put the apps under `~/Applications/formai` on a Mac; here they sit under the hub's folder on all three so one rule covers every system, and a visible place in Applications is a packaging question for the shell.
+
+### src/hub.rs · install
+- refers-to: src/hub.rs :: Hub::install, unzip, place
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+Download and verify; unpack into `<version>.tmp`; rename to `<version>`; then record. The rename is what makes a version appear, so a failed unpack leaves nothing half-installed (the staging folder is removed). The version that was current becomes `previous` and its folder is kept; the version that was previous before that is deleted, so at most two versions of a product and channel are on disk. Installing the version already current replaces its folder and leaves `previous` alone. The downloaded archive is deleted after a successful install.
+
+A `.zip` is unpacked; an `.AppImage` is copied and made executable. Every other kind returns `Unsupported` for now: a `.dmg` needs mounting, which is macOS only and unwritten; installers (`msi`, `nsis`, `deb`, `rpm`) need the system's own installer and are not a per-user unpack. formcut's release shape, the family template, is a zip on all three desktops, which is why the zip came first.
+
+### src/hub.rs · unzip
+- refers-to: src/hub.rs :: unzip
+- kind: warning-context
+- logged: v0.9.0 · 2026-10-05
+
+Each entry's path comes from `enclosed_name`, which is `None` for a path that would leave the folder (`../x`, an absolute path); such an archive is refused whole. A symbolic link in the archive is recreated as a link (macOS app bundles contain them) unless its target is absolute, which is refused. Unix permissions stored in the archive are applied, which is what keeps an AppImage or a binary executable.
+
+### src/hub.rs · find_target and launch
+- refers-to: src/hub.rs :: find_target, Hub::launch_target, Hub::launch
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+What to open inside an installed version: on macOS the first `.app`; on Windows an `.exe` whose name contains the product's id, else the first `.exe`; on Linux the first `.AppImage`, else the first executable file. If the archive unpacked to a single folder that is not an `.app`, the search goes into it. `launch` starts it and returns its process id without waiting (on macOS through `open`). Nothing tracks the process afterwards; "is it running" is the shell's work in a later phase.
+
+### src/hub.rs · rollback and uninstall
+- refers-to: src/hub.rs :: Hub::rollback, Hub::uninstall
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+`rollback` swaps `current` and `previous`; nothing is downloaded and nothing deleted, so rolling back twice returns to where you were. `uninstall` removes the product's channel folder and its record. It does not touch the app's own data, which lives wherever the app keeps it.
+
+## examples/install.rs {#install-example}
+
+### examples/install.rs · what it is for
+- refers-to: examples/install.rs :: run
+- kind: explainer
+- logged: v0.9.0 · 2026-10-05
+
+The core driven from a terminal, with no window: `cargo run -p formai-core --example install -- formcut --catalog <file or address> [--channel beta] [--root <folder>]` installs what the catalogue offers this computer and prints the verified hash, where it went, what was kept and what it opens. `--launch`, `--rollback`, `--uninstall` and `--status` do the rest. It is how every function in `hub.rs` was run for this version. It is the seed of the command-line tool, which becomes its own crate later.
 
 ## examples/catalog.rs {#example}
 
