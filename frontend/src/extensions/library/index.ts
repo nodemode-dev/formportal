@@ -18,10 +18,14 @@ function fill(row: HTMLElement, entry: ExtensionEntry): void {
   row.dataset.product = entry.product;
   row.dataset.trust = entry.signature ? "signed" : "unsigned";
   set("name", entry.name);
-  set("meta", `${entry.product}, by ${entry.author}, version ${entry.version}`);
+  set("meta", `For ${entry.product}, by ${entry.author}, version ${entry.version}`);
   set("description", entry.description);
-  set("permissions", `Can use ${entry.permissions.map((p) => PERMISSIONS[p] ?? p).join(", ") || "nothing"}`);
-  set("trust", entry.signature ? "Signed" : "Unsigned, for testing");
+  set("permissions", entry.permissions.map((p) => PERMISSIONS[p] ?? p).join(", ") || "nothing");
+  set("kind", entry.kind.replace(/-/g, " "));
+  set("licence", entry.licence);
+  set("needs", entry.minimum_app ? `${entry.product} ${entry.minimum_app} or newer` : `any ${entry.product}`);
+  set("sha256", entry.sha256);
+  set("trust", entry.signature ? "Signed by its publisher" : "Unsigned, for testing");
 }
 
 export const library: Extension = {
@@ -32,6 +36,14 @@ export const library: Extension = {
     const empty = document.querySelector<HTMLElement>("[data-ext-empty]");
     if (!list || !template) return;
     const mounted = new Map<string, HTMLElement>();
+    const pane = list.closest<HTMLElement>("[data-pane]");
+    const filters = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-ext-filter]"));
+    for (const button of filters) {
+      button.addEventListener("click", () => {
+        pane?.setAttribute("data-filter", button.dataset.extFilter ?? "all");
+        for (const other of filters) other.setAttribute("aria-pressed", String(other === button));
+      });
+    }
 
     engine.on("extensions", () => {
       const entries = engine.state.extensions?.packages ?? [];

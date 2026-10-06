@@ -1,7 +1,26 @@
 <div class="row-actions">
                 <span class="row-bar" aria-hidden="true"></span>
-                <button class="act act-quiet" type="button" data-act="rollback">Roll back</button>
-                <button class="act act-quiet" type="button" data-act="remove">Remove</button>
+                <details class="drop drop-info">
+                  <summary class="drop-toggle">Details%icon:chevron-down:ic-s%</summary>
+                  <div class="drop-panel">
+                    <dl class="drop-facts">
+                      <div><dt>Released</dt><dd data-field="date"></dd></div>
+                      <div><dt>Download</dt><dd data-field="file"></dd></div>
+                      <div><dt>Needs</dt><dd data-field="minimum"></dd></div>
+                      <div><dt>Project files</dt><dd data-field="project"></dd></div>
+                      <div><dt>Licence</dt><dd data-field="licence"></dd></div>
+                      <div><dt>SHA-256</dt><dd class="drop-hash" data-field="sha256"></dd></div>
+                    </dl>
+                    <p class="drop-fine">The download is checked against this hash before anything is installed.</p>
+                  </div>
+                </details>
+                <details class="drop drop-more">
+                  <summary class="drop-toggle">More%icon:chevron-down:ic-s%</summary>
+                  <div class="drop-panel drop-menu">
+                    <button class="drop-item" type="button" data-act="rollback">Go back to the version before</button>
+                    <button class="drop-item" type="button" data-act="remove">Remove from this computer</button>
+                  </div>
+                </details>
                 <button class="act" type="button" data-act="open">Open</button>
                 <button class="act act-main" type="button" data-act="update">Update</button>
                 <button class="act act-main" type="button" data-act="install">Install</button>

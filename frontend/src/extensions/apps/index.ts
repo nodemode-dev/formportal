@@ -62,6 +62,19 @@ export const apps: Extension = {
       const bytes = view.artifact && state !== "ready" ? view.artifact.bytes : 0;
       const size = bytes >= 1_000_000 ? `${Math.round(bytes / 1_000_000)} MB` : bytes > 0 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : "";
       write(row.querySelector<HTMLElement>("[data-field='size']"), size);
+      const info = engine.product(product);
+      const release = info?.channels[channel];
+      const field = (name: string, text: string) => write(row.querySelector<HTMLElement>(`[data-field='${name}']`), text);
+      field("date", release ? release.published.slice(0, 10) : "");
+      field("file", view.artifact?.file ?? "");
+      field("minimum", view.artifact?.minimum_os ?? "");
+      field("sha256", view.artifact?.sha256 ?? "");
+      field("project", info?.project_extensions?.join(", ") ?? "");
+      field("licence", info?.licence ?? "");
+      row.toggleAttribute("data-release", Boolean(view.artifact));
+      const waiting = document.querySelectorAll(".up[data-install='update']").length;
+      document.documentElement.setAttribute("data-updates", String(waiting));
+      write(document.querySelector<HTMLElement>("[data-updates-count]"), waiting > 0 ? String(waiting) : "");
     };
 
     engine.on("product", ({ id }) => {
@@ -73,6 +86,16 @@ export const apps: Extension = {
         if (engine.key(product, channel) === key) patch(row);
       }
     });
+    const open = () => Array.from(document.querySelectorAll<HTMLDetailsElement>("details.drop[open]"));
+    document.addEventListener("click", (event) => {
+      const at = event.target as HTMLElement;
+      for (const drop of open()) if (!drop.contains(at) || at.closest(".drop-item")) drop.open = false;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") for (const drop of open()) drop.open = false;
+    });
+    document.querySelector<HTMLButtonElement>("[data-updates-all]")?.addEventListener("click", () => void engine.dispatch("app.updateAll"));
+
     engine.on("source", () => rows.forEach(patch));
     engine.on("notice", ({ text }) => write(notice, text));
 

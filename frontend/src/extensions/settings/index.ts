@@ -20,6 +20,14 @@ export const settings: Extension = {
 
     engine.on("platform", ({ platform: p }) => {
       if (platform) platform.textContent = `${OS[p.os]}, ${ARCH[p.arch] ?? p.arch}`;
+      const folder = field("folder");
+      const where: Record<Os, string> = {
+        macos: "~/Library/Application Support/dev.formai.hub",
+        windows: "%LOCALAPPDATA%\\formai",
+        linux: "~/.local/share/formai",
+        other: "",
+      };
+      if (folder) folder.textContent = where[p.os];
     });
     engine.on("source", ({ source: s, generated: when }) => {
       document.documentElement.setAttribute("data-source", s);

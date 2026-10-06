@@ -22,7 +22,7 @@
           <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Apps</span></button></li>
           <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
           <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
-          <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span></button></li>
+          <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
         </ul>
         <div class="rail-end">
           <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
@@ -118,32 +118,88 @@
           </ul>
         </section>
 
-        <section class="pane" data-pane="extensions" aria-labelledby="h-extensions">
+        <section class="pane" data-pane="extensions" data-filter="all" aria-labelledby="h-extensions">
           <header class="pane-head">
             <h1 id="h-extensions" class="pane-title">Extensions</h1>
-            <p class="pane-sub">Effects, looks, templates and plugins from the open catalogue. Each one says what it can use.</p>
+            <p class="pane-sub">Effects, looks, templates and plugins from the open catalogue. Each one says who made it, what it is for and what it can use.</p>
+            <div class="seg" role="group" aria-label="Show extensions for">
+              <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
+              <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">formcut</button>
+              <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">formvis</button>
+              <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">formwav</button>
+            </div>
           </header>
-          <ul class="rows" data-ext-list></ul>
+          <ul class="exts" data-ext-list></ul>
           <p class="pane-note" data-ext-empty>The catalogue lists no extensions yet.</p>
+          <p class="pane-note">Installing an extension from here arrives with the catalogue's first packages. Until then this shows what the catalogue lists.</p>
           <template id="ext-row">
-            <li class="row row-ext">
+            <li class="ext">
               <span class="mark">%icon:formcut:ic-m ic-formcut%%icon:formvis:ic-m ic-formvis%%icon:formwav:ic-m ic-formwav%%icon:formai:ic-m ic-formai%</span>
-              <div class="row-text">
-                <h2 class="row-name" data-field="name"></h2>
-                <p class="row-kind" data-field="meta"></p>
-                <p class="row-sum" data-field="description"></p>
-                <p class="row-fine" data-field="permissions"></p>
+              <div class="ext-text">
+                <h2 class="ext-name" data-field="name"></h2>
+                <p class="ext-meta" data-field="meta"></p>
+                <p class="ext-sum" data-field="description"></p>
               </div>
-              <p class="row-status" data-field="trust"></p>
+              <div class="ext-foot">
+                <p class="ext-trust" data-field="trust"></p>
+                <details class="drop drop-ext">
+                  <summary class="drop-toggle">What it can use%icon:chevron-down:ic-s%</summary>
+                  <div class="drop-panel">
+                    <dl class="drop-facts">
+                      <div><dt>Can use</dt><dd data-field="permissions"></dd></div>
+                      <div><dt>Kind</dt><dd data-field="kind"></dd></div>
+                      <div><dt>Licence</dt><dd data-field="licence"></dd></div>
+                      <div><dt>Needs</dt><dd data-field="needs"></dd></div>
+                      <div><dt>SHA-256</dt><dd class="drop-hash" data-field="sha256"></dd></div>
+                    </dl>
+                  </div>
+                </details>
+              </div>
             </li>
           </template>
         </section>
 
         <section class="pane" data-pane="updates" aria-labelledby="h-updates">
-          <header class="pane-head">
-            <h1 id="h-updates" class="pane-title">Updates</h1>
-            <p class="pane-sub">Nothing is installed through formai yet, so there is nothing to update.</p>
+          <header class="pane-head pane-head-split">
+            <div>
+              <h1 id="h-updates" class="pane-title">Updates</h1>
+              <p class="pane-sub">What is installed here, the version of each, and what has a newer one.</p>
+            </div>
+            <button class="act act-main ups-all" type="button" data-updates-all>Update all</button>
           </header>
+          <ul class="ups">
+            <li class="up" data-row="stable" data-product="formcut">
+              <img class="up-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formcut</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+            <li class="up" data-row="beta" data-product="formcut">
+              <img class="up-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formcut, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+            <li class="up" data-row="stable" data-product="formvis">
+              <img class="up-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formvis</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+            <li class="up" data-row="beta" data-product="formvis">
+              <img class="up-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formvis, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+            <li class="up" data-row="stable" data-product="formwav">
+              <img class="up-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formwav</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+            <li class="up" data-row="beta" data-product="formwav">
+              <img class="up-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
+              <div class="up-text"><h2 class="up-name">formwav, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
+              <!-- @include row-actions.html -->
+            </li>
+          </ul>
+          <p class="pane-note ups-empty">Nothing is installed through formai yet. Install an editor from Apps and it appears here with its version.</p>
         </section>
 
         <section class="pane" data-pane="settings" aria-labelledby="h-settings">
@@ -173,6 +229,22 @@
             <div class="setting">
               <dt>This computer</dt>
               <dd data-setting="platform"></dd>
+            </div>
+            <div class="setting">
+              <dt>Editors are installed in</dt>
+              <dd><span class="mono" data-setting="folder"></span> <span class="fine">Your own folder; no administrator password.</span></dd>
+            </div>
+            <div class="setting">
+              <dt>Account</dt>
+              <dd>None. Nothing here signs you in.</dd>
+            </div>
+            <div class="setting">
+              <dt>In the background</dt>
+              <dd>Nothing. formai checks for updates when it is open and stops when you close it.</dd>
+            </div>
+            <div class="setting">
+              <dt>Licence</dt>
+              <dd>GPL-3.0-only.</dd>
             </div>
             <div class="setting">
               <dt>Version</dt>

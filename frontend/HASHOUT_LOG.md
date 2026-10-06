@@ -98,6 +98,47 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.15.0 · more on each tile, drop-downs, and the remaining panes {#rest}
+
+### row-actions.html · Details and More
+- refers-to: row-actions.html; src/extensions/apps/index.ts :: the `field` writes in patch, the `open` helpers; src/styles/main.css :: `.drop` to `.drop-item`
+- kind: explainer
+- logged: v0.15.0 · 2026-10-06
+
+The owner asked for more relevant information on the tiles and for drop-downs. The actions partial, which every stage panel, Beta tile and update row includes, now carries two. **Details** holds what a careful person wants before installing: the release date, the file's name, what it needs, the editor's project file types, its licence and the SHA-256 the download is checked against, each a field the apps extension writes from the catalogue. **More** holds the actions that are not the main one: go back to the version before (shown only when one is kept) and remove. So the row of buttons is the main action, then the two drop-downs.
+
+They are native `details` elements, so they open and close with no script and work from the keyboard. Script adds only what `details` lacks: a click anywhere else, choosing an item, or Escape closes whatever is open, which also keeps one open at a time. A panel is positioned over the content rather than pushing it, on the dropdown layer.
+
+A row gets `data-release` when the catalogue has a file for this computer; Details shows only then. More shows when the editor is installed.
+
+### src/styles/main.css · the actions keep their places
+- refers-to: src/styles/main.css :: `.row-actions::before`, the `order` rules, the busy `[data-act="install"]` rule, `.up` grid
+- kind: warning-context
+- logged: v0.15.0 · 2026-10-06
+
+With drop-downs beside the main button, changing state moved them: Install to Open changed the button's width, and More appearing pushed Details along. Measured: up to 0.0015 of layout shift on the stage. Three things fixed it. The main buttons sit at the start and a flexible spacer pushes the drop-downs to the far end, More before Details, so More arrives beside Details without moving it. While installing, the Install button stays in place, dimmed, instead of vanishing. An update row's actions have a column of fixed width. After: 0 on every flow.
+
+### index.html · Updates is real
+- refers-to: index.html :: the Updates pane, `ul.ups`; src/main.ts :: `app.updateAll`; the rail's `data-updates-count`
+- kind: explainer
+- logged: v0.15.0 · 2026-10-06
+
+The pane was one sentence. It now holds a row for each of the six things that can be installed (three editors, stable and beta); a row shows only when that one is installed, with its small view, name, status and version, and the same actions. A row with a newer version glows. Update all runs the installs one after another and shows only when something is waiting; the rail's Updates item carries the count. When nothing is installed a sentence says so (`:has()` hides it once a row shows). The rows are written by the same patch as everything else, because they carry `data-row` and `data-product`. The date was dropped from the row after it ran under the buttons; it is in Details.
+
+### index.html · Extensions as tiles, with a filter
+- refers-to: index.html :: the Extensions pane, `template#ext-row`; src/extensions/library/index.ts :: fill, the filter handlers
+- kind: explainer
+- logged: v0.15.0 · 2026-10-06
+
+Each extension is a tile on the shared shadow, glowing in its editor's colour under the pointer: its name, who made it and for which editor, what it does, whether it is signed, and a drop-down, What it can use, with its permissions, kind, licence, the editor version it needs and its SHA-256. A row of four buttons filters by editor by setting `data-filter` on the pane; CSS hides the rest, so nothing is rebuilt. Installing an extension is still not built, and the pane says so.
+
+### index.html · Settings says what the hub does not do
+- refers-to: index.html :: the Settings list; src/extensions/settings/index.ts :: the `folder` write
+- kind: explainer
+- logged: v0.15.0 · 2026-10-06
+
+Four rows added: the folder editors are installed in (per system, the same paths as the core's default), and three plain statements: no account, nothing in the background, GPL-3.0.
+
 ## v0.14.0 · shadow and glow, and Beta as tiles {#glow}
 
 ### src/styles/main.css · how a tile is marked

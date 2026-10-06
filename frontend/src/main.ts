@@ -55,6 +55,15 @@ engine.command("app.install", (arg) =>
   }),
 );
 
+engine.command("app.updateAll", async () => {
+  for (const record of Array.from(engine.installs.values())) {
+    const view = engine.view(record.product, record.channel);
+    if (view.availability === "available" && view.version && view.version !== record.version) {
+      await engine.dispatch("app.install", { product: record.product, channel: record.channel });
+    }
+  }
+});
+
 engine.command("app.open", (arg) => guard(() => bridge.open((arg as Target).product, (arg as Target).channel)));
 
 engine.command("app.rollback", (arg) =>
