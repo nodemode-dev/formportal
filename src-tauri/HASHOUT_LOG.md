@@ -107,6 +107,21 @@ Drawn once at 1024 pixels from the family mark (three bars in amber, off-purple 
 
 ---
 
+## v0.18.0 · the hub's own install and boot {#v018}
+
+### hub/formai_hub_oc_install, hub/formai_hub · and their .bat twins, and the wrappers at the root
+- refers-to: hub/formai_hub_oc_install(.bat), hub/formai_hub(.bat); formai_hub_oc_install(.bat), formai_hub(.bat) at the repo root; formai_dev :: the `desktop` case
+- kind: rationale
+- logged: v0.18.0 · 2026-10-06
+
+The owner pointed out that the hub had no main install and boot. It was true: the hub started only as a mode of the repo's script (`./formai_dev desktop`), whose default is the site, and its interface had the only scripts of its own. Every other app in the family has one script to install and one to start, named after itself.
+
+`formai_hub_oc_install` checks what the hub needs before doing anything: Node, Rust, and on Linux WebKitGTK 4.1 through `pkg-config`, printing the one line that installs what is missing. Then it installs the interface (`frontend/oc_install`) and fetches the crates with the lockfile, so the first boot compiles rather than downloads. `formai_hub` starts the interface on port 3250 in its own process group, waits until that port answers (so the window never opens on an empty page), and runs the shell in the foreground. Closing the window ends the script, and its exit stops the interface; so does Ctrl-C. The shell runs in the foreground rather than being waited on because the stock bash on a Mac is 3.2 and has no `wait -n`. The port is tried as `localhost`, not `127.0.0.1`: Vite with `host: false` may listen on IPv6 only.
+
+Both live in `hub/`, the hub's own root. The two at the repo root, with the same names, only call them, so someone who has just unpacked the repo finds them where they look. `./formai_dev desktop` now hands over to `hub/formai_hub`: one way the hub starts, three ways to ask for it.
+
+Run on Linux for this version: the install script from the root wrapper, to its last line; the boot script under a virtual display, which started the interface, compiled the shell and opened the window. The `.bat` twins are written and not run.
+
 ## v0.17.0 · one running copy, and formai:// links {#v017}
 
 ### src/main.rs, Cargo.toml · one copy at a time
