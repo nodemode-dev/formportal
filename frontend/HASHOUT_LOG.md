@@ -98,6 +98,37 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.14.0 · shadow and glow, and Beta as tiles {#glow}
+
+### src/styles/main.css · how a tile is marked
+- refers-to: src/styles/main.css :: `.shelf-item` and its hover and pressed rules, `.row` and `.row:hover`
+- kind: explainer
+- logged: v0.14.0 · 2026-10-06
+
+The chosen shelf tile had a thin outline in the app's colour and a stripe of it across its top; every row had a stripe down its leading edge. The owner called the highlight a telltale sign and asked for a drop shadow and a glow in the app's colour instead. Every tile now sits on `--shadow-tile`; the chosen one adds `--glow`; one under the pointer adds `--glow-soft`. Rows lost their stripe and the extra padding that made room for it. Removed from the pressed shelf tile:
+
+```css
+  box-shadow: inset 0 0 0 1px var(--hue-line), inset 0 var(--sp-1) 0 var(--hue);
+```
+
+and from `.row`:
+
+```css
+  padding-inline-start: calc(var(--sp-5) + var(--sp-1));
+  box-shadow: inset var(--sp-1) 0 0 var(--hue), inset 0 0 0 1px var(--edge);
+```
+
+The reasoning and the tokens are in `design/HASHOUT_LOG.md`.
+
+### index.html, src/styles/main.css · Beta is three tiles
+- refers-to: index.html :: `ul.tiles` in the Beta pane; src/styles/main.css :: `.tiles` to the tile state rules
+- kind: explainer
+- logged: v0.14.0 · 2026-10-06
+
+The Beta pane was three plain rows, the same fault the Apps pane had. It is now three tiles, each with the editor's interface on top, its name in its hue, "beta", the status and version, and the actions. A tile whose beta exists or is installed glows in its colour; the others sit on the shadow alone, so the eye goes to what can be had. Each tile carries `data-row="beta"` and `data-product`, so the apps extension writes it with no change, and includes the actions partial by hand. With this, no row with `data-row` is left in the page: the build's insertion of the actions partial into rows (`vite.config.ts`) now matches nothing, and stays only until the next pane needs it or it is removed.
+
+Checked in a browser under 4x CPU: the formcut tile read Beta available 2.7.0-beta.1 with Install, then Installed with Remove and Open; layout shift 0, no node removed.
+
 ## v0.13.0 · the Apps pane is a stage, not a list {#stage}
 
 ### index.html, src/styles/main.css · the stage and its shelf
