@@ -98,6 +98,35 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.13.0 · the Apps pane is a stage, not a list {#stage}
+
+### index.html, src/styles/main.css · the stage and its shelf
+- refers-to: index.html :: `section.pane-apps`, `ul.cards`, `div.shelf`; src/styles/main.css :: `.pane-apps` to `.shelf-status`; public/media/formcut.webp, formvis.webp, formwav.webp
+- kind: rationale
+- logged: v0.13.0 · 2026-10-06
+
+The owner's verdict on the first real window, 2026-10-06: it would make a person think the apps are poor too. It was three plain rows; it showed nothing of what the editors are. A hub's job is to make each app look worth opening before anything is installed.
+
+So the Apps pane now leads with the apps themselves. The upper two thirds of the window is a stage: one editor at a time, its real interface (the captures taken from the running apps in v0.4.0) filling the stage edge to edge, shaded toward the left where its name stands at display size in its own hue, with one line of what it is, two of what it does, its status, version and download size, and its actions as full-size buttons. Under the stage a shelf of three holds a small view of each editor with its name, kind and status; choosing one changes the stage. An editor that is not released still gets its stage, its interface and its words, and simply offers no button.
+
+The pattern is the family's own: formcut.studio opens on a stage with a row of thumbnails. The three captures are the site's, resized to 1600 by 1000 (35 to 71 KB each) and shipped in the hub.
+
+All three stage panels and the shelf are in the page. `data-app` on the pane says which shows; the others are hidden with `visibility`, so their buttons cannot be reached by keyboard. Each panel and each shelf item carries `data-row` and `data-product`, so the apps extension writes their status, version and size exactly as it writes the Beta rows. The stage panels include the actions partial by hand; the build-time insertion still serves the Beta rows.
+
+### src/extensions/stage/index.ts · choosing an editor
+- refers-to: src/extensions/stage/index.ts :: the `app.show` command
+- kind: explainer
+- logged: v0.13.0 · 2026-10-06
+
+A shelf item dispatches `app.show` with its product id; the command sets `data-app` on the pane and `aria-pressed` on the three items. Which editor is on the stage is the window's own business, not the core's, so it is kept here and not in the engine's state.
+
+### src/styles/main.css · .card-meta is a grid of fixed columns
+- refers-to: src/styles/main.css :: `.card-meta`
+- kind: warning-context
+- logged: v0.13.0 · 2026-10-06
+
+Status, version and size first sat in a flowing row. When the status changed length during an install the version and size moved sideways: a measured shift of 0.00007. They now sit in three fixed columns and the shift is 0, at 1180 by 760, 1440 by 900 and 900 by 620 in light, through install, update and switching editors, with no node removed.
+
 ## v0.12.0 · run in the real window {#real}
 
 ### src/extensions/apps/index.ts · every row is written when a catalogue arrives

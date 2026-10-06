@@ -59,6 +59,9 @@ export const apps: Extension = {
               : WORDS[channel][view.availability];
       write(row.querySelector<HTMLElement>("[data-field='status']"), words);
       write(row.querySelector<HTMLElement>("[data-field='version']"), record?.version ?? view.version ?? "");
+      const bytes = view.artifact && state !== "ready" ? view.artifact.bytes : 0;
+      const size = bytes >= 1_000_000 ? `${Math.round(bytes / 1_000_000)} MB` : bytes > 0 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : "";
+      write(row.querySelector<HTMLElement>("[data-field='size']"), size);
     };
 
     engine.on("product", ({ id }) => {

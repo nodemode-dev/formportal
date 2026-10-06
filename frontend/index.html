@@ -31,31 +31,54 @@
       </nav>
 
       <main class="stage">
-        <section class="pane" data-pane="apps" aria-labelledby="h-apps">
-          <header class="pane-head">
-            <h1 id="h-apps" class="pane-title">Apps</h1>
-            <p class="pane-sub">The three editors. Each one also downloads and runs on its own.</p>
-          </header>
-          <ul class="rows">
-            <li class="row" data-row="stable" data-product="formcut">
-              <span class="mark">%icon:formcut:ic-m%</span>
-              <div class="row-text"><h2 class="row-name">formcut</h2><p class="row-kind">Video editor</p></div>
-              <p class="row-status" data-field="status"></p>
-              <p class="row-version" data-field="version"></p>
+        <section class="pane pane-apps" data-pane="apps" data-app="formcut" aria-labelledby="h-apps">
+          <h1 id="h-apps" class="sr-only">Apps</h1>
+          <ul class="cards">
+            <li class="card" data-row="stable" data-product="formcut">
+              <img class="card-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
+              <div class="card-body">
+                <h2 class="card-name">formcut</h2>
+                <p class="card-kind">Video editing that stays on your machine</p>
+                <p class="card-sum">A multi-track timeline, colour grading with scopes, captions and speech from local models, and an export that matches the preview, because both run through one renderer.</p>
+                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
+                <!-- @include row-actions.html -->
+              </div>
             </li>
-            <li class="row" data-row="stable" data-product="formvis">
-              <span class="mark">%icon:formvis:ic-m%</span>
-              <div class="row-text"><h2 class="row-name">formvis</h2><p class="row-kind">Image editor</p></div>
-              <p class="row-status" data-field="status"></p>
-              <p class="row-version" data-field="version"></p>
+            <li class="card" data-row="stable" data-product="formvis">
+              <img class="card-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
+              <div class="card-body">
+                <h2 class="card-name">formvis</h2>
+                <p class="card-kind">Layered image editing, with your Photoshop files</p>
+                <p class="card-sum">Layers, masks and blend modes, forty-five tools, RAW development and colour management, and local models for selection, fill and upscaling.</p>
+                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
+                <!-- @include row-actions.html -->
+              </div>
             </li>
-            <li class="row" data-row="stable" data-product="formwav">
-              <span class="mark">%icon:formwav:ic-m%</span>
-              <div class="row-text"><h2 class="row-name">formwav</h2><p class="row-kind">Audio editor</p></div>
-              <p class="row-status" data-field="status"></p>
-              <p class="row-version" data-field="version"></p>
+            <li class="card" data-row="stable" data-product="formwav">
+              <img class="card-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
+              <div class="card-body">
+                <h2 class="card-name">formwav</h2>
+                <p class="card-kind">Audio editing where what plays is what renders</p>
+                <p class="card-sum">Record, edit, repair and mix on one mixer shared by playback and export, and edit speech by editing its transcript.</p>
+                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
+                <!-- @include row-actions.html -->
+              </div>
             </li>
           </ul>
+          <div class="shelf" role="group" aria-label="Choose an editor">
+            <button class="shelf-item" type="button" data-app-to="formcut" data-row="stable" data-product="formcut" aria-pressed="true">
+              <img class="shelf-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
+              <span class="shelf-text"><span class="shelf-name">formcut</span><span class="shelf-kind">Video</span><span class="shelf-status" data-field="status"></span></span>
+            </button>
+            <button class="shelf-item" type="button" data-app-to="formvis" data-row="stable" data-product="formvis" aria-pressed="false">
+              <img class="shelf-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
+              <span class="shelf-text"><span class="shelf-name">formvis</span><span class="shelf-kind">Image</span><span class="shelf-status" data-field="status"></span></span>
+            </button>
+            <button class="shelf-item" type="button" data-app-to="formwav" data-row="stable" data-product="formwav" aria-pressed="false">
+              <img class="shelf-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
+              <span class="shelf-text"><span class="shelf-name">formwav</span><span class="shelf-kind">Audio</span><span class="shelf-status" data-field="status"></span></span>
+            </button>
+          </div>
           <p class="pane-note pane-notice" data-notice role="status" aria-live="polite"></p>
         </section>
 
