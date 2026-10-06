@@ -70,6 +70,7 @@ export const apps: Extension = {
         if (engine.key(product, channel) === key) patch(row);
       }
     });
+    engine.on("source", () => rows.forEach(patch));
     engine.on("notice", ({ text }) => write(notice, text));
 
     for (const row of rows) {

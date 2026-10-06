@@ -98,6 +98,22 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.12.0 · run in the real window {#real}
+
+### src/extensions/apps/index.ts · every row is written when a catalogue arrives
+- refers-to: src/extensions/apps/index.ts :: the `source` handler
+- kind: warning-context
+- logged: v0.12.0 · 2026-10-06
+
+A row was patched only when a `product` event named its product. The sample catalogue lists all four products, so in a browser every row was always written. The real window was pointed at a catalogue that listed only formcut, and the formvis and formwav rows stayed blank: no status at all. A `source` event now patches all six rows, so a product the catalogue does not mention reads "Not released yet", which is true.
+
+### src/bridge/tauri.ts · has now run
+- refers-to: src/bridge/tauri.ts
+- kind: explainer
+- logged: v0.12.0 · 2026-10-06
+
+The v0.11.0 entry below says this file had only been compiled. In v0.12.0 the built Linux app used it for `platform`, `catalog`, `installs`, `install` and `open` in a real web view; `rollback` and `remove` and the progress listener's effect on the bar have still not been seen there. The account of the run is in `hub/src-tauri/HASHOUT_LOG.md` § v0.12.0.
+
 ## v0.11.0 · the window is wired to the core {#wired}
 
 ### row-actions.html, vite.config.ts · actions are markup, placed at build time
