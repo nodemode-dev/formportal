@@ -104,6 +104,19 @@ Writes to `<name>.part` beside the final name. If a part file exists, it asks fo
 
 Not here yet: a check of the catalogue's own signature. The hash protects a file against the catalogue; the signature will protect the catalogue against whoever serves it. That waits on the signing key's owner and lands with the site's half.
 
+## src/signature.rs {#signature}
+
+### src/signature.rs · verify, trusted_keys
+- refers-to: src/signature.rs :: verify, trusted_keys, TRUSTED_KEYS, KEY_ENV; src/hub.rs :: Hub::catalog; src/download.rs :: fetch_bytes
+- kind: warning-context
+- logged: v0.10.0 · 2026-10-05
+
+The catalogue's signature is a detached ed25519 signature over the exact bytes the site serves, base64, at the catalogue's address with `.sig` added. `verify` accepts it if any trusted key verifies it. Trusted keys are the public keys compiled into `TRUSTED_KEYS` plus any in the `FORMAI_CATALOG_PUBKEY` environment variable (comma-separated), which exists for development. **`TRUSTED_KEYS` is empty**: the production key pair has not been made, so a build as it stands trusts nothing and refuses every signed catalogue unless the variable is set. When the owner makes the pair (`venv/bin/python -m app.signing` in `site/backend`), the public half goes in this array and the private half in the site's secrets.
+
+`Hub::catalog(url, allow_unsigned)` is the one way a catalogue enters from an address: fetch the bytes, fetch the signature, verify, parse, and only then keep both in `<root>/catalog/`. If the site cannot be reached, the kept copy is read instead and verified the same way, so a copy changed on disk is refused like any other. The rules, each run for this version: signed and a trusted key verifies it, accepted; signed and no trusted key verifies it, refused; signed and no key is trusted at all, refused, even with `allow_unsigned` (that flag forgives a missing signature, never a failed one); not signed, refused unless `allow_unsigned`; unreachable with nothing kept, the connection error. `fetch_bytes` reads at most 16 MB.
+
+A catalogue read from a file path (the example's `--catalog <file>`) is not checked: a file on the user's own disk is the user's own.
+
 ## src/state.rs {#state}
 
 ### src/state.rs · State

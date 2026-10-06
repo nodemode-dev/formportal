@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub mod download;
 pub mod error;
 pub mod hub;
+pub mod signature;
 pub mod state;
 
 pub use error::CoreError;

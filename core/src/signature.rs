@@ -1,0 +1,36 @@
+use base64::Engine;
+use ed25519_dalek::{Signature, Verifier, VerifyingKey};
+
+use crate::error::{CoreError, Result};
+
+pub const TRUSTED_KEYS: [&str; 0] = [];
+pub const KEY_ENV: &str = "FORMAI_CATALOG_PUBKEY";
+
+pub fn trusted_keys() -> Vec<String> {
+    let mut keys: Vec<String> = TRUSTED_KEYS.iter().map(|k| k.to_string()).collect();
+    if let Ok(extra) = std::env::var(KEY_ENV) {
+        keys.extend(extra.split(',').map(|k| k.trim().to_string()).filter(|k| !k.is_empty()));
+    }
+    keys
+}
+
+fn decode(text: &str) -> Option<Vec<u8>> {
+    base64::engine::general_purpose::STANDARD.decode(text.trim()).ok()
+}
+
+pub fn verify(body: &[u8], signature: &str, keys: &[String]) -> Result<()> {
+    if keys.is_empty() {
+        return Err(CoreError::Signature("this build trusts no catalogue key yet".to_string()));
+    }
+    let raw = decode(signature).ok_or_else(|| CoreError::Signature("its signature is not valid base64".to_string()))?;
+    let signature = Signature::from_slice(&raw).map_err(|_| CoreError::Signature("its signature is not 64 bytes".to_string()))?;
+    for key in keys {
+        let Some(bytes) = decode(key) else { continue };
+        let Ok(array) = <[u8; 32]>::try_from(bytes.as_slice()) else { continue };
+        let Ok(verifying) = VerifyingKey::from_bytes(&array) else { continue };
+        if verifying.verify(body, &signature).is_ok() {
+            return Ok(());
+        }
+    }
+    Err(CoreError::Signature("its signature does not match a key this build trusts".to_string()))
+}

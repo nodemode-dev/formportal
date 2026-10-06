@@ -23,6 +23,14 @@ pub fn fetch_text(url: &str) -> Result<String> {
     response.into_string().map_err(CoreError::Io)
 }
 
+pub fn fetch_bytes(url: &str) -> Result<Vec<u8>> {
+    check_url(url)?;
+    let response = ureq::get(url).call().map_err(|e| CoreError::Http(e.to_string()))?;
+    let mut body = Vec::new();
+    response.into_reader().take(16 * 1024 * 1024).read_to_end(&mut body)?;
+    Ok(body)
+}
+
 pub fn sha256_file(path: &Path) -> Result<String> {
     let mut file = File::open(path)?;
     let mut hasher = Sha256::new();

@@ -3,11 +3,10 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 use std::{env, fs};
 
-use formai_core::download::fetch_text;
 use formai_core::{Availability, Catalog, Channel, CoreError, Hub, Platform};
 
 fn usage() -> ExitCode {
-    eprintln!("usage: install <product> --catalog <file or address> [--channel stable|beta] [--root <folder>] [--launch | --rollback | --uninstall | --status]");
+    eprintln!("usage: install <product> --catalog <file or address> [--channel stable|beta] [--root <folder>] [--allow-unsigned] [--launch | --rollback | --uninstall | --status]");
     ExitCode::from(2)
 }
 
@@ -44,8 +43,11 @@ fn run() -> Result<(), CoreError> {
         return Ok(());
     }
     let source = value("--catalog").unwrap_or_default();
-    let text = if source.starts_with("http") { fetch_text(&source)? } else { fs::read_to_string(&source)? };
-    let catalog = Catalog::from_json(&text)?;
+    let catalog = if source.starts_with("http") {
+        hub.catalog(&source, has("--allow-unsigned"))?
+    } else {
+        Catalog::from_json(&fs::read_to_string(&source)?)?
+    };
     let view = catalog.view(&product, channel, Platform::current());
     let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else {
         return Err(CoreError::Unavailable(format!("{product} on that channel ({:?})", view.availability)));

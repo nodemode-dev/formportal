@@ -9,6 +9,7 @@ pub enum CoreError {
     Catalog(CatalogError),
     Url(String),
     Hash { file: String, expected: String, found: String },
+    Signature(String),
     Unsupported(String),
     Unavailable(String),
     NotInstalled(String),
@@ -29,6 +30,7 @@ impl fmt::Display for CoreError {
                 write!(f, "{file} does not match the catalogue: expected SHA-256 {expected}, found {found}. It was not installed")
             }
             CoreError::Unsupported(kind) => write!(f, "this build cannot install a {kind} file yet"),
+            CoreError::Signature(why) => write!(f, "the catalogue was refused: {why}"),
             CoreError::Unavailable(what) => write!(f, "the catalogue offers this computer nothing for {what}"),
             CoreError::NotInstalled(what) => write!(f, "{what} is not installed"),
             CoreError::State(e) => write!(f, "the record of installed apps could not be read: {e}"),

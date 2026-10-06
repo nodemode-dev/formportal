@@ -4,10 +4,11 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::download::download;
+use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
+use crate::signature::{trusted_keys, verify};
 use crate::state::{Install, InstalledVersion, State};
-use crate::{Artifact, ArtifactKind, Channel};
+use crate::{Artifact, ArtifactKind, Catalog, Channel};
 
 pub struct Hub {
     root: PathBuf,
@@ -130,6 +131,40 @@ impl Hub {
 
     pub fn state(&self) -> Result<State> {
         State::load(&self.root)
+    }
+
+    pub fn catalog(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
+        let dir = self.root.join("catalog");
+        let kept = dir.join("apps.json");
+        let kept_signature = dir.join("apps.json.sig");
+        let (body, signature, fresh) = match fetch_bytes(url) {
+            Ok(body) => {
+                let signature = fetch_bytes(&format!("{url}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
+                (body, signature, true)
+            }
+            Err(e) => match fs::read(&kept) {
+                Ok(body) => (body, fs::read_to_string(&kept_signature).ok(), false),
+                Err(_) => return Err(e),
+            },
+        };
+        match &signature {
+            Some(signature) => verify(&body, signature, &trusted_keys())?,
+            None if allow_unsigned => {}
+            None => return Err(CoreError::Signature("it is not signed".to_string())),
+        }
+        let text = String::from_utf8(body.clone()).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
+        let catalog = Catalog::from_json(&text)?;
+        if fresh {
+            fs::create_dir_all(&dir)?;
+            fs::write(&kept, &body)?;
+            match &signature {
+                Some(signature) => fs::write(&kept_signature, signature)?,
+                None => {
+                    let _ = fs::remove_file(&kept_signature);
+                }
+            }
+        }
+        Ok(catalog)
     }
 
     pub fn install(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
