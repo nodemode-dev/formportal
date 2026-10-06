@@ -1,6 +1,8 @@
-import type { Catalog, Channel, ChannelView, ExtensionIndex, Platform, Product, Route, Source } from "./types.ts";
+import type { Catalog, Channel, ChannelView, ExtensionIndex, InstallRecord, Platform, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
+  install: { key: string };
+  notice: { text: string };
   route: { route: Route };
   theme: { light: boolean };
   platform: { platform: Platform };
@@ -83,6 +85,35 @@ export class Engine {
   setExtensions(index: ExtensionIndex): void {
     this.state.extensions = index;
     this.emit("extensions", { count: index.packages.length });
+  }
+
+  readonly installs = new Map<string, InstallRecord>();
+  readonly progress = new Map<string, number>();
+
+  key(product: string, channel: Channel): string {
+    return `${product}:${channel}`;
+  }
+
+  setInstalls(list: InstallRecord[]): void {
+    const touched = new Set(this.installs.keys());
+    this.installs.clear();
+    for (const record of list) {
+      const key = this.key(record.product, record.channel);
+      this.installs.set(key, record);
+      touched.add(key);
+    }
+    for (const key of touched) this.emit("install", { key });
+  }
+
+  setProgress(product: string, channel: Channel, fraction: number | null): void {
+    const key = this.key(product, channel);
+    if (fraction === null) this.progress.delete(key);
+    else this.progress.set(key, Math.min(1, Math.max(0, fraction)));
+    this.emit("install", { key });
+  }
+
+  setNotice(text: string): void {
+    this.emit("notice", { text });
   }
 
   product(id: string): Product | null {

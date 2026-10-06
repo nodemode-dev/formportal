@@ -18,7 +18,9 @@ function hubPlugin(): Plugin {
     transformIndexHtml: {
       order: "pre",
       handler(html) {
-        return renderMarkers(html, { icons, facts, chromeDir: ROOT, origin: "", rel: "" });
+        const rows = /(<li class="row" data-row="[a-z]+" data-product="[a-z]+">[\s\S]*?<p class="row-version" data-field="version"><\/p>)/g;
+        const withActions = html.replace(rows, "$1\n              <!-- @include row-actions.html -->");
+        return renderMarkers(withActions, { icons, facts, chromeDir: ROOT, origin: "", rel: "" });
       },
     },
   };

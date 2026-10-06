@@ -107,6 +107,29 @@ Drawn once at 1024 pixels from the family mark (three bars in amber, off-purple 
 
 ---
 
+## v0.11.0 · the command surface, and building the app {#v011}
+
+### src/main.rs · commands over the core
+- refers-to: src/main.rs :: platform, catalog, installs, install, open, rollback, remove, Progress
+- kind: explainer
+- logged: v0.11.0 · 2026-10-06
+
+Seven commands, each a thin call into `formai-core`'s `Hub` at its default per-user folder; no logic lives here. `catalog` and `install` do network and disk work, so they run on a blocking thread and the window stays responsive. `install` reads the catalogue again through the hub (verified, and from the kept copy if the site is unreachable) so the file it installs is the one the catalogue lists now, not one the page remembered; it emits `install-progress` with product, channel, bytes so far and total each time the percentage changes. Errors cross to the page as the core's own sentences. The commands need no capability beyond `core:default`: they are the app's own, and listening to an event is part of the core set.
+
+### tauri.conf.json · withGlobalTauri
+- refers-to: tauri.conf.json :: `app.withGlobalTauri`
+- kind: rationale
+- logged: v0.11.0 · 2026-10-06
+
+Puts Tauri's `invoke` and `listen` on `window.__TAURI__`, so the interface calls the shell with no package and no bundler step. Its presence is also how the interface knows it is inside the shell.
+
+### hub/setup/, .github/workflows/desktop.yml · building the app
+- refers-to: hub/setup/build_macos_app, build_linux_app, build_windows_app.bat; .github/workflows/desktop.yml
+- kind: warning-context
+- logged: v0.11.0 · 2026-10-06
+
+One script per system: build the interface, then `npx @tauri-apps/cli@2 build` for that system's bundles (`.app` and `.dmg`; `.deb` and AppImage; NSIS and MSI). The workflow runs the three on GitHub's macOS, Ubuntu 22.04 and Windows runners by hand and keeps each bundle folder as an artifact. **All four files are written and not run.** The next version runs the Linux script in the build container, opens the result under a virtual display, and adds the step that turns the bundles into a release in formcut's shape.
+
 ## src/main.rs {#main}
 
 ### src/main.rs · the command surface

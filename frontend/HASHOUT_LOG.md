@@ -98,6 +98,50 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.11.0 · the window is wired to the core {#wired}
+
+### row-actions.html, vite.config.ts · actions are markup, placed at build time
+- refers-to: row-actions.html; vite.config.ts :: the `rows` replacement in `handler`
+- kind: rationale
+- logged: v0.11.0 · 2026-10-06
+
+Every app row (three in Apps, three in Beta) carries the same actions: Roll back, Remove, Open, Update, Install and a progress bar. Rather than write that block six times in `index.html` or build it with script, the build inserts an include of `row-actions.html` after each row's version field, and the marker renderer resolves it. The served page has the buttons in it from the first byte; script only sets attributes. This replaces the v0.1.0 entry "no buttons on the rows yet" and its note in the Apps pane, whose paragraph is now the place a failed action is reported (`data-notice`).
+
+### src/extensions/apps/index.ts · row state
+- refers-to: src/extensions/apps/index.ts :: patch, write, the click handlers
+- kind: explainer
+- logged: v0.11.0 · 2026-10-06
+
+A row's `data-install` is `none` (not installed), `busy` (installing, with `--p` from 0 to 1 driving the bar), `ready` (installed and the catalogue offers the same version) or `update` (installed and the catalogue offers another). `data-previous` is present when an earlier version is kept. CSS shows the buttons that fit: Install when none and the catalogue has a file for this computer; Open and Remove when ready; Open and Update when update; Roll back whenever an earlier version is kept; nothing but the bar when busy. The actions column has a fixed width, so no state moves anything. A click dispatches `app.install`, `app.open`, `app.rollback` or `app.remove` with the row's product and channel; Update is `app.install`.
+
+### src/extensions/apps/index.ts · write, and why status text starts at the left
+- refers-to: src/extensions/apps/index.ts :: write; src/styles/main.css :: `.row-status`
+- kind: warning-context
+- logged: v0.11.0 · 2026-10-06
+
+Two things measured. Setting `textContent` replaces the text node: fourteen nodes removed over one install, which the stability rule counts as churn. `write` now changes the existing text node's value. With the node kept, the browser then reported a layout shift of 0.0001 each time the status changed length, because the text was right-aligned and its start moved. The status is now aligned to its start, where a longer word grows away from a fixed edge. After both: no node removed and a shift of exactly 0 through install, open, update, roll back and remove.
+
+### src/bridge/tauri.ts · the shell's bridge
+- refers-to: src/bridge/tauri.ts :: tauriBridge, catalogUrl, allowUnsigned; src/bridge/index.ts :: pickBridge
+- kind: explainer
+- logged: v0.11.0 · 2026-10-06
+
+When the page runs inside the shell (`window.__TAURI__` exists, because the shell's config sets `withGlobalTauri`), `pickBridge` returns this bridge, which calls the shell's commands of the same names and listens for `install-progress` events during an install. No package is needed for it. The catalogue address is `https://formai.dev/catalog/v1/apps.json` unless Settings holds another (`formai-catalog-url` in local storage), and an unsigned catalogue is accepted only if the Developer box in Settings is ticked (`formai-allow-unsigned`). Changing either reloads the catalogue. The extension list is empty in the shell until the catalogue's index is fetched by the core. **Never run**: this file has only been compiled.
+
+### src/bridge/fixture.ts · acted-out installs
+- refers-to: src/bridge/fixture.ts :: installed, the action methods, the `installed` query
+- kind: explainer
+- logged: v0.11.0 · 2026-10-06
+
+In a browser the fixture bridge now plays the actions in memory: an install takes ten steps of 90 ms and reports progress, then records the catalogue's version, keeping the one before as `previous`. `?installed=formcut:2.6.1` in the address starts with that version installed, which is how the update and roll back states are reached. Nothing is downloaded. This is what the interface was exercised against.
+
+### src/main.ts · commands and the notice
+- refers-to: src/main.ts :: guard, refresh, the `app.*` commands
+- kind: explainer
+- logged: v0.11.0 · 2026-10-06
+
+Every command runs inside `guard`, which clears the notice, awaits the work and, if it throws, shows the message in the Apps pane (the core's errors are sentences written for a person). After an install, roll back or remove the installed list is read again from the bridge rather than patched from the answer, so the interface shows what the core recorded. `catalog.load` now sets the platform and the installed list before the catalogue, so a row never shows Install for something already installed.
+
 ## public/prepaint.js {#prepaint}
 
 ### public/prepaint.js · a file, not an inline script

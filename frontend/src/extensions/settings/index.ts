@@ -1,4 +1,5 @@
 import type { Os, Source } from "../../engine/types.ts";
+import { CATALOG_KEY, UNSIGNED_KEY } from "../../bridge/tauri.ts";
 import type { Extension } from "../registry.ts";
 
 const OS: Record<Os, string> = { macos: "macOS", windows: "Windows", linux: "Linux", other: "Unknown" };
@@ -24,6 +25,31 @@ export const settings: Extension = {
       document.documentElement.setAttribute("data-source", s);
       if (source) source.textContent = SOURCE[s];
       if (generated) generated.textContent = when ? when.slice(0, 10) : "";
+    });
+
+    const address = document.querySelector<HTMLInputElement>("[data-setting-input='catalog']");
+    const unsigned = document.querySelector<HTMLInputElement>("[data-setting-input='unsigned']");
+    const keep = (key: string, value: string) => {
+      try {
+        if (value) localStorage.setItem(key, value);
+        else localStorage.removeItem(key);
+      } catch {
+        engine.setNotice("This choice could not be saved on this computer.");
+      }
+    };
+    try {
+      if (address) address.value = localStorage.getItem(CATALOG_KEY) ?? "";
+      if (unsigned) unsigned.checked = localStorage.getItem(UNSIGNED_KEY) === "yes";
+    } catch {
+      engine.setNotice("");
+    }
+    address?.addEventListener("change", () => {
+      keep(CATALOG_KEY, address.value.trim());
+      void engine.dispatch("catalog.load");
+    });
+    unsigned?.addEventListener("change", () => {
+      keep(UNSIGNED_KEY, unsigned.checked ? "yes" : "");
+      void engine.dispatch("catalog.load");
     });
   },
 };

@@ -88,6 +88,13 @@ export interface Platform {
   arch: Arch;
 }
 
+export interface InstallRecord {
+  product: string;
+  channel: Channel;
+  version: string;
+  previous: string | null;
+}
+
 export interface ChannelView {
   product: string;
   channel: Channel;

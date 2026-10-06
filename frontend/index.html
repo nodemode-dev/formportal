@@ -56,7 +56,7 @@
               <p class="row-version" data-field="version"></p>
             </li>
           </ul>
-          <p class="pane-note">Installing, opening and updating from here arrive in a later build. This build reads the catalogue and shows what is published.</p>
+          <p class="pane-note pane-notice" data-notice role="status" aria-live="polite"></p>
         </section>
 
         <section class="pane" data-pane="beta" aria-labelledby="h-beta">
@@ -129,6 +129,14 @@
             <div class="setting">
               <dt>Catalogue</dt>
               <dd><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></dd>
+            </div>
+            <div class="setting">
+              <dt><label for="catalog-url">Catalogue address</label></dt>
+              <dd><input class="field" id="catalog-url" type="url" inputmode="url" spellcheck="false" autocomplete="off" data-setting-input="catalog" placeholder="https://formai.dev/catalog/v1/apps.json" /></dd>
+            </div>
+            <div class="setting">
+              <dt>Developer</dt>
+              <dd><label class="check"><input type="checkbox" data-setting-input="unsigned" /><span>Accept a catalogue that is not signed</span></label></dd>
             </div>
             <div class="setting">
               <dt>This computer</dt>

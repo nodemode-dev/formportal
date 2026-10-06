@@ -925,6 +925,7 @@ name = "formai"
 version = "0.10.0"
 dependencies = [
  "formai-core",
+ "serde",
  "tauri",
  "tauri-build",
 ]
