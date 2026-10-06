@@ -107,6 +107,37 @@ Drawn once at 1024 pixels from the family mark (three bars in amber, off-purple 
 
 ---
 
+## v0.12.0 · the Linux app built, opened and used; the release packer {#v012}
+
+### hub/setup/build_linux_app · run for real
+- refers-to: hub/setup/build_linux_app
+- kind: explainer
+- logged: v0.12.0 · 2026-10-06
+
+Run as written in the build container (Ubuntu 24.04, Rust 1.99.0, WebKitGTK 4.1, with `patchelf` installed, and `APPIMAGE_EXTRACT_AND_RUN=1` and `NO_STRIP=true` in the environment because a container has no FUSE and the AppImage tool's own strip is old). It built `formai_<version>_amd64.deb` (3.25 MiB) and `formai_<version>_amd64.AppImage` (78 MiB) under `hub/target/release/bundle/`. A release build takes about ten minutes cold here; the release profile has `lto`. The script needed no change. The two environment variables are a container's need, not the script's, so they are not in it; the workflow's runner has FUSE.
+
+### the real window, opened and driven
+- refers-to: the built `hub/target/release/formai`; src/main.rs :: every command; tauri.conf.json :: the CSP, withGlobalTauri
+- kind: explainer
+- logged: v0.12.0 · 2026-10-06
+
+The built binary was started under a virtual display (Xvfb, 1280 by 860, with WebKit's compositing off) with its data folder pointed at a scratch folder, beside a local site serving a test catalogue and a local server holding a test archive. What was seen and done, by screen capture and by keyboard and mouse through `xdotool`:
+
+1. The window opened at 1180 by 760 showing the interface as designed: the rail, the three rows in their hues, Inter, the version in the rail. So the page loads under the shell's Content-Security-Policy, and the theme script, the stylesheet and the font are all allowed by it.
+2. With nothing configured, the Apps pane showed the core's own sentence in red: the download of `https://formai.dev/catalog/v1/apps.json` did not complete. So the interface found `window.__TAURI__`, chose the shell's bridge, and the `catalog` command ran the core and returned its error to the page. (Here the failure was the container's proxy presenting an unknown certificate; on any machine today it would be that formai.dev is not deployed.)
+3. In Settings, the catalogue address was typed and the Developer box ticked from the keyboard. The Apps pane then showed formcut as available: local storage, the change handlers and the reload work in the real web view.
+4. Install was pressed. The shell downloaded the archive from the local server, the core verified and unpacked it, and the row read Installed 2.6.2 with Remove and Open. `installed.json` in the scratch folder records the version, its folder and its SHA-256.
+5. Open was pressed, and the installed file ran (it wrote its marker).
+
+Found by this run and fixed in the interface: the two rows whose products the test catalogue did not list were blank, because a row was only written when its own product arrived. Not seen: progress events moving the bar (the archive is small and the capture was taken after), Update, Roll back and Remove in the real window (they were exercised in a browser and in the core separately), and anything on a real desktop with a compositor.
+
+### hub/setup/package_release.py · the release in formcut's shape
+- refers-to: hub/setup/package_release.py :: pack, finish, members, floor; .github/workflows/desktop.yml :: Pack, the `release` job
+- kind: explainer
+- logged: v0.12.0 · 2026-10-06
+
+`--platform` and `--arch` pack one system's bundle as `formai-<version>-<platform>-<arch>.zip` in `release-dist/` and write that asset's entry beside it; `--finish` gathers the entries into `manifest.json` (name, version, commit, published, repository, assets with platform, arch, file, bytes, sha256, minimum_os) and `SHA256SUMS`, which is the shape the site's resolver reads from formcut. Linux packs the AppImage as `formai.AppImage` (or the `.deb` if there is no AppImage), Windows the NSIS installer, macOS the `.app` through `ditto` so its links and permissions survive. The Linux floor is read from the machine that built it (glibc 2.39 here, 2.35 on the workflow's runner). Run here for Linux: an 81 MB zip, its hash verified against `SHA256SUMS`. **The macOS and Windows branches have not been run.** The workflow now packs in each build job and has a last job that finishes and drafts the release; it too has not been run.
+
 ## v0.11.0 · the command surface, and building the app {#v011}
 
 ### src/main.rs · commands over the core
