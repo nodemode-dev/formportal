@@ -1,6 +1,6 @@
 [package]
 name = "formai"
-version = "0.12.0"
+version = "0.13.0"
 description = "formai, the hub for formcut, formvis and formwav: a Tauri shell over formai-core"
 authors = ["nodemode-ai"]
 license = "GPL-3.0-only"
