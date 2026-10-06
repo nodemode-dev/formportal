@@ -1,5 +1,15 @@
 <div class="row-actions">
                 <span class="row-bar" aria-hidden="true"></span>
+                <button class="act" type="button" data-act="open">Open</button>
+                <button class="act act-main" type="button" data-act="update">Update</button>
+                <button class="act act-main" type="button" data-act="install">Install</button>
+                <details class="drop drop-more">
+                  <summary class="drop-toggle">More%icon:chevron-down:ic-s%</summary>
+                  <div class="drop-panel drop-menu">
+                    <button class="drop-item" type="button" data-act="rollback">Go back to the version before</button>
+                    <button class="drop-item" type="button" data-act="remove">Remove from this computer</button>
+                  </div>
+                </details>
                 <details class="drop drop-info">
                   <summary class="drop-toggle">Details%icon:chevron-down:ic-s%</summary>
                   <div class="drop-panel">
@@ -14,14 +24,4 @@
                     <p class="drop-fine">The download is checked against this hash before anything is installed.</p>
                   </div>
                 </details>
-                <details class="drop drop-more">
-                  <summary class="drop-toggle">More%icon:chevron-down:ic-s%</summary>
-                  <div class="drop-panel drop-menu">
-                    <button class="drop-item" type="button" data-act="rollback">Go back to the version before</button>
-                    <button class="drop-item" type="button" data-act="remove">Remove from this computer</button>
-                  </div>
-                </details>
-                <button class="act" type="button" data-act="open">Open</button>
-                <button class="act act-main" type="button" data-act="update">Update</button>
-                <button class="act act-main" type="button" data-act="install">Install</button>
               </div>

@@ -400,6 +400,10 @@ html[data-route="settings"] [data-pane="settings"] {
   font-size: var(--fs-s);
 }
 
+.drop-facts > div:has(dd:empty) {
+  display: none;
+}
+
 .drop-facts dt {
   color: var(--ink-faint);
 }

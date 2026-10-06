@@ -98,6 +98,26 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.16.0 · Tab order, and the new controls in the real window {#v016}
+
+### row-actions.html · the source order is the order on screen
+- refers-to: row-actions.html :: the whole partial
+- kind: warning-context
+- logged: v0.16.0 · 2026-10-06
+
+In v0.15.0 the partial listed Details and More before Open, Update and Install, and CSS reordered them for the eye. The keyboard follows the source, so Tab reached the drop-downs before the main button. The partial now lists them as they are seen: Open, Update, Install, More, Details. Checked in a browser from an editor with an update waiting: Tab after the rail goes Open, Update, More, Details, then the shelf. The `order` rules and the spacer in the stylesheet still do the pinning; they no longer reorder anything.
+
+### the real window · the new controls
+- refers-to: the Linux app built from this version's interface; src/bridge/tauri.ts
+- kind: explainer
+- logged: v0.16.0 · 2026-10-06
+
+The Linux app was rebuilt and driven by keyboard and mouse under a virtual display, as in v0.12.0, against a local test catalogue. Seen in captures of the real window: the stage before install with Install and Details; after Install, Installed with Open, More and Details; More opened from the keyboard showing Remove from this computer; Details opened from the keyboard showing the release date, file, needs, licence and SHA-256; the Updates screen listing formcut as installed at 2.6.2 with Open, More and Details and no Update all, nothing being newer; the Beta tiles; and Extensions with its filter and its empty state, the shell having no extension list yet. The installed file ran when Open was pressed.
+
+Found there and fixed: Details showed a Project files row with nothing in it, because that test catalogue gives none. A fact row whose value is empty is now hidden (`.drop-facts > div:has(dd:empty)`). The real app was not rebuilt after that one-line fix.
+
+Not seen in the real window: an update arriving, Update all, going back a version, removing, the rail's count, the extension tiles (the shell lists none), Settings' new rows.
+
 ## v0.15.0 · more on each tile, drop-downs, and the remaining panes {#rest}
 
 ### row-actions.html · Details and More
