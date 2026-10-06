@@ -98,6 +98,15 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.17.0 · links {#links}
+
+### src/main.ts, src/bridge · a link opens a screen or an editor
+- refers-to: src/main.ts :: the `link.open` command, `bridge.onLink`; src/bridge/index.ts :: onLink; src/bridge/tauri.ts :: onLink; src/bridge/fixture.ts :: onLink
+- kind: explainer
+- logged: v0.17.0 · 2026-10-06
+
+The bridge gained `onLink`. In the shell it listens for the `deep-link` event and asks once for a link the app was started with. In a browser it reads `?link=` from the address, so the same path can be exercised without the shell. Either way the interface receives the text after `formai://` and dispatches `link.open`: `app/<id>` goes to Apps and puts that editor on the stage; anything else is offered to `route.go`. Both of those commands already ignore what they do not know, so a link can only ever choose among the hub's own screens and editors. Checked in a browser: `app/formwav` showed formwav on the stage, `updates` the Updates screen; `app/nothing`, `settings/extra` and a `javascript:` address changed nothing beyond a valid screen name.
+
 ## v0.16.0 · Tab order, and the new controls in the real window {#v016}
 
 ### row-actions.html · the source order is the order on screen

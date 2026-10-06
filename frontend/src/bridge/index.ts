@@ -12,6 +12,7 @@ export interface Bridge {
   open(product: string, channel: Channel): Promise<void>;
   rollback(product: string, channel: Channel): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;
+  onLink(handler: (target: string) => void): void;
 }
 
 export function pickBridge(): Bridge {

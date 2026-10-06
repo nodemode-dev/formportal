@@ -80,4 +80,15 @@ engine.command("app.remove", (arg) =>
   }),
 );
 
+engine.command("link.open", (arg) => {
+  const [head, id] = String(arg).split("/");
+  if (head === "app" && id) {
+    void engine.dispatch("route.go", "apps");
+    void engine.dispatch("app.show", id);
+  } else {
+    void engine.dispatch("route.go", head);
+  }
+});
+
 void engine.dispatch("catalog.load");
+bridge.onLink((link) => void engine.dispatch("link.open", link));

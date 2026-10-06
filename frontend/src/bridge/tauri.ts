@@ -68,4 +68,12 @@ export const tauriBridge: Bridge = {
   remove: async (product, channel) => {
     await tauri().core.invoke<null>("remove", { product, channel });
   },
+  onLink: (handler) => {
+    void tauri().event.listen<string>("deep-link", ({ payload }) => handler(payload));
+    void tauri()
+      .core.invoke<string | null>("launch_link")
+      .then((link) => {
+        if (link) handler(link);
+      });
+  },
 };

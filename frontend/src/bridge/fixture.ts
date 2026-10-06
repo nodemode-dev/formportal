@@ -58,4 +58,8 @@ export const fixtureBridge: Bridge = {
   remove: async (product, channel) => {
     if (!installed.delete(key(product, channel))) throw missing(product);
   },
+  onLink: (handler) => {
+    const link = new URLSearchParams(window.location.search).get("link");
+    if (link) handler(link);
+  },
 };

@@ -1,8 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use formai_core::{Availability, Catalog, Channel, Hub, Install, Platform};
+use std::sync::Mutex;
+
 use serde::Serialize;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager, State};
+use tauri_plugin_deep_link::DeepLinkExt;
 
 #[derive(Clone, Serialize)]
 struct Progress {
@@ -73,9 +76,53 @@ fn remove(product: String, channel: Channel) -> Result<(), String> {
     hub().uninstall(&product, channel).map_err(text)
 }
 
+const SCHEME: &str = "formai://";
+
+struct Pending(Mutex<Option<String>>);
+
+fn target(url: &str) -> Option<String> {
+    url.strip_prefix(SCHEME).map(|rest| rest.trim_matches('/').to_string()).filter(|rest| !rest.is_empty())
+}
+
+fn route(app: &AppHandle, urls: impl IntoIterator<Item = String>) {
+    for url in urls {
+        if let Some(link) = target(&url) {
+            let _ = app.emit("deep-link", link);
+        }
+    }
+}
+
+#[tauri::command]
+fn launch_link(pending: State<'_, Pending>) -> Option<String> {
+    pending.0.lock().ok().and_then(|mut slot| slot.take())
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove])
+        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }))
+        .plugin(tauri_plugin_deep_link::init())
+        .manage(Pending(Mutex::new(None)))
+        .setup(|app| {
+            #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
+            {
+                let _ = app.deep_link().register_all();
+            }
+            let started_with = app.deep_link().get_current().ok().flatten().unwrap_or_default();
+            if let Some(link) = started_with.iter().find_map(|url| target(url.as_str())) {
+                if let Ok(mut slot) = app.state::<Pending>().0.lock() {
+                    *slot = Some(link);
+                }
+            }
+            let handle = app.handle().clone();
+            app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove, launch_link])
         .run(tauri::generate_context!())
         .expect("formai could not start");
 }

@@ -107,6 +107,28 @@ Drawn once at 1024 pixels from the family mark (three bars in amber, off-purple 
 
 ---
 
+## v0.17.0 · one running copy, and formai:// links {#v017}
+
+### src/main.rs, Cargo.toml · one copy at a time
+- refers-to: src/main.rs :: the `tauri_plugin_single_instance::init` call in main; Cargo.toml :: tauri-plugin-single-instance
+- kind: explainer
+- logged: v0.17.0 · 2026-10-06
+
+Starting formai while it is already running does not open a second window: the second process hands its arguments to the first and exits, and the first brings its window forward (unminimised and focused). On Linux this goes over the session's D-Bus, so a desktop session is needed; on Windows and macOS the plugin uses each system's own means. The plugin is registered first, as its documentation asks, so it can stop a second copy before anything else is set up.
+
+### src/main.rs, tauri.conf.json, capabilities/default.json · formai:// links
+- refers-to: src/main.rs :: SCHEME, Pending, target, route, launch_link, the setup closure; tauri.conf.json :: `plugins.deep-link`; capabilities/default.json :: `deep-link:default`
+- kind: explainer
+- logged: v0.17.0 · 2026-10-06
+
+The app declares the `formai` scheme. A link is everything after `formai://`, trimmed of slashes: `app/formcut`, `updates`, `beta`, `extensions`, `settings`. The shell does not interpret it; it passes the text to the window as a `deep-link` event, and the interface decides (an unknown link does nothing).
+
+Three ways a link arrives, all ending in that one event. While running, the plugin's `on_open_url` fires. From a second copy started with a link, the single-instance plugin's `deep-link` feature forwards it to the same handler. At start-up with a link, the window is not listening yet, so the link is kept in `Pending` and the interface asks for it once with the `launch_link` command, which hands it over and forgets it.
+
+On Linux the scheme is also registered at run time (`register_all`), because an AppImage has no installer to do it; the `.deb` registers it through its desktop entry. The same call is made on Windows in debug builds only. The config carries a `plugins` section for the first time, and with one the generated context needs `serde_json` as a direct dependency: the first check failed on exactly that.
+
+The window's capability gained `deep-link:default`, the plugin's own minimum, and nothing else.
+
 ## v0.12.0 · the Linux app built, opened and used; the release packer {#v012}
 
 ### hub/setup/build_linux_app · run for real
