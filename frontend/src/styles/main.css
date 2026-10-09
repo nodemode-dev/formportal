@@ -1,5 +1,6 @@
 @import "../../../../design/tokens.css";
 @import "./lineup.css";
+@import "./workspace.css";
 
 @font-face {
   font-family: "Inter";
@@ -187,11 +188,7 @@ button {
   margin-inline: auto;
 }
 
-html[data-route="apps"] [data-pane="apps"],
-html[data-route="beta"] [data-pane="beta"],
-html[data-route="extensions"] [data-pane="extensions"],
-html[data-route="updates"] [data-pane="updates"],
-html[data-route="settings"] [data-pane="settings"] {
+[data-pane][data-on-route] {
   display: block;
 }
 

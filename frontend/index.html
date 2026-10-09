@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-route="apps" data-source="none">
+<html lang="en" data-route="home" data-source="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,12 +18,24 @@
           <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="mark-cut" fill="currentColor" d="M4 5h16a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-vis" fill="currentColor" d="M4 10.5h11a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-wav" fill="currentColor" d="M4 16h6a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/></svg>
           <span class="rail-label">FormPortal</span>
         </div>
-        <ul class="rail-list">
-          <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Apps</span></button></li>
-          <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
-          <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
-          <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
-        </ul>
+        <div class="rail-scroll">
+          <ul class="rail-list">
+            <li><button class="rail-item" type="button" data-route-to="home" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Home</span></button></li>
+          </ul>
+          <p class="rail-h">Instead of Adobe</p>
+          <ul class="rail-list"><!-- @portal:nav-adobe --></ul>
+          <p class="rail-h">More apps</p>
+          <ul class="rail-list"><!-- @portal:nav-other --></ul>
+          <p class="rail-h">On the way</p>
+          <ul class="rail-list"><!-- @portal:nav-next --></ul>
+          <p class="rail-h">Library</p>
+          <ul class="rail-list">
+            <li><button class="rail-item" type="button" data-route-to="apps">%icon:apps:ic-m%<span class="rail-label">All apps</span></button></li>
+            <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
+            <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
+            <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
+          </ul>
+        </div>
         <div class="rail-end">
           <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
           <p class="rail-foot"><span class="rail-label">FormPortal </span>v%fact:version%</p>
@@ -31,6 +43,14 @@
       </nav>
 
       <main class="stage">
+        <header class="topbar"><span class="topbar-label" data-route-label>Home</span><span class="topbar-note">Free and open source</span></header>
+        <section class="pane pane-home" data-pane="home" data-on-route aria-labelledby="h-home">
+          <p class="home-kicker">Your Form workspace</p>
+          <h1 id="h-home" class="home-title">What will you <span class="lu-accent">make</span> today?</h1>
+          <p class="home-sub">Pick an app. FormPortal installs it, opens it and keeps it current.</p>
+          <!-- @portal:home -->
+        </section>
+        <!-- @portal:pages -->
         <section class="pane pane-apps" data-pane="apps" data-app="formcut" aria-labelledby="h-apps">
           <div class="ruler" aria-hidden="true"><span class="ruler-label">Lineup</span></div>
           <header class="lu-head">

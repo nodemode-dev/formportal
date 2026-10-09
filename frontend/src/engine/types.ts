@@ -3,7 +3,7 @@ export type ProductKind = string;
 export type Channel = "stable" | "beta" | "nightly";
 export type Os = "macos" | "windows" | "linux" | "other";
 export type Arch = "arm64" | "x86_64";
-export type Route = "apps" | "beta" | "extensions" | "updates" | "settings";
+export type Route = string;
 export type Source = "none" | "fixture" | "live";
 export type Availability = "unreleased" | "no-release" | "available" | "other-platform";
 

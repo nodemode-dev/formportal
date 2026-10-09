@@ -63,8 +63,34 @@ function renderPortal(html: string): string {
     const status = p.status ?? "available";
     return `<li class="cell" id="cell-${p.id}" data-row="stable" data-product="${p.id}" data-status="${status}"><div class="cell-top"><span class="cell-num">${n}</span><span class="cell-cat">${kind(p)}</span></div><div class="cell-shot">${shot(p, "cell-img")}<span class="cell-icon" aria-hidden="true">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span></div><div class="cell-body"><h2 class="cell-name">${name(p)}</h2><p class="cell-line">${line(p)}</p><p class="cell-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip" data-field="status"></span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></li>`;
   });
-  const parts: Record<string, string[]> = { cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)] };
-  return html.replace(/<!-- @portal:([a-z]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
+  const badge = (p: App) => ({ "in-progress": "Soon", "in-development": "Later" })[p.status ?? ""] ?? "";
+  const tag = (p: App) => (badge(p) ? `<span class="tag">${badge(p)}</span>` : "");
+  const glyph = (p: App) => `<span class="glyph" aria-hidden="true">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span>`;
+  const nav = (group: string) =>
+    APPS.filter((p) => (p as App & { group?: string }).group === group).map(
+      (p) => `<li data-product="${p.id}"><button class="rail-item" type="button" data-route-to="app-${p.id}">${glyph(p)}<span class="rail-label">${esc(p.name)}</span>${tag(p)}</button></li>`,
+    );
+  const titles: Record<string, string> = { adobe: "Instead of Adobe", other: "More apps", next: "On the way" };
+  const home = GROUPS.map(
+    (group) =>
+      `<h2 class="home-group">${titles[group]}</h2><ul class="tools">${APPS.filter((p) => (p as App & { group?: string }).group === group)
+        .map(
+          (p) => `<li data-product="${p.id}"><button class="tool" type="button" data-route-to="app-${p.id}">${glyph(p)}<span class="tool-text"><span class="tool-name">${esc(p.name)}${tag(p)}</span><span class="tool-sum">${esc(p.summary)}</span></span><span class="tool-go" aria-hidden="true">%icon:arrow-right:ic-s%</span></button></li>`,
+        )
+        .join("")}</ul>`,
+  );
+  const pages = APPS.map((p) => {
+    const status = p.status ?? "available";
+    return `<section class="pane pane-app" data-pane="app-${p.id}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="ap-grid"><div class="ap-text"><p class="home-kicker">${kind(p)}</p><h1 class="ap-name">${name(p)}</h1><p class="ap-line">${line(p)}</p><p class="ap-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip">GPL-3.0-only</span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><div class="cell ap-cell" data-row="stable" data-product="${p.id}"><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></div><div class="ap-shot">${shot(p, "cell-img")}</div></div><h2 class="home-group">More in this group</h2><ul class="tools">${APPS.filter((q) => q.id !== p.id && (q as App & { group?: string }).group === (p as App & { group?: string }).group)
+      .slice(0, 6)
+      .map((q) => `<li data-product="${q.id}"><button class="tool" type="button" data-route-to="app-${q.id}">${glyph(q)}<span class="tool-text"><span class="tool-name">${esc(q.name)}${tag(q)}</span><span class="tool-sum">${esc(q.summary)}</span></span></button></li>`)
+      .join("")}</ul></section>`;
+  });
+  const parts: Record<string, string[]> = {
+    cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)],
+    "nav-adobe": nav("adobe"), "nav-other": nav("other"), "nav-next": nav("next"), home, pages,
+  };
+  return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
 }
 
 function hubPlugin(): Plugin {
