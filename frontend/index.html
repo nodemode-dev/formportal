@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <title>formai</title>
+    <title>FormPortal</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/inter-4-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <script src="/prepaint.js"></script>
@@ -16,7 +16,7 @@
       <nav class="rail" aria-label="Sections">
         <div class="rail-brand">
           <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="mark-cut" fill="currentColor" d="M4 5h16a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-vis" fill="currentColor" d="M4 10.5h11a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-wav" fill="currentColor" d="M4 16h6a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/></svg>
-          <span class="rail-label">formai</span>
+          <span class="rail-label">FormPortal</span>
         </div>
         <ul class="rail-list">
           <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Apps</span></button></li>
@@ -26,7 +26,7 @@
         </ul>
         <div class="rail-end">
           <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
-          <p class="rail-foot"><span class="rail-label">formai </span>v%fact:version%</p>
+          <p class="rail-foot"><span class="rail-label">FormPortal </span>v%fact:version%</p>
         </div>
       </nav>
 
@@ -34,50 +34,10 @@
         <section class="pane pane-apps" data-pane="apps" data-app="formcut" aria-labelledby="h-apps">
           <h1 id="h-apps" class="sr-only">Apps</h1>
           <ul class="cards">
-            <li class="card" data-row="stable" data-product="formcut">
-              <img class="card-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
-              <div class="card-body">
-                <h2 class="card-name">formcut</h2>
-                <p class="card-kind">Video editing that stays on your machine</p>
-                <p class="card-sum">A multi-track timeline, colour grading with scopes, captions and speech from local models, and an export that matches the preview, because both run through one renderer.</p>
-                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
-            <li class="card" data-row="stable" data-product="formvis">
-              <img class="card-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
-              <div class="card-body">
-                <h2 class="card-name">formvis</h2>
-                <p class="card-kind">Layered image editing, with your Photoshop files</p>
-                <p class="card-sum">Layers, masks and blend modes, forty-five tools, RAW development and colour management, and local models for selection, fill and upscaling.</p>
-                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
-            <li class="card" data-row="stable" data-product="formwav">
-              <img class="card-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
-              <div class="card-body">
-                <h2 class="card-name">formwav</h2>
-                <p class="card-kind">Audio editing where what plays is what renders</p>
-                <p class="card-sum">Record, edit, repair and mix on one mixer shared by playback and export, and edit speech by editing its transcript.</p>
-                <p class="card-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="size"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
+            <!-- @portal:cards -->
           </ul>
-          <div class="shelf" role="group" aria-label="Choose an editor">
-            <button class="shelf-item" type="button" data-app-to="formcut" data-row="stable" data-product="formcut" aria-pressed="true">
-              <img class="shelf-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
-              <span class="shelf-text"><span class="shelf-name">formcut</span><span class="shelf-kind">Video</span><span class="shelf-status" data-field="status"></span></span>
-            </button>
-            <button class="shelf-item" type="button" data-app-to="formvis" data-row="stable" data-product="formvis" aria-pressed="false">
-              <img class="shelf-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
-              <span class="shelf-text"><span class="shelf-name">formvis</span><span class="shelf-kind">Image</span><span class="shelf-status" data-field="status"></span></span>
-            </button>
-            <button class="shelf-item" type="button" data-app-to="formwav" data-row="stable" data-product="formwav" aria-pressed="false">
-              <img class="shelf-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
-              <span class="shelf-text"><span class="shelf-name">formwav</span><span class="shelf-kind">Audio</span><span class="shelf-status" data-field="status"></span></span>
-            </button>
+          <div class="shelf" role="group" aria-label="Choose an app">
+            <!-- @portal:shelf -->
           </div>
           <p class="pane-note pane-notice" data-notice role="status" aria-live="polite"></p>
         </section>
@@ -88,33 +48,7 @@
             <p class="pane-sub">Builds that are still being tested. A beta installs beside the stable build with its own settings, and it can be unstable.</p>
           </header>
           <ul class="tiles">
-            <li class="tile" data-row="beta" data-product="formcut">
-              <img class="tile-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
-              <div class="tile-body">
-                <h2 class="tile-name">formcut</h2>
-                <p class="tile-kind">Video, beta</p>
-                <p class="tile-meta"><span data-field="status"></span><span data-field="version"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
-            <li class="tile" data-row="beta" data-product="formvis">
-              <img class="tile-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
-              <div class="tile-body">
-                <h2 class="tile-name">formvis</h2>
-                <p class="tile-kind">Image, beta</p>
-                <p class="tile-meta"><span data-field="status"></span><span data-field="version"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
-            <li class="tile" data-row="beta" data-product="formwav">
-              <img class="tile-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
-              <div class="tile-body">
-                <h2 class="tile-name">formwav</h2>
-                <p class="tile-kind">Audio, beta</p>
-                <p class="tile-meta"><span data-field="status"></span><span data-field="version"></span></p>
-                <!-- @include row-actions.html -->
-              </div>
-            </li>
+            <!-- @portal:beta -->
           </ul>
         </section>
 
@@ -168,38 +102,9 @@
             <button class="act act-main ups-all" type="button" data-updates-all>Update all</button>
           </header>
           <ul class="ups">
-            <li class="up" data-row="stable" data-product="formcut">
-              <img class="up-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formcut</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
-            <li class="up" data-row="beta" data-product="formcut">
-              <img class="up-shot" src="/media/formcut.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formcut, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
-            <li class="up" data-row="stable" data-product="formvis">
-              <img class="up-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formvis</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
-            <li class="up" data-row="beta" data-product="formvis">
-              <img class="up-shot" src="/media/formvis.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formvis, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
-            <li class="up" data-row="stable" data-product="formwav">
-              <img class="up-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formwav</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
-            <li class="up" data-row="beta" data-product="formwav">
-              <img class="up-shot" src="/media/formwav.webp" width="1600" height="1000" alt="" />
-              <div class="up-text"><h2 class="up-name">formwav, beta</h2><p class="up-meta"><span data-field="status"></span><span data-field="version"></span><span data-field="date"></span></p></div>
-              <!-- @include row-actions.html -->
-            </li>
+            <!-- @portal:updates -->
           </ul>
-          <p class="pane-note ups-empty">Nothing is installed through formai yet. Install an editor from Apps and it appears here with its version.</p>
+          <p class="pane-note ups-empty">Nothing is installed through FormPortal yet. Install an app from Apps and it appears here with its version.</p>
         </section>
 
         <section class="pane" data-pane="settings" aria-labelledby="h-settings">

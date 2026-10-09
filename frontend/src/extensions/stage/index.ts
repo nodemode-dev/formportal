@@ -12,6 +12,8 @@ export const stage: Extension = {
       if (!items.some((item) => item.dataset.appTo === id)) return;
       pane.setAttribute("data-app", id);
       for (const item of items) item.setAttribute("aria-pressed", String(item.dataset.appTo === id));
+      for (const card of pane.querySelectorAll<HTMLElement>(".card")) card.toggleAttribute("data-on", card.dataset.product === id);
+      items.find((item) => item.dataset.appTo === id)?.scrollIntoView({ block: "nearest", inline: "nearest" });
     });
 
     for (const item of items) item.addEventListener("click", () => engine.dispatch("app.show", item.dataset.appTo));

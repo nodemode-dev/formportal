@@ -98,6 +98,21 @@ Direct children of `body`, after the app. Dialogs, menus and toasts render into 
 
 ---
 
+## v0.20.0 · FormPortal, built from the registry {#portal20}
+
+### index.html, vite.config.ts · every app, not three
+- refers-to: index.html :: `<!-- @portal:cards -->`, `@portal:shelf`, `@portal:beta`, `@portal:updates`; vite.config.ts :: APPS, renderPortal; src/extensions/stage/index.ts; src/styles/main.css :: `.card[data-on]`, `.shelf`, `.app-plate`
+- kind: rationale
+- logged: v0.20.0 · 2026-10-06
+
+The window was written for three apps by hand: three stage panels, three shelf items, three Beta tiles, six update rows, and a CSS rule per app choosing the panel. The family is twenty. The four blocks are now markers that the build fills from `catalog/products.json` (every app but the portal itself): a stage panel and a shelf item per app, a Beta tile per available app, and a stable and a beta update row per app, each carrying `data-row` and `data-product` so the apps extension writes them unchanged. The chosen panel is the one with `data-on`, set by the `app.show` command, so the stage works for any number. The shelf is a strip that scrolls sideways and brings the chosen app into view. An app w/o a screenshot shows the same plate as the website; on the stage the plate carries no word, since the app's name is set over it (the first build showed the plate's word colliding w/ the name).
+
+Limit, stated: the panels are written at build time, so an app added to the registry appears in the window w/ the next FormPortal release, not before. The catalogue still decides at run time what each one offers.
+
+The window, rail and page are titled FormPortal; `tauri.conf.json` names the product FormPortal, so bundles and the macOS app take that name. The folder is still `hub/` and the scripts `formai_hub`; renaming them is separate.
+
+Checked in a browser under 4x CPU: 19 panels, 19 shelf items, 11 Beta tiles, 38 update rows; choosing FormEncoder put it on the stage; every earlier flow (stage at three sizes, Beta, Details, More, Updates, Update all, Extensions, Settings) still gives layout shift 0, no node removed, no overflow, no console error. Looked at: the stage w/ FormEncoder and the Beta screen. Not run: the real window w/ twenty apps.
+
 ## v0.17.0 · links {#links}
 
 ### src/main.ts, src/bridge · a link opens a screen or an editor
