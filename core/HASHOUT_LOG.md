@@ -104,6 +104,15 @@ Writes to `<name>.part` beside the final name. If a part file exists, it asks fo
 
 Not here yet: a check of the catalogue's own signature. The hash protects a file against the catalogue; the signature will protect the catalogue against whoever serves it. That waits on the signing key's owner and lands with the site's half.
 
+## src/lib.rs · ProductKind is text {#kind}
+
+### src/lib.rs · ProductKind
+- refers-to: src/lib.rs :: `pub type ProductKind = String`; Product.kind
+- kind: warning-context
+- logged: v0.19.0 · 2026-10-06
+
+It was an enum of four (`Hub, Video, Image, Audio`). When the family grew to twenty apps with kinds such as `photo`, `vector` and `encoder`, one unknown kind made serde reject the whole catalogue, so the portal would have read nothing. Nothing in the core branches on the kind, so it is now plain text: a catalogue whose kinds this build has never seen still reads. The portal's own kind is `portal`, no longer `hub`, because FormHub is the GitHub alternative. Run: the catalog example read the twenty-product catalogue the site served from the registry.
+
 ## src/signature.rs {#signature}
 
 ### src/signature.rs · verify, trusted_keys

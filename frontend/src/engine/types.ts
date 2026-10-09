@@ -1,5 +1,5 @@
 export type ProductState = "prelaunch" | "public" | "live";
-export type ProductKind = "hub" | "video" | "image" | "audio";
+export type ProductKind = string;
 export type Channel = "stable" | "beta" | "nightly";
 export type Os = "macos" | "windows" | "linux" | "other";
 export type Arch = "arm64" | "x86_64";

@@ -25,14 +25,7 @@ pub enum ProductState {
     Live,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum ProductKind {
-    Hub,
-    Video,
-    Image,
-    Audio,
-}
+pub type ProductKind = String;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
