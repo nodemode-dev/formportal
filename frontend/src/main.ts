@@ -7,13 +7,14 @@ import { activateAll, register } from "./extensions/registry.ts";
 import { route } from "./extensions/route/index.ts";
 import { settings } from "./extensions/settings/index.ts";
 import { stage } from "./extensions/stage/index.ts";
+import { accordion } from "./extensions/accordion/index.ts";
 import { theme } from "./extensions/theme/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
-[route, theme, apps, stage, library, settings].forEach(register);
+[route, theme, apps, stage, library, settings, accordion].forEach(register);
 activateAll(engine);
 
 interface Target {

@@ -15,6 +15,64 @@
   gap: var(--sp-3);
 }
 
+.rail-group {
+  border-block-start: 1px solid var(--edge);
+}
+
+summary.rail-h {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  padding-block: var(--sp-3);
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+summary.rail-h::-webkit-details-marker {
+  display: none;
+}
+
+summary.rail-h:hover,
+.rail-group[open] > summary.rail-h {
+  color: var(--ink);
+}
+
+summary.rail-h:focus-visible {
+  outline: 2px solid var(--hue);
+  outline-offset: -2px;
+}
+
+.stage > .pane-apps {
+  margin-block-start: 0;
+}
+
+summary.rail-h > span:first-child {
+  min-inline-size: 0;
+  overflow: hidden;
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rail-count {
+  margin-inline-start: auto;
+  color: var(--ink-faint);
+}
+
+.rail-chev {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.rail-group[open] > summary .rail-chev {
+  transform: rotate(180deg);
+}
+
+.rail-group > .rail-list {
+  padding-block-end: var(--sp-3);
+}
+
 .rail-h {
   margin: var(--sp-4) 0 var(--sp-1);
   padding-inline: var(--sp-3);

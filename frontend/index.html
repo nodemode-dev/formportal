@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-route="home" data-source="none">
+<html lang="en" data-route="apps" data-source="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,21 +20,28 @@
         </div>
         <div class="rail-scroll">
           <ul class="rail-list">
-            <li><button class="rail-item" type="button" data-route-to="home" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Home</span></button></li>
+            <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Home</span></button></li>
           </ul>
-          <p class="rail-h">Instead of Adobe</p>
-          <ul class="rail-list"><!-- @portal:nav-adobe --></ul>
-          <p class="rail-h">More apps</p>
-          <ul class="rail-list"><!-- @portal:nav-other --></ul>
-          <p class="rail-h">On the way</p>
-          <ul class="rail-list"><!-- @portal:nav-next --></ul>
-          <p class="rail-h">Library</p>
-          <ul class="rail-list">
-            <li><button class="rail-item" type="button" data-route-to="apps">%icon:apps:ic-m%<span class="rail-label">All apps</span></button></li>
-            <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
-            <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
-            <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
-          </ul>
+          <details class="rail-group" data-group="adobe" open>
+            <summary class="rail-h"><span>Instead of Adobe</span><span class="rail-count"><!-- @portal:count-adobe --></span>%icon:chevron-down:ic-s rail-chev%</summary>
+            <ul class="rail-list"><!-- @portal:nav-adobe --></ul>
+          </details>
+          <details class="rail-group" data-group="other">
+            <summary class="rail-h"><span>More apps</span><span class="rail-count"><!-- @portal:count-other --></span>%icon:chevron-down:ic-s rail-chev%</summary>
+            <ul class="rail-list"><!-- @portal:nav-other --></ul>
+          </details>
+          <details class="rail-group" data-group="next">
+            <summary class="rail-h"><span>On the way</span><span class="rail-count"><!-- @portal:count-next --></span>%icon:chevron-down:ic-s rail-chev%</summary>
+            <ul class="rail-list"><!-- @portal:nav-next --></ul>
+          </details>
+          <details class="rail-group" data-group="library">
+            <summary class="rail-h"><span>Library</span><span class="rail-count">3</span>%icon:chevron-down:ic-s rail-chev%</summary>
+            <ul class="rail-list">
+              <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
+              <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
+              <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
+            </ul>
+          </details>
         </div>
         <div class="rail-end">
           <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
@@ -44,14 +51,8 @@
 
       <main class="stage">
         <header class="topbar"><span class="topbar-label" data-route-label>Home</span><span class="topbar-note">Free and open source</span></header>
-        <section class="pane pane-home" data-pane="home" data-on-route aria-labelledby="h-home">
-          <p class="home-kicker">Your Form workspace</p>
-          <h1 id="h-home" class="home-title">What will you <span class="lu-accent">make</span> today?</h1>
-          <p class="home-sub">Pick an app. FormPortal installs it, opens it and keeps it current.</p>
-          <!-- @portal:home -->
-        </section>
         <!-- @portal:pages -->
-        <section class="pane pane-apps" data-pane="apps" data-app="formcut" aria-labelledby="h-apps">
+        <section class="pane pane-apps" data-pane="apps" data-app="formcut" data-on-route aria-labelledby="h-apps">
           <div class="ruler" aria-hidden="true"><span class="ruler-label">Lineup</span></div>
           <header class="lu-head">
             <p class="lu-crumb">01 / FormPortal / <!-- @portal:count --> apps / open source</p>

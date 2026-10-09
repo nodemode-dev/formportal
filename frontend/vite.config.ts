@@ -89,6 +89,7 @@ function renderPortal(html: string): string {
   const parts: Record<string, string[]> = {
     cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)],
     "nav-adobe": nav("adobe"), "nav-other": nav("other"), "nav-next": nav("next"), home, pages,
+    "count-adobe": [String(nav("adobe").length)], "count-other": [String(nav("other").length)], "count-next": [String(nav("next").length)],
   };
   return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
 }
