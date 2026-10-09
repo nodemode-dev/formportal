@@ -1167,7 +1167,7 @@ dependencies = [
 
 [[package]]
 name = "formai"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "formai-core",
  "serde",
@@ -1180,7 +1180,7 @@ dependencies = [
 
 [[package]]
 name = "formai-core"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "base64 0.22.1",
  "ed25519-dalek",
