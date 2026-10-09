@@ -1,12 +1,13 @@
 .rail-scroll {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: var(--sp-1);
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  margin-inline: calc(var(--sp-2) * -1);
-  padding-inline: var(--sp-2);
+  margin-inline: 0;
+  padding-inline: 0;
 }
 
 .rail-scroll .rail-item {
@@ -25,6 +26,7 @@ summary.rail-h {
   gap: var(--sp-2);
   margin: 0;
   padding-block: var(--sp-3);
+  padding-inline: var(--sp-3);
   list-style: none;
   cursor: pointer;
   user-select: none;
