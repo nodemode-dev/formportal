@@ -22,7 +22,10 @@ interface App {
   status?: string;
 }
 
-const APPS = loadJson<{ products: App[] }>(resolve(CATALOG, "products.json")).products.filter((p) => p.id !== "formai");
+const GROUPS = ["adobe", "other", "next"];
+const APPS = loadJson<{ products: (App & { group?: string })[] }>(resolve(CATALOG, "products.json"))
+  .products.filter((p) => p.id !== "formai")
+  .sort((a, b) => GROUPS.indexOf(a.group ?? "other") - GROUPS.indexOf(b.group ?? "other"));
 const SHOTS = new Set(["formcut", "formvis", "formwav"]);
 const FIRST = "formcut";
 
@@ -51,7 +54,16 @@ function renderPortal(html: string): string {
       (channel) => `<li class="up" data-row="${channel}" data-product="${p.id}">${shot(p, "up-shot")}<div class="up-text"><h2 class="up-name">${esc(p.name)}${channel === "beta" ? ", beta" : ""}</h2><p class="up-meta">${meta('<span data-field="date"></span>')}</p></div><!-- @include row-actions.html --></li>`,
     ),
   );
-  const parts: Record<string, string[]> = { cards, shelf, beta, updates };
+  const words: Record<string, string> = { available: "Available", "in-progress": "In progress", "in-development": "In development" };
+  const icons = APPS.map(
+    (p) => `<li data-product="${p.id}"><a class="lu-icon" href="#cell-${p.id}"><span class="lu-icon-tile">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span><span class="lu-icon-name">${esc(p.name)}</span></a></li>`,
+  );
+  const lineup = APPS.map((p, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    const status = p.status ?? "available";
+    return `<li class="cell" id="cell-${p.id}" data-row="stable" data-product="${p.id}" data-status="${status}"><div class="cell-top"><span class="cell-num">${n}</span><span class="cell-cat">${kind(p)}</span></div><div class="cell-shot">${shot(p, "cell-img")}<span class="cell-icon" aria-hidden="true">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span></div><div class="cell-body"><h2 class="cell-name">${name(p)}</h2><p class="cell-line">${line(p)}</p><p class="cell-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip" data-field="status"></span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></li>`;
+  });
+  const parts: Record<string, string[]> = { cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)] };
   return html.replace(/<!-- @portal:([a-z]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
 }
 

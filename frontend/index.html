@@ -32,13 +32,19 @@
 
       <main class="stage">
         <section class="pane pane-apps" data-pane="apps" data-app="formcut" aria-labelledby="h-apps">
-          <h1 id="h-apps" class="sr-only">Apps</h1>
-          <ul class="cards">
-            <!-- @portal:cards -->
+          <div class="ruler" aria-hidden="true"><span class="ruler-label">Lineup</span></div>
+          <header class="lu-head">
+            <p class="lu-crumb">01 / FormPortal / <!-- @portal:count --> apps / open source</p>
+            <h1 id="h-apps" class="lu-title">Every Form app. <span class="lu-accent">One portal.</span></h1>
+            <p class="lu-big" aria-hidden="true">FORM APPS</p>
+            <p class="lu-lede">Photo, image, layout, vector, motion, video, sound, notes, slides and code. Free, open-source apps that run on your machine, installed and kept current from here.</p>
+            <ul class="lu-icons" aria-label="Jump to an app">
+              <!-- @portal:icons -->
+            </ul>
+          </header>
+          <ul class="lineup">
+            <!-- @portal:lineup -->
           </ul>
-          <div class="shelf" role="group" aria-label="Choose an app">
-            <!-- @portal:shelf -->
-          </div>
           <p class="pane-note pane-notice" data-notice role="status" aria-live="polite"></p>
         </section>
 

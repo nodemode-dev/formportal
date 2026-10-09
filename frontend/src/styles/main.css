@@ -1,4 +1,5 @@
 @import "../../../../design/tokens.css";
+@import "./lineup.css";
 
 @font-face {
   font-family: "Inter";

@@ -1,0 +1,295 @@
+.pane-apps {
+  position: relative;
+  padding-inline-end: var(--sp-8);
+}
+
+.ruler {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: var(--sp-7);
+  border-inline-start: 1px solid var(--edge);
+  background: repeating-linear-gradient(180deg, var(--edge) 0 1px, transparent 1px var(--sp-3)) right / 30% 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ink-faint) 0 1px, transparent 1px calc(var(--sp-3) * 5)) right / 60% 100% no-repeat;
+  pointer-events: none;
+}
+
+.ruler-label {
+  position: sticky;
+  inset-block-start: 45%;
+  display: block;
+  margin-block-start: 45vh;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+  inline-size: 100%;
+}
+
+.lu-head {
+  position: relative;
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-6) var(--gutter) var(--sp-7);
+  border-block-end: 1px solid var(--edge);
+}
+
+.lu-crumb,
+.cell-top,
+.chip {
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lu-crumb {
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+}
+
+.lu-title {
+  max-inline-size: 18ch;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: var(--weight-display);
+  line-height: 1;
+  letter-spacing: var(--track-display);
+}
+
+.lu-accent {
+  color: var(--accent, #5c9dff);
+}
+
+.lu-big {
+  position: absolute;
+  inset-block-start: var(--sp-6);
+  inset-inline-end: var(--gutter);
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  font-weight: var(--weight-display);
+  letter-spacing: 0.04em;
+}
+
+.lu-lede {
+  max-inline-size: 34rem;
+  color: var(--ink-soft);
+  font-size: var(--fs-l);
+}
+
+.lu-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-block-start: var(--sp-3);
+}
+
+.lu-icon {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-2);
+  inline-size: 4.5rem;
+  color: var(--ink-soft);
+  font-size: var(--fs-xs);
+  text-align: center;
+  text-decoration: none;
+}
+
+.lu-icon-tile,
+.cell-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 22%;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--hue) 82%, #fff), var(--hue));
+  color: color-mix(in oklab, var(--hue) 30%, #000);
+  font-weight: var(--weight-display);
+  letter-spacing: -0.02em;
+  box-shadow: var(--shadow-tile), var(--glow-soft);
+}
+
+.lu-icon-tile {
+  inline-size: 3.75rem;
+  block-size: 3.75rem;
+  font-size: var(--fs-l);
+}
+
+.lu-icon:hover .lu-icon-tile {
+  box-shadow: var(--shadow-tile), var(--glow);
+}
+
+.lineup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  border-block-start: 1px solid var(--edge);
+  border-inline-start: 1px solid var(--edge);
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  border-inline-end: 1px solid var(--edge);
+  border-block-end: 1px solid var(--edge);
+  scroll-margin-top: var(--sp-5);
+  transition: background-color var(--dur) var(--ease-out);
+}
+
+.cell:hover,
+.cell:focus-within,
+.cell:target {
+  background: color-mix(in srgb, var(--hue) 6%, transparent);
+}
+
+.cell-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+}
+
+.cell-num {
+  padding: 0 var(--sp-2);
+  border-radius: var(--radius-s);
+  background: var(--hue);
+  color: color-mix(in oklab, var(--hue) 25%, #000);
+  font-weight: var(--weight-strong);
+}
+
+.cell-shot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--inset);
+}
+
+.cell-img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 0 0;
+}
+
+.cell-img.app-plate {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+}
+
+.cell-icon {
+  position: absolute;
+  inset-inline-start: var(--sp-4);
+  inset-block-end: calc(var(--sp-6) * -1);
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  font-size: var(--fs-l);
+}
+
+.cell-body {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-2);
+  padding: calc(var(--sp-6) + var(--sp-3)) var(--sp-4) var(--sp-5);
+}
+
+.cell-name {
+  font-size: var(--fs-xl);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--track-tight);
+  line-height: 1.1;
+}
+
+.cell-line {
+  color: var(--ink);
+  font-size: var(--fs-s);
+  font-weight: var(--weight-strong);
+}
+
+.cell-sum {
+  color: var(--ink-soft);
+  font-size: var(--fs-s);
+}
+
+.cell-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-block-start: var(--sp-2);
+}
+
+.chip {
+  padding: 0 var(--sp-2);
+  border: 1px solid var(--edge-strong);
+  color: var(--ink-faint);
+  font-size: 0.625rem;
+  line-height: 1.8;
+}
+
+.chip:empty {
+  display: none;
+}
+
+.chip-status {
+  border-color: var(--hue);
+  color: var(--hue);
+}
+
+.cell-meta {
+  display: grid;
+  grid-template-columns: 7rem 5rem minmax(0, 1fr);
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+}
+
+.cell-chips [data-field="status"] {
+  display: none;
+}
+
+.cell-meta [data-field="status"] {
+  color: var(--ink);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+}
+
+.cell .row-actions {
+  position: static;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  margin-block-start: var(--sp-3);
+}
+
+.cell .row-bar {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  border-radius: 0;
+}
+
+.cell[data-install="none"][data-availability="available"] [data-act="install"],
+.cell[data-install="ready"] [data-act="open"],
+.cell[data-install="update"] [data-act="open"],
+.cell[data-install="update"] [data-act="update"],
+.cell[data-release] .drop-info,
+.cell[data-install="ready"] .drop-more,
+.cell[data-install="update"] .drop-more {
+  display: inline-flex;
+}
+
+.cell[data-install="busy"] [data-act="install"] {
+  display: inline-flex;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.cell[data-install="busy"] .row-bar {
+  display: block;
+}
+
+.cell[data-install="ready"] [data-act="open"] {
+  background: var(--hue);
+  color: var(--on-ink);
+}
+
+.cell .drop-panel {
+  inset-block: auto calc(100% + var(--sp-2));
+}
