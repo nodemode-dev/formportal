@@ -6,7 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
-use crate::process;
+use crate::{installers, process};
 use crate::signature::{trusted_keys, verify};
 use crate::prefs::Preferences;
 use crate::state::{Install, InstalledVersion, State};
@@ -138,6 +138,35 @@ fn find_target(dir: &Path, product: &str) -> Option<PathBuf> {
     entries.iter().find(|p| has_extension(p, "AppImage")).or_else(|| entries.iter().find(|p| executable(p))).cloned()
 }
 
+fn deep_find(dir: &Path, product: &str, depth: u32) -> Option<PathBuf> {
+    let mut found: Vec<PathBuf> = Vec::new();
+    let mut stack = vec![(dir.to_path_buf(), 0u32)];
+    while let Some((at, level)) = stack.pop() {
+        let Ok(entries) = fs::read_dir(&at) else { continue };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if cfg!(target_os = "macos") && has_extension(&path, "app") {
+                found.push(path);
+                continue;
+            }
+            if path.is_dir() {
+                if level < depth {
+                    stack.push((path, level + 1));
+                }
+                continue;
+            }
+            let name = path.file_name().map(|n| n.to_string_lossy().to_lowercase()).unwrap_or_default();
+            let runnable = if cfg!(target_os = "windows") { has_extension(&path, "exe") } else { executable(&path) };
+            if runnable && !name.contains("uninstall") {
+                found.push(path);
+            }
+        }
+    }
+    let stem = |p: &PathBuf| p.file_stem().map(|s| s.to_string_lossy().to_lowercase()).unwrap_or_default();
+    found.sort();
+    found.iter().find(|p| stem(p) == product).or_else(|| found.iter().find(|p| stem(p).contains(product))).or_else(|| found.iter().find(|p| p.parent().map(|d| d.ends_with("bin")).unwrap_or(false))).cloned()
+}
+
 impl Portal {
     pub fn default_root() -> PathBuf {
         if let Some(root) = std::env::var_os("FORMPORTAL_ROOT") {
@@ -210,6 +239,11 @@ impl Portal {
         let unpacked = match artifact.kind {
             ArtifactKind::Zip => unzip(&file, &staging),
             ArtifactKind::Appimage => place(&file, &staging),
+            ArtifactKind::Deb => installers::deb(&file, &staging),
+            ArtifactKind::Rpm => installers::rpm(&file, &staging),
+            ArtifactKind::Dmg => installers::dmg(&file, &staging),
+            ArtifactKind::Msi => installers::msi(&file, &staging),
+            ArtifactKind::Nsis => installers::nsis(&file, &staging),
             other => Err(CoreError::Unsupported(format!("{other:?}").to_lowercase())),
         };
         if let Err(e) = unpacked {
@@ -363,7 +397,7 @@ impl Portal {
     pub fn launch_target(&self, product: &str, channel: Channel) -> Result<PathBuf> {
         let state = self.state()?;
         let install = state.get(product, channel).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
-        find_target(&install.current.path, product).ok_or_else(|| CoreError::NotInstalled(format!("anything to open in {}", install.current.path.display())))
+        find_target(&install.current.path, product).or_else(|| deep_find(&install.current.path, product, 5)).ok_or_else(|| CoreError::NotInstalled(format!("anything to open in {}", install.current.path.display())))
     }
 
     pub fn launch(&self, product: &str, channel: Channel) -> Result<u32> {

@@ -5,6 +5,22 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.31.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
+## v0.32.0 · every installer kind {#installers}
+
+### Unpack, never run an installer as administrator
+- refers-to: src/installers.rs :: deb, rpm, dmg, msi, nsis · src/portal.rs :: install
+- kind: decision
+- logged: v0.32.0 · 2026-10-11
+
+Each kind lands in the same per-user staging folder as a zip, so versions, rollback, the hash check and the open-app guard work unchanged. deb: `dpkg-deb -x` (no root, no maintainer scripts). rpm: `bsdtar -xf`, else `rpm2cpio | cpio -idm` (no scriptlets). dmg: `hdiutil attach -nobrowse -readonly` to a private mount point, `ditto` each .app into staging, always detach. msi: `msiexec /a` (an administrative image: files only, no registration, no administrator). nsis: the installer with `/S /D=[staging]`, which Tauri's NSIS installers honour in per-user mode. A missing tool is a sentence naming it, not a crash. Verified on Linux: a deb built with dpkg-deb and an rpm built with rpmbuild both installed, and the deb's `usr/bin/formcut` opened and showed in `open_processes`. dmg, msi and nsis are written to their tools' documented switches and were not run (no macOS or Windows here).
+
+### Finding what to open in a package tree
+- refers-to: src/portal.rs :: deep_find, launch_target
+- kind: decision
+- logged: v0.32.0 · 2026-10-11
+
+deb and rpm trees put the program under `usr/bin` or `opt`, below where `find_target` looks. When it finds nothing, `deep_find` walks five levels for a .app (macOS), an .exe that is not an uninstaller (Windows) or an executable (Linux), preferring the product's own name, then any name containing it, then anything in a `bin` folder.
+
 ## v0.31.0 · extensions {#extensions}
 
 ### Packages land in FormPortal's folder; apps read enabled.json
