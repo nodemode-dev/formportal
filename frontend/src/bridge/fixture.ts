@@ -1,5 +1,5 @@
-import apps from "../../../../catalog/fixtures/apps.json";
-import extensions from "../../../../catalog/fixtures/extensions.json";
+import apps from "../../../catalog/fixtures/apps.json";
+import extensions from "../../../catalog/fixtures/extensions.json";
 import type { Catalog, Channel, ExtensionIndex, InstallRecord, Os, Platform } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 

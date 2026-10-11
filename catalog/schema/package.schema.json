@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formai.dev/catalog/v1/schema/package.schema.json",
+  "title": "formai package manifest (.formpkg)",
+  "type": "object",
+  "required": ["format", "format_version", "id", "name", "product", "kind", "version", "author", "licence", "native", "permissions"],
+  "additionalProperties": true,
+  "properties": {
+    "format": { "const": "formai-package" },
+    "format_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+    "name": { "type": "string", "minLength": 1 },
+    "product": { "enum": ["formcut", "formvis", "formwav", "formai"] },
+    "kind": { "$ref": "#/$defs/kind" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "author": { "type": "string", "minLength": 1 },
+    "licence": { "type": "string", "minLength": 1 },
+    "minimum_app": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "native": { "type": "boolean" },
+    "permissions": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/permission" } },
+    "payload": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "kind": {
+      "enum": [
+        "effect-stack",
+        "wgsl-kernel",
+        "audio-chain",
+        "caption-look",
+        "lut",
+        "timeline-template",
+        "script-plugin",
+        "action-set",
+        "preset",
+        "theme",
+        "native-plugin"
+      ]
+    },
+    "permission": { "enum": ["document", "files-read", "files-write", "network", "models", "native-code"] }
+  }
+}

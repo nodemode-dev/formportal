@@ -1,0 +1,50 @@
+{
+  "format": "formai-extensions",
+  "format_version": 1,
+  "name": "formai extensions (fixture)",
+  "description": "Sample entries for development. Hashes are of the file names, not of real files.",
+  "fixture": true,
+  "publishers": [
+    {
+      "id": "formai",
+      "name": "formai",
+      "public_key": "FIXTURE-NOT-A-KEY",
+      "url": "https://formai.dev"
+    }
+  ],
+  "packages": [
+    {
+      "id": "warm-dust",
+      "name": "Warm dust",
+      "product": "formcut",
+      "kind": "effect-stack",
+      "author": "formcut",
+      "description": "A warm grade with a little dust and a soft vignette.",
+      "version": "1.0.0",
+      "url": "https://raw.githubusercontent.com/nodemode-ai/formcut/main/.docs/registry/packages/warm-dust.zip",
+      "sha256": "36f7b34850f4921d7315b3b4c759815ac0472669354074946539660118573e28",
+      "licence": "GPL-3.0-only",
+      "minimum_app": "2.6.0",
+      "native": false,
+      "permissions": [
+        "document"
+      ]
+    },
+    {
+      "id": "contact-sheet",
+      "name": "Contact sheet",
+      "product": "formvis",
+      "kind": "script-plugin",
+      "author": "formai",
+      "description": "Lays the open layers out as a grid on a new document.",
+      "version": "0.1.0",
+      "url": "https://formai.dev/fixtures/contact-sheet.formpkg",
+      "sha256": "062df0d0a48a8d98d7c68e40fba7fb87aaed59a44a569e10e45bdee6b410f733",
+      "licence": "GPL-3.0-only",
+      "native": false,
+      "permissions": [
+        "document"
+      ]
+    }
+  ]
+}

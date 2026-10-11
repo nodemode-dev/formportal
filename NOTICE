@@ -1,0 +1,21 @@
+FormPortal
+Copyright 2026 NodeAgentc, Inc.
+https://github.com/nodemode-ai/formportal
+
+This product is licensed under the GNU General Public License v3.0 (SPDX GPL-3.0-only, see LICENSE).
+The third-party work it carries keeps its own licence; all of it is compatible with GPL-3.0.
+
+FormPortal was developed inside nodemode-ai/formai_dev (as hub/) up to formai_dev 0.26.0 and moved to
+this repository with its history. The catalogue contract (catalog/) and the design tokens, icons and
+marker renderer (design/) are copies of formai_dev 0.26.0, GPL-3.0-only; formai_dev stays their publisher.
+
+Third-party material:
+
+- Inter typeface, Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter),
+  SIL Open Font License 1.1. Shipped as inter-4-var-latin.woff2 in frontend/public/fonts, with its
+  licence beside it as LICENSE-Inter.txt.
+- Form family names, marks and product facts, from the nodemode-ai repositories of the same names,
+  GPL-3.0-only.
+- Icons in design/icons.json carried from nodemode-ai/formcut_studio, GPL-3.0-only.
+
+Every dependency and what it obliges is listed in LICENSES.md.

@@ -1,0 +1,190 @@
+:root {
+  color-scheme: dark;
+
+  --ground: #14161b;
+  --inset: #101216;
+  --pane: #1b1e25;
+  --float: #242833;
+  --control: #2b303c;
+  --control-hover: #343a48;
+  --control-press: #3d4454;
+  --edge: rgb(255 255 255 / 0.09);
+  --edge-strong: rgb(255 255 255 / 0.18);
+  --ink: #eef0f4;
+  --ink-soft: #a4aab8;
+  --ink-faint: #6b7283;
+  --on-ink: #14161b;
+  --fault: #ff5d6c;
+  --veil: rgb(8 9 12 / 0.6);
+  --bar-veil: rgb(20 22 27 / 0.92);
+  --focus: #eef0f4;
+
+  --hue-cut: #ffae2b;
+  --hue-vis: #a98bf0;
+  --hue-wav: #1fe5c0;
+  --hue-hub: #eef0f4;
+  --hue: var(--hue-hub);
+  --hue-depth: 0%;
+
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --radius-pill: 999px;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --sp-10: 128px;
+
+  --icon-s: 16px;
+  --icon-m: 20px;
+  --control-h: 40px;
+  --control-h-compact: 32px;
+  --bar-h: 64px;
+  --rail-w: 208px;
+  --row-h: 88px;
+  --motif-w: 160px;
+  --motif-h: 40px;
+  --page-max: 1120px;
+  --prose-max: 62ch;
+  --gutter: clamp(20px, 4vw, 40px);
+  --band-pad: clamp(64px, 10vw, 128px);
+
+  --font-ui: "Inter", "Inter Fallback", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "SF Mono", "Cascadia Mono", ui-monospace, Menlo, Consolas, monospace;
+  --fs-xs: 0.8125rem;
+  --fs-s: 0.875rem;
+  --fs-m: 1rem;
+  --fs-l: 1.125rem;
+  --fs-xl: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+  --fs-2xl: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem);
+  --fs-hero: clamp(2.5rem, 1.1rem + 5.2vw, 5rem);
+  --weight-body: 420;
+  --weight-strong: 560;
+  --weight-display: 640;
+  --track-display: -0.035em;
+  --track-tight: -0.015em;
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 140ms;
+  --dur: 240ms;
+
+  --black: #000000;
+  --footage-ink: #ffffff;
+  --footage-soft: rgb(255 255 255 / 0.78);
+  --footage-faint: rgb(255 255 255 / 0.5);
+  --footage-line: rgb(255 255 255 / 0.16);
+  --footage-glass: rgb(10 12 13 / 0.45);
+  --footage-edge: rgb(255 255 255 / 0.55);
+  --shade-strong: rgb(0 0 0 / 0.8);
+  --shade-mid: rgb(0 0 0 / 0.45);
+  --shade-soft: rgb(0 0 0 / 0.25);
+  --terminal: #0c0f10;
+  --terminal-bar: #161c1d;
+  --paper: var(--inset);
+  --paper-ink: var(--ink);
+  --paper-soft: var(--ink-soft);
+  --paper-edge: var(--edge);
+  --rail-dark: var(--pane);
+  --rail-ink: var(--ink-soft);
+  --card-light: var(--pane);
+  --card-light-ink: var(--ink);
+  --card-light-soft: var(--ink-soft);
+  --shadow-tile: 0 var(--sp-1) var(--sp-2) rgb(0 0 0 / 0.28), 0 var(--sp-4) var(--sp-6) calc(var(--sp-3) * -1) rgb(0 0 0 / 0.62);
+  --shadow-shot: 0 30px 80px -40px rgb(0 0 0 / 0.55);
+  --shadow-frame: 0 40px 100px -50px rgb(0 0 0 / 0.9);
+
+  --z-behind: -1;
+  --z-base: 0;
+  --z-raised: 100;
+  --z-sticky: 200;
+  --z-chrome: 300;
+  --z-dropdown: 400;
+  --z-scrim: 500;
+  --z-overlay: 600;
+  --z-popover: 700;
+  --z-toast: 800;
+  --z-tooltip: 900;
+  --z-debug: 1000;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --ground: #f4f5f8;
+  --inset: #e9ebf0;
+  --pane: #ffffff;
+  --float: #ffffff;
+  --control: #e4e7ee;
+  --control-hover: #d9dde6;
+  --control-press: #cdd2dd;
+  --edge: rgb(20 22 27 / 0.11);
+  --edge-strong: rgb(20 22 27 / 0.24);
+  --ink: #14161b;
+  --ink-soft: #4d5464;
+  --ink-faint: #7b8292;
+  --on-ink: #f4f5f8;
+  --fault: #c9283a;
+  --veil: rgb(20 22 27 / 0.4);
+  --bar-veil: rgb(244 245 248 / 0.92);
+  --focus: #14161b;
+
+  --shadow-tile: 0 var(--sp-1) var(--sp-2) rgb(20 22 27 / 0.08), 0 var(--sp-4) var(--sp-6) calc(var(--sp-3) * -1) rgb(20 22 27 / 0.22);
+  --paper: #edeae2;
+  --paper-edge: rgb(20 24 25 / 0.12);
+  --rail-dark: #ffffff;
+  --rail-ink: #465052;
+
+  --hue-cut: #a86400;
+  --hue-vis: #6a48c9;
+  --hue-wav: #00806a;
+  --hue-hub: #14161b;
+  --hue-depth: 42%;
+}
+
+[data-product="formlit"] { --hue: color-mix(in oklab, #5cb8ff calc(100% - var(--hue-depth)), #000); }
+[data-product="formdesign"] { --hue: color-mix(in oklab, #ff6fae calc(100% - var(--hue-depth)), #000); }
+[data-product="formpath"] { --hue: color-mix(in oklab, #ff8a4c calc(100% - var(--hue-depth)), #000); }
+[data-product="formvfx"] { --hue: color-mix(in oklab, #d86bff calc(100% - var(--hue-depth)), #000); }
+[data-product="formmd"] { --hue: color-mix(in oklab, #d8d2c4 calc(100% - var(--hue-depth)), #000); }
+[data-product="formdam"] { --hue: color-mix(in oklab, #7fdc6a calc(100% - var(--hue-depth)), #000); }
+[data-product="formslide"] { --hue: color-mix(in oklab, #c8ee4f calc(100% - var(--hue-depth)), #000); }
+[data-product="formhub"] { --hue: color-mix(in oklab, #8794ff calc(100% - var(--hue-depth)), #000); }
+[data-product="formencoder"] { --hue: color-mix(in oklab, #f2545b calc(100% - var(--hue-depth)), #000); }
+[data-product="formsurface"] { --hue: color-mix(in oklab, #f58f7c calc(100% - var(--hue-depth)), #000); }
+[data-product="formweb"] { --hue: color-mix(in oklab, #36d3f5 calc(100% - var(--hue-depth)), #000); }
+[data-product="formapp"] { --hue: color-mix(in oklab, #61e8a0 calc(100% - var(--hue-depth)), #000); }
+[data-product="formsim"] { --hue: color-mix(in oklab, #b6c2d6 calc(100% - var(--hue-depth)), #000); }
+[data-product="formui"] { --hue: color-mix(in oklab, #f2a3ff calc(100% - var(--hue-depth)), #000); }
+[data-product="formmcp"] { --hue: color-mix(in oklab, #9fe7ff calc(100% - var(--hue-depth)), #000); }
+[data-product="formskill"] { --hue: color-mix(in oklab, #ffc069 calc(100% - var(--hue-depth)), #000); }
+
+[data-product="formcut"] {
+  --hue: var(--hue-cut);
+}
+
+[data-product="formvis"] {
+  --hue: var(--hue-vis);
+}
+
+[data-product="formwav"] {
+  --hue: var(--hue-wav);
+}
+
+[data-product="formai"] {
+  --hue: var(--hue-hub);
+}
+
+:root,
+[data-product] {
+  --hue-wash: color-mix(in srgb, var(--hue) 14%, transparent);
+  --hue-line: color-mix(in srgb, var(--hue) 42%, transparent);
+  --glow: 0 0 var(--sp-3) color-mix(in srgb, var(--hue) 30%, transparent), 0 var(--sp-2) var(--sp-7) calc(var(--sp-2) * -1) color-mix(in srgb, var(--hue) 62%, transparent);
+  --glow-soft: 0 var(--sp-2) var(--sp-6) calc(var(--sp-2) * -1) color-mix(in srgb, var(--hue) 38%, transparent);
+}

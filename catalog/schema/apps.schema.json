@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formai.dev/catalog/v1/schema/apps.schema.json",
+  "title": "formai app catalogue",
+  "type": "object",
+  "required": ["format", "format_version", "generated", "origin", "products"],
+  "additionalProperties": false,
+  "properties": {
+    "format": { "const": "formai-catalog" },
+    "format_version": { "const": 1 },
+    "generated": { "type": "string", "format": "date-time" },
+    "origin": { "type": "string", "format": "uri" },
+    "fixture": { "type": "boolean" },
+    "products": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/product" } }
+  },
+  "$defs": {
+    "product": {
+      "type": "object",
+      "required": ["id", "name", "kind", "summary", "identifier", "repository", "licence", "state", "channels"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}$" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "pattern": "^[a-z][a-z-]{1,23}$" },
+        "summary": { "type": "string", "minLength": 1 },
+        "identifier": { "type": "string", "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$" },
+        "repository": { "type": "string", "format": "uri" },
+        "licence": { "type": "string" },
+        "project_extensions": { "type": "array", "items": { "type": "string", "pattern": "^\\.[a-z0-9]+$" } },
+        "state": { "enum": ["prelaunch", "public", "live"] },
+        "channels": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "stable": { "$ref": "#/$defs/release" },
+            "beta": { "$ref": "#/$defs/release" },
+            "nightly": { "$ref": "#/$defs/release" }
+          }
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "required": ["version", "published", "notes", "artifacts"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.]+)?$" },
+        "published": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string", "format": "uri" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["platform", "arch", "kind", "file", "url", "bytes", "sha256", "minimum_os"],
+      "additionalProperties": false,
+      "properties": {
+        "platform": { "enum": ["macos", "windows", "linux", "android", "ios"] },
+        "arch": { "enum": ["arm64", "x86_64"] },
+        "kind": { "enum": ["zip", "dmg", "appimage", "msi", "nsis", "deb", "rpm", "apk", "ipa"] },
+        "file": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "minimum_os": { "type": "string" },
+        "signature": { "type": "string" }
+      }
+    }
+  }
+}
