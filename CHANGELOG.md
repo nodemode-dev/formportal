@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.30.0 · 2026-10-11
+
+- Other versions: every app's More menu lists the versions the catalogue offers (the latest and up to five before it) and installs any of them, newer or older.
+- Installing an older version on purpose turns that app's automatic updates off, so it stays, and says so.
+- Settings: Keep the version before, to go back to (on by default).
+- Command line and MCP: `versions`, and `install` with a version.
+
 ## v0.29.0 · 2026-10-11
 
 - Automatic updates while FormPortal is open, on by default, for all apps or app by app, with beta builds as a separate choice and open apps left alone unless you say otherwise.
