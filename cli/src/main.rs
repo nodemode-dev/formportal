@@ -1,0 +1,102 @@
+mod mcp;
+mod ops;
+
+use std::io::Write;
+use std::process::ExitCode;
+
+use serde_json::{json, Map, Value};
+
+const USAGE: &str = "formportal-cli: FormPortal without the window
+
+  status                          version, platform, install folder, catalogue source, installs
+  apps [--source S]               the Form family and what this computer is offered
+  info <product> [--source S]     one product's registry entry and releases
+  installs                        what is installed
+  install <product> [--channel C] [--source S] [--allow-unsigned]
+  open <product> [--channel C]
+  rollback <product> [--channel C]
+  remove <product> [--channel C]
+  mcp                             serve the MCP tools on stdin and stdout
+
+  C is stable (default), beta or nightly. S is an https catalogue or a local file.
+  FORMPORTAL_ROOT moves the install folder; FORMPORTAL_CATALOG sets the default source.";
+
+fn args_to_json(rest: &[String]) -> Value {
+    let mut map = Map::new();
+    let mut i = 0;
+    while i < rest.len() {
+        let a = &rest[i];
+        if let Some(key) = a.strip_prefix("--") {
+            let key = key.replace('-', "_");
+            match rest.get(i + 1).filter(|v| !v.starts_with("--")) {
+                Some(v) if key != "allow_unsigned" => {
+                    map.insert(key, json!(v));
+                    i += 1;
+                }
+                _ => {
+                    map.insert(key, json!(true));
+                }
+            }
+        } else if !map.contains_key("product") {
+            map.insert("product".to_string(), json!(a));
+        }
+        i += 1;
+    }
+    Value::Object(map)
+}
+
+fn main() -> ExitCode {
+    let all: Vec<String> = std::env::args().skip(1).collect();
+    let Some(cmd) = all.first().cloned() else {
+        eprintln!("{USAGE}");
+        return ExitCode::from(2);
+    };
+    if cmd == "mcp" {
+        return match mcp::serve() {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("formportal mcp: {e}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+    let ctx = ops::Ctx::from_env();
+    let args = args_to_json(&all[1..]);
+    let mut last = u64::MAX;
+    let mut progress = |have: u64, total: u64| {
+        let step = if total > 0 { have * 100 / total } else { 0 };
+        if step != last && step % 10 == 0 {
+            last = step;
+            eprint!("\r{step:>3}% of {total} bytes");
+            let _ = std::io::stderr().flush();
+        }
+    };
+    let out = match cmd.as_str() {
+        "status" => ops::status(&ctx),
+        "apps" => ops::apps(&ctx, &args),
+        "info" => ops::info(&ctx, &args),
+        "installs" => ops::installs(&ctx),
+        "install" => ops::install(&ctx, &args, &mut progress),
+        "open" => ops::open(&ctx, &args),
+        "rollback" => ops::rollback(&ctx, &args),
+        "remove" => ops::remove(&ctx, &args),
+        "help" | "--help" | "-h" => {
+            println!("{USAGE}");
+            return ExitCode::SUCCESS;
+        }
+        other => {
+            eprintln!("unknown command {other:?}\n\n{USAGE}");
+            return ExitCode::from(2);
+        }
+    };
+    match out {
+        Ok(v) => {
+            println!("{}", serde_json::to_string_pretty(&v).unwrap_or_default());
+            ExitCode::SUCCESS
+        }
+        Err(e) => {
+            eprintln!("{e}");
+            ExitCode::FAILURE
+        }
+    }
+}

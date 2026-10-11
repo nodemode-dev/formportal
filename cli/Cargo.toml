@@ -1,0 +1,12 @@
+[package]
+name = "formportal-cli"
+version = "0.26.0"
+description = "FormPortal's command line and MCP server: the same core as the window, for terminals and agents"
+authors = ["nodemode-ai"]
+license = "GPL-3.0-only"
+edition = "2021"
+
+[dependencies]
+formportal-core = { path = "../core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

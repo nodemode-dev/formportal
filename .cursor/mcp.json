@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "formportal": {
+      "command": "${workspaceFolder}/formportal",
+      "args": ["mcp"]
+    }
+  }
+}
