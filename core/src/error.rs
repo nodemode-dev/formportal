@@ -15,6 +15,8 @@ pub enum CoreError {
     NotInstalled(String),
     State(String),
     Archive(String),
+    Running { what: String, pids: Vec<u32> },
+    Invalid(String),
 }
 
 pub type Result<T> = std::result::Result<T, CoreError>;
@@ -35,6 +37,11 @@ impl fmt::Display for CoreError {
             CoreError::NotInstalled(what) => write!(f, "{what} is not installed"),
             CoreError::State(e) => write!(f, "the record of installed apps could not be read: {e}"),
             CoreError::Archive(e) => write!(f, "the archive could not be unpacked: {e}"),
+            CoreError::Running { what, pids } => {
+                let list = pids.iter().map(|p| p.to_string()).collect::<Vec<_>>().join(", ");
+                write!(f, "{what} is open (process {list}); close it first, then try again")
+            }
+            CoreError::Invalid(why) => write!(f, "{why}"),
         }
     }
 }

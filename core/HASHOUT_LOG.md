@@ -5,6 +5,29 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.27.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
+## v0.28.0 · open apps {#open-apps}
+
+### Finding open copies
+- refers-to: src/process.rs :: under, all
+- kind: decision
+- logged: v0.28.0 · 2026-10-11
+
+A process counts as an open copy of an install when its executable, its first two command-line arguments (Linux) or its working folder (Linux) lies inside that install's folder. The working folder catches apps started through a script that hands over to another program (`launch` starts every app with its own folder as the working folder). macOS reads `ps -axo pid=,args=` and Windows asks PowerShell for `Win32_Process` paths; both are written but run only on Linux so far. No dependency added.
+
+### What the guard refuses and allows
+- refers-to: src/portal.rs :: install, uninstall, sweep, running
+- kind: decision
+- logged: v0.28.0 · 2026-10-11
+
+Each version installs into its own folder, so an update while the app is open never touches the open copy: the new folder becomes current, the open one stays as previous, and the new version opens next time. That is Creative Cloud's "updates apply when the app is not in use" without a background process to wait for the close. Refused with `CoreError::Running`: replacing the folder of the version that is open (reinstalling the same version) and removing a channel with any copy open. A previous version that is open is never pruned; `sweep` removes any version folder that is neither current nor previous once nothing runs from it, so a skipped prune is cleaned up on the next install.
+
+### Invalid
+- refers-to: src/error.rs :: CoreError::Invalid
+- kind: explainer
+- logged: v0.28.0 · 2026-10-11
+
+A plain sentence for a wrong call (no product, an unknown channel). The command line used `Unavailable` for these in 0.27.0, which wrapped them in "the catalogue offers this computer nothing for", a wrong sentence.
+
 ## v0.27.0 · the move {#move}
 
 ### Names

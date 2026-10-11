@@ -21,7 +21,7 @@ impl Ctx {
 }
 
 pub fn fail(message: impl Into<String>) -> CoreError {
-    CoreError::Unavailable(message.into())
+    CoreError::Invalid(message.into())
 }
 
 fn text(args: &Value, key: &str) -> Option<String> {
@@ -37,12 +37,12 @@ pub fn channel(args: &Value) -> Result<Channel, CoreError> {
         None | Some("stable") => Ok(Channel::Stable),
         Some("beta") => Ok(Channel::Beta),
         Some("nightly") => Ok(Channel::Nightly),
-        Some(other) => Err(fail(format!("channel {other:?}; the channels are stable, beta and nightly"))),
+        Some(other) => Err(fail(format!("there is no channel {other:?}; the channels are stable, beta and nightly"))),
     }
 }
 
 fn product(args: &Value) -> Result<String, CoreError> {
-    text(args, "product").ok_or_else(|| fail("a product id (formcut, formvis, formencoder...): none was given"))
+    text(args, "product").ok_or_else(|| fail("no product was given; pass a product id such as formcut, formvis or formencoder (apps lists them)"))
 }
 
 fn load(ctx: &Ctx, args: &Value) -> Result<(Catalog, String), CoreError> {
@@ -133,7 +133,21 @@ pub fn info(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 }
 
 pub fn installs(ctx: &Ctx) -> Result<Value, CoreError> {
-    Ok(json!({ "root": ctx.portal.root(), "installs": ctx.portal.state()?.installs }))
+    let rows: Vec<Value> = ctx
+        .portal
+        .state()?
+        .installs
+        .into_iter()
+        .map(|i| {
+            let open: Vec<u32> = ctx.portal.running(&i.product, i.channel).iter().map(|r| r.pid).collect();
+            let mut v = serde_json::to_value(&i).unwrap_or(Value::Null);
+            if let Some(o) = v.as_object_mut() {
+                o.insert("open_processes".to_string(), json!(open));
+            }
+            v
+        })
+        .collect();
+    Ok(json!({ "root": ctx.portal.root(), "installs": rows }))
 }
 
 pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
@@ -146,7 +160,9 @@ pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> R
     };
     let done = ctx.portal.install(&id, ch, version, artifact, progress)?;
     let opens = ctx.portal.launch_target(&id, ch).ok();
-    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256 }))
+    let still_open: Vec<u32> = ctx.portal.running(&id, ch).iter().filter(|r| !r.path.starts_with(&done.current.path)).map(|r| r.pid).collect();
+    let note = if still_open.is_empty() { None } else { Some(format!("an earlier copy is still open (process {}); it keeps running untouched, and {version} opens next time", still_open.iter().map(|p| p.to_string()).collect::<Vec<_>>().join(", "))) };
+    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note }))
 }
 
 pub fn open(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {

@@ -7,11 +7,11 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `status` | no | FormPortal's version, this computer's platform, the install folder, the catalogue source and everything installed. Call first. |
 | `apps` | no | Every app in the Form family registry (name, what it replaces, group, development status) with, per channel, what the catalogue offers this computer and what is installed. Works offline from the registry when the catalogue cannot be read, and says why. |
 | `app_info` | no | The registry entry and the catalogue's releases for one product: versions per channel, artifacts with size, SHA-256 and minimum OS, and release notes. |
-| `installs` | no | What FormPortal has installed: product, channel, current version with path and SHA-256, and the previous version kept for rollback. |
-| `install` | yes | Downloads the release the catalogue offers this computer for the product and channel, verifies its SHA-256, unpacks it per user (no administrator) and keeps the version it replaces for rollback. Installing the newer version over an older one is how an update is done. Changes the person's computer: confirm first. |
+| `installs` | no | What FormPortal has installed: product, channel, current version with path and SHA-256, the previous version kept for rollback, and the process ids of any copy that is open. |
+| `install` | yes | Downloads the release the catalogue offers this computer for the product and channel, verifies its SHA-256, unpacks it per user (no administrator) and keeps the version it replaces for rollback. Installing the newer version over an older one is how an update is done. If the app is open, the new version goes into its own folder, the open copy keeps running untouched, and the result's note says the new version opens next time; reinstalling the exact version that is open is refused. Changes the person's computer: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
 | `rollback` | yes, destructive | Swaps the installed version for the previous one FormPortal kept. Fails when no previous version is kept. Confirm first. |
-| `remove` | yes, destructive | Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Confirm first. |
+| `remove` | yes, destructive | Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Refused while the app is open. Confirm first. |
 
 ## Parameters
 

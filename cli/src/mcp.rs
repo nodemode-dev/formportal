@@ -45,11 +45,11 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": props(json!({ "product": target()["product"] })), "required": ["product"] },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "installs", "title": "Installed apps",
-          "description": "What FormPortal has installed: product, channel, current version with path and SHA-256, and the previous version kept for rollback.",
+          "description": "What FormPortal has installed: product, channel, current version with path and SHA-256, the previous version kept for rollback, and the process ids of any copy that is open.",
           "inputSchema": { "type": "object", "properties": {} },
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "install", "title": "Install or update an app",
-          "description": "Downloads the release the catalogue offers this computer for the product and channel, verifies its SHA-256, unpacks it per user (no administrator) and keeps the version it replaces for rollback. Installing the newer version over an older one is how an update is done. Changes the person's computer: confirm first.",
+          "description": "Downloads the release the catalogue offers this computer for the product and channel, verifies its SHA-256, unpacks it per user (no administrator) and keeps the version it replaces for rollback. Installing the newer version over an older one is how an update is done. If the app is open, the new version goes into its own folder, the open copy keeps running untouched, and the result's note says the new version opens next time; reinstalling the exact version that is open is refused. Changes the person's computer: confirm first.",
           "inputSchema": { "type": "object", "properties": props(target()), "required": ["product"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true } },
         { "name": "open", "title": "Open an installed app",
@@ -61,7 +61,7 @@ fn tools() -> Value {
           "inputSchema": only_target(true),
           "annotations": { "readOnlyHint": false, "destructiveHint": true, "openWorldHint": false } },
         { "name": "remove", "title": "Remove an app",
-          "description": "Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Confirm first.",
+          "description": "Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Refused while the app is open. Confirm first.",
           "inputSchema": only_target(true),
           "annotations": { "readOnlyHint": false, "destructiveHint": true, "openWorldHint": false } }
     ])

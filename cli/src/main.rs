@@ -89,6 +89,9 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
+    if cmd == "install" && last != u64::MAX {
+        eprintln!();
+    }
     match out {
         Ok(v) => {
             println!("{}", serde_json::to_string_pretty(&v).unwrap_or_default());

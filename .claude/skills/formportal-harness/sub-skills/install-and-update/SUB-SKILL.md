@@ -26,6 +26,10 @@ The result carries `installed.current` (version, path, SHA-256), `installed.prev
 
 `remove {product, channel?}` deletes the channel's install folder, the kept previous version included. The app's own documents and settings live elsewhere and stay. Confirm with the person, naming what will be deleted.
 
-## Running apps
+## Open apps
 
-FormPortal does not yet check whether an app is running before replacing it. Ask the person to close the app before an install, rollback or remove of a version that is open.
+FormPortal checks for open copies (`installs` lists their `open_processes`).
+
+- **Update while open:** allowed. The new version unpacks into its own folder and the open copy keeps running from the old one; the result carries `still_open` and a `note`. Tell the person the new version opens next time they start the app.
+- **Reinstalling the version that is open, or remove:** refused with "[app] is open (process ...); close it first". Ask the person to close the app, then retry. Never end the process yourself.
+- **Rollback while open:** allowed; it changes which version opens next time, not the open copy.

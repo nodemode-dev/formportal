@@ -38,6 +38,8 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | the catalogue offers this computer nothing for | unreleased, no release on that channel, or no file for this system | read `apps` for which one, and the registry status |
 | refused address | not https and not this computer | use the https address |
 | this build cannot install a [kind] file yet | the release is a dmg, msi, deb or similar FormPortal does not unpack yet | tell the person; the app's own download page on formai.dev has it |
+| [app] is open (process ...); close it first | remove, or reinstalling the version that is running | ask the person to close the app; never end the process yourself |
+| no product was given, or there is no channel | a parameter is missing or wrong | fix the call from `apps` |
 | a file could not be read or written | disk or permission problem in the install folder | report the path |
 
 ## Environment variables

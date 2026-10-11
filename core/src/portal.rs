@@ -6,6 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
+use crate::process;
 use crate::signature::{trusted_keys, verify};
 use crate::state::{Install, InstalledVersion, State};
 use crate::{Artifact, ArtifactKind, Catalog, Channel};
@@ -189,6 +190,11 @@ impl Portal {
             return Err(e);
         }
         if target.exists() {
+            let open = process::under(&target);
+            if !open.is_empty() {
+                let _ = fs::remove_dir_all(&staging);
+                return Err(CoreError::Running { what: format!("{product} {version}"), pids: open.iter().map(|r| r.pid).collect() });
+            }
             fs::remove_dir_all(&target)?;
         }
         fs::rename(&staging, &target)?;
@@ -201,7 +207,7 @@ impl Portal {
                     existing.previous
                 } else {
                     if let Some(old) = &existing.previous {
-                        if old.version != fresh.version && old.path.exists() {
+                        if old.version != fresh.version && old.path.exists() && process::under(&old.path).is_empty() {
                             fs::remove_dir_all(&old.path)?;
                         }
                     }
@@ -219,7 +225,23 @@ impl Portal {
         };
         state.save(&self.root)?;
         let _ = fs::remove_file(&file);
+        self.sweep(&base, &install);
         Ok(install)
+    }
+
+    fn sweep(&self, base: &Path, install: &Install) {
+        let keep: Vec<&Path> = std::iter::once(install.current.path.as_path()).chain(install.previous.as_ref().map(|p| p.path.as_path())).collect();
+        let Ok(entries) = fs::read_dir(base) else { return };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() && !keep.contains(&path.as_path()) && process::under(&path).is_empty() {
+                let _ = fs::remove_dir_all(&path);
+            }
+        }
+    }
+
+    pub fn running(&self, product: &str, channel: Channel) -> Vec<process::Running> {
+        process::under(&self.root.join("apps").join(product).join(channel_name(channel)))
     }
 
     pub fn rollback(&self, product: &str, channel: Channel) -> Result<Install> {
@@ -240,6 +262,10 @@ impl Portal {
         let mut state = self.state()?;
         let index = state.position(product, channel).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
         let base = self.root.join("apps").join(product).join(channel_name(channel));
+        let open = process::under(&base);
+        if !open.is_empty() {
+            return Err(CoreError::Running { what: product.to_string(), pids: open.iter().map(|r| r.pid).collect() });
+        }
         if base.exists() {
             fs::remove_dir_all(&base)?;
         }
