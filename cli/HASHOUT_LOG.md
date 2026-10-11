@@ -2,7 +2,7 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.28.0
+Current build version: v0.29.0
 Last updated: 2026-10-11 · first version: eight commands, eight tools
 
 ---

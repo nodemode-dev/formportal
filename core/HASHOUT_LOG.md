@@ -2,7 +2,7 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.28.0
+Current build version: v0.29.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
 ## v0.29.0 · updates {#updates}

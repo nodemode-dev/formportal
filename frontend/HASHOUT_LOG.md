@@ -2,7 +2,7 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.28.0
+Current build version: v0.29.0
 Last updated: 2026-10-11 · standalone repository
 
 ## v0.29.0 · updates {#updates}
