@@ -55,6 +55,13 @@ Only JSON-RPC lines go to stdout. The dispatcher builds with `cargo build -q` to
 
 A `source` that is not an http(s) address is read as a file and parsed without a signature, like the core's install example; it is for fixtures and development. Remote sources go through `Portal::catalog`, signature and all, with `allow_unsigned` only when asked.
 
+### v0.29.0 · updates, update, preferences
+- refers-to: src/ops.rs :: updates, update, preferences · src/mcp.rs :: tools
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+Eleven tools. `update` without a product applies everything waiting (an explicit request, so the preferences do not filter it) unless `automatic_only` asks for exactly what the window does on open. `updates` adds `formportal_update` when the catalogue's `formai` product is newer than this build, pointing at formai.dev's download page: FormPortal does not replace its own running binary from the catalogue; its own signed updater is still to come. `preferences` changes only the keys given; `per_app` null removes an override. The command line turns `true` and `false` arguments into booleans.
+
 ### When ./formportal mcp rebuilds
 - refers-to: ../formportal :: case mcp|cli
 - kind: warning-context
