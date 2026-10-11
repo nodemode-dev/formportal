@@ -74,6 +74,13 @@ export interface ExtensionEntry {
   signature?: ExtensionSignature;
 }
 
+export interface SelfUpdate {
+  configured: boolean;
+  current: string;
+  available: string | null;
+  notes: string | null;
+}
+
 export interface InstalledExtension {
   id: string;
   name: string;

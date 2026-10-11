@@ -51,6 +51,19 @@ export const settings: Extension = {
     } catch {
       engine.setNotice("");
     }
+    const checkButton = document.querySelector<HTMLButtonElement>("[data-self-check]");
+    const installButton = document.querySelector<HTMLButtonElement>("[data-self-install]");
+    const selfStatus = document.querySelector<HTMLElement>("[data-self-status]");
+    const say = (text: string) => {
+      if (selfStatus && selfStatus.textContent !== text) selfStatus.textContent = text;
+    };
+    engine.on("self", ({ status, installable }) => {
+      say(status);
+      if (installButton && installButton.hidden === installable) installButton.hidden = !installable;
+    });
+    checkButton?.addEventListener("click", () => void engine.dispatch("self.check"));
+    installButton?.addEventListener("click", () => void engine.dispatch("self.install"));
+
     const prefBoxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-pref]"));
     engine.on("prefs", ({ prefs }) => {
       for (const box of prefBoxes) {

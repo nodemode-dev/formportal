@@ -5,6 +5,22 @@ Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to fo
 Current build version: v0.31.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.32.0 · FormPortal's own updates {#self-update}
+
+### The updater plugin, off until a key exists
+- refers-to: src/main.rs :: self_update_check, self_update_install, updater_configured · tauri.conf.json :: plugins.updater · Cargo.toml :: tauri-plugin-updater
+- kind: decision
+- logged: v0.32.0 · 2026-10-11
+
+`tauri-plugin-updater` 2 (2.13.3 locked; Apache-2.0 or MIT; its new crates minisign-verify, tar, reqwest, infer and the rest are MIT or Apache-2.0, and the lockfile's MPL crates are still only Tauri's five). The committed config has an empty `pubkey` and the endpoint `releases/latest/download/latest.json` of this repository. While the key is empty the check answers "not configured" and never fetches; the release workflow writes the real public key and `createUpdaterArtifacts` into a config file only when the signing secret exists. Install downloads, verifies the minisign signature (the plugin refuses an unsigned or mismatched update) and restarts. The checks are Rust commands, so no updater permission is granted to the page.
+
+### Verified
+- refers-to: the entry above
+- kind: explainer
+- logged: v0.32.0 · 2026-10-11
+
+The debug window was built and run for 25 seconds under Xvfb with a session bus and the interface's dev server: it opened on Home (captured and looked at) with the updater registered and no key, and did not panic. A signed update was not tried (no key, no release).
+
 ## v0.31.0 · extensions and .formpkg files {#extensions}
 
 ### Commands and the file type

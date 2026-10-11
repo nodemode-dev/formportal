@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -56,6 +56,10 @@ export const tauriBridge: Bridge = {
   },
   enableExtension: async (product, id, enabled) => {
     await tauri().core.invoke<InstalledExtension>("extension_enable", { product, id, enabled });
+  },
+  selfUpdateCheck: () => tauri().core.invoke<SelfUpdate>("self_update_check"),
+  selfUpdateInstall: async () => {
+    await tauri().core.invoke<null>("self_update_install");
   },
   onPackage: (handler) => {
     void tauri().event.listen<string>("package-open", ({ payload }) => handler(payload));

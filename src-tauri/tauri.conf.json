@@ -25,6 +25,10 @@
     }
   },
   "plugins": {
+    "updater": {
+      "pubkey": "",
+      "endpoints": ["https://github.com/nodemode-ai/formportal/releases/latest/download/latest.json"]
+    },
     "deep-link": {
       "desktop": {
         "schemes": ["formai"]

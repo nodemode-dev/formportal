@@ -169,6 +169,27 @@ engine.command("ext.enable", (arg) =>
   }),
 );
 
+engine.command("self.check", async () => {
+  engine.setSelf("Checking...", false);
+  try {
+    const s = await bridge.selfUpdateCheck();
+    if (!s.configured) engine.setSelf("This build has no update key yet; new versions come from formai.dev/download.", false);
+    else if (s.available) engine.setSelf(`FormPortal ${s.available} is available.`, true);
+    else engine.setSelf("FormPortal is up to date.", false);
+  } catch (e) {
+    engine.setSelf(e instanceof Error ? e.message : String(e), false);
+  }
+});
+
+engine.command("self.install", async () => {
+  engine.setSelf("Downloading and checking the signature...", false);
+  try {
+    await bridge.selfUpdateInstall();
+  } catch (e) {
+    engine.setSelf(e instanceof Error ? e.message : String(e), false);
+  }
+});
+
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");
   void engine.dispatch("ext.install", { path });

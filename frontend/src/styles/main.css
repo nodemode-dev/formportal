@@ -1190,6 +1190,22 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   block-size: var(--control-h-compact);
 }
 
+.self-update {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: var(--control-h-compact);
+}
+
+.self-update .seg-item {
+  background: var(--control);
+}
+
+.self-update .seg-item[hidden] {
+  display: none;
+}
+
 .drop-go {
   background: var(--control);
 }

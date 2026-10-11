@@ -7,6 +7,7 @@ use std::sync::Mutex;
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_deep_link::DeepLinkExt;
+use tauri_plugin_updater::UpdaterExt;
 
 #[derive(Clone, Serialize)]
 struct Progress {
@@ -175,6 +176,40 @@ fn extension_enable(product: String, id: String, enabled: bool) -> Result<Instal
     hub().enable_extension(&product, &id, enabled).map_err(text)
 }
 
+#[derive(Serialize)]
+struct SelfUpdate {
+    configured: bool,
+    current: String,
+    available: Option<String>,
+    notes: Option<String>,
+}
+
+fn updater_configured(app: &AppHandle) -> bool {
+    app.config().plugins.0.get("updater").and_then(|u| u.get("pubkey")).and_then(|k| k.as_str()).map(|k| !k.trim().is_empty()).unwrap_or(false)
+}
+
+#[tauri::command]
+async fn self_update_check(app: AppHandle) -> Result<SelfUpdate, String> {
+    let current = app.package_info().version.to_string();
+    if !updater_configured(&app) {
+        return Ok(SelfUpdate { configured: false, current, available: None, notes: None });
+    }
+    let update = app.updater().map_err(text)?.check().await.map_err(text)?;
+    Ok(SelfUpdate { configured: true, current, available: update.as_ref().map(|u| u.version.clone()), notes: update.and_then(|u| u.body.clone()) })
+}
+
+#[tauri::command]
+async fn self_update_install(app: AppHandle) -> Result<(), String> {
+    if !updater_configured(&app) {
+        return Err("FormPortal's own updates are not set up in this build yet".to_string());
+    }
+    let Some(update) = app.updater().map_err(text)?.check().await.map_err(text)? else {
+        return Err("FormPortal is up to date".to_string());
+    };
+    update.download_and_install(|_, _| {}, || {}).await.map_err(text)?;
+    app.restart()
+}
+
 struct PendingPackage(Mutex<Option<String>>);
 
 fn package_arg<I: IntoIterator<Item = String>>(args: I) -> Option<String> {
@@ -229,6 +264,7 @@ fn main() {
             }
         }))
         .plugin(tauri_plugin_deep_link::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(Pending(Mutex::new(None)))
         .manage(PendingPackage(Mutex::new(package_arg(std::env::args()))))
         .setup(|app| {
@@ -248,7 +284,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

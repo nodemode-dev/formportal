@@ -5,6 +5,22 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.31.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.32.0 · checking for a newer FormPortal {#self-update}
+
+### Settings, Version
+- refers-to: index.html :: data-self-check, data-self-install, data-self-status · src/extensions/settings/index.ts · src/main.ts :: self.check, self.install
+- kind: decision
+- logged: v0.32.0 · 2026-10-11
+
+Check for a newer FormPortal, then Install and restart when one is offered; one status line says not configured, up to date, available, or the failure. The row reserves the control height (`.self-update` min-block-size), so the status text and the second button appear without moving anything. `.seg-item` sets `display`, which beat the `hidden` attribute and showed Install and restart on every check; `.self-update .seg-item[hidden]` fixes it. The browser mode takes `?self=0.40.0` to offer a version, `?self=` for up to date, nothing for not configured. Verified at 4x CPU: the three cases gave the right line and button, layout shift 0, no script error.
+
+### Seen in the real window, older than this version
+- refers-to: styles/lineup.css :: the ruler label
+- kind: warning-context
+- logged: v0.32.0 · 2026-10-11
+
+At the window's default 1180 px width, the vertical LINEUP label of the ruler sits over the icon row between FormCut and FormWav. Logged for the interface phase.
+
 ## v0.31.0 · extensions {#extensions}
 
 ### Rows from the index and from what is installed

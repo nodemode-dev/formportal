@@ -10,6 +10,7 @@ export interface EngineEvents {
   product: { id: string };
   extensions: { count: number };
   prefs: { prefs: Preferences };
+  self: { status: string; installable: boolean };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };
@@ -138,6 +139,10 @@ export class Engine {
 
   setNotice(text: string): void {
     this.emit("notice", { text });
+  }
+
+  setSelf(status: string, installable: boolean): void {
+    this.emit("self", { status, installable });
   }
 
   setPrefs(prefs: Preferences): void {

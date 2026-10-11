@@ -57,6 +57,15 @@ export const fixtureBridge: Bridge = {
     if (!record) throw new Error(`the extension ${id} for ${product} is not installed`);
     extInstalled.set(`${product}:${id}`, { ...record, enabled });
   },
+  selfUpdateCheck: async () => {
+    await pause(200);
+    const offered = new URLSearchParams(window.location.search).get("self");
+    return { configured: offered !== null, current: "0.0.0", available: offered || null, notes: null };
+  },
+  selfUpdateInstall: async () => {
+    await pause(300);
+    throw new Error("the browser mode cannot restart FormPortal");
+  },
   onPackage: (handler) => {
     const path = new URLSearchParams(window.location.search).get("package");
     if (path) handler(path);

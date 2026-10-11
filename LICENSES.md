@@ -8,6 +8,8 @@ FormPortal is GPL-3.0-only (LICENSE, NOTICE), as formpromo, formMCP and formskil
 | --- | --- | --- | --- |
 | tauri, tauri-build | 2 (as in Cargo.lock) | MIT or Apache-2.0 | src-tauri, the shell |
 | tauri-plugin-single-instance, tauri-plugin-deep-link | 2 (as in Cargo.lock) | Apache-2.0 or MIT | src-tauri: one running copy, and formai:// links |
+| tauri-plugin-updater | 2.13.3 | Apache-2.0 or MIT | src-tauri: FormPortal's own signed updates |
+| What the updater brings (minisign-verify, tar, reqwest, infer, osakit, semver, tempfile and others, read from `cargo metadata`) | as locked | MIT, or MIT or Apache-2.0; no GPL, AGPL or new MPL crate (the MPL-2.0 crates are still Tauri's five, unedited) | src-tauri |
 | serde, serde_json | 1 | MIT or Apache-2.0 | core, cli |
 | ed25519-dalek 2, base64 0.22, and what ed25519-dalek brings | as locked | BSD-3-Clause (the dalek crates); MIT or Apache-2.0 (the rest) | core, checking the catalogue's signature |
 | sha2 0.10, ureq 2, zip 2 | as locked | MIT or Apache-2.0 (sha2, ureq); MIT (zip) | core: hashing, fetching, unpacking |
