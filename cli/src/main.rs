@@ -12,7 +12,8 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   apps [--source S]               the Form family and what this computer is offered
   info <product> [--source S]     one product's registry entry and releases
   installs                        what is installed
-  install <product> [--channel C] [--source S] [--allow-unsigned]
+  install <product> [--channel C] [--version V] [--source S] [--allow-unsigned]
+  versions <product> [--channel C] [--source S]
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
   preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...]
@@ -86,6 +87,7 @@ fn main() -> ExitCode {
         "installs" => ops::installs(&ctx),
         "install" => ops::install(&ctx, &args, &mut progress),
         "updates" => ops::updates(&ctx, &args),
+        "versions" => ops::versions(&ctx, &args),
         "update" => ops::update(&ctx, &args, &mut progress),
         "preferences" => ops::preferences(&ctx, &args),
         "open" => ops::open(&ctx, &args),

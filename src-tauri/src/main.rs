@@ -39,23 +39,38 @@ fn installs() -> Result<Vec<Install>, String> {
 }
 
 #[tauri::command]
-async fn install(app: AppHandle, product: String, channel: Channel, url: String, allow_unsigned: bool) -> Result<Install, String> {
+async fn install(app: AppHandle, product: String, channel: Channel, url: String, allow_unsigned: bool, version: Option<String>) -> Result<Install, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
         let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
         let view = catalog.view(&product, channel, Platform::current());
-        let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else {
-            return Err(format!("the catalogue offers this computer nothing for {product}"));
+        let asked = version.is_some();
+        let (version, artifact) = match version.as_deref() {
+            Some(wanted) => {
+                let release = catalog.release_of(&product, channel, wanted).ok_or_else(|| format!("{product} {wanted} is not in the catalogue"))?;
+                let artifact = release.artifact_for(Platform::current()).ok_or_else(|| format!("the catalogue offers this computer nothing for {product} {wanted}"))?;
+                (release.version.as_str(), artifact)
+            }
+            None => {
+                let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else {
+                    return Err(format!("the catalogue offers this computer nothing for {product}"));
+                };
+                (version, artifact)
+            }
         };
         let mut last = u64::MAX;
-        hub.install(&product, channel, version, artifact, &mut |have, total| {
+        let done = hub.install(&product, channel, version, artifact, &mut |have, total| {
             let step = if total > 0 { have * 100 / total } else { 0 };
             if step != last {
                 last = step;
                 let _ = app.emit("install-progress", Progress { product: product.clone(), channel, have, total });
             }
         })
-        .map_err(text)
+        .map_err(text)?;
+        if asked {
+            hub.hold_if_older(&catalog, &product, channel, &done.current.version).map_err(text)?;
+        }
+        Ok(done)
     })
     .await
     .map_err(text)?

@@ -18,7 +18,13 @@ The result carries `installed.current` (version, path, SHA-256), `installed.prev
 
 - `updates` lists every installed app with a newer version: from, to, size, release notes, whether it is open, and whether the person's preferences update it automatically. It also says when FormPortal itself has a newer version (`formportal_update`), which the person downloads from formai.dev.
 - `update {product, channel?}` updates one app; `update {}` updates everything waiting; `update {automatic_only: true}` does only what the preferences allow, which is what FormPortal's window does each time it opens. Only a newer version counts as an update; an older one offered by the catalogue is never installed this way.
-- `preferences` reads the settings, or changes the ones given: `auto_update` (default on), `auto_update_beta` (default off), `only_when_closed` (default on), `notices` (default on), `per_app` (product id to true or false, null to follow the global switch). These are the person's choices; change one only when they ask.
+- `preferences` reads the settings, or changes the ones given: `auto_update` (default on), `auto_update_beta` (default off), `only_when_closed` (default on), `notices` (default on), `keep_previous` (default on; off deletes the replaced version after each update, so rollback is no longer possible), `per_app` (product id to true or false, null to follow the global switch). These are the person's choices; change one only when they ask.
+
+## Other versions
+
+- `versions {product, channel?}` lists what the catalogue offers, newest first: the latest and its history, each with date, notes, size and whether there is a file for this computer, plus what is installed and kept for rollback.
+- `install {product, version}` installs that exact version, newer or older; the replaced one is kept for rollback (unless the person turned `keep_previous` off).
+- Installing an older version while automatic updates would replace it turns that app's automatic updates off (`automatic_updates_held` in the result says so), so it stays. Tell the person; `preferences {per_app: {"[id]": null}}` gives it back to the global switch.
 
 ## Open
 

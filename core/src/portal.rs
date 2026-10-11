@@ -234,7 +234,7 @@ impl Portal {
                             fs::remove_dir_all(&old.path)?;
                         }
                     }
-                    Some(existing.current)
+                    if self.preferences()?.keep_previous { Some(existing.current) } else { None }
                 };
                 let updated = Install { product: product.to_string(), channel, current: fresh, previous };
                 state.installs[index] = updated.clone();
@@ -265,6 +265,17 @@ impl Portal {
 
     pub fn running(&self, product: &str, channel: Channel) -> Vec<process::Running> {
         process::under(&self.root.join("apps").join(product).join(channel_name(channel)))
+    }
+
+    pub fn hold_if_older(&self, catalog: &Catalog, product: &str, channel: Channel, installed: &str) -> Result<bool> {
+        let newest = catalog.product(product).and_then(|p| p.channels.get(&channel)).map(|r| r.version.as_str());
+        let mut prefs = self.preferences()?;
+        if !newest.map(|n| version_newer(n, installed)).unwrap_or(false) || !prefs.automatic(product, channel) {
+            return Ok(false);
+        }
+        prefs.per_app.insert(product.to_string(), false);
+        prefs.save(&self.root)?;
+        Ok(true)
     }
 
     pub fn preferences(&self) -> Result<Preferences> {

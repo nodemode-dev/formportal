@@ -5,6 +5,29 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.29.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
+## v0.30.0 · versions {#versions}
+
+### History in the catalogue
+- refers-to: src/lib.rs :: Release::history, Catalog::versions, Catalog::release_of, VersionView
+- kind: decision
+- logged: v0.30.0 · 2026-10-11
+
+formai_dev 0.27.0 added `history` to a channel's release (earlier releases, newest first, each with artifacts and hashes); `serde(default)` reads catalogues without it. `versions` is the latest plus its history with this computer's artifact; `release_of` finds one version so any of them installs through the same `install`, hash check and all.
+
+### keep_previous
+- refers-to: src/prefs.rs :: keep_previous · src/portal.rs :: install
+- kind: decision
+- logged: v0.30.0 · 2026-10-11
+
+On by default (rollback needs it). Off, an update records no previous and `sweep` deletes the replaced folder unless a copy of it is open; that is Creative Cloud's "remove older versions" choice.
+
+### hold_if_older
+- refers-to: src/portal.rs :: hold_if_older
+- kind: decision
+- logged: v0.30.0 · 2026-10-11
+
+Installing an older version on purpose while automatic updates would replace it at the next open would undo the person's choice. After such an install, the surfaces call `hold_if_older`, which sets `per_app[product] = false` and says so. Only an explicit version triggers it; an ordinary install or update never does.
+
 ## v0.29.0 · updates {#updates}
 
 ### Preferences live in the install folder

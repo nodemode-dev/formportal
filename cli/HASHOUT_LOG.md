@@ -55,6 +55,13 @@ Only JSON-RPC lines go to stdout. The dispatcher builds with `cargo build -q` to
 
 A `source` that is not an http(s) address is read as a file and parsed without a signature, like the core's install example; it is for fixtures and development. Remote sources go through `Portal::catalog`, signature and all, with `allow_unsigned` only when asked.
 
+### v0.30.0 · versions, install with version
+- refers-to: src/ops.rs :: versions, install · src/mcp.rs :: tools
+- kind: decision
+- logged: v0.30.0 · 2026-10-11
+
+Twelve tools. `versions` lists the catalogue's versions with what is installed and kept; `install` takes `version` for any of them, and its result carries `automatic_updates_held` when installing an older version turned that app's automatic updates off. Verified against a three-release local catalogue: install 1.0.0, update to 1.2.0 (1.0.0 kept), install 1.1.0 (1.2.0 kept), a missing version refused, keep_previous off left no previous and removed the folder, rollback then refused; installing 1.0.0 held automatic updates and `update --automatic-only` did nothing.
+
 ### v0.29.0 · updates, update, preferences
 - refers-to: src/ops.rs :: updates, update, preferences · src/mcp.rs :: tools
 - kind: decision

@@ -151,19 +151,45 @@ pub fn installs(ctx: &Ctx) -> Result<Value, CoreError> {
     Ok(json!({ "root": ctx.portal.root(), "installs": rows }))
 }
 
+pub fn versions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = product(args)?;
+    let ch = channel(args)?;
+    let (catalog, source) = load(ctx, args)?;
+    let installed = ctx.portal.state()?.get(&id, ch).map(|i| (i.current.version.clone(), i.previous.as_ref().map(|p| p.version.clone())));
+    let list: Vec<Value> = catalog
+        .versions(&id, ch, Platform::current())
+        .into_iter()
+        .map(|v| json!({ "version": v.version, "published": v.published, "notes": v.notes, "latest": v.latest, "for_this_computer": v.artifact.is_some(), "bytes": v.artifact.map(|a| a.bytes) }))
+        .collect();
+    Ok(json!({ "source": source, "product": id, "channel": formportal_core::portal::channel_name(ch), "installed": installed.as_ref().map(|i| &i.0), "kept_for_rollback": installed.and_then(|i| i.1), "versions": list }))
+}
+
 pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
     let (catalog, _) = load(ctx, args)?;
-    let view = catalog.view(&id, ch, Platform::current());
-    let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else {
-        return Err(CoreError::Unavailable(format!("{id} on {} ({})", formportal_core::portal::channel_name(ch), word(view.availability))));
+    let platform = Platform::current();
+    let view = catalog.view(&id, ch, platform);
+    let (version, artifact) = match text(args, "version") {
+        Some(wanted) => {
+            let release = catalog.release_of(&id, ch, &wanted).ok_or_else(|| fail(format!("{id} {wanted} is not in the catalogue for that channel; versions lists what is")))?;
+            let artifact = release.artifact_for(platform).ok_or_else(|| CoreError::Unavailable(format!("{id} {wanted} on this computer")))?;
+            (release.version.as_str(), artifact)
+        }
+        None => {
+            let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else {
+                return Err(CoreError::Unavailable(format!("{id} on {} ({})", formportal_core::portal::channel_name(ch), word(view.availability))));
+            };
+            (version, artifact)
+        }
     };
     let done = ctx.portal.install(&id, ch, version, artifact, progress)?;
+    let held = text(args, "version").is_some() && ctx.portal.hold_if_older(&catalog, &id, ch, &done.current.version)?;
     let opens = ctx.portal.launch_target(&id, ch).ok();
     let still_open: Vec<u32> = ctx.portal.running(&id, ch).iter().filter(|r| !r.path.starts_with(&done.current.path)).map(|r| r.pid).collect();
     let note = if still_open.is_empty() { None } else { Some(format!("an earlier copy is still open (process {}); it keeps running untouched, and {version} opens next time", still_open.iter().map(|p| p.to_string()).collect::<Vec<_>>().join(", "))) };
-    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note }))
+    let held_note = held.then(|| format!("automatic updates for {id} were turned off so {version} stays; turn them back on with preferences per_app {{\"{id}\": null}}"));
+    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note, "automatic_updates_held": held_note }))
 }
 
 pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
@@ -210,6 +236,7 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     set("auto_update_beta", &mut prefs.auto_update_beta);
     set("only_when_closed", &mut prefs.only_when_closed);
     set("notices", &mut prefs.notices);
+    set("keep_previous", &mut prefs.keep_previous);
     if let Some(map) = args.get("per_app").and_then(Value::as_object) {
         for (id, v) in map {
             match v.as_bool() {

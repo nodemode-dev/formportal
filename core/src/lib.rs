@@ -118,6 +118,17 @@ pub struct Release {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub commit: Option<String>,
     pub artifacts: Vec<Artifact>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub history: Vec<Release>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct VersionView<'a> {
+    pub version: &'a str,
+    pub published: &'a str,
+    pub notes: &'a str,
+    pub latest: bool,
+    pub artifact: Option<&'a Artifact>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -237,6 +248,20 @@ impl Catalog {
 
     pub fn product(&self, id: &str) -> Option<&Product> {
         self.products.iter().find(|p| p.id == id)
+    }
+
+    pub fn versions(&self, id: &str, channel: Channel, platform: Platform) -> Vec<VersionView<'_>> {
+        let Some(product) = self.product(id).filter(|p| p.state != ProductState::Prelaunch) else { return Vec::new() };
+        let Some(latest) = product.channels.get(&channel) else { return Vec::new() };
+        std::iter::once((latest, true))
+            .chain(latest.history.iter().map(|r| (r, false)))
+            .map(|(r, newest)| VersionView { version: &r.version, published: &r.published, notes: &r.notes, latest: newest, artifact: r.artifact_for(platform) })
+            .collect()
+    }
+
+    pub fn release_of(&self, id: &str, channel: Channel, version: &str) -> Option<&Release> {
+        let latest = self.product(id)?.channels.get(&channel)?;
+        std::iter::once(latest).chain(latest.history.iter()).find(|r| r.version == version)
     }
 
     pub fn view<'a>(&'a self, id: &'a str, channel: Channel, platform: Platform) -> ChannelView<'a> {
