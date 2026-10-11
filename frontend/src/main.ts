@@ -73,14 +73,21 @@ engine.command("prefs.set", (arg) =>
 
 engine.command("app.install", (arg) =>
   guard(async () => {
-    const { product, channel } = arg as Target;
+    const { product, channel, version } = arg as Target & { version?: string };
     engine.setProgress(product, channel, 0);
     try {
-      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction));
+      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction), version);
     } finally {
       engine.setProgress(product, channel, null);
     }
     await refresh();
+    if (version) {
+      const held = engine.automatic(product, channel);
+      engine.setPrefs(await bridge.preferences());
+      if (held && !engine.automatic(product, channel)) {
+        engine.setNotice(`${engine.product(product)?.name ?? product} ${version} is installed. Automatic updates for it are off so it stays; turn them back on under More.`);
+      }
+    }
   }),
 );
 

@@ -8,7 +8,7 @@ export interface Bridge {
   catalog(): Promise<Catalog>;
   extensions(): Promise<ExtensionIndex>;
   installs(): Promise<InstallRecord[]>;
-  install(product: string, channel: Channel, progress: (fraction: number) => void): Promise<InstallRecord>;
+  install(product: string, channel: Channel, progress: (fraction: number) => void, version?: string): Promise<InstallRecord>;
   open(product: string, channel: Channel): Promise<void>;
   rollback(product: string, channel: Channel): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;

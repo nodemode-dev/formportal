@@ -36,15 +36,20 @@ export const fixtureBridge: Bridge = {
   catalog: async () => catalog,
   extensions: async () => extensions as unknown as ExtensionIndex,
   installs: async () => Array.from(installed.values()),
-  install: async (product, channel, progress) => {
-    const release = catalog.products.find((p) => p.id === product)?.channels[channel];
-    if (!release) throw new Error(`the catalogue offers this computer nothing for ${product}`);
+  install: async (product, channel, progress, version) => {
+    const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
+    const release = version ? [latest, ...(latest?.history ?? [])].find((r) => r?.version === version) : latest;
+    if (!release) throw new Error(`the catalogue offers this computer nothing for ${product}${version ? ` ${version}` : ""}`);
     for (let step = 1; step <= 10; step += 1) {
       await pause(90);
       progress(step / 10);
     }
     const before = installed.get(key(product, channel));
-    const record: InstallRecord = { product, channel, version: release.version, previous: before && before.version !== release.version ? before.version : (before?.previous ?? null) };
+    if (version && latest && versionNewer(latest.version, release.version) && prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) {
+      prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
+    }
+    const kept = before && before.version !== release.version ? before.version : (before?.previous ?? null);
+    const record: InstallRecord = { product, channel, version: release.version, previous: prefs.keep_previous ? kept : null };
     installed.set(key(product, channel), record);
     return record;
   },

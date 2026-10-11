@@ -1145,6 +1145,28 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   gap: var(--sp-2);
 }
 
+.drop-versions {
+  display: none;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-1) var(--sp-3) 0;
+  border-block-start: 1px solid var(--edge);
+  margin-block-start: var(--sp-1);
+}
+
+[data-history] .drop-versions {
+  display: flex;
+}
+
+.drop-select {
+  inline-size: 19ch;
+  block-size: var(--control-h-compact);
+}
+
+.drop-go {
+  background: var(--control);
+}
+
 .drop-notes {
   white-space: normal;
   max-inline-size: 36ch;

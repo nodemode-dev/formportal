@@ -51,12 +51,12 @@ export const tauriBridge: Bridge = {
   extensions: async () =>
     ({ format: "formai-extensions", format_version: 1, name: "formai extensions", publishers: [], packages: [] }) as ExtensionIndex,
   installs: async () => (await tauri().core.invoke<RawInstall[]>("installs")).map(record),
-  install: async (product, channel, progress) => {
+  install: async (product, channel, progress, version) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) => {
       if (payload.product === product && payload.channel === channel) progress(payload.total > 0 ? payload.have / payload.total : 0);
     });
     try {
-      return record(await tauri().core.invoke<RawInstall>("install", { product, channel, url: catalogUrl(), allowUnsigned: allowUnsigned() }));
+      return record(await tauri().core.invoke<RawInstall>("install", { product, channel, url: catalogUrl(), allowUnsigned: allowUnsigned(), version: version ?? null }));
     } finally {
       stop();
     }

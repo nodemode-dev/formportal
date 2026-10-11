@@ -25,6 +25,7 @@ export interface Release {
   notes: string;
   commit?: string;
   artifacts: Artifact[];
+  history?: Release[];
 }
 
 export interface Product {
@@ -94,6 +95,7 @@ export interface Preferences {
   only_when_closed: boolean;
   notices: boolean;
   per_app: Record<string, boolean>;
+  keep_previous: boolean;
 }
 
 export interface UpdateOutcome {

@@ -5,6 +5,29 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.29.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.30.0 · other versions {#versions}
+
+### Other versions in More
+- refers-to: row-actions.html :: data-versions, data-version-go · src/extensions/apps/index.ts :: patch · src/main.ts :: app.install
+- kind: decision
+- logged: v0.30.0 · 2026-10-11
+
+A select and an Install button at the foot of every row's More menu, shown only when the channel has more than one version with a file for this system (`data-history`). The options are the only nodes the interface creates at run time: they live inside a closed menu, are replaced only when the list or the installed version changes (`data-list` keys it), and keep the person's selection. `app.install` passes the version through the bridge; after it, the interface rereads the preferences and, when the core held automatic updates, says so. The button is a `drop-item`: `.act` buttons are shown by row state, which hid it in the first try.
+
+### keep_previous in Settings
+- refers-to: index.html :: data-pref keep_previous · src/extensions/settings/index.ts
+- kind: explainer
+- logged: v0.30.0 · 2026-10-11
+
+"Keep the version before, to go back to", on by default.
+
+### Verified
+- refers-to: the entries above
+- kind: explainer
+- logged: v0.30.0 · 2026-10-11
+
+Built, 4x CPU, headless Chromium, `?installed=formcut:2.6.2&link=app/formcut`: More listed 2.6.2 (installed), 2.6.1, 2.6.0; choosing 2.6.0 installed it, kept 2.6.2 for rollback, offered 2.6.2 as an update, marked 2.6.0 installed, unticked Update automatically and showed the notice; no node removed other than the replaced options, no script error. The 0.0117 shift at load is the known link and accordion one.
+
 ## v0.29.0 · updates {#updates}
 
 ### Automatic updates when the catalogue loads

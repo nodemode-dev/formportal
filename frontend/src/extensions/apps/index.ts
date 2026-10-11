@@ -68,6 +68,16 @@ export const apps: Extension = {
       const field = (name: string, text: string) => write(row.querySelector<HTMLElement>(`[data-field='${name}']`), text);
       field("date", release ? release.published.slice(0, 10) : "");
       field("notes", release?.notes ?? "");
+      const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
+      const all = release ? [release, ...(release.history ?? [])].filter((r) => r.artifacts.some((a) => a.platform === engine.state.platform.os)) : [];
+      const list = all.map((r) => `${r.version}${r.version === record?.version ? " (installed)" : ""}`).join("|");
+      if (picker && picker.dataset.list !== list) {
+        picker.dataset.list = list;
+        const wanted = picker.value;
+        picker.replaceChildren(...all.map((r) => new Option(r.version === record?.version ? `${r.version} (installed)` : r.version, r.version)));
+        if (all.some((r) => r.version === wanted)) picker.value = wanted;
+      }
+      row.toggleAttribute("data-history", all.length > 1);
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       const on = engine.automatic(product, channel);
       if (auto && auto.checked !== on) auto.checked = on;
@@ -104,6 +114,10 @@ export const apps: Extension = {
     engine.on("source", () => rows.forEach(patch));
     engine.on("prefs", () => rows.forEach(patch));
     for (const row of rows) {
+      const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
+      row.querySelector<HTMLButtonElement>("[data-version-go]")?.addEventListener("click", () => {
+        if (picker?.value) void engine.dispatch("app.install", { ...target(row), version: picker.value });
+      });
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       auto?.addEventListener("change", () => {
         const { product } = target(row);

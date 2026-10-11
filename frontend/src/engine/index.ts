@@ -12,7 +12,7 @@ export interface EngineEvents {
   prefs: { prefs: Preferences };
 }
 
-export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {} };
+export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {
