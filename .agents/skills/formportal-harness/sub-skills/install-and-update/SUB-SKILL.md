@@ -12,7 +12,7 @@ description: Installing, updating, opening, rolling back and removing Form apps 
 1. `apps` shows `available` for that channel. Anything else: stop and say which state it is in.
 2. Tell the person the version and the size, and get a yes.
 
-The result carries `installed.current` (version, path, SHA-256), `installed.previous` (what rollback would return to) and `opens` (the file `open` will start). A release FormPortal cannot unpack yet (a dmg, msi or deb) fails with "this build cannot install a ... file yet": point the person to the app's download page on formai.dev.
+The result carries `installed.current` (version, path, SHA-256), `installed.previous` (what rollback would return to) and `opens` (the file `open` will start). Every desktop release kind installs per user without administrator: zip, AppImage, dmg (copied out of the mounted image), deb and rpm (unpacked, no install scripts), msi (an administrative image) and NSIS (silent, into FormPortal's folder). Nothing is registered with the system's package manager.
 
 ## Updates and preferences
 

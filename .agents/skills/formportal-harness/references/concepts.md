@@ -37,7 +37,8 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | [file] does not match the catalogue: expected SHA-256 | the download differs from the release | stop; report it; do not retry from elsewhere |
 | the catalogue offers this computer nothing for | unreleased, no release on that channel, or no file for this system | read `apps` for which one, and the registry status |
 | refused address | not https and not this computer | use the https address |
-| this build cannot install a [kind] file yet | the release is a dmg, msi, deb or similar FormPortal does not unpack yet | tell the person; the app's own download page on formai.dev has it |
+| this build cannot install a [kind] file yet | the release is a phone package (apk, ipa); zip, AppImage, dmg, deb, rpm, msi and NSIS all install | tell the person |
+| unpacking a [kind] needs [tool], which this computer does not have | rpm needs bsdtar or rpm2cpio and cpio; deb needs dpkg-deb | name the tool to the person |
 | [app] is open (process ...); close it first | remove, or reinstalling the version that is running | ask the person to close the app; never end the process yourself |
 | ... It was not installed (an extension) | a package's signature, manifest or native-code rule failed | report the sentence; see `sub-skills/extensions/SUB-SKILL.md` |
 | no product was given, or there is no channel | a parameter is missing or wrong | fix the call from `apps` |

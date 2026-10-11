@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.32.0 · 2026-10-11
+
+- Every desktop release kind installs, per user and without administrator: dmg, deb, rpm, msi and NSIS, besides zip and AppImage. Install scripts never run.
+- Builds for six systems: macOS on Apple silicon and Intel, Linux and Windows on x86-64 and ARM64.
+- FormPortal can update itself, signed, from Settings, Version, once the updater key is set for releases.
+
 ## v0.31.0 · 2026-10-11
 
 - Extensions: install, update, turn off and remove packages from the open catalogue on the Extensions screen.
