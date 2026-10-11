@@ -48,7 +48,8 @@
         "published": { "type": "string", "format": "date-time" },
         "notes": { "type": "string", "format": "uri" },
         "commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
-        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } }
+        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } },
+        "history": { "type": "array", "maxItems": 10, "items": { "$ref": "#/$defs/release" } }
       }
     },
     "artifact": {
