@@ -657,6 +657,33 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   font-size: var(--fs-s);
 }
 
+.ext-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-inline-start: auto;
+}
+
+.ext .ext-on {
+  display: none;
+  font-size: var(--fs-s);
+}
+
+.ext[data-ext-state="none"][data-listed] [data-ext-act="install"],
+.ext[data-ext-state="update"] [data-ext-act="install"],
+.ext:not([data-ext-state="none"]) [data-ext-act="remove"] {
+  display: inline-flex;
+}
+
+.ext:not([data-ext-state="none"]) .ext-on {
+  display: inline-flex;
+}
+
+.ext[data-ext-state="busy"] .ext-actions {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .ext .drop-panel {
   inset-block: calc(100% + var(--sp-2)) auto;
   inset-inline: auto 0;

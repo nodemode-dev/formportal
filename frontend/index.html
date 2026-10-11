@@ -85,14 +85,15 @@
             <p class="pane-sub">Effects, looks, templates and plugins from the open catalogue. Each one says who made it, what it is for and what it can use.</p>
             <div class="seg" role="group" aria-label="Show extensions for">
               <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
-              <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">formcut</button>
-              <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">formvis</button>
-              <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">formwav</button>
+              <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">FormCut</button>
+              <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">FormVis</button>
+              <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">FormWav</button>
             </div>
           </header>
+          <p class="pane-note">Each package is checked against the catalogue before it is installed. An app uses its extensions from the next time it starts. To install a .formpkg file, open it with FormPortal.</p>
+          <p class="pane-note pane-notice ext-notice" data-notice role="status" aria-live="polite"></p>
           <ul class="exts" data-ext-list></ul>
           <p class="pane-note" data-ext-empty>The catalogue lists no extensions yet.</p>
-          <p class="pane-note">Installing an extension from here arrives with the catalogue's first packages. Until then this shows what the catalogue lists.</p>
           <template id="ext-row">
             <li class="ext">
               <span class="mark">%icon:formcut:ic-m ic-formcut%%icon:formvis:ic-m ic-formvis%%icon:formwav:ic-m ic-formwav%%icon:formai:ic-m ic-formai%</span>
@@ -103,6 +104,11 @@
               </div>
               <div class="ext-foot">
                 <p class="ext-trust" data-field="trust"></p>
+                <div class="ext-actions">
+                  <label class="check ext-on"><input type="checkbox" data-ext-enabled /><span>On</span></label>
+                  <button class="act" type="button" data-ext-act="remove">Remove</button>
+                  <button class="act act-main" type="button" data-ext-act="install">Install</button>
+                </div>
                 <details class="drop drop-ext">
                   <summary class="drop-toggle">What it can use%icon:chevron-down:ic-s%</summary>
                   <div class="drop-panel">

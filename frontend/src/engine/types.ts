@@ -74,6 +74,26 @@ export interface ExtensionEntry {
   signature?: ExtensionSignature;
 }
 
+export interface InstalledExtension {
+  id: string;
+  name: string;
+  product: string;
+  kind: string;
+  version: string;
+  sha256: string;
+  source: "catalogue" | "sideload";
+  signed_by: string | null;
+  native: boolean;
+  permissions: string[];
+  enabled: boolean;
+}
+
+export interface ExtensionsView {
+  index: ExtensionIndex | null;
+  index_error: string | null;
+  installed: InstalledExtension[];
+}
+
 export interface ExtensionIndex {
   format: "formai-extensions";
   format_version: 1;

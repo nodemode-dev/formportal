@@ -35,6 +35,15 @@
     "active": true,
     "targets": "all",
     "category": "Utility",
+    "fileAssociations": [
+      {
+        "ext": ["formpkg"],
+        "name": "Form package",
+        "description": "An extension for a Form app",
+        "role": "Viewer",
+        "mimeType": "application/x-formpkg"
+      }
+    ],
     "shortDescription": "Installs, opens and updates every Form app",
     "longDescription": "FormPortal installs, opens, updates and rolls back the Form family's apps, keeps their beta builds beside the stable ones, and adds extensions from an open catalogue. No account and no background process.",
     "copyright": "Copyright 2026 NodeAgentc, Inc.",

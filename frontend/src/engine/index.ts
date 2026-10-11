@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ChannelView, ExtensionIndex, InstallRecord, Platform, Preferences, Product, Route, Source } from "./types.ts";
+import type { Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -37,6 +37,7 @@ export interface HubState {
   source: Source;
   catalog: Catalog | null;
   extensions: ExtensionIndex | null;
+  installedExtensions: InstalledExtension[];
   prefs: Preferences;
 }
 
@@ -51,6 +52,7 @@ export class Engine {
     source: "none",
     catalog: null,
     extensions: null,
+    installedExtensions: [],
     prefs: { ...DEFAULT_PREFS },
   };
   private handlers = new Map<keyof EngineEvents, Set<Handler<never>>>();
@@ -103,9 +105,10 @@ export class Engine {
     for (const p of catalog.products) this.emit("product", { id: p.id });
   }
 
-  setExtensions(index: ExtensionIndex): void {
+  setExtensions(index: ExtensionIndex | null, installed: InstalledExtension[] = this.state.installedExtensions): void {
     this.state.extensions = index;
-    this.emit("extensions", { count: index.packages.length });
+    this.state.installedExtensions = installed;
+    this.emit("extensions", { count: (index?.packages.length ?? 0) + installed.length });
   }
 
   readonly installs = new Map<string, InstallRecord>();

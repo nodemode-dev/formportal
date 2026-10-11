@@ -40,7 +40,7 @@ engine.command("catalog.load", () =>
     await refresh();
     const [catalog, extensions] = await Promise.all([bridge.catalog(), bridge.extensions()]);
     engine.setCatalog(catalog, bridge.source);
-    engine.setExtensions(extensions);
+    engine.setExtensions(extensions.index, extensions.installed);
     engine.setPrefs(await bridge.preferences());
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
@@ -131,3 +131,45 @@ engine.command("link.open", (arg) => {
 
 void engine.dispatch("catalog.load");
 bridge.onLink((link) => void engine.dispatch("link.open", link));
+
+const extRefresh = async () => {
+  const view = await bridge.extensions();
+  engine.setExtensions(view.index, view.installed);
+};
+
+engine.command("ext.install", (arg) =>
+  guard(async () => {
+    let done;
+    try {
+      done = await bridge.installExtension(arg as { id?: string; path?: string });
+    } finally {
+      await extRefresh();
+    }
+    const label = done.source === "sideload" ? " It was installed from a file, not the catalogue." : "";
+    engine.setNotice(`${done.name} ${done.version} is installed; it is used the next time the app starts.${label}`);
+  }),
+);
+
+engine.command("ext.remove", (arg) =>
+  guard(async () => {
+    const { product, id } = arg as { product: string; id: string };
+    try {
+      await bridge.removeExtension(product, id);
+    } finally {
+      await extRefresh();
+    }
+  }),
+);
+
+engine.command("ext.enable", (arg) =>
+  guard(async () => {
+    const { product, id, enabled } = arg as { product: string; id: string; enabled: boolean };
+    await bridge.enableExtension(product, id, enabled);
+    await extRefresh();
+  }),
+);
+
+bridge.onPackage((path) => {
+  void engine.dispatch("route.go", "extensions");
+  void engine.dispatch("ext.install", { path });
+});

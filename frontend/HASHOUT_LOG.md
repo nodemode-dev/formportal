@@ -5,6 +5,36 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.30.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.31.0 · extensions {#extensions}
+
+### Rows from the index and from what is installed
+- refers-to: src/extensions/library/index.ts :: fill, wire, extensions handler · index.html :: ext-row template
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+The Extensions screen keys its rows by product and id over the union of the index and the installed list, so a sideloaded package has a row too. `data-ext-state` (none, installed, update, busy), `data-listed` and `data-trust` drive which of Install or Update, Remove and On show, all in CSS; `fill` writes attributes, text and `checked` only when they differ. Rows are still cloned from the template at run time (as since 0.7.0), appended at the end of the list.
+
+### The notes and the notice sit above the list
+- refers-to: index.html :: data-pane extensions
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+With the notes below the list, a row appended after load (a sideload finishing) pushed them down: a 0.0115 shift. They now sit above the list, the notice in the 3em space `.pane-notice` reserves, so a row appended at the end moves nothing. The notice is shared with Home (every `[data-notice]` gets the text). Notices are drawn in the fault colour even for good news; that predates this and goes to the interface phase.
+
+### Opening a .formpkg
+- refers-to: src/main.ts :: ext.install, bridge.onPackage · src/bridge/tauri.ts :: onPackage
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+A package opened with FormPortal goes to the Extensions screen and installs at once, with the sideload label when the index does not list it. Opening the file is the person's intent; the label, the native-code rule and Remove are the safeguards. The browser mode takes `?package=/path/name.formpkg`.
+
+### Verified
+- refers-to: the entries above
+- kind: explainer
+- logged: v0.31.0 · 2026-10-11
+
+Built, 4x CPU, headless Chromium: `?package=...teal-look.formpkg` routed to Extensions, installed it as sideloaded with the notice; Install on Warm dust went busy then installed, with Remove and On; unticking On kept it installed and off; Remove took the sideloaded row away; no script error. Shift: only the known 0.0147 accordion one when a route opens the Library group. The screen was looked at; a first look showed On on a package that was not installed (`.check` declared later in the file won), fixed by raising the rule's specificity.
+
 ## v0.30.0 · other versions {#versions}
 
 ### Other versions in More

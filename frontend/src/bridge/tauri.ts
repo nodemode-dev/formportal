@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionIndex, InstallRecord, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -48,8 +48,23 @@ export const tauriBridge: Bridge = {
   source: "live",
   platform: () => tauri().core.invoke<Platform>("platform"),
   catalog: () => tauri().core.invoke<Catalog>("catalog", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
-  extensions: async () =>
-    ({ format: "formai-extensions", format_version: 1, name: "formai extensions", publishers: [], packages: [] }) as ExtensionIndex,
+  extensions: () => tauri().core.invoke<ExtensionsView>("extensions", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
+  installExtension: ({ id, path }) =>
+    tauri().core.invoke<InstalledExtension>("extension_install", { id: id ?? null, path: path ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() }),
+  removeExtension: async (product, id) => {
+    await tauri().core.invoke<null>("extension_remove", { product, id });
+  },
+  enableExtension: async (product, id, enabled) => {
+    await tauri().core.invoke<InstalledExtension>("extension_enable", { product, id, enabled });
+  },
+  onPackage: (handler) => {
+    void tauri().event.listen<string>("package-open", ({ payload }) => handler(payload));
+    void tauri()
+      .core.invoke<string | null>("launch_package")
+      .then((path) => {
+        if (path) handler(path);
+      });
+  },
   installs: async () => (await tauri().core.invoke<RawInstall[]>("installs")).map(record),
   install: async (product, channel, progress, version) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) => {

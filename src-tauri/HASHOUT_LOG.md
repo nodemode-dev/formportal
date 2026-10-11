@@ -5,6 +5,15 @@ Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to fo
 Current build version: v0.27.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.31.0 · extensions and .formpkg files {#extensions}
+
+### Commands and the file type
+- refers-to: src/main.rs :: extensions, extension_install, extension_remove, extension_enable, launch_package, package_arg · tauri.conf.json :: bundle.fileAssociations
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+The extension commands call the core; the index address is `extensions.json` beside the catalogue address. `.formpkg` is registered as a file type FormPortal opens. A package path reaches the interface three ways: as an argument at start (kept until the interface asks with `launch_package`), as an argument to a second launch (the single-instance callback emits `package-open`), and on macOS as `RunEvent::Opened`, which needs `build()` then `run(handler)` instead of `run(context)`. The macOS branch is compiled only on macOS and was not built here; the Linux build compiles. No double-click was tried.
+
 ## v0.27.0 · the move {#move}
 
 ### Identity

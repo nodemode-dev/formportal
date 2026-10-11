@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use formportal_core::extensions::{ExtensionIndex, InstalledExtension};
 use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal, Preferences, Update, UpdateOutcome};
 use std::sync::Mutex;
 
@@ -121,6 +122,70 @@ async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Resul
     .map_err(text)?
 }
 
+#[derive(Serialize)]
+struct ExtensionsView {
+    index: Option<ExtensionIndex>,
+    index_error: Option<String>,
+    installed: Vec<InstalledExtension>,
+}
+
+fn index_url(catalog: &str) -> String {
+    match catalog.rsplit_once('/') {
+        Some((dir, _)) => format!("{dir}/extensions.json"),
+        None => "extensions.json".to_string(),
+    }
+}
+
+#[tauri::command]
+async fn extensions(url: String, allow_unsigned: bool) -> Result<ExtensionsView, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let (index, index_error) = match hub.extension_index(&index_url(&url), allow_unsigned) {
+            Ok(i) => (Some(i), None),
+            Err(e) => (None, Some(e.to_string())),
+        };
+        Ok(ExtensionsView { index, index_error, installed: hub.extensions_installed().map_err(text)? })
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn extension_install(id: Option<String>, path: Option<String>, url: String, allow_unsigned: bool) -> Result<InstalledExtension, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let index = hub.extension_index(&index_url(&url), allow_unsigned);
+        match (id, path) {
+            (_, Some(path)) => hub.install_extension_file(std::path::Path::new(&path), index.as_ref().ok(), allow_unsigned).map_err(text),
+            (Some(id), None) => hub.install_extension(&index.map_err(text)?, &id, allow_unsigned, &mut |_, _| {}).map_err(text),
+            (None, None) => Err("give an extension id or a package file".to_string()),
+        }
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn extension_remove(product: String, id: String) -> Result<(), String> {
+    hub().remove_extension(&product, &id).map_err(text)
+}
+
+#[tauri::command]
+fn extension_enable(product: String, id: String, enabled: bool) -> Result<InstalledExtension, String> {
+    hub().enable_extension(&product, &id, enabled).map_err(text)
+}
+
+struct PendingPackage(Mutex<Option<String>>);
+
+fn package_arg<I: IntoIterator<Item = String>>(args: I) -> Option<String> {
+    args.into_iter().skip(1).find(|a| a.to_lowercase().ends_with(".formpkg"))
+}
+
+#[tauri::command]
+fn launch_package(pending: State<'_, PendingPackage>) -> Option<String> {
+    pending.0.lock().ok().and_then(|mut slot| slot.take())
+}
+
 #[tauri::command]
 fn preferences() -> Result<Preferences, String> {
     hub().preferences().map_err(text)
@@ -154,14 +219,18 @@ fn launch_link(pending: State<'_, Pending>) -> Option<String> {
 
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.unminimize();
                 let _ = window.set_focus();
             }
+            if let Some(path) = package_arg(argv) {
+                let _ = app.emit("package-open", path);
+            }
         }))
         .plugin(tauri_plugin_deep_link::init())
         .manage(Pending(Mutex::new(None)))
+        .manage(PendingPackage(Mutex::new(package_arg(std::env::args()))))
         .setup(|app| {
             #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             {
@@ -177,7 +246,26 @@ fn main() {
             app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences])
-        .run(tauri::generate_context!())
-        .expect("FormPortal could not start");
+        .invoke_handler(tauri::generate_handler![
+            platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
+            extensions, extension_install, extension_remove, extension_enable, launch_package
+        ])
+        .build(tauri::generate_context!())
+        .expect("FormPortal could not start")
+        .run(|_app, _event| {
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Opened { urls } = &_event {
+                for url in urls {
+                    if let Ok(path) = url.to_file_path() {
+                        let path = path.to_string_lossy().to_string();
+                        if path.to_lowercase().ends_with(".formpkg") {
+                            if let Ok(mut slot) = _app.state::<PendingPackage>().0.lock() {
+                                *slot = Some(path.clone());
+                            }
+                            let _ = _app.emit("package-open", path);
+                        }
+                    }
+                }
+            }
+        });
 }

@@ -28,7 +28,7 @@ export const apps: Extension = {
   setup(engine) {
     const rows = Array.from(document.querySelectorAll<HTMLElement>("[data-row]"));
 
-    const notice = document.querySelector<HTMLElement>("[data-notice]");
+    const notices = Array.from(document.querySelectorAll<HTMLElement>("[data-notice]"));
     const target = (row: HTMLElement) => ({ product: row.dataset.product ?? "", channel: (row.dataset.row ?? "stable") as Channel });
 
     const write = (node: HTMLElement | null, text: string) => {
@@ -124,7 +124,7 @@ export const apps: Extension = {
         void engine.dispatch("prefs.set", { per_app: { [product]: auto.checked } });
       });
     }
-    engine.on("notice", ({ text }) => write(notice, text));
+    engine.on("notice", ({ text }) => notices.forEach((notice) => write(notice, text)));
 
     for (const row of rows) {
       row.querySelectorAll<HTMLButtonElement>("[data-act]").forEach((button) => {
