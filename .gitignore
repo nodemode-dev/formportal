@@ -4,5 +4,6 @@ target/
 src-tauri/gen/
 src-tauri/binaries/
 release-dist/
+release-updater.json
 .DS_Store
 .env

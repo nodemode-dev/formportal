@@ -64,7 +64,27 @@ def pack(system: str, arch: str, bundle: Path, out: Path) -> dict:
                     shutil.copyfileobj(source, sink)
     entry = {"platform": system, "arch": arch, "file": name, "bytes": target.stat().st_size, "sha256": sha256(target), "minimum_os": floor(system)}
     (out / f"manifest-{system}-{arch}.json").write_text(json.dumps(entry, indent=2) + "\n", encoding="utf-8")
+    updater(system, arch, bundle, out)
     return entry
+
+
+UPDATER = {"macos": ("macos", "*.app.tar.gz"), "linux": ("appimage", "*.AppImage"), "windows": ("nsis", "*.exe")}
+TARGET = {"macos": "darwin", "linux": "linux", "windows": "windows"}
+ARCH = {"arm64": "aarch64", "x86_64": "x86_64"}
+
+
+def updater(system: str, arch: str, bundle: Path, out: Path) -> None:
+    folder, pattern = UPDATER[system]
+    for found in sorted((bundle / folder).glob(pattern)):
+        signature = found.with_name(found.name + ".sig")
+        if not signature.is_file():
+            continue
+        suffix = ".app.tar.gz" if found.name.endswith(".app.tar.gz") else found.suffix
+        name = f"formportal-{version()}-{system}-{arch}-update{suffix}"
+        shutil.copyfile(found, out / name)
+        part = {"key": f"{TARGET[system]}-{ARCH[arch]}", "file": name, "signature": signature.read_text(encoding="utf-8").strip()}
+        (out / f"updater-{system}-{arch}.json").write_text(json.dumps(part, indent=2) + "\n", encoding="utf-8")
+        return
 
 
 def finish(out: Path) -> dict:
@@ -82,7 +102,16 @@ def finish(out: Path) -> dict:
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (out / "SHA256SUMS").write_text("".join(f"{a['sha256']}  {a['file']}\n" for a in assets), encoding="utf-8")
-    for part in out.glob("manifest-*.json"):
+    parts = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(out.glob("updater-*.json"))]
+    if parts:
+        latest = {
+            "version": version(),
+            "notes": f"{REPOSITORY}/blob/main/CHANGELOG.md",
+            "pub_date": manifest["published"],
+            "platforms": {p["key"]: {"signature": p["signature"], "url": f"{REPOSITORY}/releases/download/v{version()}/{p['file']}"} for p in parts},
+        }
+        (out / "latest.json").write_text(json.dumps(latest, indent=2) + "\n", encoding="utf-8")
+    for part in list(out.glob("manifest-*.json")) + list(out.glob("updater-*.json")):
         part.unlink()
     return manifest
 
