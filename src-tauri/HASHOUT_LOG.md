@@ -2,7 +2,7 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.31.0
+Current build version: v0.32.0
 Last updated: 2026-10-11 · standalone repository
 
 ## v0.32.0 · FormPortal's own updates {#self-update}
