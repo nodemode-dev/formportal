@@ -84,6 +84,10 @@ The MCP server uses stdio, no port.
 | `FORMPORTAL_ALLOW_UNSIGNED` | `1` accepts an unsigned catalogue (development only) |
 | `FORMAI_CATALOG_PUBKEY` | Extra trusted catalogue keys, base64, comma separated |
 
+### The catalogue key
+
+FormPortal installs only from a catalogue signed with a key it trusts. Trusted public keys are the lines of `core/catalog_keys.txt`, compiled in. To make the pair, run `python -m app.signing` in formai_dev's `site/backend`: the private seed goes into the site's `FORMAI_CATALOG_KEY` and nowhere else, the public key goes on a line of `core/catalog_keys.txt`. The file ships empty until formai.dev's key is published.
+
 ## Repository
 
 | Path | What it is |

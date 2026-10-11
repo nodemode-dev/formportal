@@ -80,6 +80,7 @@ pub fn status(ctx: &Ctx) -> Result<Value, CoreError> {
         "root": ctx.portal.root(),
         "catalog_source": ctx.source,
         "allow_unsigned": ctx.allow_unsigned,
+        "trusted_keys": { "compiled": formportal_core::signature::compiled_keys().len(), "total": formportal_core::signature::trusted_keys().len() },
         "installed": installs.len(),
         "installs": installs,
         "next": "apps lists the family and what this computer is offered; install, open, rollback and remove act on one product and channel."

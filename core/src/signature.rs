@@ -3,11 +3,15 @@ use ed25519_dalek::{Signature, Verifier, VerifyingKey};
 
 use crate::error::{CoreError, Result};
 
-pub const TRUSTED_KEYS: [&str; 0] = [];
+pub const TRUSTED_KEYS: &str = include_str!("../catalog_keys.txt");
 pub const KEY_ENV: &str = "FORMAI_CATALOG_PUBKEY";
 
+pub fn compiled_keys() -> Vec<String> {
+    TRUSTED_KEYS.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')).map(str::to_string).collect()
+}
+
 pub fn trusted_keys() -> Vec<String> {
-    let mut keys: Vec<String> = TRUSTED_KEYS.iter().map(|k| k.to_string()).collect();
+    let mut keys = compiled_keys();
     if let Ok(extra) = std::env::var(KEY_ENV) {
         keys.extend(extra.split(',').map(|k| k.trim().to_string()).filter(|k| !k.is_empty()));
     }

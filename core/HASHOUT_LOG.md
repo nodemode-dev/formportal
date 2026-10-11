@@ -21,6 +21,13 @@ A process counts as an open copy of an install when its executable, its first tw
 
 Each version installs into its own folder, so an update while the app is open never touches the open copy: the new folder becomes current, the open one stays as previous, and the new version opens next time. That is Creative Cloud's "updates apply when the app is not in use" without a background process to wait for the close. Refused with `CoreError::Running`: replacing the folder of the version that is open (reinstalling the same version) and removing a channel with any copy open. A previous version that is open is never pruned; `sweep` removes any version folder that is neither current nor previous once nothing runs from it, so a skipped prune is cleaned up on the next install.
 
+### Catalogue keys in a file
+- refers-to: catalog_keys.txt · src/signature.rs :: TRUSTED_KEYS, compiled_keys
+- kind: decision
+- logged: v0.28.0 · 2026-10-11
+
+The trusted public keys are lines of `core/catalog_keys.txt`, compiled in with `include_str!` (comments start with `#`). Adding formai.dev's key is a one-line edit to a text file, reviewable in a diff, with no Rust touched. The pair is formai_dev's: `python -m app.signing` in `site/backend` prints the private seed for the site's `FORMAI_CATALOG_KEY` and the public key for this file. The file ships empty because the owner has not published a key; a key made in a build session would be a key nobody controls. Verified with a throwaway pair: a catalogue signed with it installed through `FORMAI_CATALOG_PUBKEY`, and through the file when the key was put in it for that run and taken out again; a catalogue signed with another key was refused.
+
 ### Invalid
 - refers-to: src/error.rs :: CoreError::Invalid
 - kind: explainer
