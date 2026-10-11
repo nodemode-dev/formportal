@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.31.0 · 2026-10-11
+
+- Extensions: install, update, turn off and remove packages from the open catalogue on the Extensions screen.
+- Every package is checked against the catalogue's hash, its publisher's signature when it has one, and its own manifest; a package that runs native code must be signed unless you turn on the developer setting.
+- Open a `.formpkg` file with FormPortal to install it; a package the catalogue does not list is labelled as sideloaded.
+- Apps pick up their extensions from FormPortal the next time they start.
+- Command line and MCP: `extensions`, `extension_install`, `extension_remove`, `extension_enable`.
+
 ## v0.30.0 · 2026-10-11
 
 - Other versions: every app's More menu lists the versions the catalogue offers (the latest and up to five before it) and installs any of them, newer or older.
