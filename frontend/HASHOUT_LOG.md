@@ -5,6 +5,29 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.27.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.28.0 · links and theme {#links-theme}
+
+### formai://app/[id] opens the app's page
+- refers-to: src/main.ts :: link.open
+- kind: decision
+- logged: v0.28.0 · 2026-10-11
+
+The link first asks for the route `app-[id]` (the per-app page written at build time since 0.23.0); the route extension ignores routes that have no pane, so for an id without a page the link falls back to the apps screen with that app shown, as before. Nothing is built at run time; the pane already exists.
+
+### Theme: System, Dark, Light
+- refers-to: public/prepaint.js · src/extensions/theme/index.ts · index.html :: data-theme-set
+- kind: decision
+- logged: v0.28.0 · 2026-10-11
+
+The stored key holds `light` or `dark` only; no key means System, which is the default. prepaint.js decides before the first paint (stored choice, else `prefers-color-scheme`), so the first frame is final. The extension follows the system's changes only while in System, and writes `data-theme` and `aria-pressed` only when they differ. Storage that throws falls back to System. The Settings segment's markup starts with System pressed; Settings is never the first screen, so the extension's correction for a stored choice is not seen.
+
+### Verified
+- refers-to: the two entries above
+- kind: explainer
+- logged: v0.28.0 · 2026-10-11
+
+Built and served by `vite preview`, headless Chromium at 4x CPU and a 150 ms, 200 KB/s network: with no stored choice a light system starts light and a dark one dark, a stored dark on a light system starts dark and the reverse, with no `data-theme` change after the document loaded and no node removed; `?link=app/formvis` opened FormVis's page with FormVis in the top bar; in Settings, Light, System, a system switch to light while in System, then Dark each set the attribute, the pressed button and the stored key as expected, no overflow. Known and older than this change: one layout shift of 0.00098 on the lineup's "FORM APPS" label on a slow network, measured identically on the 0.28.0 build before these edits; it is listed in DEV_PLAN for the interface phase.
+
 ## v0.27.0 · the move {#move}
 
 ### Paths to design and catalog

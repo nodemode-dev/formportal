@@ -84,8 +84,11 @@ engine.command("app.remove", (arg) =>
 engine.command("link.open", (arg) => {
   const [head, id] = String(arg).split("/");
   if (head === "app" && id) {
-    void engine.dispatch("route.go", "apps");
-    void engine.dispatch("app.show", id);
+    void engine.dispatch("route.go", `app-${id}`);
+    if (engine.state.route !== `app-${id}`) {
+      void engine.dispatch("route.go", "apps");
+      void engine.dispatch("app.show", id);
+    }
   } else {
     void engine.dispatch("route.go", head);
   }
