@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionIndex, InstallRecord, Platform } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionIndex, InstallRecord, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -67,6 +67,20 @@ export const tauriBridge: Bridge = {
   rollback: async (product, channel) => record(await tauri().core.invoke<RawInstall>("rollback", { product, channel })),
   remove: async (product, channel) => {
     await tauri().core.invoke<null>("remove", { product, channel });
+  },
+  preferences: () => tauri().core.invoke<Preferences>("preferences"),
+  setPreferences: async (preferences) => {
+    await tauri().core.invoke<null>("set_preferences", { preferences });
+  },
+  autoUpdate: async (progress) => {
+    const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>
+      progress(payload.product, payload.channel, payload.total > 0 ? payload.have / payload.total : 0),
+    );
+    try {
+      return await tauri().core.invoke<UpdateOutcome[]>("auto_update", { url: catalogUrl(), allowUnsigned: allowUnsigned() });
+    } finally {
+      stop();
+    }
   },
   onLink: (handler) => {
     void tauri().event.listen<string>("deep-link", ({ payload }) => handler(payload));

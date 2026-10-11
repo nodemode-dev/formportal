@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ChannelView, ExtensionIndex, InstallRecord, Platform, Product, Route, Source } from "./types.ts";
+import type { Catalog, Channel, ChannelView, ExtensionIndex, InstallRecord, Platform, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -9,6 +9,25 @@ export interface EngineEvents {
   source: { source: Source; generated: string | null };
   product: { id: string };
   extensions: { count: number };
+  prefs: { prefs: Preferences };
+}
+
+export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {} };
+
+export function versionNewer(candidate: string, current: string): boolean {
+  const split = (v: string): [number[], string | null] => {
+    const [core, ...pre] = v.trim().replace(/^v/, "").split("-");
+    return [core.split(".").map((n) => Number.parseInt(n, 10) || 0), pre.length ? pre.join("-") : null];
+  };
+  const [a, ap] = split(candidate);
+  const [b, bp] = split(current);
+  for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+    const x = a[i] ?? 0;
+    const y = b[i] ?? 0;
+    if (x !== y) return x > y;
+  }
+  if (ap === null) return bp !== null;
+  return bp !== null && ap > bp;
 }
 
 export interface HubState {
@@ -18,6 +37,7 @@ export interface HubState {
   source: Source;
   catalog: Catalog | null;
   extensions: ExtensionIndex | null;
+  prefs: Preferences;
 }
 
 type Handler<T> = (payload: T) => void;
@@ -31,6 +51,7 @@ export class Engine {
     source: "none",
     catalog: null,
     extensions: null,
+    prefs: { ...DEFAULT_PREFS },
   };
   private handlers = new Map<keyof EngineEvents, Set<Handler<never>>>();
   private commands = new Map<string, Command>();
@@ -114,6 +135,18 @@ export class Engine {
 
   setNotice(text: string): void {
     this.emit("notice", { text });
+  }
+
+  setPrefs(prefs: Preferences): void {
+    this.state.prefs = prefs;
+    this.emit("prefs", { prefs });
+  }
+
+  automatic(product: string, channel: Channel): boolean {
+    const p = this.state.prefs;
+    const own = p.per_app[product];
+    if (own !== undefined) return own && (channel === "stable" || p.auto_update_beta);
+    return channel === "stable" ? p.auto_update : p.auto_update && p.auto_update_beta;
   }
 
   product(id: string): Product | null {

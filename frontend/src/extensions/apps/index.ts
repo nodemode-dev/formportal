@@ -1,3 +1,4 @@
+import { versionNewer } from "../../engine/index.ts";
 import type { Channel, ChannelView } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -44,7 +45,7 @@ export const apps: Extension = {
       const record = engine.installs.get(key) ?? null;
       const progress = engine.progress.get(key);
       const offered = view.availability === "available" ? view.version : null;
-      const state = progress !== undefined ? "busy" : !record ? "none" : offered && offered !== record.version ? "update" : "ready";
+      const state = progress !== undefined ? "busy" : !record ? "none" : offered && versionNewer(offered, record.version) ? "update" : "ready";
       row.setAttribute("data-availability", view.availability);
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
@@ -66,6 +67,10 @@ export const apps: Extension = {
       const release = info?.channels[channel];
       const field = (name: string, text: string) => write(row.querySelector<HTMLElement>(`[data-field='${name}']`), text);
       field("date", release ? release.published.slice(0, 10) : "");
+      field("notes", release?.notes ?? "");
+      const auto = row.querySelector<HTMLInputElement>("[data-auto]");
+      const on = engine.automatic(product, channel);
+      if (auto && auto.checked !== on) auto.checked = on;
       field("file", view.artifact?.file ?? "");
       field("minimum", view.artifact?.minimum_os ?? "");
       field("sha256", view.artifact?.sha256 ?? "");
@@ -97,6 +102,14 @@ export const apps: Extension = {
     document.querySelector<HTMLButtonElement>("[data-updates-all]")?.addEventListener("click", () => void engine.dispatch("app.updateAll"));
 
     engine.on("source", () => rows.forEach(patch));
+    engine.on("prefs", () => rows.forEach(patch));
+    for (const row of rows) {
+      const auto = row.querySelector<HTMLInputElement>("[data-auto]");
+      auto?.addEventListener("change", () => {
+        const { product } = target(row);
+        void engine.dispatch("prefs.set", { per_app: { [product]: auto.checked } });
+      });
+    }
     engine.on("notice", ({ text }) => write(notice, text));
 
     for (const row of rows) {

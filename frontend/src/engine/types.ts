@@ -88,6 +88,22 @@ export interface Platform {
   arch: Arch;
 }
 
+export interface Preferences {
+  auto_update: boolean;
+  auto_update_beta: boolean;
+  only_when_closed: boolean;
+  notices: boolean;
+  per_app: Record<string, boolean>;
+}
+
+export interface UpdateOutcome {
+  product: string;
+  channel: Channel;
+  from: string;
+  to: string;
+  error: string | null;
+}
+
 export interface InstallRecord {
   product: string;
   channel: Channel;

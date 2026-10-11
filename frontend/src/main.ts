@@ -1,6 +1,7 @@
 import { pickBridge } from "./bridge/index.ts";
-import { Engine } from "./engine/index.ts";
-import type { Channel } from "./engine/types.ts";
+import { Engine, versionNewer } from "./engine/index.ts";
+import type { Channel, Preferences } from "./engine/types.ts";
+import pkg from "../package.json";
 import { apps } from "./extensions/apps/index.ts";
 import { library } from "./extensions/library/index.ts";
 import { activateAll, register } from "./extensions/registry.ts";
@@ -40,6 +41,33 @@ engine.command("catalog.load", () =>
     const [catalog, extensions] = await Promise.all([bridge.catalog(), bridge.extensions()]);
     engine.setCatalog(catalog, bridge.source);
     engine.setExtensions(extensions);
+    engine.setPrefs(await bridge.preferences());
+    const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
+    for (const d of done) engine.setProgress(d.product, d.channel, null);
+    if (done.length) await refresh();
+    const name = (id: string) => engine.product(id)?.name ?? id;
+    const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)} ${d.to}${d.channel === "stable" ? "" : ` (${d.channel})`}`);
+    const failed = done.filter((d) => d.error).map((d) => `${name(d.product)}: ${d.error}`);
+    const waiting = Array.from(engine.installs.values()).filter((r) => {
+      const v = engine.view(r.product, r.channel);
+      return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version);
+    }).length;
+    const self = engine.view("formai", "stable");
+    const parts = [
+      ok.length ? `Updated ${ok.join(", ")}.` : "",
+      failed.length ? `Could not update ${failed.join("; ")}.` : "",
+      waiting ? `${waiting} ${waiting === 1 ? "update is" : "updates are"} waiting in Updates.` : "",
+      self.version && versionNewer(self.version, pkg.version) ? `FormPortal ${self.version} is available at formai.dev/download.` : "",
+    ].filter(Boolean);
+    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "));
+  }),
+);
+
+engine.command("prefs.set", (arg) =>
+  guard(async () => {
+    const next = { ...engine.state.prefs, ...(arg as Partial<Preferences>), per_app: { ...engine.state.prefs.per_app, ...((arg as Partial<Preferences>).per_app ?? {}) } };
+    await bridge.setPreferences(next);
+    engine.setPrefs(next);
   }),
 );
 
@@ -59,7 +87,7 @@ engine.command("app.install", (arg) =>
 engine.command("app.updateAll", async () => {
   for (const record of Array.from(engine.installs.values())) {
     const view = engine.view(record.product, record.channel);
-    if (view.availability === "available" && view.version && view.version !== record.version) {
+    if (view.availability === "available" && view.version && versionNewer(view.version, record.version)) {
       await engine.dispatch("app.install", { product: record.product, channel: record.channel });
     }
   }

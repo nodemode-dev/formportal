@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionIndex, InstallRecord, Platform, Source } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionIndex, InstallRecord, Platform, Preferences, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -13,6 +13,9 @@ export interface Bridge {
   rollback(product: string, channel: Channel): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;
   onLink(handler: (target: string) => void): void;
+  preferences(): Promise<Preferences>;
+  setPreferences(prefs: Preferences): Promise<void>;
+  autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
 }
 
 export function pickBridge(): Bridge {

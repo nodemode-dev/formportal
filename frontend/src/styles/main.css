@@ -1135,6 +1135,21 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   accent-color: var(--ink);
 }
 
+.setting-stack {
+  display: grid;
+  gap: var(--sp-2);
+  justify-items: start;
+}
+
+.drop-item.check {
+  gap: var(--sp-2);
+}
+
+.drop-notes {
+  white-space: normal;
+  max-inline-size: 36ch;
+}
+
 .mark {
   inline-size: var(--control-h);
   block-size: var(--control-h);

@@ -5,6 +5,36 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.28.0
 Last updated: 2026-10-11 · standalone repository
 
+## v0.29.0 · updates {#updates}
+
+### Automatic updates when the catalogue loads
+- refers-to: src/main.ts :: catalog.load, prefs.set · src/bridge/*.ts :: preferences, setPreferences, autoUpdate
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+After the catalogue loads, the window reads the preferences from the core and asks it to apply the automatic updates (`auto_update` in the shell, which emits the same `install-progress` events as Install, so rows show their progress). Then one notice: what was updated, what failed, how many updates still wait, and whether a newer FormPortal is in the catalogue (product `formai`, compared with this build's package.json version). The notice is skipped when `notices` is off, except for failures. The fixture bridge does the same in memory; `?auto=off` starts it with automatic updates off, `?installed=formcut:2.6.1` seeds an install.
+
+### Only newer versions
+- refers-to: src/engine/index.ts :: versionNewer · src/extensions/apps/index.ts :: patch · src/main.ts :: app.updateAll
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+A row says "Update to" only when the offered version is newer, by the same rule as the core's `version_newer`. Before, any different version counted, so an older catalogue would have offered a downgrade as an update.
+
+### Preferences in the interface
+- refers-to: index.html :: data-pref · row-actions.html :: data-auto, data-field notes · src/extensions/settings, src/extensions/apps
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+Four checkboxes under Settings, Updates, and "Update automatically" in every row's More menu (a per-app override saved in `per_app`), all in the build-time markup; the extensions write `checked` only when it differs. Release notes are a "What's new" line in Details, hidden when empty by the existing `div:has(dd:empty)` rule. Engine.automatic mirrors the core's rule so the More checkbox shows what the core will do.
+
+### Verified, and one shift
+- refers-to: the entries above
+- kind: warning-context
+- logged: v0.29.0 · 2026-10-11
+
+Headless Chromium, 4x CPU, the built interface: `?installed=formcut:2.6.1` updated FormCut to 2.6.2 on load with the notice, layout shift 0, no node removed; with `?auto=off` the row said "Update to 2.6.2", the notice "1 update is waiting", the count 1; ticking Update automatically in More set the per-app override for every FormCut stable row; Beta builds too in Settings ticked every beta row's box; Details showed What's new. No overflow, no script error. One shift of 0.0117 at load, sourced to the sidebar's groups: a `formai://app/` link to an app outside the open group makes the accordion open that group (0.24.0's rule) with no input event in the window, so the layout-shift record counts it. It is the same movement a click on the sidebar causes; it is logged for the interface phase (DEV_PLAN Phase 6), and the 0.28.0 link check's 0.00028 was a smaller case of it.
+
 ## v0.28.0 · links and theme {#links-theme}
 
 ### formai://app/[id] opens the app's page

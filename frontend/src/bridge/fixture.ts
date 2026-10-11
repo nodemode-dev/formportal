@@ -1,6 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
-import type { Catalog, Channel, ExtensionIndex, InstallRecord, Os, Platform } from "../engine/types.ts";
+import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
+import type { Catalog, Channel, ExtensionIndex, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -22,6 +23,8 @@ for (const seed of (new URLSearchParams(window.location.search).get("installed")
   const [product, version] = seed.split(":");
   if (product && version) installed.set(key(product, "stable"), { product, channel: "stable", version, previous: null });
 }
+
+let prefs: Preferences = { ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
 
 function missing(product: string): Error {
   return new Error(`${product} is not installed`);
@@ -61,5 +64,22 @@ export const fixtureBridge: Bridge = {
   onLink: (handler) => {
     const link = new URLSearchParams(window.location.search).get("link");
     if (link) handler(link);
+  },
+  preferences: async () => ({ ...prefs, per_app: { ...prefs.per_app } }),
+  setPreferences: async (next) => {
+    prefs = { ...next, per_app: { ...next.per_app } };
+  },
+  autoUpdate: async (progress) => {
+    const done: UpdateOutcome[] = [];
+    for (const record of Array.from(installed.values())) {
+      const release = catalog.products.find((p) => p.id === record.product)?.channels[record.channel];
+      if (!release || !versionNewer(release.version, record.version)) continue;
+      const own = prefs.per_app[record.product];
+      const automatic = own !== undefined ? own && (record.channel === "stable" || prefs.auto_update_beta) : record.channel === "stable" ? prefs.auto_update : prefs.auto_update && prefs.auto_update_beta;
+      if (!automatic) continue;
+      await fixtureBridge.install(record.product, record.channel, (f) => progress(record.product, record.channel, f));
+      done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: null });
+    }
+    return done;
   },
 };

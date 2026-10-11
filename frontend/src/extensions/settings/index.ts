@@ -51,6 +51,14 @@ export const settings: Extension = {
     } catch {
       engine.setNotice("");
     }
+    const prefBoxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-pref]"));
+    engine.on("prefs", ({ prefs }) => {
+      for (const box of prefBoxes) {
+        const on = Boolean(prefs[box.dataset.pref as "auto_update" | "auto_update_beta" | "only_when_closed" | "notices"]);
+        if (box.checked !== on) box.checked = on;
+      }
+    });
+    for (const box of prefBoxes) box.addEventListener("change", () => void engine.dispatch("prefs.set", { [box.dataset.pref ?? ""]: box.checked }));
     address?.addEventListener("change", () => {
       keep(CATALOG_KEY, address.value.trim());
       void engine.dispatch("catalog.load");
