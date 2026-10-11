@@ -16,7 +16,7 @@ Do not drive an app's files or folders by hand from FormPortal's install folder.
 
 ## Links from formai.dev
 
-formai.dev links into FormPortal with `formai://app/[id]` (the apps screen with that app shown), `formai://apps`, `formai://updates`, `formai://beta`, `formai://extensions`, `formai://settings`. They open the window; agents use the tools instead.
+formai.dev links into FormPortal with `formai://app/[id]` (that app's own page), `formai://apps`, `formai://updates`, `formai://beta`, `formai://extensions`, `formai://settings`. They open the window; agents use the tools instead.
 
 ## Names that are easy to confuse
 
