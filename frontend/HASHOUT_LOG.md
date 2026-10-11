@@ -1,9 +1,25 @@
-# HASHOUT_LOG · hub/frontend · formai_dev
+# HASHOUT_LOG · frontend · formportal
 
-Living log for the hub's interface. Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
+Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.1.0
-Last updated: 2026-10-04 · scaffold
+Current build version: v0.27.0
+Last updated: 2026-10-11 · standalone repository
+
+## v0.27.0 · the move {#move}
+
+### Paths to design and catalog
+- refers-to: vite.config.ts :: DESIGN, CATALOG · tsconfig.json :: include · src/styles/main.css :: @import · src/bridge/fixture.ts :: imports
+- kind: decision
+- logged: v0.27.0 · 2026-10-11
+
+`frontend/` sits at the repository root now, so `design/` and `catalog/` are one level up (`../design`, `../catalog`; `../../../` from `src/`). Both folders are copies of formai_dev 0.26.0. The catalogue contract is still formai_dev's to change; a change there is copied here, never edited here first.
+
+### Names in the browser
+- refers-to: src/bridge/tauri.ts :: CATALOG_KEY, UNSIGNED_KEY · src/extensions/theme/index.ts :: KEY · public/prepaint.js · src/extensions/settings/index.ts :: where
+- kind: decision
+- logged: v0.27.0 · 2026-10-11
+
+Stored keys are `formportal-theme`, `formportal-catalog-url`, `formportal-allow-unsigned` (were `formai-*`); prepaint.js and the theme extension must name the same key or the theme flashes on first paint. Settings shows the install folders `core` now uses. The default catalogue address stays formai.dev's.
 
 ---
 

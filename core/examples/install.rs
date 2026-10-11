@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 use std::{env, fs};
 
-use formai_core::{Availability, Catalog, Channel, CoreError, Hub, Platform};
+use formportal_core::{Availability, Catalog, Channel, CoreError, Platform, Portal};
 
 fn usage() -> ExitCode {
     eprintln!("usage: install <product> --catalog <file or address> [--channel stable|beta] [--root <folder>] [--allow-unsigned] [--launch | --rollback | --uninstall | --status]");
@@ -20,7 +20,7 @@ fn run() -> Result<(), CoreError> {
         Some("nightly") => Channel::Nightly,
         _ => Channel::Stable,
     };
-    let hub = Hub::new(value("--root").map(PathBuf::from).unwrap_or_else(Hub::default_root));
+    let hub = Portal::new(value("--root").map(PathBuf::from).unwrap_or_else(Portal::default_root));
     if has("--status") {
         for install in hub.state()?.installs {
             let previous = install.previous.map(|p| p.version).unwrap_or_else(|| "-".to_string());

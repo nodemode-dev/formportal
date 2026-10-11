@@ -1,6 +1,6 @@
 use std::{env, fs, process::ExitCode};
 
-use formai_core::{Catalog, Channel, Platform, CORE_VERSION};
+use formportal_core::{Catalog, Channel, Platform, CORE_VERSION};
 
 fn main() -> ExitCode {
     let Some(path) = env::args().nth(1) else {
@@ -22,7 +22,7 @@ fn main() -> ExitCode {
         }
     };
     let platform = Platform::current();
-    println!("formai-core {CORE_VERSION} on {platform:?}, catalogue of {} (fixture: {})", catalog.generated, catalog.fixture);
+    println!("formportal-core {CORE_VERSION} on {platform:?}, catalogue of {} (fixture: {})", catalog.generated, catalog.fixture);
     for product in &catalog.products {
         for channel in [Channel::Stable, Channel::Beta] {
             let view = catalog.view(&product.id, channel, platform);

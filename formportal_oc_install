@@ -16,4 +16,5 @@ fi
 cargo fetch --locked
 
 echo
-echo "formai is ready to run from source. Start it with: ./formai_hub"
+echo "FormPortal is ready to run from source. Start it with: ./formportal"
+echo "Agents (Claude Code, Codex, Cursor) reach it through ./formportal mcp; see AGENTS.md."

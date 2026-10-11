@@ -1,9 +1,18 @@
-# HASHOUT_LOG · hub/src-tauri · formai_dev
+# HASHOUT_LOG · src-tauri · formportal
 
-Living log for the hub's desktop shell. Source files stay comment-free; what they would have said lives here.
+Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.1.0
-Last updated: 2026-10-04 · scaffold
+Current build version: v0.27.0
+Last updated: 2026-10-11 · standalone repository
+
+## v0.27.0 · the move {#move}
+
+### Identity
+- refers-to: Cargo.toml :: package.name · tauri.conf.json :: identifier, bundle · capabilities/default.json :: description · src/main.rs :: expect
+- kind: decision
+- logged: v0.27.0 · 2026-10-11
+
+Package `formportal`, identifier `dev.formai.portal` (was `formai` and `dev.formai.hub`). The identifier decides where macOS keeps the web view's data and how Windows registers the app; nothing shipped under the old one. The deep-link scheme stays `formai://` because formai.dev's pages already link with it (`formai://app/<id>`, `formai://apps`) and the site is not changed until FormPortal is complete. The function `hub()` in main.rs returns a `Portal`; its name is local and was left.
 
 ---
 

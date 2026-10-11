@@ -1,9 +1,25 @@
-# HASHOUT_LOG · hub/core · formai_dev
+# HASHOUT_LOG · core · formportal
 
-Living log for `formai-core`, the hub's engine in Rust. Source files stay comment-free; what they would have said lives here.
+Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.9.0
-Last updated: 2026-10-05 · download, verify, install, launch, roll back, uninstall
+Current build version: v0.27.0
+Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
+
+## v0.27.0 · the move {#move}
+
+### Names
+- refers-to: Cargo.toml :: package.name · src/portal.rs :: Portal · src/lib.rs :: pub mod portal
+- kind: decision
+- logged: v0.27.0 · 2026-10-11
+
+The crate is `formportal-core`, the module `portal`, the type `Portal` (was `formai-core`, `hub`, `Hub`), because FormHub is the family's GitHub alternative and "hub" for FormPortal reads as that app. What stays named formai on purpose: `CATALOG_FORMAT` "formai-catalog" and the extension index's "formai-extensions" (formai.dev publishes them, they are the contract), `FORMAI_CATALOG_PUBKEY` (the key the site signs with), and the error sentence "this is not a formai catalogue", which names that contract.
+
+### Where installs live
+- refers-to: src/portal.rs :: Portal::default_root
+- kind: decision
+- logged: v0.27.0 · 2026-10-11
+
+macOS `~/Library/Application Support/dev.formai.portal`, Windows `%LOCALAPPDATA%\FormPortal`, Linux `$XDG_DATA_HOME/formportal` (was `dev.formai.hub` and `formai`). Nothing was released under the old names, so no migration is written. `FORMPORTAL_ROOT` overrides all three; the command line and the MCP server use it so an agent or a developer can work in a scratch folder without touching real installs.
 
 ---
 

@@ -96,7 +96,7 @@ function renderPortal(html: string): string {
 
 function hubPlugin(): Plugin {
   return {
-    name: "formai-hub",
+    name: "formportal",
     transformIndexHtml: {
       order: "pre",
       handler(source) {

@@ -20,8 +20,8 @@ interface RawProgress {
   total: number;
 }
 
-export const CATALOG_KEY = "formai-catalog-url";
-export const UNSIGNED_KEY = "formai-allow-unsigned";
+export const CATALOG_KEY = "formportal-catalog-url";
+export const UNSIGNED_KEY = "formportal-allow-unsigned";
 export const DEFAULT_CATALOG = "https://formai.dev/catalog/v1/apps.json";
 
 const tauri = (): TauriGlobal => (window as unknown as { __TAURI__: TauriGlobal }).__TAURI__;

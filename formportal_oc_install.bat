@@ -18,4 +18,5 @@ cd ..
 cargo fetch --locked || exit /b 1
 
 echo.
-echo formai is ready to run from source. Start it with: formai_hub.bat
+echo FormPortal is ready to run from source. Start it with: formportal.bat
+echo Agents (Claude Code, Codex, Cursor) reach it through formportal.bat mcp; see AGENTS.md.

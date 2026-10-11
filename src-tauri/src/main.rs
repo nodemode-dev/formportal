@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use formai_core::{Availability, Catalog, Channel, Hub, Install, Platform};
+use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal};
 use std::sync::Mutex;
 
 use serde::Serialize;
@@ -15,8 +15,8 @@ struct Progress {
     total: u64,
 }
 
-fn hub() -> Hub {
-    Hub::new(Hub::default_root())
+fn hub() -> Portal {
+    Portal::new(Portal::default_root())
 }
 
 fn text<E: std::fmt::Display>(e: E) -> String {
@@ -124,5 +124,5 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove, launch_link])
         .run(tauri::generate_context!())
-        .expect("formai could not start");
+        .expect("FormPortal could not start");
 }

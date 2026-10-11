@@ -10,7 +10,7 @@ use crate::signature::{trusted_keys, verify};
 use crate::state::{Install, InstalledVersion, State};
 use crate::{Artifact, ArtifactKind, Catalog, Channel};
 
-pub struct Hub {
+pub struct Portal {
     root: PathBuf,
 }
 
@@ -110,19 +110,22 @@ fn find_target(dir: &Path, product: &str) -> Option<PathBuf> {
     entries.iter().find(|p| has_extension(p, "AppImage")).or_else(|| entries.iter().find(|p| executable(p))).cloned()
 }
 
-impl Hub {
+impl Portal {
     pub fn default_root() -> PathBuf {
+        if let Some(root) = std::env::var_os("FORMPORTAL_ROOT") {
+            return PathBuf::from(root);
+        }
         if cfg!(target_os = "macos") {
-            home().join("Library").join("Application Support").join("dev.formai.hub")
+            home().join("Library").join("Application Support").join("dev.formai.portal")
         } else if cfg!(target_os = "windows") {
-            std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(|| home().join("AppData").join("Local")).join("formai")
+            std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(|| home().join("AppData").join("Local")).join("FormPortal")
         } else {
-            std::env::var_os("XDG_DATA_HOME").map(PathBuf::from).unwrap_or_else(|| home().join(".local").join("share")).join("formai")
+            std::env::var_os("XDG_DATA_HOME").map(PathBuf::from).unwrap_or_else(|| home().join(".local").join("share")).join("formportal")
         }
     }
 
     pub fn new(root: impl Into<PathBuf>) -> Self {
-        Hub { root: root.into() }
+        Portal { root: root.into() }
     }
 
     pub fn root(&self) -> &Path {

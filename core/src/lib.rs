@@ -5,12 +5,12 @@ use serde::{Deserialize, Serialize};
 
 pub mod download;
 pub mod error;
-pub mod hub;
+pub mod portal;
 pub mod signature;
 pub mod state;
 
 pub use error::CoreError;
-pub use hub::Hub;
+pub use portal::Portal;
 pub use state::{Install, InstalledVersion, State};
 
 pub const CORE_VERSION: &str = env!("CARGO_PKG_VERSION");

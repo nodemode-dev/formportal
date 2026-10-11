@@ -1,8 +1,8 @@
 {
-  "name": "formai-hub",
+  "name": "formportal",
   "private": true,
   "version": "0.26.0",
-  "description": "formai, the hub for formcut, formvis and formwav",
+  "description": "FormPortal's interface: the Form family's app portal",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {

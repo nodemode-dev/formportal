@@ -1,7 +1,7 @@
 [package]
-name = "formai-core"
+name = "formportal-core"
 version = "0.26.0"
-description = "The formai hub's core: the catalogue and what it offers a computer. No window, no interface."
+description = "FormPortal's core: the catalogue, what it offers a computer, and installing, opening, rolling back and removing apps. No window, no interface."
 authors = ["nodemode-ai"]
 license = "GPL-3.0-only"
 edition = "2021"

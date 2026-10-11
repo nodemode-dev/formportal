@@ -1,6 +1,6 @@
 import type { Extension } from "../registry.ts";
 
-const KEY = "formai-theme";
+const KEY = "formportal-theme";
 
 export const theme: Extension = {
   id: "theme",

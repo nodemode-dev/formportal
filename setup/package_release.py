@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HUB = Path(__file__).resolve().parent.parent
-REPOSITORY = "https://github.com/nodemode-ai/formai_dev"
+REPOSITORY = "https://github.com/nodemode-ai/formportal"
 FLOORS = {"macos": "macOS 12", "windows": "Windows 10"}
 
 
@@ -36,7 +36,7 @@ def floor(system: str) -> str:
 def members(system: str, bundle: Path) -> list[tuple[Path, str]]:
     if system == "linux":
         found = sorted(bundle.glob("appimage/*.AppImage"))
-        return [(found[0], "formai.AppImage")] if found else [(p, p.name) for p in sorted(bundle.glob("deb/*.deb"))]
+        return [(found[0], "FormPortal.AppImage")] if found else [(p, p.name) for p in sorted(bundle.glob("deb/*.deb"))]
     if system == "windows":
         return [(p, p.name) for p in sorted(bundle.glob("nsis/*.exe"))]
     return []
@@ -44,7 +44,7 @@ def members(system: str, bundle: Path) -> list[tuple[Path, str]]:
 
 def pack(system: str, arch: str, bundle: Path, out: Path) -> dict:
     out.mkdir(parents=True, exist_ok=True)
-    name = f"formai-{version()}-{system}-{arch}.zip"
+    name = f"formportal-{version()}-{system}-{arch}.zip"
     target = out / name
     target.unlink(missing_ok=True)
     if system == "macos":
@@ -73,7 +73,7 @@ def finish(out: Path) -> dict:
         sys.exit(f"no manifest-*.json under {out}")
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=HUB, capture_output=True, text=True).stdout.strip()
     manifest = {
-        "name": "formai",
+        "name": "formportal",
         "version": version(),
         "commit": commit,
         "published": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -88,11 +88,11 @@ def finish(out: Path) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Pack a built formai bundle as a release zip, or finish a release from packed parts.")
+    parser = argparse.ArgumentParser(description="Pack a built FormPortal bundle as a release zip, or finish a release from packed parts.")
     parser.add_argument("--platform", choices=["macos", "windows", "linux"])
     parser.add_argument("--arch", choices=["arm64", "x86_64"])
     parser.add_argument("--bundle-dir", default=str(HUB / "target" / "release" / "bundle"))
-    parser.add_argument("--out", default=str(HUB.parent / "release-dist"))
+    parser.add_argument("--out", default=str(HUB / "release-dist"))
     parser.add_argument("--finish", action="store_true")
     args = parser.parse_args()
     out = Path(args.out)

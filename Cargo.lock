@@ -1166,10 +1166,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "formai"
+name = "formportal"
 version = "0.26.0"
 dependencies = [
- "formai-core",
+ "formportal-core",
  "serde",
  "serde_json",
  "tauri",
@@ -1179,7 +1179,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "formai-core"
+name = "formportal-core"
 version = "0.26.0"
 dependencies = [
  "base64 0.22.1",
