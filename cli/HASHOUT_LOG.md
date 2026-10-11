@@ -55,6 +55,13 @@ Only JSON-RPC lines go to stdout. The dispatcher builds with `cargo build -q` to
 
 A `source` that is not an http(s) address is read as a file and parsed without a signature, like the core's install example; it is for fixtures and development. Remote sources go through `Portal::catalog`, signature and all, with `allow_unsigned` only when asked.
 
+### When ./formportal mcp rebuilds
+- refers-to: ../formportal :: case mcp|cli
+- kind: warning-context
+- logged: v0.27.0 · 2026-10-11
+
+The dispatcher rebuilds the release binary when anything under `cli/` or `core/` (sources, Cargo.toml), `catalog/products.json` (compiled in) or `Cargo.lock` is newer than it. The first version looked only at `.rs` files, so after the 0.27.0 bump the server still reported 0.26.0; caught by asking it for `serverInfo` after the bump.
+
 ### Verified
 - refers-to: src/mcp.rs
 - kind: explainer

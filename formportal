@@ -6,7 +6,7 @@ case "${1:-}" in
   mcp|cli)
     [ "$1" = "mcp" ] || shift
     bin=target/release/formportal-cli
-    if [ ! -x "$bin" ] || [ -n "$(find cli/src core/src -newer "$bin" -name '*.rs' 2>/dev/null | head -1)" ]; then
+    if [ ! -x "$bin" ] || [ -n "$(find cli core catalog/products.json Cargo.lock -newer "$bin" \( -name '*.rs' -o -name '*.toml' -o -name '*.json' -o -name '*.lock' \) 2>/dev/null | head -1)" ]; then
       cargo build -q --release --locked -p formportal-cli >&2
     fi
     exec "$bin" "$@"
