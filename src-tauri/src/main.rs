@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal};
+use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal, Preferences, Update, UpdateOutcome};
 use std::sync::Mutex;
 
 use serde::Serialize;
@@ -76,6 +76,46 @@ fn remove(product: String, channel: Channel) -> Result<(), String> {
     hub().uninstall(&product, channel).map_err(text)
 }
 
+#[tauri::command]
+async fn updates(url: String, allow_unsigned: bool) -> Result<Vec<Update>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
+        hub.updates(&catalog, Platform::current()).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Result<Vec<UpdateOutcome>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
+        let mut last = u64::MAX;
+        hub.apply_updates(&catalog, Platform::current(), true, &mut |product, channel, have, total| {
+            let step = if total > 0 { have * 100 / total } else { 0 };
+            if step != last {
+                last = step;
+                let _ = app.emit("install-progress", Progress { product: product.to_string(), channel, have, total });
+            }
+        })
+        .map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn preferences() -> Result<Preferences, String> {
+    hub().preferences().map_err(text)
+}
+
+#[tauri::command]
+fn set_preferences(preferences: Preferences) -> Result<(), String> {
+    hub().set_preferences(&preferences).map_err(text)
+}
+
 const SCHEME: &str = "formai://";
 
 struct Pending(Mutex<Option<String>>);
@@ -122,7 +162,7 @@ fn main() {
             app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove, launch_link])
+        .invoke_handler(tauri::generate_handler![platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences])
         .run(tauri::generate_context!())
         .expect("FormPortal could not start");
 }

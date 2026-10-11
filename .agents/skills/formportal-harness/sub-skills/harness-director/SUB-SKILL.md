@@ -20,7 +20,7 @@ One row per product and channel that would change:
 | Product | Channel | Installed | Offered | Size | Action |
 | --- | --- | --- | --- | --- | --- |
 
-- **Update everything** means every row where installed and offered differ and offered is `available`. A newer installed version than offered (a downgrade) is not an update: list it, do not act.
+- **Update everything** means the rows `updates` returns (it lists only newer versions, so a downgrade never appears); after the yes, `update {}` does them all in one call.
 - **Set up the family** means every `available` stable product the person names. When they say "everything", list the available ones and the in-progress ones separately, and install only what is available.
 - Add the total download size.
 

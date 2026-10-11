@@ -13,6 +13,9 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   info <product> [--source S]     one product's registry entry and releases
   installs                        what is installed
   install <product> [--channel C] [--source S] [--allow-unsigned]
+  updates [--source S]            what has a newer version, and whether it would update itself
+  update [<product>] [--channel C] [--automatic-only]
+  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...]
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]
@@ -29,8 +32,13 @@ fn args_to_json(rest: &[String]) -> Value {
         if let Some(key) = a.strip_prefix("--") {
             let key = key.replace('-', "_");
             match rest.get(i + 1).filter(|v| !v.starts_with("--")) {
-                Some(v) if key != "allow_unsigned" => {
-                    map.insert(key, json!(v));
+                Some(v) if key != "allow_unsigned" && key != "automatic_only" => {
+                    let value = match v.as_str() {
+                        "true" => json!(true),
+                        "false" => json!(false),
+                        _ => json!(v),
+                    };
+                    map.insert(key, value);
                     i += 1;
                 }
                 _ => {
@@ -77,6 +85,9 @@ fn main() -> ExitCode {
         "info" => ops::info(&ctx, &args),
         "installs" => ops::installs(&ctx),
         "install" => ops::install(&ctx, &args, &mut progress),
+        "updates" => ops::updates(&ctx, &args),
+        "update" => ops::update(&ctx, &args, &mut progress),
+        "preferences" => ops::preferences(&ctx, &args),
         "open" => ops::open(&ctx, &args),
         "rollback" => ops::rollback(&ctx, &args),
         "remove" => ops::remove(&ctx, &args),
@@ -89,7 +100,7 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    if cmd == "install" && last != u64::MAX {
+    if (cmd == "install" || cmd == "update") && last != u64::MAX {
         eprintln!();
     }
     match out {

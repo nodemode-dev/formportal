@@ -14,6 +14,12 @@ description: Installing, updating, opening, rolling back and removing Form apps 
 
 The result carries `installed.current` (version, path, SHA-256), `installed.previous` (what rollback would return to) and `opens` (the file `open` will start). A release FormPortal cannot unpack yet (a dmg, msi or deb) fails with "this build cannot install a ... file yet": point the person to the app's download page on formai.dev.
 
+## Updates and preferences
+
+- `updates` lists every installed app with a newer version: from, to, size, release notes, whether it is open, and whether the person's preferences update it automatically. It also says when FormPortal itself has a newer version (`formportal_update`), which the person downloads from formai.dev.
+- `update {product, channel?}` updates one app; `update {}` updates everything waiting; `update {automatic_only: true}` does only what the preferences allow, which is what FormPortal's window does each time it opens. Only a newer version counts as an update; an older one offered by the catalogue is never installed this way.
+- `preferences` reads the settings, or changes the ones given: `auto_update` (default on), `auto_update_beta` (default off), `only_when_closed` (default on), `notices` (default on), `per_app` (product id to true or false, null to follow the global switch). These are the person's choices; change one only when they ask.
+
 ## Open
 
 `open {product, channel?}` starts the installed app and returns its process id. Only when asked. On macOS the first start of an unsigned build may be stopped by the system; the person allows it once under Privacy and Security.

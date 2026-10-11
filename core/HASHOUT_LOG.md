@@ -5,6 +5,29 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.28.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
+## v0.29.0 · updates {#updates}
+
+### Preferences live in the install folder
+- refers-to: src/prefs.rs :: Preferences, automatic
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+`preferences.json` beside `installed.json`, so the window, the command line and the MCP server read one set. Defaults: automatic updates on (Creative Cloud's default, and FormPortal applies them only while it is open), betas off, only when the app is closed on, notices on. `per_app` overrides the global switch for one product; a beta still needs `auto_update_beta`. A missing file is the defaults; a broken one is a State error rather than silently reset.
+
+### Only newer versions
+- refers-to: src/lib.rs :: version_newer · src/portal.rs :: updates
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+Numeric comparison of the dotted parts, a release ranking above its own pre-release, and pre-release labels compared as text (so `beta.10` sorts before `beta.9`; good enough until a catalogue carries such labels). The interface's old rule (offered differs from installed) would have offered an older catalogue's version as an update.
+
+### apply_updates
+- refers-to: src/portal.rs :: apply_updates
+- kind: decision
+- logged: v0.29.0 · 2026-10-11
+
+One pass over `updates`, each through `install`, each failure recorded beside its row rather than stopping the pass. With `automatic_only` it skips what the preferences exclude and, under `only_when_closed`, apps with an open copy; the next time FormPortal opens, they are tried again.
+
 ## v0.28.0 · open apps {#open-apps}
 
 ### Finding open copies

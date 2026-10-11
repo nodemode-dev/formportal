@@ -8,11 +8,34 @@ use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::process;
 use crate::signature::{trusted_keys, verify};
+use crate::prefs::Preferences;
 use crate::state::{Install, InstalledVersion, State};
-use crate::{Artifact, ArtifactKind, Catalog, Channel};
+use crate::{version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform};
+use serde::Serialize;
 
 pub struct Portal {
     root: PathBuf,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct Update {
+    pub product: String,
+    pub channel: Channel,
+    pub from: String,
+    pub to: String,
+    pub bytes: u64,
+    pub notes: String,
+    pub open: bool,
+    pub automatic: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct UpdateOutcome {
+    pub product: String,
+    pub channel: Channel,
+    pub from: String,
+    pub to: String,
+    pub error: Option<String>,
 }
 
 fn home() -> PathBuf {
@@ -242,6 +265,55 @@ impl Portal {
 
     pub fn running(&self, product: &str, channel: Channel) -> Vec<process::Running> {
         process::under(&self.root.join("apps").join(product).join(channel_name(channel)))
+    }
+
+    pub fn preferences(&self) -> Result<Preferences> {
+        Preferences::load(&self.root)
+    }
+
+    pub fn set_preferences(&self, prefs: &Preferences) -> Result<()> {
+        prefs.save(&self.root)
+    }
+
+    pub fn updates(&self, catalog: &Catalog, platform: Platform) -> Result<Vec<Update>> {
+        let prefs = self.preferences()?;
+        let mut out = Vec::new();
+        for install in self.state()?.installs {
+            let view = catalog.view(&install.product, install.channel, platform);
+            let (Availability::Available, Some(version), Some(artifact)) = (view.availability, view.version, view.artifact) else { continue };
+            if !version_newer(version, &install.current.version) {
+                continue;
+            }
+            let open = !self.running(&install.product, install.channel).is_empty();
+            out.push(Update {
+                automatic: prefs.automatic(&install.product, install.channel),
+                product: install.product.clone(),
+                channel: install.channel,
+                from: install.current.version.clone(),
+                to: version.to_string(),
+                bytes: artifact.bytes,
+                notes: catalog.product(&install.product).and_then(|p| p.channels.get(&install.channel)).map(|r| r.notes.clone()).unwrap_or_default(),
+                open,
+            });
+        }
+        Ok(out)
+    }
+
+    pub fn apply_updates(&self, catalog: &Catalog, platform: Platform, automatic_only: bool, progress: &mut dyn FnMut(&str, Channel, u64, u64)) -> Result<Vec<UpdateOutcome>> {
+        let prefs = self.preferences()?;
+        let mut done = Vec::new();
+        for update in self.updates(catalog, platform)? {
+            if automatic_only && (!update.automatic || (prefs.only_when_closed && update.open)) {
+                continue;
+            }
+            let view = catalog.view(&update.product, update.channel, platform);
+            let Some(artifact) = view.artifact else { continue };
+            let product = update.product.clone();
+            let channel = update.channel;
+            let result = self.install(&product, channel, &update.to, artifact, &mut |have, total| progress(&product, channel, have, total));
+            done.push(UpdateOutcome { product, channel, from: update.from, to: update.to, error: result.err().map(|e| e.to_string()) });
+        }
+        Ok(done)
     }
 
     pub fn rollback(&self, product: &str, channel: Channel) -> Result<Install> {

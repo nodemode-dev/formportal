@@ -6,12 +6,39 @@ use serde::{Deserialize, Serialize};
 pub mod download;
 pub mod error;
 pub mod portal;
+pub mod prefs;
 pub mod process;
 pub mod signature;
 pub mod state;
 
 pub use error::CoreError;
-pub use portal::Portal;
+pub use portal::{Portal, Update, UpdateOutcome};
+pub use prefs::Preferences;
+
+pub fn version_newer(candidate: &str, current: &str) -> bool {
+    fn split(v: &str) -> (Vec<u64>, Option<&str>) {
+        let v = v.trim().trim_start_matches('v');
+        let (core, pre) = match v.split_once('-') {
+            Some((c, p)) => (c, Some(p)),
+            None => (v, None),
+        };
+        (core.split('.').map(|n| n.parse().unwrap_or(0)).collect(), pre)
+    }
+    let (a, ap) = split(candidate);
+    let (b, bp) = split(current);
+    let width = a.len().max(b.len());
+    for i in 0..width {
+        let (x, y) = (a.get(i).copied().unwrap_or(0), b.get(i).copied().unwrap_or(0));
+        if x != y {
+            return x > y;
+        }
+    }
+    match (ap, bp) {
+        (None, Some(_)) => true,
+        (Some(x), Some(y)) => x > y,
+        _ => false,
+    }
+}
 pub use state::{Install, InstalledVersion, State};
 
 pub const CORE_VERSION: &str = env!("CARGO_PKG_VERSION");

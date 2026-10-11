@@ -27,7 +27,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 ## The loop
 
 1. **Plan.** One line per change: product, channel, from which version to which, and the download size.
-2. **Confirm.** `install`, `rollback` and `remove` change the person's computer. Say what will change and get a yes first. `remove` also deletes the kept previous version.
+2. **Confirm.** `install`, `update`, `rollback`, `remove` and `preferences` changes alter the person's computer or choices. Say what will change and get a yes first. `remove` also deletes the kept previous version.
 3. **Act** with one tool call per product and channel.
 4. **Check** with `installs`: the version and SHA-256 now on disk. `open` only when the person wants the app started.
 5. **Report**: what changed, the version, where it is, and anything refused with its reason.
@@ -38,7 +38,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | --- | --- |
 | A broad request: set up the whole family, update everything, a new computer | `sub-skills/harness-director/SUB-SKILL.md` |
 | Tools missing, the server not starting, a catalogue refused, offline, a local or forked catalogue | `sub-skills/session-and-connection/SUB-SKILL.md` |
-| Installing, updating, opening, rolling back, removing | `sub-skills/install-and-update/SUB-SKILL.md` |
+| Installing, updating, update preferences, opening, rolling back, removing | `sub-skills/install-and-update/SUB-SKILL.md` |
 | Beta and nightly builds beside stable | `sub-skills/channels-and-beta/SUB-SKILL.md` |
 | Which apps exist, what each replaces, status and groups | `sub-skills/catalog-and-registry/SUB-SKILL.md` |
 | Using an installed Form app through its own MCP server, deep links, formai.dev | `sub-skills/form-family-bridge/SUB-SKILL.md` |

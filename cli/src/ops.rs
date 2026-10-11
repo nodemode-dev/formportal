@@ -166,6 +166,69 @@ pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> R
     Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note }))
 }
 
+pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let (catalog, source) = load(ctx, args)?;
+    let list = ctx.portal.updates(&catalog, Platform::current())?;
+    let me = catalog.view("formai", Channel::Stable, Platform::current());
+    let portal = me.version.filter(|v| formportal_core::version_newer(v, CORE_VERSION)).map(|v| json!({ "version": v, "get": "https://formai.dev/download/" }));
+    Ok(json!({ "source": source, "updates": list, "formportal_update": portal }))
+}
+
+pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    let (catalog, _) = load(ctx, args)?;
+    let platform = Platform::current();
+    match text(args, "product") {
+        Some(id) => {
+            let ch = channel(args)?;
+            let pending = ctx.portal.updates(&catalog, platform)?.into_iter().find(|u| u.product == id && u.channel == ch);
+            let Some(u) = pending else {
+                return Err(fail(format!("{id} on {} has no newer version in the catalogue; updates lists what has", formportal_core::portal::channel_name(ch))));
+            };
+            let view = catalog.view(&id, ch, platform);
+            let artifact = view.artifact.ok_or_else(|| fail(format!("{id} has no file for this computer")))?;
+            let done = ctx.portal.install(&id, ch, &u.to, artifact, progress)?;
+            Ok(json!({ "updated": [{ "product": id, "channel": formportal_core::portal::channel_name(ch), "from": u.from, "to": done.current.version, "error": null }] }))
+        }
+        None => {
+            let automatic_only = flag(args, "automatic_only").unwrap_or(false);
+            let done = ctx.portal.apply_updates(&catalog, platform, automatic_only, &mut |_, _, have, total| progress(have, total))?;
+            Ok(json!({ "updated": done }))
+        }
+    }
+}
+
+pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let mut prefs = ctx.portal.preferences()?;
+    let mut changed = false;
+    let mut set = |key: &str, slot: &mut bool| {
+        if let Some(on) = flag(args, key) {
+            *slot = on;
+            changed = true;
+        }
+    };
+    set("auto_update", &mut prefs.auto_update);
+    set("auto_update_beta", &mut prefs.auto_update_beta);
+    set("only_when_closed", &mut prefs.only_when_closed);
+    set("notices", &mut prefs.notices);
+    if let Some(map) = args.get("per_app").and_then(Value::as_object) {
+        for (id, v) in map {
+            match v.as_bool() {
+                Some(on) => {
+                    prefs.per_app.insert(id.clone(), on);
+                }
+                None => {
+                    prefs.per_app.remove(id);
+                }
+            }
+            changed = true;
+        }
+    }
+    if changed {
+        ctx.portal.set_preferences(&prefs)?;
+    }
+    Ok(json!({ "preferences": prefs, "saved": changed }))
+}
+
 pub fn open(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
