@@ -90,6 +90,10 @@ fn unzip(file: &Path, into: &Path) -> Result<()> {
     Ok(())
 }
 
+pub(crate) fn unzip_into(file: &Path, into: &Path) -> Result<()> {
+    unzip(file, into)
+}
+
 fn place(file: &Path, into: &Path) -> Result<()> {
     let name = file.file_name().ok_or_else(|| CoreError::Archive("the file has no name".to_string()))?;
     let out = into.join(name);

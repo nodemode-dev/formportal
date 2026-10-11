@@ -55,6 +55,13 @@ Only JSON-RPC lines go to stdout. The dispatcher builds with `cargo build -q` to
 
 A `source` that is not an http(s) address is read as a file and parsed without a signature, like the core's install example; it is for fixtures and development. Remote sources go through `Portal::catalog`, signature and all, with `allow_unsigned` only when asked.
 
+### v0.31.0 · extension tools
+- refers-to: src/ops.rs :: extensions, extension_install, extension_remove, extension_enable, ext_source
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+Sixteen tools. The index address is `extensions_source`, else `FORMPORTAL_EXTENSIONS`, else `extensions.json` beside the catalogue address (formai.dev serves both under `/catalog/v1/`). `extensions` merges the index with what is installed (installed version, enabled, update waiting) and lists sideloads. Verified with a local index of four packages and two loose files: an unsigned index refused; a plain package installed; a signed native package installed with its publisher recorded; with a signed index and the developer setting off, an unsigned native package refused; a manifest that disagrees with the index refused; a tampered package signature refused; a sideloaded look installed as sideload; a sideloaded native package refused; turning one off removed it from enabled.json; remove deleted its folder.
+
 ### v0.30.0 · versions, install with version
 - refers-to: src/ops.rs :: versions, install · src/mcp.rs :: tools
 - kind: decision

@@ -5,6 +5,36 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.30.0
 Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
 
+## v0.31.0 · extensions {#extensions}
+
+### Packages land in FormPortal's folder; apps read enabled.json
+- refers-to: src/extensions.rs :: place_package, ext_save
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+formai_dev's plan said the hub hands a checked package to the app (its loader, command line or an inbox) and never writes into an app's internals. The hand-over is a file: each package is unpacked into `extensions/[product]/[id]/[version]/` under FormPortal's root, and `extensions/[product]/enabled.json` (format `formportal-enabled-extensions`) lists the enabled ones with path, kind, permissions and whether they run native code. An app reads that file at start and runs its own checks on each package; that is the app-side contract, written as an executor plan for formcut (sidecar `EXECUTOR_PLAN_formcut_extensions_v0.31.0.md`). Installing or toggling while an app is open takes effect at its next start.
+
+### What is checked, in order
+- refers-to: src/extensions.rs :: install_extension, install_extension_file, check_signature, read_manifest
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+The index itself: signed by a trusted catalogue key, or refused unless `allow_unsigned`. A package from the index: SHA-256 against the index (in `download`), then its publisher signature (Ed25519 over the package bytes, with the key the index lists for that publisher) when present, refused when the package runs native code and has none unless `allow_unsigned`; then its manifest must agree with the index on id, product, version and native. A package by path: its manifest, then, when the index lists a file with the same SHA-256, that entry's signature; otherwise it is a sideload, and a native sideload needs `allow_unsigned`. ids and products must be plain names, so a manifest cannot point the unpack outside the folder; `unzip` already refuses paths that leave it. The schema does not say what a package signature covers; "the package's bytes" is this build's reading, to be written into the contract in formai_dev with Phase 9.
+
+### Products beyond the schema's four
+- refers-to: src/extensions.rs :: Entry::product, Manifest::product
+- kind: warning-context
+- logged: v0.31.0 · 2026-10-11
+
+The extension and package schemas list four products (formcut, formvis, formwav, formai). The core reads `product` as text so packages for the other Form apps work; the schema enum is a Phase 9 contract change.
+
+### download with no size
+- refers-to: src/download.rs :: download
+- kind: decision
+- logged: v0.31.0 · 2026-10-11
+
+`bytes` is optional in the extension index. With a size of 0 the download now always fetches (no resume) instead of skipping straight to a hash of an empty file.
+
 ## v0.30.0 · versions {#versions}
 
 ### History in the catalogue

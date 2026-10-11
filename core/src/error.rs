@@ -17,6 +17,7 @@ pub enum CoreError {
     Archive(String),
     Running { what: String, pids: Vec<u32> },
     Invalid(String),
+    Refused(String),
 }
 
 pub type Result<T> = std::result::Result<T, CoreError>;
@@ -42,6 +43,7 @@ impl fmt::Display for CoreError {
                 write!(f, "{what} is open (process {list}); close it first, then try again")
             }
             CoreError::Invalid(why) => write!(f, "{why}"),
+            CoreError::Refused(why) => write!(f, "{why}. It was not installed"),
         }
     }
 }

@@ -40,6 +40,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | Tools missing, the server not starting, a catalogue refused, offline, a local or forked catalogue | `sub-skills/session-and-connection/SUB-SKILL.md` |
 | Installing, updating, update preferences, opening, rolling back, removing | `sub-skills/install-and-update/SUB-SKILL.md` |
 | Beta and nightly builds beside stable | `sub-skills/channels-and-beta/SUB-SKILL.md` |
+| Extensions: finding, installing, sideloading a .formpkg, turning off, removing | `sub-skills/extensions/SUB-SKILL.md` |
 | Which apps exist, what each replaces, status and groups | `sub-skills/catalog-and-registry/SUB-SKILL.md` |
 | Using an installed Form app through its own MCP server, deep links, formai.dev | `sub-skills/form-family-bridge/SUB-SKILL.md` |
 | Checking work before reporting it | `sub-skills/verification/SUB-SKILL.md` |

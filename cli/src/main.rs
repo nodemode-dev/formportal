@@ -14,6 +14,10 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   installs                        what is installed
   install <product> [--channel C] [--version V] [--source S] [--allow-unsigned]
   versions <product> [--channel C] [--source S]
+  extensions [--extensions-source S]
+  extension-install --id ID | --path FILE.formpkg [--allow-unsigned]
+  extension-remove --product P --id ID
+  extension-enable --product P --id ID --enabled true|false
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
   preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...]
@@ -88,6 +92,10 @@ fn main() -> ExitCode {
         "install" => ops::install(&ctx, &args, &mut progress),
         "updates" => ops::updates(&ctx, &args),
         "versions" => ops::versions(&ctx, &args),
+        "extensions" => ops::extensions(&ctx, &args),
+        "extension-install" => ops::extension_install(&ctx, &args, &mut progress),
+        "extension-remove" => ops::extension_remove(&ctx, &args),
+        "extension-enable" => ops::extension_enable(&ctx, &args),
         "update" => ops::update(&ctx, &args, &mut progress),
         "preferences" => ops::preferences(&ctx, &args),
         "open" => ops::open(&ctx, &args),
@@ -102,7 +110,7 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    if (cmd == "install" || cmd == "update") && last != u64::MAX {
+    if (cmd == "install" || cmd == "update" || cmd == "extension-install") && last != u64::MAX {
         eprintln!();
     }
     match out {

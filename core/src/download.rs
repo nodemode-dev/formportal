@@ -60,7 +60,7 @@ pub fn download(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u
         fs::remove_file(&part)?;
         have = 0;
     }
-    if have < artifact.bytes {
+    if artifact.bytes == 0 || have < artifact.bytes {
         let mut request = ureq::get(&artifact.url);
         if have > 0 {
             request = request.set("Range", &format!("bytes={have}-"));

@@ -13,6 +13,10 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `updates` | no | Every installed app and channel with a newer version in the catalogue: from and to versions, download size, release notes, whether a copy is open, and whether the person's preferences would update it automatically. Also says when a newer FormPortal is available. |
 | `update` | yes | With product (and channel), installs that app's newer version. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow (skipping open apps when only_when_closed is on). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first. |
 | `preferences` | yes | Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting). Changing them is the person's choice: confirm first. |
+| `extensions` | no | The open extension index (effects, looks, templates, presets, plugins for the Form apps) with each package's author, kind, permissions, whether it runs native code and is signed, and its install state; plus every installed extension, including sideloaded ones (source sideload). The index is read from extensions_source, FORMPORTAL_EXTENSIONS, or extensions.json beside the catalogue. |
+| `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
+| `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
+| `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
 | `rollback` | yes, destructive | Swaps the installed version for the previous one FormPortal kept. Fails when no previous version is kept. Confirm first. |
 | `remove` | yes, destructive | Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Refused while the app is open. Confirm first. |
@@ -74,6 +78,31 @@ No parameters.
 - `notices` (optional): boolean. 
 - `only_when_closed` (optional): boolean. 
 - `per_app` (optional): object. 
+
+### extensions
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `extensions_source` (optional): string. Extension index address or file.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+
+### extension_install
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `extensions_source` (optional): string. 
+- `id` (optional): string. 
+- `path` (optional): string. Absolute path of a .formpkg file.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+
+### extension_remove
+
+- `id`: string. 
+- `product`: string. 
+
+### extension_enable
+
+- `enabled`: boolean. 
+- `id`: string. 
+- `product`: string. 
 
 ### open
 
