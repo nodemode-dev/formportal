@@ -7,7 +7,7 @@ description: Stock media and Form app templates through FormPortal. Use when the
 
 ## What it is
 
-An open media index (`media.json` beside the catalogue, signed with the catalogue's key) lists images, video, audio and Form app templates. Each item names its creator, licence, source page and SHA-256. FormPortal saves only items under CC0-1.0, CC-BY-4.0, CC-BY-SA-4.0, Apache-2.0, MIT or OFL-1.1, into the person's Library (`Documents/Form/Library`, or `FORMPORTAL_LIBRARY`). It writes the credit line beside each file (`<file>.credit.txt`) and into `credits.json`. There is no generative AI here and no paid stock; that is deliberate.
+An open media index (`media.json` beside the catalogue, signed with the catalogue's key) lists images, video, audio and Form app templates. Each item names its creator, licence, source page and SHA-256. FormPortal saves only items under CC0-1.0, CC-BY-4.0, CC-BY-SA-4.0, Apache-2.0, MIT or OFL-1.1, into the person's Library (`Documents/Form/Library`, or `FORMPORTAL_LIBRARY`). It writes the credit line beside each file (the file's name plus `.credit.txt`) and into `credits.json`. There is no generative AI here and no paid stock; that is deliberate.
 
 ## The loop
 
