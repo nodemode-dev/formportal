@@ -79,6 +79,29 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
 }
 
 #[tauri::command]
+fn still_open(product: String, channel: Channel) -> Vec<u32> {
+    let hub = hub();
+    let current = hub.state().ok().and_then(|s| s.installs.into_iter().find(|i| i.product == product && i.channel == channel)).map(|i| i.current.path);
+    hub.running(&product, channel).into_iter().filter(|r| current.as_ref().map(|c| !r.path.starts_with(c)).unwrap_or(true)).map(|r| r.pid).collect()
+}
+
+const WEB: [&str; 3] = ["https://github.com/nodemode-ai/", "https://formai.dev/", "https://docs.formai.dev/"];
+
+#[tauri::command]
+fn open_web(url: String) -> Result<(), String> {
+    if !WEB.iter().any(|allowed| url.starts_with(allowed)) || url.chars().any(|c| c.is_whitespace() || c == '"') {
+        return Err("FormPortal opens only formai.dev and the Form family's repositories".to_string());
+    }
+    #[cfg(target_os = "macos")]
+    let mut command = std::process::Command::new("open");
+    #[cfg(target_os = "windows")]
+    let mut command = std::process::Command::new("explorer");
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let mut command = std::process::Command::new("xdg-open");
+    command.arg(&url).spawn().map(|_| ()).map_err(|e| format!("the browser could not be opened: {e}"))
+}
+
+#[tauri::command]
 fn open(product: String, channel: Channel) -> Result<u32, String> {
     hub().launch(&product, channel).map_err(text)
 }
@@ -284,7 +307,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

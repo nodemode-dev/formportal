@@ -19,6 +19,8 @@ export interface Bridge {
   rollback(product: string, channel: Channel): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;
   onLink(handler: (target: string) => void): void;
+  stillOpen(product: string, channel: Channel): Promise<number[]>;
+  openWeb(url: string): Promise<void>;
   preferences(): Promise<Preferences>;
   setPreferences(prefs: Preferences): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;

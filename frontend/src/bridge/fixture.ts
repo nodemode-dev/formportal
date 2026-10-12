@@ -105,6 +105,10 @@ export const fixtureBridge: Bridge = {
     const link = new URLSearchParams(window.location.search).get("link");
     if (link) handler(link);
   },
+  stillOpen: async (product) => ((new URLSearchParams(window.location.search).get("open") ?? "").split(",").includes(product) ? [4242] : []),
+  openWeb: async (url) => {
+    window.open(url, "_blank", "noopener");
+  },
   preferences: async () => ({ ...prefs, per_app: { ...prefs.per_app } }),
   setPreferences: async (next) => {
     prefs = { ...next, per_app: { ...next.per_app } };

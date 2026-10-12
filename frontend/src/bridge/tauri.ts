@@ -109,4 +109,8 @@ export const tauriBridge: Bridge = {
         if (link) handler(link);
       });
   },
+  stillOpen: (product, channel) => tauri().core.invoke<number[]>("still_open", { product, channel }),
+  openWeb: async (url) => {
+    await tauri().core.invoke<null>("open_web", { url });
+  },
 };
