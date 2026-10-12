@@ -968,6 +968,30 @@ details[open] > .icon-btn {
   color: var(--ink-soft);
 }
 
+.strip-offline,
+.strip-retry {
+  display: none;
+}
+
+:root[data-offline] .strip-offline {
+  display: inline;
+}
+
+:root[data-offline] .strip-retry {
+  display: inline-flex;
+}
+
+:root[data-offline] .strip-checking,
+:root[data-offline] .strip-waiting,
+:root[data-offline] .strip-clear,
+:root[data-offline] .strip-all {
+  display: none;
+}
+
+.fam:not(:has(.acts)) {
+  grid-template-columns: var(--tile) minmax(0, 1fr);
+}
+
 .fam-group + .fam-group {
   margin-block-start: var(--sp-5);
 }

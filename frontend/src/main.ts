@@ -39,14 +39,25 @@ async function guard(work: () => Promise<void>): Promise<void> {
 
 engine.command("catalog.load", () =>
   guard(async () => {
+    const root = document.documentElement;
     engine.setPlatform(await bridge.platform());
     engine.setPolicy(await bridge.policy());
     await refresh();
-    const [catalog, extensions] = await Promise.all([bridge.catalog(), bridge.extensions()]);
-    engine.setCatalog(catalog, bridge.source);
-    engine.setExtensions(extensions.index, extensions.installed);
     engine.setPrefs(await bridge.preferences());
-    document.documentElement.setAttribute("data-loaded", "");
+    let catalog;
+    try {
+      catalog = await bridge.catalog();
+    } catch (e) {
+      root.setAttribute("data-offline", "");
+      root.setAttribute("data-loaded", "");
+      const why = e instanceof Error ? e.message : String(e);
+      throw new Error(`FormPortal could not read the catalogue, so installs and updates wait until it can. Installed apps still open. (${why})`);
+    }
+    root.removeAttribute("data-offline");
+    engine.setCatalog(catalog, bridge.source);
+    const extensions = await bridge.extensions();
+    engine.setExtensions(extensions.index, extensions.installed);
+    root.setAttribute("data-loaded", "");
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
@@ -203,6 +214,8 @@ engine.command("self.install", async () => {
 });
 
 engine.command("web.open", (arg) => guard(() => bridge.openWeb(String(arg))));
+
+document.querySelectorAll<HTMLButtonElement>("[data-retry]").forEach((button) => button.addEventListener("click", () => void engine.dispatch("catalog.load")));
 
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");

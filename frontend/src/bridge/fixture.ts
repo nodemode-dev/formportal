@@ -35,7 +35,10 @@ function missing(product: string): Error {
 export const fixtureBridge: Bridge = {
   source: "fixture",
   platform: async () => browserPlatform(),
-  catalog: async () => catalog,
+  catalog: async () => {
+    if (new URLSearchParams(window.location.search).has("offline")) throw new Error("the download did not complete: no network (browser mode, ?offline)");
+    return catalog;
+  },
   extensions: async () => ({ index: extensions as unknown as ExtensionIndex, index_error: null, installed: Array.from(extInstalled.values()) }),
   installExtension: async ({ id, path }) => {
     const index = extensions as unknown as ExtensionIndex;
