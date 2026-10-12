@@ -7,6 +7,7 @@ pub mod agents;
 pub mod download;
 pub mod error;
 pub mod files;
+pub mod fonts;
 pub mod extensions;
 pub mod installers;
 pub mod mirror;
