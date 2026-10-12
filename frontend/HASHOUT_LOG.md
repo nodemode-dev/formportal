@@ -2,8 +2,38 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.34.0
-Last updated: 2026-10-12 · standalone repository
+Current build version: v0.35.0
+Last updated: 2026-10-12 · the interface rebuilt on the Creative Cloud app's layout
+
+## v0.35.0 · the interface rebuilt {#rebuild}
+
+### Why, and from what
+- refers-to: index.html · vite.config.ts · src/styles/main.css · the sidecar's RESEARCH_CC_UI.md
+- kind: decision
+- logged: v0.35.0 · 2026-10-12
+
+The owner called the interface awful. Research on Creative Cloud's desktop app (Adobe's help and release notes, cross-checked with university IT guides and named trade reviews) and on Apple, Microsoft and Adobe design-system guidance gave the shape: a left sidebar of at most two levels; bell and Preferences in the upper right; Preferences as a dialog with tabs down its left, a master auto-update switch and one per app; apps as a list with Install, Open or Update and a More menu; a consistent determinate progress place; no marketing on Home. The old window failed most of these: a poster Home (hero, "FORM APPS", ruler, lineup), 19 apps in sidebar accordions with Updates hidden in a collapsed group, Settings as a page, no top bar, notices as inline text, each app in four shapes with five buttons. `index.html`, `vite.config.ts`, `row-actions.html` and `main.css` were rewritten whole; `lineup.css`, `workspace.css` and the stage and accordion extensions were deleted, and the 0.28.0 to 0.33.0 entries about them below are history.
+
+### Structure
+- refers-to: vite.config.ts :: renderPortal · row-actions.html · card-actions.html
+- kind: explainer
+- logged: v0.35.0 · 2026-10-12
+
+Build time writes: Apps list rows grouped by registry group; Updates rows (stable and beta per app, shown when installed, waiting ones first); Beta rows with the feedback link; Your apps cards (stable and beta, shown when installed, in a strip of fixed height with an empty state); family cards with one action; What's new cards; app pages with facts, screenshot or plate, a beta row and help links; a switch per released app for Preferences; Learn entries. Rows keep the data contract (`data-row`, `data-product`, `data-field`, `data-act`), so the apps extension drives them all. Rows never nest: an earlier draft put the beta row inside the stable `.ap` block, and its Install would have fired both channels.
+
+### Notices, search, Preferences
+- refers-to: src/extensions/notices · src/extensions/search · src/extensions/prefs · src/main.ts :: link.open, app.install
+- kind: decision
+- logged: v0.35.0 · 2026-10-12
+
+Notices: each becomes a bell entry with its time (30 kept) and a toast in the lower right (info leaves after 6 s, a failure stays until dismissed); the bell's dot shows until the list is opened. Successful manual installs now say so. Search filters the Apps rows by name, summary, what it replaces and kind, switching to Apps when typing elsewhere; `/` or Ctrl or Cmd F focuses it; Escape clears. Preferences is a `<dialog>` opened from the top bar, and `formai://settings` opens it on a tab.
+
+### Zero shift
+- refers-to: src/styles/main.css :: data-loaded, .fam, .mine, .strip · src/main.ts :: catalog.load
+- kind: decision
+- logged: v0.35.0 · 2026-10-12
+
+First measurements of the rebuild showed 0.02 on Home: family cards whose action column changed width, a status line of no height that filled in, and Update all appearing beside Updates. Fixed with a fixed action column, reserved status lines, `visibility` for Update all, versions hidden on cards, and actions kept hidden until `data-loaded` (set after catalogue, installs and preferences), so buttons appear once instead of passing through Open on the way to Update. Measured at 4x CPU: 0 on Home (with apps, empty, light, 1180 px), Apps, an app page, Updates and Extensions. Over eleven further loads, two showed a single shift under 0.0002 in the first 300 ms (the bell icon once, a family card once), before any script ran; not reproduced on demand, cause not found, logged here to watch.
 
 ## v0.34.0 · a managed computer {#managed}
 

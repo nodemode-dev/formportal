@@ -24,7 +24,8 @@ FormPortal reads the signed catalogue formai.dev publishes and offers this compu
 - **Rollback, betas side by side.** Every update keeps the version it replaced; each channel (stable, beta, nightly) is its own install
 - **Nothing resident.** No account, no login item, no tray process. FormPortal checks when it is open and stops when you close it
 - **Agent ready.** `./formportal mcp` serves `status`, `apps`, `app_info`, `installs`, `install`, `versions`, `updates`, `update`, `preferences`, `extensions`, `extension_install`, `extension_remove`, `extension_enable`, `policy`, `open`, `rollback`, `remove`; `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are wired, and the `formportal-harness` skill teaches the workflow
-- **Built from the registry.** Every app's cell, page, sidebar entry, beta tile and update row is written at build time from `catalog/products.json`, so the first frame is the final layout (layout shift 0 under 4x CPU throttling)
+- **Laid out like the Creative Cloud app, without the marketing.** A two-level sidebar (Home, Apps with Updates and Beta, Extensions, Learn), search, a notifications bell and Preferences in the top bar, Home built around the apps you have, Apps as a list with one action each and a More menu, and Preferences as a dialog with a switch per app
+- **Built from the registry.** Every app's row, card, page and switch is written at build time from `catalog/products.json`, so the first frame is the final layout (layout shift 0 under 4x CPU throttling)
 
 ## Quick Start
 
