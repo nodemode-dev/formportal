@@ -56,6 +56,15 @@ pub struct ProjectFile {
     pub bytes: u64,
     pub modified: u64,
     pub versions: usize,
+    pub preview: Option<PathBuf>,
+}
+
+pub const PREVIEW_LIMIT: u64 = 256 * 1024;
+
+pub fn preview_of(path: &Path) -> Option<PathBuf> {
+    let name = path.file_name()?.to_string_lossy().to_string();
+    let p = path.with_file_name(format!("{name}.preview.webp"));
+    fs::metadata(&p).ok().filter(|m| m.is_file() && m.len() <= PREVIEW_LIMIT).map(|_| p)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -252,6 +261,7 @@ impl Portal {
                     bytes: meta.len(),
                     modified: modified(&meta),
                     versions: history.files.get(&k).map(|v| v.len()).unwrap_or(0),
+                    preview: preview_of(&path),
                     path,
                 });
             }
@@ -269,6 +279,24 @@ impl Portal {
         }
         files.sort_by(|a, b| b.modified.cmp(&a.modified).then_with(|| a.name.cmp(&b.name)));
         Ok(Scan { folders: views, files, truncated, new_versions })
+    }
+
+    pub fn preview_data_url(&self, path: &Path) -> Result<String> {
+        use base64::Engine;
+        let path = fs::canonicalize(path)?;
+        let inside = self.files_state()?.folders.iter().filter_map(|f| fs::canonicalize(&f.path).ok()).any(|f| path.starts_with(&f));
+        let name = path.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+        if !inside || !name.ends_with(".preview.webp") {
+            return Err(CoreError::Invalid("only a project's .preview.webp inside a projects folder is shown".to_string()));
+        }
+        if fs::metadata(&path)?.len() > PREVIEW_LIMIT {
+            return Err(CoreError::Invalid("the preview is larger than 256 KB".to_string()));
+        }
+        let bytes = fs::read(&path)?;
+        if !matches!(bytes.get(..12), Some([b'R', b'I', b'F', b'F', _, _, _, _, b'W', b'E', b'B', b'P'])) {
+            return Err(CoreError::Invalid("the preview is not a WebP image".to_string()));
+        }
+        Ok(format!("data:image/webp;base64,{}", base64::engine::general_purpose::STANDARD.encode(bytes)))
     }
 
     pub fn keep_saved(&self, extensions: &BTreeMap<String, String>, settle_secs: u64) -> Result<Vec<PathBuf>> {
