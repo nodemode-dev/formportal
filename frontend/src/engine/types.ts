@@ -255,6 +255,7 @@ export interface Preferences {
   per_app: Record<string, boolean>;
   keep_previous: boolean;
   quiet: NoticeCategory[];
+  language: string | null;
 }
 
 export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";

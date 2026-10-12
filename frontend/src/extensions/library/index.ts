@@ -1,4 +1,5 @@
 import { versionNewer } from "../../engine/index.ts";
+import { t } from "../../i18n/index.ts";
 import type { ExtensionEntry, InstalledExtension } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -48,7 +49,7 @@ function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExt
   const box = row.querySelector<HTMLInputElement>("[data-ext-enabled]");
   if (box && have && box.checked !== have.enabled) box.checked = have.enabled;
   const install = row.querySelector<HTMLElement>("[data-ext-act='install']");
-  const word = have ? "Update" : "Install";
+  const word = t(have ? "Update" : "Install");
   if (install && install.textContent !== word) install.textContent = word;
 }
 

@@ -1,4 +1,5 @@
 import type { Tutorial } from "../../engine/types.ts";
+import { t as tr } from "../../i18n/index.ts";
 import registry from "../../../../catalog/products.json";
 import type { Extension } from "../registry.ts";
 
@@ -48,7 +49,7 @@ export const learn: Extension = {
         const body = el("div", "tutorial-body");
         body.hidden = true;
         const steps = el("ol", "tutorial-steps");
-        const again = el("button", "link-btn tutorial-again", "Start again");
+        const again = el("button", "link-btn tutorial-again", tr("Start again"));
         again.type = "button";
         again.addEventListener("click", () => void engine.dispatch("learn.mark", { id: t.id, reset: true, title: t.title }));
         body.append(steps, again);
@@ -65,9 +66,9 @@ export const learn: Extension = {
       setText(r.querySelector(".tutorial-app"), name);
       setText(r.querySelector(".tutorial-title"), t.title);
       setText(r.querySelector(".tutorial-sum"), t.summary);
-      setText(r.querySelector(".tutorial-meta"), `${t.steps.length} steps · ${t.minutes} min · ${LEVEL[t.level] ?? t.level}`);
+      setText(r.querySelector(".tutorial-meta"), tr("{steps} steps · {minutes} min · {level}", { steps: t.steps.length, minutes: t.minutes, level: tr(LEVEL[t.level] ?? t.level) }));
       const done = t.done_steps.length;
-      setText(r.querySelector(".tutorial-of"), t.finished ? "Finished" : `${done} of ${t.steps.length}`);
+      setText(r.querySelector(".tutorial-of"), t.finished ? tr("Finished") : tr("{done} of {steps}", { done, steps: t.steps.length }));
       const fill = r.querySelector<HTMLElement>(".tutorial-fill");
       const width = `${Math.round((done / Math.max(1, t.steps.length)) * 100)}%`;
       if (fill && fill.style.inlineSize !== width) fill.style.inlineSize = width;
@@ -85,13 +86,13 @@ export const learn: Extension = {
             text.append(el("p", "tstep-title", `${i + 1}. ${s.title}`), el("p", "tstep-body", s.body));
             const acts = el("p", "tstep-acts");
             if (s.route) {
-              const go = el("button", "btn btn-small", "Go there");
+              const go = el("button", "btn btn-small", tr("Go there"));
               go.type = "button";
               go.addEventListener("click", () => void engine.dispatch("route.go", s.route));
               acts.append(go);
             }
             if (s.url) {
-              const a = el("a", "link", "Read more");
+              const a = el("a", "link", tr("Read more"));
               a.href = s.url;
               a.dataset.web = "";
               acts.append(a);
@@ -143,16 +144,16 @@ export const learn: Extension = {
       const started = tutorials.find((t) => t.done_steps.length > 0 && !t.finished);
       if (started) {
         const next = started.steps.findIndex((_, i) => !started.done_steps.includes(i + 1));
-        items.push(suggestion(`Continue ${started.title}`, `Next: step ${next + 1} of ${started.steps.length}, ${started.steps[next]?.title ?? ""}.`, "Continue", () => openTutorial(started.id)));
+        items.push(suggestion(tr("Continue {title}", { title: started.title }), tr("Next: step {n} of {steps}, {step}.", { n: next + 1, steps: started.steps.length, step: started.steps[next]?.title ?? "" }), tr("Continue"), () => openTutorial(started.id)));
       } else {
         const own = (t: Tutorial) => t.product === "formportal" && (installed.size === 0 ? t.id === "portal-first-app" : t.id !== "portal-first-app");
         const fresh = tutorials.find((t) => !t.done_steps.length && installed.has(t.product)) ?? tutorials.find((t) => !t.done_steps.length && own(t));
-        if (fresh) items.push(suggestion(fresh.title, `${fresh.summary} ${fresh.minutes} min.`, "Start", () => openTutorial(fresh.id)));
+        if (fresh) items.push(suggestion(fresh.title, `${fresh.summary} ${fresh.minutes} min.`, tr("Start"), () => openTutorial(fresh.id)));
       }
-      if (folders === 0) items.push(suggestion("Choose where your projects live", "FormPortal lists your Form projects, opens each in its app and keeps earlier versions.", "Go to Files", () => void engine.dispatch("route.go", "files")));
+      if (folders === 0) items.push(suggestion(tr("Choose where your projects live"), tr("FormPortal lists your Form projects, opens each in its app and keeps earlier versions."), tr("Go to Files"), () => void engine.dispatch("route.go", "files")));
       const groups = new Set(registry.products.filter((p) => installed.has(p.id)).map((p) => p.group));
       const pair = registry.products.find((p) => p.status === "available" && p.id !== "formai" && !installed.has(p.id) && groups.has(p.group) && engine.view(p.id, "stable").availability === "available");
-      if (pair) items.push(suggestion(`${pair.name}${pair.alt_of ? `, in place of ${pair.alt_of}` : ""}`, pair.summary, "See the app", () => void engine.dispatch("route.go", `app-${pair.id}`)));
+      if (pair) items.push(suggestion(pair.alt_of ? tr("{name}, in place of {other}", { name: pair.name, other: pair.alt_of }) : pair.name, tr(pair.summary), tr("See the app"), () => void engine.dispatch("route.go", `app-${pair.id}`)));
       const shown = items.slice(0, 3);
       const key = shown.map((s) => s.textContent).join("|");
       if (key === lastKey) return;
@@ -165,7 +166,7 @@ export const learn: Extension = {
       engine.lastLearn = view;
       for (const t of view.tutorials) row(t);
       const finished = view.tutorials.filter((t) => t.finished).length;
-      setText(count, `${finished} of ${view.tutorials.length} finished`);
+      setText(count, tr("{done} of {all} finished", { done: finished, all: view.tutorials.length }));
       if (error) {
         const text = view.index_error ? `The Form apps' tutorials could not be read, so only FormPortal's own are listed: ${view.index_error}` : "";
         setText(error, text);

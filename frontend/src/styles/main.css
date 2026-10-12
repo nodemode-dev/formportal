@@ -441,6 +441,44 @@ details[open] > .icon-btn {
   display: block;
 }
 
+html[data-launch] .pane[data-pane="home"] {
+  display: none;
+}
+
+html[data-launch="apps"] .pane[data-pane="apps"],
+html[data-launch="updates"] .pane[data-pane="updates"],
+html[data-launch="beta"] .pane[data-pane="beta"],
+html[data-launch="files"] .pane[data-pane="files"],
+html[data-launch="fonts"] .pane[data-pane="fonts"],
+html[data-launch="stock"] .pane[data-pane="stock"],
+html[data-launch="extensions"] .pane[data-pane="extensions"],
+html[data-launch="learn"] .pane[data-pane="learn"] {
+  display: block;
+}
+
+html[data-launch] .top-title {
+  visibility: hidden;
+}
+
+html[data-launch] .nav-item[data-route-to="home"] {
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: inherit;
+}
+
+html[data-launch="apps"] .nav-item[data-route-to="apps"],
+html[data-launch="updates"] .nav-item[data-route-to="updates"],
+html[data-launch="beta"] .nav-item[data-route-to="beta"],
+html[data-launch="files"] .nav-item[data-route-to="files"],
+html[data-launch="fonts"] .nav-item[data-route-to="fonts"],
+html[data-launch="stock"] .nav-item[data-route-to="stock"],
+html[data-launch="extensions"] .nav-item[data-route-to="extensions"],
+html[data-launch="learn"] .nav-item[data-route-to="learn"] {
+  background: var(--control-press);
+  color: var(--ink);
+  font-weight: var(--weight-strong);
+}
+
 .page {
   inline-size: min(100%, 1040px);
   margin-inline: auto;

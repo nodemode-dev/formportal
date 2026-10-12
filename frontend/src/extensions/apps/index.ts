@@ -1,4 +1,5 @@
 import { versionNewer } from "../../engine/index.ts";
+import { t } from "../../i18n/index.ts";
 import type { Channel, ChannelView } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -53,14 +54,14 @@ export const apps: Extension = {
       row.style.setProperty("--p", String(progress ?? 0));
       const words =
         state === "busy"
-          ? `Installing ${Math.round((progress ?? 0) * 100)}%`
+          ? t("Installing {n}%", { n: Math.round((progress ?? 0) * 100) })
           : blocked && (state === "none" || state === "update")
-            ? "Not allowed by your organisation"
+            ? t("Not allowed by your organisation")
             : state === "update"
-            ? `Update to ${offered}`
+            ? t("Update to {version}", { version: offered ?? "" })
             : state === "ready"
-              ? "Installed"
-              : WORDS[channel][view.availability];
+              ? t("Installed")
+              : t(WORDS[channel][view.availability]);
       write(row.querySelector<HTMLElement>("[data-field='status']"), words);
       write(row.querySelector<HTMLElement>("[data-field='version']"), record?.version ?? view.version ?? "");
       const bytes = view.artifact && state !== "ready" ? view.artifact.bytes : 0;

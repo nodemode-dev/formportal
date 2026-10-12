@@ -18,13 +18,14 @@ import { fonts } from "./extensions/fonts/index.ts";
 import { stock } from "./extensions/stock/index.ts";
 import { learn } from "./extensions/learn/index.ts";
 import { assistant } from "./extensions/assistant/index.ts";
+import { goToLanguage, launch } from "./extensions/launch/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -125,6 +126,16 @@ engine.command("app.install", (arg) =>
     }
     engine.setNotice(notes.join(" "), "info", "installs");
   }, "installs"),
+);
+
+engine.command("language.set", (arg) =>
+  guard(async () => {
+    const language = String(arg) === "en" ? null : String(arg);
+    const next = { ...engine.state.prefs, language };
+    await bridge.setPreferences(next);
+    engine.setPrefs(next);
+    goToLanguage(String(arg));
+  }),
 );
 
 engine.command("app.updateAll", async () => {
@@ -459,5 +470,6 @@ bridge.onPackage((path) => {
   void engine.dispatch("ext.install", { path });
 });
 
+void engine.dispatch("route.launch");
 void engine.dispatch("catalog.load");
 bridge.onLink((link) => void engine.dispatch("link.open", link));

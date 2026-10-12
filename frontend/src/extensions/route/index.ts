@@ -16,6 +16,12 @@ export const route: Extension = {
       if (routes.has(arg as Route)) engine.setRoute(arg as Route);
     });
 
+    engine.command("route.launch", () => {
+      const launch = root.dataset.launch;
+      if (launch && routes.has(launch)) engine.setRoute(launch);
+      root.removeAttribute("data-launch");
+    });
+
     engine.on("route", ({ route: next }) => {
       root.setAttribute("data-route", next);
       let title = next;
@@ -32,6 +38,11 @@ export const route: Extension = {
         else link.removeAttribute("aria-current");
       }
       if (stage) stage.scrollTop = 0;
+      try {
+        localStorage.setItem("formportal-last", owner);
+      } catch {
+        return;
+      }
     });
 
     for (const link of links) link.addEventListener("click", () => engine.dispatch("route.go", link.dataset.routeTo));
