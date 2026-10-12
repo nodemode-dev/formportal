@@ -123,7 +123,7 @@ fn cursor_config() -> PathBuf {
     home().join(".cursor").join("mcp.json")
 }
 
-fn which(program: &str) -> Option<PathBuf> {
+pub(crate) fn which(program: &str) -> Option<PathBuf> {
     let paths = std::env::var_os("PATH")?;
     for dir in std::env::split_paths(&paths) {
         for name in [program.to_string(), format!("{program}.exe"), format!("{program}.cmd")] {
@@ -144,7 +144,7 @@ fn backup(path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn quote(text: &str) -> String {
+pub(crate) fn quote(text: &str) -> String {
     format!("\"{}\"", text.replace('\\', "\\\\").replace('"', "\\\""))
 }
 

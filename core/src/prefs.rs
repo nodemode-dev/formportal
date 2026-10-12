@@ -27,11 +27,13 @@ pub struct Preferences {
     pub per_app: BTreeMap<String, bool>,
     #[serde(default = "yes")]
     pub keep_previous: bool,
+    #[serde(default)]
+    pub quiet: Vec<String>,
 }
 
 impl Default for Preferences {
     fn default() -> Self {
-        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true }
+        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new() }
     }
 }
 

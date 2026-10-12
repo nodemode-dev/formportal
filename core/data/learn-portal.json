@@ -1,0 +1,88 @@
+{
+  "format": "formai-learn",
+  "format_version": 1,
+  "generated": "2026-10-12T00:00:00Z",
+  "tutorials": [
+    {
+      "id": "portal-first-app",
+      "product": "formportal",
+      "title": "Install your first Form app",
+      "summary": "Find an app, install it, open it and let it update itself.",
+      "minutes": 3,
+      "level": "beginner",
+      "steps": [
+        { "title": "Open Apps", "body": "Apps lists the whole Form family. Filter by Installed or Not installed, or search by name or by what an app replaces.", "route": "apps" },
+        { "title": "Install an app", "body": "Choose Install on its row. FormPortal checks the catalogue's signature and the file's SHA-256 before anything is unpacked, and installs for you only, with no administrator." },
+        { "title": "Open it", "body": "Choose Open on its row, or on Home under Your apps.", "route": "home" },
+        { "title": "Let it update itself", "body": "In Preferences, Apps, keep automatic updates on. Updates run while FormPortal is open, and an app you have open is never replaced under you." }
+      ]
+    },
+    {
+      "id": "portal-beta",
+      "product": "formportal",
+      "title": "Try a beta beside stable",
+      "summary": "Install a beta build without touching the stable one, then remove it again.",
+      "minutes": 2,
+      "level": "beginner",
+      "steps": [
+        { "title": "Open Beta", "body": "Beta lists builds still being tested. A beta installs beside the stable build and keeps its own settings.", "route": "beta" },
+        { "title": "Install the beta", "body": "Choose Install on its row. Your stable build stays as it is, so you can open either one." },
+        { "title": "Remove it when you are done", "body": "In the beta's More menu, choose Remove from this computer. The stable build is not touched." }
+      ]
+    },
+    {
+      "id": "portal-go-back",
+      "product": "formportal",
+      "title": "Go back a version",
+      "summary": "Undo an update that went wrong, or install any version the catalogue lists.",
+      "minutes": 2,
+      "level": "beginner",
+      "steps": [
+        { "title": "Keep the version before", "body": "In Preferences, Apps, Keep the version before, to go back to is on by default, so every update keeps the version it replaced." },
+        { "title": "Go back", "body": "In an app's More menu, choose Go back to the version before. Automatic updates for that app turn off so it stays where you put it.", "route": "apps" },
+        { "title": "Any other version", "body": "Other versions in the same menu lists every version the catalogue offers for this computer." }
+      ]
+    },
+    {
+      "id": "portal-files",
+      "product": "formportal",
+      "title": "Keep your projects on your own disk",
+      "summary": "Tell FormPortal where your projects live, open them in the right app, and go back to an earlier version.",
+      "minutes": 3,
+      "level": "beginner",
+      "steps": [
+        { "title": "Choose a folder", "body": "In Files, choose Choose a folder, or Use the suggested folder (Documents/Form). Nothing leaves your computer.", "route": "files" },
+        { "title": "Open a project", "body": "Recent projects lists your Form projects, newest first. Open starts the app that makes it." },
+        { "title": "Go back to an earlier version", "body": "Versions shows up to 20 earlier copies FormPortal kept. Choose Go back to this on the one you want." },
+        { "title": "See what uses your disk", "body": "Storage shows what FormPortal and each projects folder take up." }
+      ]
+    },
+    {
+      "id": "portal-fonts-stock",
+      "product": "formportal",
+      "title": "Fonts and stock with their licences",
+      "summary": "Install open fonts, add your own, and save stock or start from a template with its credit kept.",
+      "minutes": 4,
+      "level": "beginner",
+      "steps": [
+        { "title": "Install a font family", "body": "In Fonts, choose Install family. Only open licences (OFL, Apache-2.0, MIT) are offered, and the fonts are installed for you alone.", "route": "fonts" },
+        { "title": "Add your own font", "body": "Add a font file takes a TTF or OTF once you confirm you have the right to use it on this computer." },
+        { "title": "Save stock with its credit", "body": "In Stock & templates, Save puts an item in your Library with its credit line beside it. CC BY items need that credit wherever you use them.", "route": "stock" },
+        { "title": "Start from a template", "body": "Use template copies a template into your projects folder and opens it in its app." }
+      ]
+    },
+    {
+      "id": "portal-agents",
+      "product": "formportal",
+      "title": "Work with your AI agent",
+      "summary": "Connect an app to Claude Code, Codex or Cursor, and ask your agent about your apps from FormPortal.",
+      "minutes": 3,
+      "level": "intermediate",
+      "steps": [
+        { "title": "Connect an app", "body": "An app that ships its own MCP server has a section on its page called Use (the app) with your AI tools. Choose Connect beside Claude Code, Codex or Cursor; it stays connected across updates.", "route": "apps" },
+        { "title": "Ask your agent here", "body": "Ask your agent, in the top bar, sends a question to the agent installed on this computer. It can read FormPortal (apps, installs, updates, files, fonts, stock, tutorials) but cannot install or remove anything from there." },
+        { "title": "Let it do the work", "body": "To have an agent install or update apps, add FormPortal's own server (./formportal mcp) to it; it asks you before installing, going back or removing." }
+      ]
+    }
+  ]
+}

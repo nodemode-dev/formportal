@@ -4,6 +4,7 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 pub mod agents;
+pub mod assistant;
 pub mod download;
 pub mod error;
 pub mod files;
@@ -11,6 +12,7 @@ pub mod fonts;
 pub mod media;
 pub mod extensions;
 pub mod installers;
+pub mod learn;
 pub mod mirror;
 pub mod policy;
 pub mod portal;
