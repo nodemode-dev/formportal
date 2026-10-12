@@ -79,6 +79,23 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
 }
 
 #[tauri::command]
+fn policy() -> Result<Option<serde_json::Value>, String> {
+    Ok(hub().policy().map_err(text)?.map(|m| {
+        serde_json::json!({
+            "managed_by": m.policy.managed_by,
+            "system": m.system,
+            "path": m.path,
+            "locked": m.policy.locked(),
+            "catalog": m.policy.catalog,
+            "apps": m.policy.apps,
+            "channels": m.policy.channels,
+            "extensions": m.policy.extensions != Some(false),
+            "sideload": m.policy.extensions != Some(false) && m.policy.sideload != Some(false),
+        })
+    }))
+}
+
+#[tauri::command]
 fn still_open(product: String, channel: Channel) -> Vec<u32> {
     let hub = hub();
     let current = hub.state().ok().and_then(|s| s.installs.into_iter().find(|i| i.product == product && i.channel == channel)).map(|i| i.current.path);
@@ -307,7 +324,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

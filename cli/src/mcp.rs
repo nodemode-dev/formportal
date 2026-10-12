@@ -86,6 +86,10 @@ fn tools() -> Value {
           "description": "Turns an installed extension on or off without removing it; the app sees the change the next time it starts.",
           "inputSchema": { "type": "object", "properties": { "product": { "type": "string" }, "id": { "type": "string" }, "enabled": { "type": "boolean" } }, "required": ["product", "id", "enabled"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
+        { "name": "policy", "title": "Organisation policy",
+          "description": "Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\\FormPortal\\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists.",
+          "inputSchema": { "type": "object", "properties": {} },
+          "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "open", "title": "Open an installed app",
           "description": "Starts the installed app for the product and channel and returns its process id.",
           "inputSchema": only_target(true),
@@ -119,7 +123,8 @@ fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
         "open" => ops::open(ctx, args),
         "rollback" => ops::rollback(ctx, args),
         "remove" => ops::remove(ctx, args),
-        other => return Err(format!("no tool named {other:?}; tools/list has the sixteen tools")),
+        "policy" => ops::policy(ctx),
+        other => return Err(format!("no tool named {other:?}; tools/list has the seventeen tools")),
     };
     out.map_err(|e| e.to_string())
 }

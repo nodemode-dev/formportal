@@ -17,6 +17,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
+| `policy` | no | Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\FormPortal\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
 | `rollback` | yes, destructive | Swaps the installed version for the previous one FormPortal kept. Fails when no previous version is kept. Confirm first. |
 | `remove` | yes, destructive | Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Refused while the app is open. Confirm first. |
@@ -103,6 +104,10 @@ No parameters.
 - `enabled`: boolean. 
 - `id`: string. 
 - `product`: string. 
+
+### policy
+
+No parameters.
 
 ### open
 

@@ -24,7 +24,11 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]
-  mcp                             serve the MCP tools on stdin and stdout
+  policy                          the organisation's policy, if this computer has one
+  mirror --to DIR --base-url URL [--platforms macos,windows,linux] [--channels stable,beta] [--history]
+                                  copy the catalogue and its files for an internal server;
+                                  FORMPORTAL_MIRROR_KEY (base64 Ed25519 seed) signs it
+  mcp                            serve the MCP tools on stdin and stdout
 
   C is stable (default), beta or nightly. S is an https catalogue or a local file.
   FORMPORTAL_ROOT moves the install folder; FORMPORTAL_CATALOG sets the default source.";
@@ -101,6 +105,8 @@ fn main() -> ExitCode {
         "open" => ops::open(&ctx, &args),
         "rollback" => ops::rollback(&ctx, &args),
         "remove" => ops::remove(&ctx, &args),
+        "policy" => ops::policy(&ctx),
+        "mirror" => ops::mirror(&ctx, &args, &mut progress),
         "help" | "--help" | "-h" => {
             println!("{USAGE}");
             return ExitCode::SUCCESS;
@@ -110,7 +116,7 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    if (cmd == "install" || cmd == "update" || cmd == "extension-install") && last != u64::MAX {
+    if (cmd == "install" || cmd == "update" || cmd == "extension-install" || cmd == "mirror") && last != u64::MAX {
         eprintln!();
     }
     match out {

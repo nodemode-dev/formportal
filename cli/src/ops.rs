@@ -48,6 +48,7 @@ fn product(args: &Value) -> Result<String, CoreError> {
 fn load(ctx: &Ctx, args: &Value) -> Result<(Catalog, String), CoreError> {
     let source = text(args, "source").unwrap_or_else(|| ctx.source.clone());
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let (source, _, _) = ctx.portal.source(&source, allow)?;
     let catalog = if source.starts_with("http://") || source.starts_with("https://") {
         ctx.portal.catalog(&source, allow)?
     } else {
@@ -74,8 +75,10 @@ fn word(a: Availability) -> &'static str {
 
 pub fn status(ctx: &Ctx) -> Result<Value, CoreError> {
     let installs = ctx.portal.state()?.installs;
+    let managed = ctx.portal.policy()?;
     Ok(json!({
         "formportal": CORE_VERSION,
+        "managed": managed.as_ref().map(|m| json!({ "by": m.policy.managed_by, "path": m.path, "system": m.system, "locked": m.policy.locked() })),
         "platform": Platform::current(),
         "root": ctx.portal.root(),
         "catalog_source": ctx.source,
@@ -223,7 +226,54 @@ pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Re
     }
 }
 
+pub fn policy(ctx: &Ctx) -> Result<Value, CoreError> {
+    Ok(match ctx.portal.policy()? {
+        Some(m) => json!({
+            "managed": true,
+            "by": m.policy.managed_by,
+            "path": m.path,
+            "system": m.system,
+            "locked": m.policy.locked(),
+            "policy": m.policy,
+            "note": if m.system { "Set by the organisation in a system file this account cannot change." } else { "Read from FORMPORTAL_POLICY for testing; only the system file binds a computer." }
+        }),
+        None => json!({ "managed": false, "system_path": formportal_core::policy::system_path(), "note": "No organisation policy; every setting is the person's own." }),
+    })
+}
+
+pub fn mirror(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    let out = text(args, "to").ok_or_else(|| fail("give --to, the folder the mirror is written into"))?;
+    let base_url = text(args, "base_url").ok_or_else(|| fail("give --base-url, the address the folder will be served at, such as https://apps.example.internal/formportal"))?;
+    let source = text(args, "source").unwrap_or_else(|| ctx.source.clone());
+    let os = |name: &str| match name {
+        "macos" => Ok(formportal_core::Os::Macos),
+        "windows" => Ok(formportal_core::Os::Windows),
+        "linux" => Ok(formportal_core::Os::Linux),
+        other => Err(fail(format!("there is no platform {other:?}; use macos, windows or linux"))),
+    };
+    let platforms = text(args, "platforms").map(|l| l.split(',').map(|p| os(p.trim())).collect::<Result<Vec<_>, _>>()).transpose()?;
+    let channels = text(args, "channels")
+        .map(|l| l.split(',').map(|c| channel(&json!({ "channel": c.trim() }))).collect::<Result<Vec<_>, _>>())
+        .transpose()?;
+    let sign_key = std::env::var(formportal_core::mirror::MIRROR_KEY_ENV).ok().filter(|k| !k.trim().is_empty());
+    let options = formportal_core::mirror::MirrorOptions { base_url, platforms, channels, history: flag(args, "history").unwrap_or(false), sign_key };
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let report = ctx.portal.mirror(&source, allow, std::path::Path::new(&out), &options, &mut |_, have, total| progress(have, total))?;
+    let next = match &report.public_key {
+        Some(key) => format!("Serve {out} at the base address. On each computer, a policy file with \"catalog\": \"{}\" and \"catalog_keys\": [\"{key}\"] points FormPortal at it.", report.address),
+        None => format!("The mirror is not signed: set {} to a base64 Ed25519 seed to sign it, or computers need the developer setting.", formportal_core::mirror::MIRROR_KEY_ENV),
+    };
+    Ok(json!({ "mirror": report, "next": next }))
+}
+
 pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    if let Some(m) = ctx.portal.policy()? {
+        let locked = m.policy.locked();
+        let asked: Vec<&str> = ["auto_update", "auto_update_beta", "only_when_closed", "keep_previous", "per_app"].into_iter().filter(|k| args.get(*k).is_some() && locked.contains(k)).collect();
+        if !asked.is_empty() {
+            return Err(CoreError::Policy(format!("{} set by the organisation's policy and cannot be changed here", asked.join(", ") + if asked.len() == 1 { " is" } else { " are" })));
+        }
+    }
     let mut prefs = ctx.portal.preferences()?;
     let mut changed = false;
     let mut set = |key: &str, slot: &mut bool| {
