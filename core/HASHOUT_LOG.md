@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.38.0
-Last updated: 2026-10-12 · fonts
+Current build version: v0.39.0
+Last updated: 2026-10-12 · stock media and templates
+
+## v0.39.0 · stock media and templates {#media}
+
+### media.rs · a signed open media index, a Library with credits, templates
+- refers-to: src/media.rs :: MediaIndex, MediaItem, Saved, library_dir, credit_line, media_index, saved_media, save_media, use_template, remove_media, thumbnail_data_url
+- kind: decision
+- logged: v0.39.0 · 2026-10-12
+
+The index (`formai-media`) is fetched beside the catalogue (or the policy's locked catalogue) and verified with the same keys, like fonts and extensions; a bad or missing signature reads "the media index was refused". Only CC0-1.0, CC-BY-4.0, CC-BY-SA-4.0, Apache-2.0, MIT and OFL-1.1 items are saved; others are listed and refused with "it was not saved". Each file goes through the checked `download` into the Library (`Documents/Form/Library`, or `FORMPORTAL_LIBRARY`), with `<file>.credit.txt` beside it and an entry in `credits.json`, so the credit travels with the file. `use_template` saves first, then copies into the chosen or first projects folder with a numbered name when one exists, and the caller opens it with the app that owns the extension. `thumbnail_data_url` returns a data URL capped at 512 KB, PNG, JPEG or WebP only, because the window's content security policy loads no remote images. Openverse was the intended live source, but its API could not be reached or verified from here, so the index is curated and signed instead; a live provider is a later decision. Verified with a signed local index: filters, a saved image with its credit file, a closed licence refused, a template copied twice and opened, removal, a tampered index refused.
 
 ## v0.38.0 · fonts {#fonts}
 

@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.38.0
-Last updated: 2026-10-12 · standalone repository
+Current build version: v0.39.0
+Last updated: 2026-10-12 · media commands
+
+## v0.39.0 · media commands {#media}
+
+### media_view, media_save, media_remove, media_thumb
+- refers-to: src/main.rs
+- kind: explainer
+- logged: v0.39.0 · 2026-10-12
+
+Thin calls into the core; the index address is `media.json` beside the catalogue the interface uses. `media_save` with `use_template` opens the copy with the app that owns its extension. `media_thumb` returns the core's data URL. Compiled on Linux; thumbnails were exercised in the browser mode only, not through the shell.
 
 ## v0.38.0 · font commands {#fonts}
 

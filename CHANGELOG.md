@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.39.0 · 2026-10-12
+
+- Stock & templates: open-licensed images, video, audio and Form app templates (CC0, CC BY, CC BY-SA, Apache-2.0, MIT, OFL) with search and kinds. Save one to your Library and its credit line is kept beside it and in `credits.json`; anything under another licence is not saved.
+- Use template copies a FormCut, FormVis or FormWav template into your projects folder and opens it in its app.
+- Your Library lists what you saved, with its licence and credit, and Remove.
+- Command line and MCP: `media`, `media_save`, `media_remove`.
+
 ## v0.38.0 · 2026-10-12
 
 - Fonts: an open font library (OFL, Apache-2.0, MIT) with search and kinds. Install a whole family or one style, for you only and with no administrator, and remove it again. Every app on the computer can use them, usually after it restarts.

@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.38.0
-Last updated: 2026-10-12 · Fonts
+Current build version: v0.39.0
+Last updated: 2026-10-12 · Stock & templates
+
+## v0.39.0 · the Stock & templates screen {#media}
+
+### Browse, save with credit, use a template, the Library
+- refers-to: index.html :: data-pane stock, #media-card · src/extensions/stock · src/main.ts :: media.load, media.thumb, media.save, media.remove
+- kind: decision
+- logged: v0.39.0 · 2026-10-12
+
+A sidebar entry under Fonts, where Creative Cloud puts Stock. Cards in a grid with a thumbnail when the index has one (fetched by the shell as a data URL, since the CSP blocks remote images), title, creator and licence, and the credit line as the card's tooltip. Kinds (all, images, video, audio, templates) and search filter without rebuilding. Images, video and audio have Save; templates have Use template, which saves, copies into the projects folder and opens the app, or says the app is not installed. Saved items list below with their licence, credit line and Remove. Every outcome goes to the bell. Blocks stay hidden until the first view (`data-ready`). Measured at 4x CPU: 0 shift on Stock. The browser mode has seven sample items, with the real project extensions (.fc, .fmw) on its templates.
 
 ## v0.38.0 · the Fonts screen {#fonts}
 

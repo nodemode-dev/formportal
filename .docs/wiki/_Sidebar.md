@@ -5,3 +5,4 @@
 - [Releasing](Releasing)
 - [Organisations](Organisations)
 - [Fonts](Fonts)
+- [Stock and Templates](Stock-and-Templates)

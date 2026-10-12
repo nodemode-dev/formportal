@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.38.0
-Last updated: 2026-10-12 · fonts; twenty-seven tools
+Current build version: v0.39.0
+Last updated: 2026-10-12 · stock media; thirty tools
+
+## v0.39.0 · stock media and templates {#media}
+
+### Three tools, four commands
+- refers-to: src/ops.rs :: media, media_save, media_remove, media_source · src/mcp.rs · src/main.rs
+- kind: decision
+- logged: v0.39.0 · 2026-10-12
+
+`media` reads the index (from `media_source`, `FORMPORTAL_MEDIA`, or `media.json` beside the catalogue) and the Library, marking each item saved or not and giving its credit line. `media_save` saves, and with `use` also copies a template into a projects folder and opens it; on the command line `media-save` and `template-use` are the two forms. `media_remove` is destructive in its annotations and leaves copies in projects folders alone. Thirty tools in all.
 
 ## v0.38.0 · fonts {#fonts}
 
