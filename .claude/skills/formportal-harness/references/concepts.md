@@ -41,6 +41,8 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | unpacking a [kind] needs [tool], which this computer does not have | rpm needs bsdtar or rpm2cpio and cpio; deb needs dpkg-deb | name the tool to the person |
 | [app] is open (process ...); close it first | remove, or reinstalling the version that is running | ask the person to close the app; never end the process yourself |
 | ... It was not installed (an extension) | a package's signature, manifest or native-code rule failed | report the sentence; see `sub-skills/extensions/SUB-SKILL.md` |
+| ...'s policy does not allow, or is set by the organisation's policy | an organisation manages this computer | report it; see `sub-skills/organisations/SUB-SKILL.md`; never work around it |
+| the organisation's policy at ... is not valid | a broken policy file; every install is refused until it is fixed | tell the person to contact whoever manages the computer |
 | no product was given, or there is no channel | a parameter is missing or wrong | fix the call from `apps` |
 | a file could not be read or written | disk or permission problem in the install folder | report the path |
 
@@ -52,3 +54,5 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | `FORMPORTAL_CATALOG` | default catalogue source (https address or local file) |
 | `FORMPORTAL_ALLOW_UNSIGNED` | `1` accepts unsigned catalogues |
 | `FORMAI_CATALOG_PUBKEY` | an extra trusted catalogue key (base64), for a fork that signs its own catalogue |
+| `FORMPORTAL_POLICY` | a policy file to try, read only when no system policy exists |
+| `FORMPORTAL_MIRROR_KEY` | the base64 Ed25519 seed `mirror` signs the mirrored catalogue with |

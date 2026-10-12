@@ -2,8 +2,31 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.32.0
-Last updated: 2026-10-11 · standalone repository, names, FORMPORTAL_ROOT
+Current build version: v0.34.0
+Last updated: 2026-10-12 · organisation policy, mirror
+
+## v0.34.0 · organisations {#organisations}
+
+### policy.rs · a system file, read every time
+- refers-to: src/policy.rs :: Policy, load, system_path, allows, allows_extensions, unsigned, catalog_url, apply, locked
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+The policy is a JSON file in a system folder (`/etc/formportal`, `/Library/Application Support/FormPortal`, `%ProgramData%\FormPortal`) that a standard account cannot write. It is read on every call rather than cached, so a pushed change applies without restarting anything, and there is no resident process to notify. `FORMPORTAL_POLICY` is consulted only when the system file is absent, so it can test a policy but never loosen a real one. `deny_unknown_fields` and the format check make a typo or a broken file an error, and every operation that loads the policy then refuses: failing closed is the point, a misspelt `aps` must not silently allow every app.
+
+### Where it is enforced
+- refers-to: src/portal.rs :: source, catalog, install, preferences, set_preferences, hold_if_older · src/extensions.rs :: extension_index, install_extension, install_extension_file
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+In the core, so the window, the command line and MCP cannot disagree. `source` turns the asked address and developer setting into the effective ones and adds the policy's keys; `catalog` and `extension_index` use it (the index moves beside the locked catalogue). `install` checks apps and channels before downloading. `preferences` overlays the fixed fields on the person's own file; `set_preferences` keeps the file's own values for locked fields, so the overlay is never written back and lifting the policy restores the person's choices. `hold_if_older` does nothing while `auto_update` is fixed, since a per-app hold would be cleared anyway.
+
+### mirror.rs · copy, check, rewrite, re-sign
+- refers-to: src/mirror.rs :: Portal::mirror, MirrorOptions, MirrorReport, signing_key
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+The mirror starts from a verified catalogue (`catalog`, so it obeys the same keys and policy), downloads each artifact with the ordinary `download` (resumable, SHA-256 checked, an existing good file reused) into `files/[product]/[channel]/[version]/`, and rewrites `url` and `origin` to the base address. Product ids and versions become folder names only if they are plain (letters, digits, `.-_+`). History is dropped unless asked for. The new body is signed with the seed from `FORMPORTAL_MIRROR_KEY`, since rewriting addresses invalidates formai.dev's signature; the result carries the public key for the policy's `catalog_keys`. Extension indexes are not mirrored yet.
 
 ## v0.32.0 · every installer kind {#installers}
 

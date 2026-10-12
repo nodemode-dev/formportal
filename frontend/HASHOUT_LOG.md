@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.33.0
+Current build version: v0.34.0
 Last updated: 2026-10-12 · standalone repository
+
+## v0.34.0 · a managed computer {#managed}
+
+### Settings, Managed, and locked controls
+- refers-to: index.html :: .setting[data-managed] · src/extensions/settings/index.ts :: the policy handler · src/styles/main.css :: .check:has(input:disabled), .field:disabled
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+The Managed row is the last row of Settings and stays `hidden` until a policy is read, so appearing after load moves nothing above it. It names who manages the computer and the file, then what is fixed, which apps and builds are allowed, and the extension rules. Locked checkboxes and the catalogue field are `disabled` (dimmed, a title says why) rather than relabelled, so no text reflows; the catalogue field shows the policy's address. The root gets `data-policy` and, when extensions are off, `data-no-extensions`. An earlier draft put `data-managed` on the root as well, and a test selector matched the root instead of the row: the root attribute was renamed.
+
+### Apps the policy does not allow
+- refers-to: src/engine/index.ts :: setPolicy, blocked · src/extensions/apps/index.ts :: patch · src/styles/main.css :: [data-blocked]
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+`engine.blocked` mirrors the core's rule (apps list, channels list). A blocked row gets `data-blocked`, its status reads "Not allowed by your organisation", and Install, Update and the versions Install are hidden with `visibility`, keeping their space. Open, rollback and remove stay: a policy limits what is installed, not what the person may do with what they have. The core refuses regardless; this only stops offering what would be refused. The browser mode takes `?policy=locked`. Measured at 4x CPU: Home and Settings at 0 shift managed and unmanaged, no script error.
 
 ## v0.33.0 · help, What's new, names, notices {#help}
 

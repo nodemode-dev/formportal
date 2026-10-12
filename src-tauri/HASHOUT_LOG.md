@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.33.0
+Current build version: v0.34.0
 Last updated: 2026-10-12 · standalone repository
+
+## v0.34.0 · the policy for the window {#policy}
+
+### policy
+- refers-to: src/main.rs :: policy
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+Returns the shape the interface draws from (who, where, locked fields, catalogue, apps, channels, and extensions and sideload as plain booleans), or null. Every other command already passes through the core, which enforces the policy, so the window's catalogue address and developer setting are replaced there whatever the interface sends.
 
 ## v0.33.0 · links out, and copies still open {#links}
 

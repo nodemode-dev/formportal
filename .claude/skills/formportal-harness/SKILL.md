@@ -1,6 +1,6 @@
 ---
 name: formportal-harness
-description: Drive FormPortal, the Form family's app portal (a Creative Cloud desktop app alternative), through its formportal MCP server or the formportal command line. Use whenever the person wants a Form app (FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormHub and the rest) listed, checked, installed, updated, opened, rolled back to the previous version, removed, or its beta installed beside the stable build; asks which Form apps exist, what each replaces, which are released or in progress, what version is installed or offered for this computer; wants the catalogue checked or pointed at a local or forked catalogue; wants another Form app's own MCP server reached after installing it; or when formportal tools such as status, apps, app_info, installs, install, open, rollback or remove are available or fail. Not for changing FormPortal's own source (use formportal-skillset).
+description: Drive FormPortal, the Form family's app portal (a Creative Cloud desktop app alternative), through its formportal MCP server or the formportal command line. Use whenever the person wants a Form app (FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormHub and the rest) listed, checked, installed, updated, opened, rolled back to the previous version, removed, or its beta installed beside the stable build; asks which Form apps exist, what each replaces, which are released or in progress, what version is installed or offered for this computer; wants the catalogue checked or pointed at a local or forked catalogue; wants another Form app's own MCP server reached after installing it; or when formportal tools such as status, apps, app_info, installs, install, open, rollback or remove are available or fail, or an organisation's policy refuses one. Not for changing FormPortal's own source (use formportal-skillset).
 ---
 
 # formportal harness
@@ -41,6 +41,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | Installing, updating, update preferences, opening, rolling back, removing | `sub-skills/install-and-update/SUB-SKILL.md` |
 | Beta and nightly builds beside stable | `sub-skills/channels-and-beta/SUB-SKILL.md` |
 | Extensions: finding, installing, sideloading a .formpkg, turning off, removing | `sub-skills/extensions/SUB-SKILL.md` |
+| A computer an organisation manages: a refusal naming a policy, locked settings, mirroring the catalogue, silent deployment | `sub-skills/organisations/SUB-SKILL.md` |
 | Which apps exist, what each replaces, status and groups | `sub-skills/catalog-and-registry/SUB-SKILL.md` |
 | Using an installed Form app through its own MCP server, deep links, formai.dev | `sub-skills/form-family-bridge/SUB-SKILL.md` |
 | Checking work before reporting it | `sub-skills/verification/SUB-SKILL.md` |

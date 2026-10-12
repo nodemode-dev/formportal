@@ -2,8 +2,8 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.31.0
-Last updated: 2026-10-11 · first version: eight commands, eight tools
+Current build version: v0.34.0
+Last updated: 2026-10-12 · policy and mirror; seventeen tools
 
 ---
 
@@ -17,6 +17,22 @@ cli/
     ├── ops.rs       every operation once, returning JSON; Ctx (portal, source, allow_unsigned)
     └── mcp.rs       stdio JSON-RPC 2.0 MCP server; the tool schemas
 ```
+
+## v0.34.0 · policy and mirror {#organisations}
+
+### policy, status.managed, and refused preferences
+- refers-to: src/ops.rs :: policy, status, preferences, load · src/mcp.rs :: the policy tool
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+`policy` (command and read-only tool, the seventeenth) prints what is in force, or the system path where a policy would be. `status` carries a short `managed` summary. `preferences` refuses outright when asked to change a locked field, naming it, rather than saving and silently ignoring it. `load` asks the core for the effective source first, so a locked catalogue also wins over a local file passed as `--source`.
+
+### mirror is a command, not a tool
+- refers-to: src/main.rs :: mirror · src/ops.rs :: mirror
+- kind: decision
+- logged: v0.34.0 · 2026-10-12
+
+Mirroring writes a whole folder and downloads every release; it is an administrator's job run on a server, so it stays on the command line and out of the agent tool list. Its result ends with the exact policy lines to deploy (`catalog`, `catalog_keys`), or says the mirror is unsigned and what to set.
 
 ## v0.27.0 · why a second surface {#why}
 
