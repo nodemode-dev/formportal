@@ -577,6 +577,12 @@ fn main() {
                     *slot = Some(link);
                 }
             }
+            let page = hub().preferences().map(|p| p.page()).unwrap_or("index.html");
+            if let Some(config) = app.config().app.windows.iter().find(|w| w.label == "main") {
+                let mut config = config.clone();
+                config.url = tauri::WebviewUrl::App(page.into());
+                tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?.build()?;
+            }
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
             Ok(())

@@ -29,11 +29,24 @@ pub struct Preferences {
     pub keep_previous: bool,
     #[serde(default)]
     pub quiet: Vec<String>,
+    #[serde(default)]
+    pub language: Option<String>,
+}
+
+pub const LANGUAGES: [&str; 2] = ["en", "es"];
+
+impl Preferences {
+    pub fn page(&self) -> &'static str {
+        match self.language.as_deref() {
+            Some("es") => "es/index.html",
+            _ => "index.html",
+        }
+    }
 }
 
 impl Default for Preferences {
     fn default() -> Self {
-        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new() }
+        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None }
     }
 }
 
