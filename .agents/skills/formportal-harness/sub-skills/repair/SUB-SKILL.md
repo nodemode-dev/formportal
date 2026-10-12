@@ -22,4 +22,4 @@ Every install record: its folder is there, it has something to open, and the kep
 
 ## Related
 
-An update put off with `update {product, later: true}` waits until the app is closed; `update {product, later: false}` cancels that. A `formai://file/<app>?url=...` link from a web page asks the person before downloading a Form project file into From the web in their projects folder.
+An update put off with `update {product, later: true}` waits until the app is closed; `update {product, later: false}` cancels that. A `formai://file/formcut?url=...` link (any app id in place of formcut) from a web page asks the person before downloading a Form project file into From the web in their projects folder.
