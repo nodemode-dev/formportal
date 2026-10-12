@@ -1,4 +1,5 @@
 import type { FontFamilyEntry, InstalledFont } from "../../engine/types.ts";
+import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 
 const set = (root: HTMLElement, field: string, text: string) => {
@@ -19,6 +20,7 @@ export const fonts: Extension = {
     const rows = new Map<string, HTMLElement>();
     const ownRows = new Map<string, HTMLElement>();
     let installed: InstalledFont[] = [];
+    let outdated: InstalledFont[] = [];
 
     const row = (family: FontFamilyEntry) => {
       let r = rows.get(family.id);
@@ -28,6 +30,7 @@ export const fonts: Extension = {
         r.dataset.category = family.category;
         r.dataset.search = `${family.family} ${family.foundry} ${family.category}`.toLowerCase();
         r.querySelector("[data-font-act='install']")?.addEventListener("click", () => void engine.dispatch("font.install", { id: family.id }));
+        r.querySelector("[data-font-act='update']")?.addEventListener("click", () => void engine.dispatch("font.update", { id: family.id, family: family.family, styles: outdated.filter((f) => f.family_id === family.id).map((f) => f.style) }));
         r.querySelector("[data-font-act='remove']")?.addEventListener("click", () => void engine.dispatch("font.remove", { family: family.id, label: family.family }));
         const styles = r.querySelector<HTMLElement>("[data-font-styles]");
         for (const s of family.styles) {
@@ -49,8 +52,10 @@ export const fonts: Extension = {
       const have = installed.filter((f) => f.family_id === family.id).map((f) => f.style);
       set(r, "family", family.family);
       set(r, "meta", `${family.foundry} · ${family.licence} · ${family.styles.length} ${family.styles.length === 1 ? "style" : "styles"}`);
-      const state = have.length === 0 ? "Not installed" : have.length === family.styles.length ? "Installed" : `${have.length} of ${family.styles.length} styles`;
+      const newer = outdated.filter((f) => f.family_id === family.id).length;
+      const state = newer ? t("Update available") : have.length === 0 ? t("Not installed") : have.length === family.styles.length ? t("Installed") : t("{n} of {all} styles", { n: have.length, all: family.styles.length });
       set(r, "state", state);
+      if (r.hasAttribute("data-update") !== newer > 0) r.toggleAttribute("data-update", newer > 0);
       const status = have.length === 0 ? "none" : have.length === family.styles.length ? "all" : "some";
       if (r.dataset.have !== status) r.dataset.have = status;
       r.querySelectorAll<HTMLElement>(".menu-style").forEach((b) => {
@@ -78,6 +83,7 @@ export const fonts: Extension = {
 
     engine.on("fonts", ({ view }) => {
       installed = view.installed;
+      outdated = view.updates ?? [];
       for (const f of view.index?.families ?? []) row(f);
       const error = document.querySelector<HTMLElement>("[data-fonts-error]");
       if (error) {

@@ -69,6 +69,7 @@ engine.command("catalog.load", () =>
     root.setAttribute("data-loaded", "");
     void engine.dispatch("files.scan");
     void engine.dispatch("learn.load");
+    void engine.dispatch("fonts.load");
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
@@ -442,6 +443,27 @@ engine.command("font.install", (arg) =>
     engine.setNotice(`${family}${style ? ` ${style}` : ""} is installed for you. Apps see it after they restart.`, "info", "library");
   }, "library"),
 );
+
+engine.command("font.update", (arg) =>
+  guard(async () => {
+    const { id, family, styles } = arg as { id: string; family: string; styles: string[] };
+    try {
+      for (const style of styles) await bridge.fontInstall(id, style);
+    } finally {
+      await engine.dispatch("fonts.load");
+    }
+    engine.setNotice(`${family} is updated (${styles.join(", ")}). Apps see the new version after they restart.`, "info", "updates");
+  }, "updates"),
+);
+
+let fontNotice = "";
+engine.on("fonts", ({ view }) => {
+  const names = Array.from(new Set((view.updates ?? []).map((f) => f.family)));
+  const key = names.join("|");
+  if (!names.length || key === fontNotice) return;
+  fontNotice = key;
+  engine.setNotice(`${names.length === 1 ? "A newer version of the font" : "Newer versions of the fonts"} ${names.join(", ")} ${names.length === 1 ? "is" : "are"} in the font library. Update ${names.length === 1 ? "it" : "them"} in Fonts.`, "info", "updates");
+});
 
 engine.command("font.remove", (arg) =>
   guard(async () => {

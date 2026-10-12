@@ -433,6 +433,10 @@ details[open] > .icon-btn {
   scrollbar-gutter: stable;
 }
 
+html[data-parsing] #app {
+  display: none;
+}
+
 .pane {
   display: none;
 }
@@ -1731,8 +1735,13 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
 }
 
 .font:not([data-have="all"]) [data-font-act="install"],
-.font:is([data-have="all"], [data-have="some"]) [data-font-act="remove"] {
+.font:is([data-have="all"], [data-have="some"]) [data-font-act="remove"],
+.font[data-update] [data-font-act="update"] {
   display: inline-flex;
+}
+
+.font[data-update] [data-font-act="install"] {
+  display: none;
 }
 
 .font .drop-styles {

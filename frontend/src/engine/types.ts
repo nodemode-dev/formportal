@@ -147,6 +147,7 @@ export interface FontsView {
   index: { families: FontFamilyEntry[] } | null;
   index_error: string | null;
   installed: InstalledFont[];
+  updates?: InstalledFont[];
   folder: string;
 }
 

@@ -49,8 +49,9 @@ export const notices: Extension = {
       close.textContent = "Dismiss";
       close.addEventListener("click", () => item.remove());
       item.append(body, close);
-      toasts.append(item);
-      while (toasts.children.length > 3) toasts.firstElementChild?.remove();
+      const showing = toasts.firstElementChild as HTMLElement | null;
+      if (showing?.dataset.tone === "fault" && tone === "info") return;
+      toasts.replaceChildren(item);
       if (tone === "info") window.setTimeout(() => item.remove(), SHOW_MS);
     };
 

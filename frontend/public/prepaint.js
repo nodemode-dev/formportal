@@ -1,5 +1,9 @@
 (function () {
   var d = document.documentElement;
+  d.setAttribute("data-parsing", "");
+  document.addEventListener("readystatechange", function () {
+    if (document.readyState !== "loading") d.removeAttribute("data-parsing");
+  });
   try {
     var mode = localStorage.getItem("formportal-theme");
     var sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;

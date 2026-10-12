@@ -46,7 +46,9 @@ const fontIndex: FontFamilyEntry[] = [
   fam("literata", "Literata", "TypeTogether", "serif", [["Regular", 400], ["Italic", 400]]),
   fam("space-grotesk", "Space Grotesk", "Florian Karsten", "display", [["Regular", 400], ["Bold", 700]]),
 ];
-const fontsIn: InstalledFont[] = [];
+const fontsIn: InstalledFont[] = new URLSearchParams(window.location.search).has("fontupdate")
+  ? ["Regular", "Bold"].map((style) => ({ family: "Inter", style, family_id: "inter", file: `~/.local/share/fonts/FormPortal/FormPortal-inter-${style}.ttf`, sha256: "1".repeat(64), source: "index" as const, licence: "OFL-1.1" }))
+  : [];
 const mediaItem = (id: string, title: string, kind: MediaItem["kind"], licence: string, thumbnail: string | null, product: string | null = null): MediaItem => ({
   id, title, kind, product, creator: "Sample creator", licence, source_url: `https://media.example/${id}`, file: `${id}${product === "formcut" ? ".fc" : product === "formwav" ? ".fmw" : ".bin"}`, bytes: 2_400_000, thumbnail, tags: [kind],
 });
@@ -295,13 +297,21 @@ export const fixtureBridge: Bridge = {
     if (params.get("assistant") === "fail") throw new Error("Claude Code could not answer: not signed in");
     return { client, answer: `This is the browser preview, so no agent ran. In the app, Claude Code would answer "${question.slice(0, 80)}" using FormPortal's reading tools.` };
   },
-  fonts: async () => ({ index: { families: fontIndex }, index_error: null, installed: fontsIn.map((f) => ({ ...f })), folder: "~/.local/share/fonts/FormPortal" }),
+  fonts: async () => ({
+    index: { families: fontIndex },
+    index_error: null,
+    installed: fontsIn.map((f) => ({ ...f })),
+    updates: fontsIn.filter((f) => f.source === "index" && fontIndex.find((x) => x.id === f.family_id)?.styles.some((s) => s.style === f.style && s.sha256 !== f.sha256)).map((f) => ({ ...f })),
+    folder: "~/.local/share/fonts/FormPortal",
+  }),
   fontInstall: async (id, style) => {
     await pause(250);
     const family = fontIndex.find((f) => f.id === id);
     if (!family) throw new Error(`${id} is not in the font index`);
     for (const s of family.styles.filter((x) => !style || x.style === style)) {
-      if (!fontsIn.some((f) => f.family_id === id && f.style === s.style)) fontsIn.push({ family: family.family, style: s.style, family_id: id, file: `~/.local/share/fonts/FormPortal/FormPortal-${id}-${s.style}.ttf`, sha256: s.sha256, source: "index", licence: family.licence });
+      const had = fontsIn.find((f) => f.family_id === id && f.style === s.style);
+      if (had) had.sha256 = s.sha256;
+      else fontsIn.push({ family: family.family, style: s.style, family_id: id, file: `~/.local/share/fonts/FormPortal/FormPortal-${id}-${s.style}.ttf`, sha256: s.sha256, source: "index", licence: family.licence });
     }
   },
   fontPick: async () => "/home/you/Downloads/Studio Grotesk.otf",
