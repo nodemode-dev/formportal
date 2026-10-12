@@ -61,6 +61,9 @@ export const tauriBridge: Bridge = {
   selfUpdateInstall: async () => {
     await tauri().core.invoke<null>("self_update_install");
   },
+  onVersionsKept: (handler) => {
+    void tauri().event.listen<string[]>("versions-kept", ({ payload }) => handler(payload));
+  },
   onPackage: (handler) => {
     void tauri().event.listen<string>("package-open", ({ payload }) => handler(payload));
     void tauri()

@@ -130,8 +130,17 @@ export const files: Extension = {
       if (total && total.textContent !== text) total.textContent = text;
     });
 
+    const fresh = document.querySelector<HTMLElement>("[data-versions-new]");
+    engine.on("saved", ({ paths }) => {
+      if (dialog?.open && current && paths.includes(current)) fresh?.toggleAttribute("data-on", true);
+    });
+    document.querySelector("[data-versions-show]")?.addEventListener("click", () => {
+      if (current) void engine.dispatch("file.versions", { path: current });
+    });
+
     engine.on("versions", ({ path, list }) => {
       if (path !== current) return;
+      fresh?.toggleAttribute("data-on", false);
       const title = document.querySelector<HTMLElement>("[data-versions-title]");
       const name = path.split(/[\\/]/).pop() ?? path;
       if (title) title.textContent = `Versions of ${name}`;

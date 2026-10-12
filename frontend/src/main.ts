@@ -570,6 +570,13 @@ engine.command("assistant.ask", async (arg) => {
 
 document.querySelectorAll<HTMLButtonElement>("[data-retry]").forEach((button) => button.addEventListener("click", () => void engine.dispatch("catalog.load")));
 
+let rescan = 0;
+bridge.onVersionsKept((paths) => {
+  window.clearTimeout(rescan);
+  rescan = window.setTimeout(() => void engine.dispatch("files.scan"), 400);
+  engine.emit("saved", { paths });
+});
+
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");
   void engine.dispatch("ext.install", { path });

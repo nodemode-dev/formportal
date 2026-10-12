@@ -148,7 +148,7 @@
                   <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                   <input type="search" data-files-query placeholder="Search your projects" aria-label="Search your projects" autocomplete="off" spellcheck="false" />
                 </label>
-                <p class="toolbar-note">Form projects in folders you choose, on this computer only. FormPortal keeps earlier versions you can go back to.</p>
+                <p class="toolbar-note">Form projects in folders you choose, on this computer only. While FormPortal is open it keeps a version each time you save, and you can go back to any of the last 20.</p>
               </div>
 
               <section class="block files-start" data-files-start>
@@ -450,6 +450,7 @@
     <dialog class="prefs versions" data-versions-dialog aria-labelledby="h-versions">
       <div class="versions-frame">
         <header class="versions-head"><h2 id="h-versions" class="prefs-title" data-versions-title>Versions</h2><p class="fine mono" data-versions-path></p></header>
+        <p class="versions-new" data-versions-new><span class="fine">You saved it again; a new version was kept.</span><button class="link-btn" type="button" data-versions-show>Show it</button></p>
         <ol class="list versions-list" data-versions-list></ol>
         <footer class="agent-acts"><button class="btn" type="button" data-versions-save>Keep a version now</button><button class="btn" type="button" data-versions-close>Close</button></footer>
       </div>

@@ -142,6 +142,15 @@ export const fixtureBridge: Bridge = {
     const path = new URLSearchParams(window.location.search).get("package");
     if (path) handler(path);
   },
+  onVersionsKept: (handler) => {
+    if (!params.has("saves") || !folders.length) return;
+    window.setTimeout(() => {
+      const path = `${folders[0].path}/Trailer.fc`;
+      const list = versionsOf(path, 4);
+      list.unshift({ id: `${stamp + 300}-${"c".repeat(12)}`, at: stamp + 300, size: (list[0]?.size ?? 0) + 512, sha256: "c".repeat(64), reason: "saved" });
+      handler([path]);
+    }, 6000);
+  },
   installs: async () => Array.from(installed.values()),
   install: async (product, channel, progress, version) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
