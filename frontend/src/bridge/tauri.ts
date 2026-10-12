@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -131,6 +131,12 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke("media_remove", { id });
   },
   mediaThumb: (url) => tauri().core.invoke<string>("media_thumb", { url }),
+  learn: () => tauri().core.invoke<LearnView>("learn_view", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
+  learnMark: async (id, step, done, reset) => {
+    await tauri().core.invoke("learn_mark", { id, step, done, reset, url: catalogUrl(), allowUnsigned: allowUnsigned() });
+  },
+  assistantAgents: () => tauri().core.invoke<AssistantAgent[]>("assistant_agents"),
+  assistantAsk: (client, question) => tauri().core.invoke<{ client: string; answer: string }>("assistant_ask", { client, question, url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   fonts: () => tauri().core.invoke<FontsView>("fonts_view", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   fontInstall: async (id, style) => {
     await tauri().core.invoke("font_install", { id, style: style ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() });

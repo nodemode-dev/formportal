@@ -1,5 +1,6 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
+import learnPortal from "../../../core/data/learn-portal.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
@@ -59,6 +60,18 @@ const mediaIndex: MediaItem[] = [
   mediaItem("podcast-mix", "Podcast mix", "template", "CC0-1.0", "/media/formwav.webp", "formwav"),
 ];
 const savedMedia: SavedMedia[] = [];
+const params = new URLSearchParams(window.location.search);
+const sampleTutorial = {
+  id: "formcut-first-cut", product: "formcut", title: "Make your first cut", summary: "A sample of an app's tutorial from the tutorial index: import a clip, trim it and export.", minutes: 5, level: "beginner",
+  steps: [
+    { title: "Import a clip", body: "Sample step from the browser preview.", route: null, url: "https://github.com/nodemode-ai/formcut#readme" },
+    { title: "Trim it", body: "Sample step from the browser preview.", route: null, url: null },
+    { title: "Export", body: "Sample step from the browser preview.", route: null, url: null },
+  ],
+};
+type FixtureTutorial = { id: string; product: string; title: string; summary: string; minutes: number; level: string; steps: { title: string; body: string; route?: string | null; url?: string | null }[] };
+const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutorial[]), sampleTutorial];
+const progress = new Map<string, Set<number>>();
 const credit = (m: MediaItem) => (m.licence === "CC0-1.0" ? `${m.title} by ${m.creator}, public domain (CC0 1.0), ${m.source_url}` : `${m.title} by ${m.creator}, licensed ${m.licence}, ${m.source_url}`);
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
@@ -217,6 +230,34 @@ export const fixtureBridge: Bridge = {
     if (at >= 0) savedMedia.splice(at, 1);
   },
   mediaThumb: async (url) => url,
+  learn: async () => ({
+    index_error: null,
+    tutorials: tutorials.map((t) => {
+      const done = Array.from(progress.get(t.id) ?? []).sort((a, b) => a - b);
+      return { ...t, steps: t.steps.map((s) => ({ title: s.title, body: s.body, route: s.route ?? null, url: s.url ?? null })), done_steps: done, finished: done.length === t.steps.length };
+    }),
+  }),
+  learnMark: async (id, step, done, reset) => {
+    const t = tutorials.find((x) => x.id === id);
+    if (!t) throw new Error(`there is no tutorial ${id}`);
+    const set = progress.get(id) ?? new Set<number>();
+    if (reset) set.clear();
+    else if (step !== null) {
+      if (step < 1 || step > t.steps.length) throw new Error(`${t.title} has ${t.steps.length} steps; there is no step ${step}`);
+      if (done) set.add(step);
+      else set.delete(step);
+    }
+    progress.set(id, set);
+  },
+  assistantAgents: async () => [
+    { client: "claude", label: "Claude Code", path: params.get("assistant") === "none" ? null : "/usr/local/bin/claude" },
+    { client: "codex", label: "Codex", path: null },
+  ],
+  assistantAsk: async (client, question) => {
+    await pause(900);
+    if (params.get("assistant") === "fail") throw new Error("Claude Code could not answer: not signed in");
+    return { client, answer: `This is the browser preview, so no agent ran. In the app, Claude Code would answer "${question.slice(0, 80)}" using FormPortal's reading tools.` };
+  },
   fonts: async () => ({ index: { families: fontIndex }, index_error: null, installed: fontsIn.map((f) => ({ ...f })), folder: "~/.local/share/fonts/FormPortal" }),
   fontInstall: async (id, style) => {
     await pause(250);

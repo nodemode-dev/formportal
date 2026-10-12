@@ -1,8 +1,11 @@
-import type { AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
+import type { AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
-  notice: { text: string; tone: "info" | "fault" };
+  notice: { text: string; tone: "info" | "fault"; category: NoticeCategory };
+  learn: { view: LearnView };
+  assistant: { agents: AssistantAgent[] };
+  answer: { pending: boolean; answer: string | null; error: string | null };
   route: { route: Route };
   theme: { light: boolean };
   platform: { platform: Platform };
@@ -20,7 +23,7 @@ export interface EngineEvents {
   media: { view: MediaView };
 }
 
-export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };
+export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [] };
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {
@@ -144,8 +147,8 @@ export class Engine {
     this.emit("install", { key });
   }
 
-  setNotice(text: string, tone: "info" | "fault" = "fault"): void {
-    this.emit("notice", { text, tone });
+  setNotice(text: string, tone: "info" | "fault" = "fault", category: NoticeCategory = "system"): void {
+    this.emit("notice", { text, tone, category });
   }
 
   private names = new Map<string, string>();
@@ -169,6 +172,7 @@ export class Engine {
 
   policy: PolicyView | null = null;
   lastFonts: FontsView | null = null;
+  lastLearn: LearnView | null = null;
 
   setPolicy(policy: PolicyView | null): void {
     this.policy = policy;

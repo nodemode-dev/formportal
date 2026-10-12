@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
+import type { AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -33,6 +33,10 @@ export interface Bridge {
   mediaSave(id: string, useTemplate: boolean): Promise<{ copied_to?: string; opened_with?: string | null }>;
   mediaRemove(id: string): Promise<void>;
   mediaThumb(url: string): Promise<string>;
+  learn(): Promise<LearnView>;
+  learnMark(id: string, step: number | null, done: boolean, reset: boolean): Promise<void>;
+  assistantAgents(): Promise<AssistantAgent[]>;
+  assistantAsk(client: string, question: string): Promise<{ client: string; answer: string }>;
   fonts(): Promise<FontsView>;
   fontInstall(id: string, style?: string): Promise<void>;
   fontPick(): Promise<string | null>;

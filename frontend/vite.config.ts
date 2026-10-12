@@ -47,7 +47,7 @@ const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-
 const web = (href: string, text: string) => `<a class="link" href="${esc(href)}" data-web>${text}</a>`;
 const help = (p: App) => {
   const r = repo(p);
-  return r ? `${web(`${r}#readme`, "Guide and docs")}${web(`${r}/releases`, "Every release")}${web(`${r}/issues/new`, "Report a problem")}` : "";
+  return r ? `${web(`${r}#readme`, "Guide and docs")}${web(`${r}/releases`, "Every release")}${web(`${r}/issues/new`, "Report a problem")}${web(`${r}/discussions`, "Ask the community")}` : "";
 };
 const feedback = (p: App) => {
   const r = repo(p);

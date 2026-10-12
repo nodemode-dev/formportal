@@ -254,6 +254,39 @@ export interface Preferences {
   notices: boolean;
   per_app: Record<string, boolean>;
   keep_previous: boolean;
+  quiet: NoticeCategory[];
+}
+
+export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";
+
+export interface TutorialStep {
+  title: string;
+  body: string;
+  route: string | null;
+  url: string | null;
+}
+
+export interface Tutorial {
+  id: string;
+  product: string;
+  title: string;
+  summary: string;
+  minutes: number;
+  level: string;
+  steps: TutorialStep[];
+  done_steps: number[];
+  finished: boolean;
+}
+
+export interface LearnView {
+  index_error: string | null;
+  tutorials: Tutorial[];
+}
+
+export interface AssistantAgent {
+  client: "claude" | "codex";
+  label: string;
+  path: string | null;
 }
 
 export interface UpdateOutcome {

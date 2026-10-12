@@ -43,6 +43,7 @@
             <input type="search" data-search placeholder="Search Form apps" aria-label="Search Form apps" autocomplete="off" spellcheck="false" />
           </label>
           <div class="top-tools">
+            <button class="icon-btn" type="button" data-ask-open aria-label="Ask your agent" title="Ask your agent"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H11l-4 3.5v-3.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 10h7M8.5 13h4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
             <button class="icon-btn bell" type="button" data-bell aria-label="Notifications" aria-expanded="false" aria-controls="bell-panel">
               <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
               <span class="bell-dot" aria-hidden="true"></span>
@@ -50,6 +51,15 @@
             <button class="icon-btn" type="button" data-prefs-open aria-label="Preferences">%icon:settings:ic-m%</button>
             <section class="bell-panel" id="bell-panel" data-bell-panel hidden aria-label="Notifications">
               <header class="bell-head"><h2>Notifications</h2><button class="link-btn" type="button" data-bell-clear>Clear</button></header>
+              <div class="bell-cats" role="group" aria-label="Show">
+                <button class="bell-cat" type="button" data-bell-cat="all" aria-pressed="true">All</button>
+                <button class="bell-cat" type="button" data-bell-cat="updates" aria-pressed="false">Updates</button>
+                <button class="bell-cat" type="button" data-bell-cat="installs" aria-pressed="false">Installs</button>
+                <button class="bell-cat" type="button" data-bell-cat="library" aria-pressed="false">Files &amp; library</button>
+                <button class="bell-cat" type="button" data-bell-cat="agents" aria-pressed="false">Agents</button>
+                <button class="bell-cat" type="button" data-bell-cat="learn" aria-pressed="false">Learning</button>
+                <button class="bell-cat" type="button" data-bell-cat="system" aria-pressed="false">FormPortal</button>
+              </div>
               <ol class="bell-list" data-bell-list></ol>
               <p class="bell-empty">Nothing yet. Updates, installs and anything that goes wrong are listed here.</p>
             </section>
@@ -83,6 +93,11 @@
                 <ul class="wn-list">
                   <!-- @portal:whatsnew -->
                 </ul>
+              </section>
+
+              <section class="block suggest-block" data-suggest hidden>
+                <header class="block-head"><h2 class="block-title">Suggested for you</h2><span class="block-note">From what is on this computer. Nothing is sent anywhere.</span></header>
+                <ul class="suggest" data-suggest-list></ul>
               </section>
             </div>
           </section>
@@ -312,10 +327,20 @@
 
           <section class="pane" data-pane="learn" data-title="Learn" aria-label="Learn">
             <div class="page">
-              <p class="lede">Each app's guide, its releases and where to report a problem. Links open in your browser.</p>
+              <p class="lede">Tutorials you can follow step by step, with your progress kept on this computer; each app's guide, releases and community. Links open in your browser.</p>
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Tutorials</h2><span class="fine" data-learn-count></span></header>
+                <div class="learn-kinds seg" role="group" aria-label="Show">
+                  <button class="seg-item" type="button" data-learn-show="all" aria-pressed="true">All</button>
+                  <button class="seg-item" type="button" data-learn-show="started" aria-pressed="false">In progress</button>
+                  <button class="seg-item" type="button" data-learn-show="finished" aria-pressed="false">Finished</button>
+                </div>
+                <ul class="tutorials" data-tutorials></ul>
+                <p class="fine" data-learn-error hidden></p>
+              </section>
               <section class="block">
                 <h2 class="block-title">FormPortal</h2>
-                <p class="links"><a class="link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-ai/formhub#readme" data-web>Community: FormHub</a></p>
+                <p class="links"><a class="link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-ai/formportal/discussions" data-web>Ask the community</a></p>
               </section>
               <section class="block">
                 <h2 class="block-title">The apps</h2>
@@ -350,7 +375,14 @@
             </div>
             <h3 class="prefs-h">Notifications</h3>
             <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
-            <p class="fine">Failures are always shown. Everything lands in the bell in the upper right.</p>
+            <p class="fine">Pop up a notice for:</p>
+            <label class="menu-check"><span>Updates</span><input type="checkbox" class="switch" data-quiet="updates" checked /></label>
+            <label class="menu-check"><span>Installs and extensions</span><input type="checkbox" class="switch" data-quiet="installs" checked /></label>
+            <label class="menu-check"><span>Files, fonts and stock</span><input type="checkbox" class="switch" data-quiet="library" checked /></label>
+            <label class="menu-check"><span>Agents</span><input type="checkbox" class="switch" data-quiet="agents" checked /></label>
+            <label class="menu-check"><span>Learning</span><input type="checkbox" class="switch" data-quiet="learn" checked /></label>
+            <label class="menu-check"><span>FormPortal itself</span><input type="checkbox" class="switch" data-quiet="system" checked /></label>
+            <p class="fine">Failures always pop up. Everything lands in the bell in the upper right, where you can show one kind at a time.</p>
             <h3 class="prefs-h">In the background</h3>
             <p class="fine">Nothing. FormPortal checks for updates, and applies the automatic ones, only while it is open. It has no login item, no tray process and no account.</p>
           </section>
@@ -414,6 +446,18 @@
         <label class="menu-check"><span>I have the right to use this font on this computer</span><input type="checkbox" class="switch" data-font-rights-ok /></label>
         <p class="fine">FormPortal copies it into your own font folder. It is not uploaded anywhere.</p>
         <footer class="agent-acts"><button class="btn btn-primary" type="button" data-font-rights-add disabled>Add font</button><button class="btn" type="button" data-font-rights-cancel>Cancel</button></footer>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions ask" data-ask aria-labelledby="h-ask">
+      <div class="versions-frame">
+        <header class="ask-head"><h2 id="h-ask" class="prefs-title">Ask your agent</h2><button class="link-btn" type="button" data-ask-close>Close</button></header>
+        <p class="fine">Your own agent on this computer answers, with your own account. It can read FormPortal (your apps, installs, updates, disk use, fonts, stock, extensions and tutorials) but cannot install, update or remove anything from here.</p>
+        <div class="seg ask-agents" role="group" aria-label="Agent" data-ask-agents></div>
+        <p class="fine" data-ask-none hidden>Neither Claude Code nor Codex is installed on this computer. Install one, sign in to it, then open this again.</p>
+        <textarea class="ask-input" rows="3" maxlength="4000" data-ask-input placeholder="For example: which of my apps have updates waiting, and what changed?" aria-label="Your question"></textarea>
+        <footer class="agent-acts"><button class="btn btn-primary" type="button" data-ask-send disabled>Ask</button><span class="fine" data-ask-state></span></footer>
+        <div class="ask-answer" data-ask-answer aria-live="polite"></div>
       </div>
     </dialog>
 

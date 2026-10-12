@@ -1,3 +1,4 @@
+import type { NoticeCategory } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
 const KEEP = 30;
@@ -53,11 +54,43 @@ export const notices: Extension = {
       if (tone === "info") window.setTimeout(() => item.remove(), SHOW_MS);
     };
 
-    engine.on("notice", ({ text, tone }) => {
+    let showing = "all";
+    const cats = Array.from(panel.querySelectorAll<HTMLButtonElement>("[data-bell-cat]"));
+    const filter = () => {
+      for (const item of Array.from(list.children) as HTMLElement[]) {
+        const hide = showing !== "all" && item.dataset.cat !== showing;
+        if (item.hidden !== hide) item.hidden = hide;
+      }
+    };
+    for (const b of cats) {
+      b.addEventListener("click", (event) => {
+        event.stopPropagation();
+        showing = b.dataset.bellCat ?? "all";
+        for (const o of cats) o.setAttribute("aria-pressed", String(o === b));
+        filter();
+      });
+    }
+    const quietBoxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-quiet]"));
+    engine.on("prefs", ({ prefs }) => {
+      for (const box of quietBoxes) {
+        const on = !(prefs.quiet ?? []).includes(box.dataset.quiet as NoticeCategory);
+        if (box.checked !== on) box.checked = on;
+      }
+    });
+    for (const box of quietBoxes) {
+      box.addEventListener("change", () => {
+        const quiet = quietBoxes.filter((b) => !b.checked).map((b) => b.dataset.quiet as NoticeCategory);
+        void engine.dispatch("prefs.set", { quiet });
+      });
+    }
+
+    engine.on("notice", ({ text, tone, category }) => {
       if (!text) return;
       const entry = document.createElement("li");
       entry.className = "bell-item";
       entry.dataset.tone = tone;
+      entry.dataset.cat = category;
+      if (showing !== "all" && showing !== category) entry.hidden = true;
       const when = document.createElement("time");
       const now = new Date();
       when.dateTime = now.toISOString();
@@ -68,7 +101,7 @@ export const notices: Extension = {
       list.prepend(entry);
       while (list.children.length > KEEP) list.lastElementChild?.remove();
       if (panel.hidden) root.setAttribute("data-unread", "");
-      toast(text, tone);
+      if (tone === "fault" || !(engine.state.prefs.quiet ?? []).includes(category)) toast(text, tone);
     });
   },
 };
