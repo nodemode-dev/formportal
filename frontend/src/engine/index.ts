@@ -1,4 +1,4 @@
-import type { AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -6,6 +6,8 @@ export interface EngineEvents {
   learn: { view: LearnView };
   assistant: { agents: AssistantAgent[] };
   answer: { pending: boolean; answer: string | null; error: string | null };
+  repair: { pending: boolean; report: RepairReport | null };
+  webfile: { plan: WebPlan };
   route: { route: Route };
   theme: { light: boolean };
   platform: { platform: Platform };
@@ -120,6 +122,15 @@ export class Engine {
     this.state.extensions = index;
     this.state.installedExtensions = installed;
     this.emit("extensions", { count: (index?.packages.length ?? 0) + installed.length });
+  }
+
+  readonly later = new Set<string>();
+
+  setLater(keys: string[]): void {
+    const touched = new Set([...this.later, ...keys]);
+    this.later.clear();
+    for (const k of keys) this.later.add(k);
+    for (const key of touched) this.emit("install", { key });
   }
 
   readonly installs = new Map<string, InstallRecord>();

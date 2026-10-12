@@ -427,6 +427,10 @@
           <section class="prefs-panel" data-prefs-panel="about" hidden>
             <h3 class="prefs-h">FormPortal %fact:version%</h3>
             <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
+            <h3 class="prefs-h">Check and repair</h3>
+            <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
+            <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
+            <ul class="repair-list" data-repair-list></ul>
             <h3 class="prefs-h">Help</h3>
             <p class="links"><a class="link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-ai/formportal/discussions" data-web>Ask the community</a></p>
             <h3 class="prefs-h">Licence</h3>
@@ -457,6 +461,16 @@
         <label class="menu-check"><span>I have the right to use this font on this computer</span><input type="checkbox" class="switch" data-font-rights-ok /></label>
         <p class="fine">FormPortal copies it into your own font folder. It is not uploaded anywhere.</p>
         <footer class="agent-acts"><button class="btn btn-primary" type="button" data-font-rights-add disabled>Add font</button><button class="btn" type="button" data-font-rights-cancel>Cancel</button></footer>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions" data-webfile aria-labelledby="h-webfile">
+      <div class="versions-frame">
+        <h2 id="h-webfile" class="prefs-title">Open a file from the web</h2>
+        <p data-webfile-what></p>
+        <p class="fine mono" data-webfile-url></p>
+        <p class="fine">FormPortal downloads it into <span class="mono" data-webfile-folder></span> and opens it. Only Form project files are accepted; nothing else is downloaded.</p>
+        <footer class="agent-acts"><button class="btn btn-primary" type="button" data-webfile-go>Download and open</button><button class="btn" type="button" data-webfile-cancel>Cancel</button></footer>
       </div>
     </dialog>
 

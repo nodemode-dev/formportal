@@ -1,4 +1,4 @@
-import type { AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -131,6 +131,11 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke("media_remove", { id });
   },
   mediaThumb: (url) => tauri().core.invoke<string>("media_thumb", { url }),
+  repair: (fix) => tauri().core.invoke<RepairReport>("repair", { url: catalogUrl(), allowUnsigned: allowUnsigned(), fix }),
+  laterList: () => tauri().core.invoke<string[]>("later_list"),
+  updateLater: (product, channel, on) => tauri().core.invoke<string[]>("update_later", { product, channel, on }),
+  webPlan: (url) => tauri().core.invoke<WebPlan>("web_plan", { url }),
+  webFetch: (url) => tauri().core.invoke<{ saved: string; product: string; opened_with: string | null }>("web_fetch", { url }),
   learn: () => tauri().core.invoke<LearnView>("learn_view", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   learnMark: async (id, step, done, reset) => {
     await tauri().core.invoke("learn_mark", { id, step, done, reset, url: catalogUrl(), allowUnsigned: allowUnsigned() });

@@ -284,6 +284,33 @@ export interface LearnView {
   tutorials: Tutorial[];
 }
 
+export interface RepairFinding {
+  kind: "missing" | "broken" | "previous" | "leftover" | "staging" | "download";
+  product: string | null;
+  channel: Channel | null;
+  path: string;
+  bytes: number;
+  problem: string;
+  fix: string;
+  fixed: boolean;
+  error: string | null;
+}
+
+export interface RepairReport {
+  checked: number;
+  findings: RepairFinding[];
+  fixed: number;
+  freed: number;
+}
+
+export interface WebPlan {
+  url: string;
+  host: string;
+  name: string;
+  product: string;
+  folder: string;
+}
+
 export interface AssistantAgent {
   client: "claude" | "codex";
   label: string;

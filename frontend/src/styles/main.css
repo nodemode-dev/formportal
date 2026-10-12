@@ -845,8 +845,14 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
 
 .menu [data-act="rollback"],
 .menu [data-act="remove"],
+.menu [data-later],
 .menu .menu-check {
   display: none;
+}
+
+[data-install="update"]:not([data-later]) .menu [data-later="on"],
+[data-install="update"][data-later] .menu [data-later="off"] {
+  display: flex;
 }
 
 [data-previous] .menu [data-act="rollback"],
@@ -2031,6 +2037,34 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
 
 .suggest-block[hidden] {
   display: none;
+}
+
+.repair-list {
+  display: grid;
+  gap: var(--sp-2);
+  list-style: none;
+}
+
+.repair-list:empty {
+  display: none;
+}
+
+.repair-item {
+  display: grid;
+  gap: 2px;
+  padding: var(--sp-3);
+  border-radius: var(--radius-m);
+  background: var(--inset);
+  font-size: var(--fs-s);
+}
+
+.repair-item[data-fixed] p:first-child {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+}
+
+.repair-item[data-fault] .fine {
+  color: var(--fault);
 }
 
 .prefs.ask {

@@ -51,12 +51,16 @@ export const apps: Extension = {
       row.setAttribute("data-availability", view.availability);
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
+      const later = engine.later.has(key);
+      if (row.hasAttribute("data-later") !== later) row.toggleAttribute("data-later", later);
       row.style.setProperty("--p", String(progress ?? 0));
       const words =
         state === "busy"
           ? t("Installing {n}%", { n: Math.round((progress ?? 0) * 100) })
           : blocked && (state === "none" || state === "update")
             ? t("Not allowed by your organisation")
+            : state === "update" && engine.later.has(key)
+            ? t("Updates to {version} when closed", { version: offered ?? "" })
             : state === "update"
             ? t("Update to {version}", { version: offered ?? "" })
             : state === "ready"
@@ -145,6 +149,9 @@ export const apps: Extension = {
           const act = button.dataset.act === "update" ? "install" : button.dataset.act;
           void engine.dispatch(`app.${act}`, target(row));
         });
+      });
+      row.querySelectorAll<HTMLButtonElement>("[data-later]").forEach((button) => {
+        button.addEventListener("click", () => void engine.dispatch("app.later", { ...target(row), on: button.dataset.later === "on" }));
       });
     }
   },

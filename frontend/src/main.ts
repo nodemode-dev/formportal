@@ -19,13 +19,14 @@ import { stock } from "./extensions/stock/index.ts";
 import { learn } from "./extensions/learn/index.ts";
 import { assistant } from "./extensions/assistant/index.ts";
 import { goToLanguage, launch } from "./extensions/launch/index.ts";
+import { repair } from "./extensions/repair/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -51,6 +52,7 @@ engine.command("catalog.load", () =>
     engine.setPolicy(await bridge.policy());
     await refresh();
     engine.setPrefs(await bridge.preferences());
+    engine.setLater(await bridge.laterList());
     let catalog;
     try {
       catalog = await bridge.catalog();
@@ -70,6 +72,7 @@ engine.command("catalog.load", () =>
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
+    engine.setLater(await bridge.laterList());
     const name = (id: string) => engine.name(id);
     const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)} ${d.to}${d.channel === "stable" ? "" : ` (${d.channel})`}`);
     const failed = done.filter((d) => d.error).map((d) => `${name(d.product)}: ${d.error}`);
@@ -138,6 +141,80 @@ engine.command("language.set", (arg) =>
   }),
 );
 
+engine.command("app.later", (arg) =>
+  guard(async () => {
+    const { product, channel, on } = arg as Target & { on: boolean };
+    engine.setLater(await bridge.updateLater(product, channel, on));
+    const to = engine.view(product, channel).version ?? "";
+    engine.setNotice(
+      on ? `${engine.name(product)} updates to ${to} when you close it. FormPortal checks every few minutes while it is open, and when it next opens.` : `${engine.name(product)} is no longer waiting to update later.`,
+      "info",
+      "updates",
+    );
+  }, "updates"),
+);
+
+engine.command("later.check", () =>
+  guard(async () => {
+    if (!engine.later.size) return;
+    const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
+    for (const d of done) engine.setProgress(d.product, d.channel, null);
+    if (done.length) await refresh();
+    engine.setLater(await bridge.laterList());
+    const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.to}`);
+    const failed = done.filter((d) => d.error).map((d) => `${engine.name(d.product)}: ${d.error}`);
+    if (ok.length || failed.length) engine.setNotice([ok.length ? `Updated ${ok.join(", ")} now that it is closed.` : "", failed.length ? `Could not update ${failed.join("; ")}.` : ""].filter(Boolean).join(" "), failed.length ? "fault" : "info", "updates");
+  }, "updates"),
+);
+
+window.setInterval(() => void engine.dispatch("later.check"), 5 * 60 * 1000);
+
+engine.command("repair.run", (arg) =>
+  guard(async () => {
+    const fix = Boolean(arg);
+    engine.emit("repair", { pending: true, report: null });
+    let report;
+    try {
+      report = await bridge.repair(fix);
+    } catch (e) {
+      engine.emit("repair", { pending: false, report: null });
+      throw e;
+    }
+    engine.emit("repair", { pending: false, report });
+    if (fix) {
+      await refresh();
+      const mb = Math.round(report.freed / 1_000_000);
+      engine.setNotice(`Repaired ${report.fixed} of ${report.findings.length}${mb ? `; ${mb} MB freed` : ""}.`, report.fixed === report.findings.length ? "info" : "fault", "system");
+    }
+  }),
+);
+
+engine.command("web.ask", (arg) =>
+  guard(async () => {
+    const plan = await bridge.webPlan(String(arg));
+    await refresh();
+    if (![...engine.installs.values()].some((r) => r.product === plan.product)) {
+      void engine.dispatch("route.go", `app-${plan.product}`);
+      engine.setNotice(`A web page wants ${engine.name(plan.product)} to open ${plan.name}, but ${engine.name(plan.product)} is not installed. Install it here, then open the link again.`, "fault", "library");
+      return;
+    }
+    engine.emit("webfile", { plan });
+  }, "library"),
+);
+
+engine.command("web.fetch", (arg) =>
+  guard(async () => {
+    const plan = arg as { url: string; name: string; product: string };
+    const done = await bridge.webFetch(plan.url);
+    engine.setNotice(
+      done.opened_with ? `${plan.name} is saved in ${done.saved.replace(/[\\/][^\\/]*$/, "")} and opening in ${engine.name(done.opened_with)}.` : `${plan.name} is saved in ${done.saved.replace(/[\\/][^\\/]*$/, "")}.`,
+      "info",
+      "library",
+    );
+    void engine.dispatch("files.scan");
+  }, "library"),
+);
+
 engine.command("app.updateAll", async () => {
   for (const record of Array.from(engine.installs.values())) {
     const view = engine.view(record.product, record.channel);
@@ -164,7 +241,13 @@ engine.command("app.remove", (arg) =>
 );
 
 engine.command("link.open", (arg) => {
-  const [head, id] = String(arg).split("/");
+  const link = String(arg);
+  if (link.startsWith("file/") || link.startsWith("file?")) {
+    const url = new URLSearchParams(link.split("?")[1] ?? "").get("url") ?? "";
+    void engine.dispatch("web.ask", url);
+    return;
+  }
+  const [head, id] = link.split("/");
   if (head === "app" && id) {
     void engine.dispatch("route.go", `app-${id}`);
     if (engine.state.route !== `app-${id}`) void engine.dispatch("route.go", "apps");

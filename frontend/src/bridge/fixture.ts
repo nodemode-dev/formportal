@@ -2,7 +2,7 @@ import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -72,6 +72,14 @@ const sampleTutorial = {
 type FixtureTutorial = { id: string; product: string; title: string; summary: string; minutes: number; level: string; steps: { title: string; body: string; route?: string | null; url?: string | null }[] };
 const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutorial[]), sampleTutorial];
 const progress = new Map<string, Set<number>>();
+const later = new Set<string>();
+const repairFindings: RepairFinding[] = params.has("repair")
+  ? [
+      { kind: "broken", product: "formcut", channel: "stable", path: "/home/you/.local/share/formportal/apps/formcut/stable/2.6.2", bytes: 0, problem: "formcut 2.6.2 has nothing FormPortal can open in its folder", fix: "install the same version again from the catalogue, checking its SHA-256", fixed: false, error: null },
+      { kind: "leftover", product: "formcut", channel: null, path: "/home/you/.local/share/formportal/apps/formcut/stable/2.5.0", bytes: 84_000_000, problem: "formcut 2.5.0 is on disk but no install record points to it", fix: "delete the folder", fixed: false, error: null },
+      { kind: "download", product: null, channel: null, path: "/home/you/.local/share/formportal/downloads/formcut-2.6.1.zip", bytes: 61_000_000, problem: "formcut-2.6.1.zip is a download that was not cleaned up", fix: "delete it", fixed: false, error: null },
+    ]
+  : [];
 const credit = (m: MediaItem) => (m.licence === "CC0-1.0" ? `${m.title} by ${m.creator}, public domain (CC0 1.0), ${m.source_url}` : `${m.title} by ${m.creator}, licensed ${m.licence}, ${m.source_url}`);
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
@@ -230,6 +238,35 @@ export const fixtureBridge: Bridge = {
     if (at >= 0) savedMedia.splice(at, 1);
   },
   mediaThumb: async (url) => url,
+  repair: async (fix) => {
+    await pause(400);
+    const findings = repairFindings.map((f) => ({ ...f }));
+    if (fix) {
+      for (const f of findings) f.fixed = true;
+      repairFindings.length = 0;
+    }
+    return { checked: installed.size, findings, fixed: fix ? findings.length : 0, freed: fix ? findings.filter((f) => f.kind !== "missing" && f.kind !== "broken" && f.kind !== "previous").reduce((n, f) => n + f.bytes, 0) : 0 };
+  },
+  laterList: async () => Array.from(later),
+  updateLater: async (product, channel, on) => {
+    if (on && !installed.has(key(product, channel))) throw new Error(`${product} is not installed`);
+    if (on) later.add(key(product, channel));
+    else later.delete(key(product, channel));
+    return Array.from(later);
+  },
+  webPlan: async (url) => {
+    if (!/^(https:\/\/|http:\/\/(127\.0\.0\.1|localhost)[:/])/.test(url)) throw new Error(`refused address "${url}": only https, or http on this computer, is fetched`);
+    const name = decodeURIComponent(url.split(/[?#]/)[0].split("/").pop() ?? "");
+    const ext = name.includes(".") ? `.${name.split(".").pop()?.toLowerCase()}` : "";
+    const owner: Record<string, string> = { ".fc": "formcut", ".fmv": "formvis", ".formvis": "formvis", ".fmw": "formwav" };
+    if (!owner[ext]) throw new Error(`${name || url} is not a Form project file (.fc, .fmv, .fmw, .formvis), so FormPortal will not download it`);
+    return { url, host: url.split("/")[2] ?? "", name, product: owner[ext], folder: `${folders[0]?.path ?? "/home/you/Documents/Form"}/From the web` };
+  },
+  webFetch: async (url) => {
+    const plan = await fixtureBridge.webPlan(url);
+    await pause(500);
+    return { saved: `${plan.folder}/${plan.name}`, product: plan.product, opened_with: installed.has(key(plan.product, "stable")) ? plan.product : null };
+  },
   learn: async () => ({
     index_error: null,
     tutorials: tutorials.map((t) => {
@@ -317,8 +354,12 @@ export const fixtureBridge: Bridge = {
       if (!release || !versionNewer(release.version, record.version)) continue;
       const own = prefs.per_app[record.product];
       const automatic = own !== undefined ? own && (record.channel === "stable" || prefs.auto_update_beta) : record.channel === "stable" ? prefs.auto_update : prefs.auto_update && prefs.auto_update_beta;
-      if (!automatic) continue;
+      const k = key(record.product, record.channel);
+      const putOff = later.has(k);
+      const open = (params.get("open") ?? "").split(",").includes(record.product);
+      if (!(automatic || putOff) || (putOff && open)) continue;
       await fixtureBridge.install(record.product, record.channel, (f) => progress(record.product, record.channel, f));
+      later.delete(k);
       done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: null });
     }
     return done;
