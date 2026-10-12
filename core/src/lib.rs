@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub mod agents;
 pub mod download;
 pub mod error;
+pub mod files;
 pub mod extensions;
 pub mod installers;
 pub mod mirror;
