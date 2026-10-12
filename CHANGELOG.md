@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.33.0 · 2026-10-12
+
+- Help on every app page (its guide and docs, every release, report a problem), Send feedback on each installed beta, and a Help row in Settings with FormPortal's guide, what changed, issues and FormHub. Links open in your browser.
+- What's new in your apps, on Home: each installed app's version, whether an update waits, and its release notes.
+- After an install, FormPortal says when an earlier copy is still open; it keeps running and the new version opens next time.
+- Notices use the apps' proper names, and good news is no longer drawn in the error colour.
+- A `formai://` link no longer reshuffles the sidebar; the group holding the current page is marked instead.
+
 ## v0.32.0 · 2026-10-11
 
 - Every desktop release kind installs, per user and without administrator: dmg, deb, rpm, msi and NSIS, besides zip and AppImage. Install scripts never run.

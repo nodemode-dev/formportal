@@ -2,8 +2,52 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.32.0
-Last updated: 2026-10-11 · standalone repository
+Current build version: v0.33.0
+Last updated: 2026-10-12 · standalone repository
+
+## v0.33.0 · help, What's new, names, notices {#help}
+
+### Help and feedback links, written at build time
+- refers-to: vite.config.ts :: repo, web, help, feedback · index.html :: Settings, Help · src/extensions/apps/index.ts :: the a[data-web] click
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+Every app page carries Guide and docs, Every release and Report a problem, and every beta tile Send feedback on the beta, all from the registry's `repository` (only `https://github.com/nodemode-ai/...` is linked). Settings has a Help row: the guide, the changelog, issues and FormHub. Links carry `data-web`; one document-level click handler sends them through `web.open`, which the shell opens in the person's browser (`open_web`, allowlisted) and the browser mode in a new tab. The beta feedback link is kept in layout and hidden with `visibility` until that beta is installed, so installing it moves nothing.
+
+### What's new on Home
+- refers-to: index.html :: .wn-wrap · vite.config.ts :: whatsnew · src/styles/workspace.css :: .wn
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+One card per released app, written at build time with `data-row="stable"`, so the existing row patch fills version, status and release notes. Cards show only for installed apps (`data-install` ready or update) and the section only when one shows (`:has`). It sits after the notice at the end of Home, so appearing after load moves nothing above it. No account: it is this computer's installs against the catalogue.
+
+### Names from the registry, and the notice's tone
+- refers-to: src/main.ts :: setNames · src/engine/index.ts :: name, setNotice · src/styles/main.css :: .pane-notice[data-tone]
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+Notices and extension rows used the catalogue's names or ids (the sample catalogue spells apps in lowercase). The engine now takes the registry's names at start and `engine.name(id)` prefers them. `setNotice` takes a tone: failures stay in the fault colour; updates done, installs done and the open-copy note are info, in `--ink-soft`.
+
+### The open-copy note in the window
+- refers-to: src/main.ts :: app.install · src/bridge :: stillOpen
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+After an install the window asks the shell which processes still run from an older version's folder and says so, as the command line and MCP already did. The browser mode takes `?open=formcut` to pretend one is open.
+
+### The sidebar marks the current group instead of opening it
+- refers-to: src/extensions/accordion/index.ts :: route handler · src/styles/workspace.css :: .rail-group[data-current]
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+Opening the target's group on every route change moved the groups below it with no input when a `formai://` link arrived (0.0117). The accordion now only marks the group holding the current page (`data-current`, drawn with colour and an inset box-shadow, no size change) and leaves open and closed to the person. Measured: 0 for `?link=app/formdam`.
+
+### Two older items, measured and left
+- refers-to: src/styles/main.css :: @font-face Inter · styles/lineup.css :: .lu-big, the ruler label
+- kind: warning-context
+- logged: v0.33.0 · 2026-10-12
+
+The 0.00098 shift on "FORM APPS" on a slow network: the platform-font trace shows Liberation Sans first, then the system's own Inter SemiBold (`isCustomFont: false`) once the web face settles. This container has Inter installed system-wide, and the family name "Inter" collides with it. On a computer without Inter it does not occur under `font-display: optional`. The fix is a family name of the web face that no system font has, which means changing `--font-ui` in formai_dev's tokens first. The LINEUP ruler overlap at 1180 px did not reproduce in Chromium (no icon intersects the label); it was seen in WebKitGTK and needs the window to fix.
 
 ## v0.32.0 · checking for a newer FormPortal {#self-update}
 

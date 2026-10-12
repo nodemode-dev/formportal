@@ -2,8 +2,24 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.32.0
-Last updated: 2026-10-11 · standalone repository
+Current build version: v0.33.0
+Last updated: 2026-10-12 · standalone repository
+
+## v0.33.0 · links out, and copies still open {#links}
+
+### open_web, allowlisted, no plugin
+- refers-to: src/main.rs :: WEB, open_web
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+The help links open in the person's browser through `open` (macOS), `explorer` (Windows) or `xdg-open` (Linux), started directly with the address as one argument, no shell. Only addresses under `https://github.com/nodemode-ai/`, `https://formai.dev/` and `https://docs.formai.dev/` are accepted, and none with whitespace or quotes, so the interface cannot be used to start anything else. No opener plugin and no new permission were needed. Compiled on Linux; not clicked in the window yet.
+
+### still_open
+- refers-to: src/main.rs :: still_open
+- kind: decision
+- logged: v0.33.0 · 2026-10-12
+
+The process ids running from the app's channel folder but not from its current version's folder: the same rule as the command line's `still_open`, for the window's note after an install.
 
 ## v0.32.0 · FormPortal's own updates {#self-update}
 
