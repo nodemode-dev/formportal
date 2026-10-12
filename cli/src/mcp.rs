@@ -61,8 +61,8 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": props(json!({})) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "update", "title": "Update one app or all",
-          "description": "With product (and channel), installs that app's newer version. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow (skipping open apps when only_when_closed is on). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first.",
-          "inputSchema": { "type": "object", "properties": props(json!({ "product": target()["product"], "channel": target()["channel"], "automatic_only": { "type": "boolean", "description": "Only the updates the preferences allow." } })) },
+          "description": "With product (and channel), installs that app's newer version; with later true instead, puts it off until the app is closed (installed the next time FormPortal checks, whatever the automatic setting), and later false cancels that. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow or put off (skipping open apps when only_when_closed is on, and always for put-off ones). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first.",
+          "inputSchema": { "type": "object", "properties": props(json!({ "product": target()["product"], "channel": target()["channel"], "automatic_only": { "type": "boolean", "description": "Only the updates the preferences allow or that were put off." }, "later": { "type": "boolean", "description": "Put this app's update off until it is closed (true), or cancel that (false)." } })) },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true } },
         { "name": "preferences", "title": "Update preferences",
           "description": "Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting). Changing them is the person's choice: confirm first.",
@@ -134,6 +134,10 @@ fn tools() -> Value {
           "description": "Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first.",
           "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": true, "openWorldHint": false } },
+        { "name": "repair", "title": "Check and repair FormPortal's installs",
+          "description": "Checks every install record (its folder is there, it has something to open, the kept earlier version is there) and FormPortal's own folders (versions no record points to, unfinished installs, old downloads). Without fix it only reports, which is safe to run any time. With fix true it reinstalls a broken app's same version when the catalogue still offers that exact file (same SHA-256), otherwise forgets the record, forgets missing earlier versions, and deletes leftovers. It never touches anything outside FormPortal's folder, folders younger than ten minutes, or a running app. Confirm before fix.",
+          "inputSchema": { "type": "object", "properties": props(json!({ "fix": { "type": "boolean" } })) },
+          "annotations": { "readOnlyHint": false, "destructiveHint": true, "idempotentHint": true, "openWorldHint": true } },
         { "name": "learn", "title": "Tutorials and progress",
           "description": "Tutorials: FormPortal's own six (installing, betas, going back, files, fonts and stock, agents) plus the Form apps' tutorials from the signed tutorial index (learn.json beside the catalogue, or learn_source or FORMPORTAL_LEARN). Each has its steps (some name the FormPortal screen they happen on), minutes, level, and the steps this person has finished (numbered from 1), kept on this computer only. product and query filter.",
           "inputSchema": { "type": "object", "properties": props(json!({ "product": { "type": "string" }, "query": { "type": "string" }, "learn_source": { "type": "string" } })) },
@@ -203,7 +207,8 @@ fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
         "media_remove" => ops::media_remove(ctx, args),
         "learn" => ops::learn(ctx, args),
         "learn_progress" => ops::learn_progress(ctx, args),
-        other => return Err(format!("no tool named {other:?}; tools/list has the thirty-two tools")),
+        "repair" => ops::repair(ctx, args, &mut |_, _| {}),
+        other => return Err(format!("no tool named {other:?}; tools/list has the thirty-three tools")),
     };
     out.map_err(|e| e.to_string())
 }

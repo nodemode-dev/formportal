@@ -490,6 +490,10 @@ pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 }
 
 pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    if let (Some(id), Some(on)) = (text(args, "product"), flag(args, "later")) {
+        let list = ctx.portal.set_later(&id, channel(args)?, on)?;
+        return Ok(json!({ "later": list, "note": if on { "installed the next time FormPortal checks and the app is not open" } else { "no longer put off" } }));
+    }
     let (catalog, _) = load(ctx, args)?;
     let platform = Platform::current();
     match text(args, "product") {
@@ -510,6 +514,28 @@ pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Re
             Ok(json!({ "updated": done }))
         }
     }
+}
+
+pub fn repair(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    let fix = flag(args, "fix").unwrap_or(false);
+    let (catalog, error) = match load(ctx, args) {
+        Ok((c, _)) => (Some(c), None),
+        Err(e) => (None, Some(e.to_string())),
+    };
+    let report = ctx.portal.repair(catalog.as_ref(), Platform::current(), fix, &mut |_, _, have, total| progress(have, total))?;
+    Ok(json!({ "fixed_mode": fix, "catalogue_error": error, "report": report }))
+}
+
+pub fn web_file(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    let url = text(args, "url").or_else(|| text(args, "product")).ok_or_else(|| fail("give the file's address"))?;
+    let exts = project_extensions();
+    let plan = ctx.portal.web_plan(&url, &exts)?;
+    if flag(args, "check").unwrap_or(false) {
+        return Ok(json!({ "plan": plan }));
+    }
+    let path = ctx.portal.fetch_web_file(&plan, progress)?;
+    let opened = if flag(args, "no_open").unwrap_or(false) { None } else { ctx.portal.open_file(&path, &exts).ok().map(|(p, _)| p) };
+    Ok(json!({ "saved": path, "product": plan.product, "opened_with": opened }))
 }
 
 pub fn policy(ctx: &Ctx) -> Result<Value, CoreError> {

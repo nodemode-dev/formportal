@@ -36,6 +36,9 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   media-save ID                   save an item into your Library with its credit line
   template-use ID [--folder DIR]  copy a template into your projects folder and open it
   media-remove ID
+  repair [--fix]                  check installs and FormPortal's folders; --fix repairs (JSON, for scripts)
+  later <product> [--channel C] [--off]   put an update off until the app is closed, or cancel that
+  open-url URL [--check] [--no-open]      download a Form project file from the web into your projects folder and open it
   learn [PRODUCT] [--query Q] [--learn-source S]   tutorials and the steps you have finished
   learn-step ID --step N [--done false]   mark a step finished (or not); steps count from 1
   learn-reset ID                  clear a tutorial's progress
@@ -183,6 +186,16 @@ fn main() -> ExitCode {
             ops::media_save(&ctx, &a, &mut progress)
         }
         "media-remove" => ops::media_remove(&ctx, &args),
+        "repair" => ops::repair(&ctx, &args, &mut progress),
+        "later" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                let on = !o.contains_key("off");
+                o.insert("later".to_string(), json!(on));
+            }
+            ops::update(&ctx, &a, &mut progress)
+        }
+        "open-url" => ops::web_file(&ctx, &args, &mut progress),
         "learn" => ops::learn(&ctx, &args),
         "learn-step" => ops::learn_progress(&ctx, &args),
         "learn-reset" => {

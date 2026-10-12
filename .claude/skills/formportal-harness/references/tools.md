@@ -19,7 +19,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `install` | yes | Downloads the release the catalogue offers this computer for the product and channel, verifies its SHA-256, unpacks it per user (no administrator) and keeps the version it replaces for rollback. Installing the newer version over an older one is how an update is done. If the app is open, the new version goes into its own folder, the open copy keeps running untouched, and the result's note says the new version opens next time; reinstalling the exact version that is open is refused. Changes the person's computer: confirm first. |
 | `versions` | no | Every version of a product's channel the catalogue offers, newest first (the latest and its history), with date, release notes, size and whether there is a file for this computer, plus what is installed and kept for rollback. Install one with install and version. |
 | `updates` | no | Every installed app and channel with a newer version in the catalogue: from and to versions, download size, release notes, whether a copy is open, and whether the person's preferences would update it automatically. Also says when a newer FormPortal is available. |
-| `update` | yes | With product (and channel), installs that app's newer version. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow (skipping open apps when only_when_closed is on). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first. |
+| `update` | yes | With product (and channel), installs that app's newer version; with later true instead, puts it off until the app is closed (installed the next time FormPortal checks, whatever the automatic setting), and later false cancels that. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow or put off (skipping open apps when only_when_closed is on, and always for put-off ones). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first. |
 | `preferences` | yes | Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting). Changing them is the person's choice: confirm first. |
 | `extensions` | no | The open extension index (effects, looks, templates, presets, plugins for the Form apps) with each package's author, kind, permissions, whether it runs native code and is signed, and its install state; plus every installed extension, including sideloaded ones (source sideload). The index is read from extensions_source, FORMPORTAL_EXTENSIONS, or extensions.json beside the catalogue. |
 | `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
@@ -37,6 +37,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `media` | no | The open media index (media.json beside the catalogue, or media_source or FORMPORTAL_MEDIA, signed like the catalogue): images, video, audio and Form app templates, each with creator, licence (CC0, CC BY, CC BY-SA, Apache, MIT, OFL), source page, credit line and whether it is saved; plus everything saved in the person's Library. query and kind filter. |
 | `media_save` | yes | Saves an item from the media index into the person's Library (Documents/Form/Library by default, or FORMPORTAL_LIBRARY), checking its SHA-256 and writing its credit line beside it and into credits.json. With use true on a template, also copies it into the first projects folder (or folder) and opens it in its app. Confirm first. |
 | `media_remove` | yes, destructive | Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first. |
+| `repair` | yes, destructive | Checks every install record (its folder is there, it has something to open, the kept earlier version is there) and FormPortal's own folders (versions no record points to, unfinished installs, old downloads). Without fix it only reports, which is safe to run any time. With fix true it reinstalls a broken app's same version when the catalogue still offers that exact file (same SHA-256), otherwise forgets the record, forgets missing earlier versions, and deletes leftovers. It never touches anything outside FormPortal's folder, folders younger than ten minutes, or a running app. Confirm before fix. |
 | `learn` | no | Tutorials: FormPortal's own six (installing, betas, going back, files, fonts and stock, agents) plus the Form apps' tutorials from the signed tutorial index (learn.json beside the catalogue, or learn_source or FORMPORTAL_LEARN). Each has its steps (some name the FormPortal screen they happen on), minutes, level, and the steps this person has finished (numbered from 1), kept on this computer only. product and query filter. |
 | `learn_progress` | yes | Marks a tutorial step finished (done true, the default) or not (done false), steps numbered from 1; or with reset true clears the tutorial's progress. Progress is kept on this computer only. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
@@ -89,8 +90,9 @@ No parameters.
 ### update
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
-- `automatic_only` (optional): boolean. Only the updates the preferences allow.
+- `automatic_only` (optional): boolean. Only the updates the preferences allow or that were put off.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
+- `later` (optional): boolean. Put this app's update off until it is closed (true), or cancel that (false).
 - `product` (optional): string. Product id from apps, e.g. formcut, formvis, formencoder.
 - `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
 
@@ -200,6 +202,12 @@ No parameters.
 ### media_remove
 
 - `id`: string. 
+
+### repair
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `fix` (optional): boolean. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
 
 ### learn
 

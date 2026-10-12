@@ -142,7 +142,7 @@ impl Portal {
                     s.save(self.root())
                 }
                 _ => {
-                    let gone = if f.path.is_dir() { fs::remove_dir_all(&f.path) } else { fs::remove_file(&f.path) };
+                    let gone = if !f.path.exists() { Ok(()) } else if f.path.is_dir() { fs::remove_dir_all(&f.path) } else { fs::remove_file(&f.path) };
                     if gone.is_ok() {
                         freed += f.bytes;
                     }
