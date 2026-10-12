@@ -407,6 +407,45 @@ async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Resul
     .map_err(text)?
 }
 
+#[tauri::command]
+async fn repair(url: String, allow_unsigned: bool, fix: bool) -> Result<formportal_core::repair::Report, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let catalog = hub.catalog(&url, allow_unsigned).ok();
+        hub.repair(catalog.as_ref(), Platform::current(), fix, &mut |_, _, _, _| {}).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn later_list() -> Result<Vec<String>, String> {
+    hub().later().map(|l| l.into_iter().collect()).map_err(text)
+}
+
+#[tauri::command]
+fn update_later(product: String, channel: Channel, on: bool) -> Result<Vec<String>, String> {
+    hub().set_later(&product, channel, on).map(|l| l.into_iter().collect()).map_err(text)
+}
+
+#[tauri::command]
+fn web_plan(url: String) -> Result<formportal_core::web::WebPlan, String> {
+    hub().web_plan(&url, &exts()).map_err(text)
+}
+
+#[tauri::command]
+async fn web_fetch(url: String) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let plan = hub.web_plan(&url, &exts()).map_err(text)?;
+        let path = hub.fetch_web_file(&plan, &mut |_, _| {}).map_err(text)?;
+        let opened = hub.open_file(&path, &exts()).ok().map(|(p, _)| p);
+        Ok(serde_json::json!({ "saved": path, "product": plan.product, "opened_with": opened }))
+    })
+    .await
+    .map_err(text)?
+}
+
 #[derive(Serialize)]
 struct ExtensionsView {
     index: Option<ExtensionIndex>,
@@ -589,7 +628,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")
