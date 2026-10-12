@@ -5,9 +5,9 @@ import type { Extension } from "../registry.ts";
 const OS: Record<Os, string> = { macos: "macOS", windows: "Windows", linux: "Linux", other: "Unknown" };
 const ARCH: Record<string, string> = { arm64: "ARM64", x86_64: "x86-64" };
 const SOURCE: Record<Source, string> = {
-  none: "Not loaded",
+  none: "Catalogue not loaded",
   fixture: "Sample catalogue bundled with this build",
-  live: "formai.dev",
+  live: "Catalogue from formai.dev, signature checked",
 };
 
 export const settings: Extension = {
@@ -15,7 +15,7 @@ export const settings: Extension = {
   setup(engine) {
     const field = (name: string) => document.querySelector<HTMLElement>(`[data-setting='${name}']`);
     const platform = field("platform");
-    const source = field("source");
+    const sources = Array.from(document.querySelectorAll<HTMLElement>("[data-setting='source']"));
     const generated = field("generated");
 
     engine.on("platform", ({ platform: p }) => {
@@ -31,7 +31,7 @@ export const settings: Extension = {
     });
     engine.on("source", ({ source: s, generated: when }) => {
       document.documentElement.setAttribute("data-source", s);
-      if (source) source.textContent = SOURCE[s];
+      for (const source of sources) if (source.textContent !== SOURCE[s]) source.textContent = SOURCE[s];
       if (generated) generated.textContent = when ? when.slice(0, 10) : "";
     });
 
@@ -91,6 +91,10 @@ export const settings: Extension = {
         const on = locked.has(box.dataset.pref ?? "");
         if (box.disabled !== on) box.disabled = on;
         box.title = on ? "Set by your organisation" : "";
+      }
+      for (const own of document.querySelectorAll<HTMLInputElement>("[data-auto]")) {
+        const off = locked.has("per_app");
+        if (own.disabled !== off) own.disabled = off;
       }
       if (address) {
         address.disabled = locked.has("catalog");

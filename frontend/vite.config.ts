@@ -21,106 +21,107 @@ interface App {
   note?: string;
   status?: string;
   repository?: string;
+  group?: string;
 }
 
-const GROUPS = ["adobe", "other", "next"];
-const APPS = loadJson<{ products: (App & { group?: string })[] }>(resolve(CATALOG, "products.json"))
+const GROUPS: [string, string][] = [
+  ["adobe", "Instead of Adobe"],
+  ["other", "More apps"],
+  ["next", "On the way"],
+];
+const ORDER = GROUPS.map(([id]) => id);
+const APPS = loadJson<{ products: App[] }>(resolve(CATALOG, "products.json"))
   .products.filter((p) => p.id !== "formai")
-  .sort((a, b) => GROUPS.indexOf(a.group ?? "other") - GROUPS.indexOf(b.group ?? "other"));
+  .sort((a, b) => ORDER.indexOf(a.group ?? "other") - ORDER.indexOf(b.group ?? "other"));
+const RELEASED = APPS.filter((p) => (p.status ?? "available") === "available");
 const SHOTS = new Set(["formcut", "formvis", "formwav"]);
-const FIRST = "formcut";
+const STATUS: Record<string, string> = { available: "Available", "in-progress": "In progress", "in-development": "In development" };
 
 const esc = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const name = (p: App) => `<span class="app-form">Form</span><span class="app-suffix">${esc(p.name.replace(/^Form/, ""))}</span>`;
-const kind = (p: App) => esc(p.kind.charAt(0).toUpperCase() + p.kind.slice(1));
+const short = (p: App) => esc(p.name.replace(/^Form\.?/, "").slice(0, 2));
 const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""));
-const shot = (p: App, cls: string) =>
-  SHOTS.has(p.id)
-    ? `<img class="${cls}" src="/media/${p.id}.webp" width="1600" height="1000" alt="" />`
-    : `<span class="${cls} app-plate" aria-hidden="true">${esc(p.name.replace(/^Form/, ""))}</span>`;
+const tile = (p: App, size = "") => `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
+const words = (p: App) => STATUS[p.status ?? "available"];
+const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.kind}`.toLowerCase());
 const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-ai/") ? p.repository.replace(/\/$/, "") : null);
-const web = (href: string, text: string, cls: string) => `<a class="${cls}" href="${esc(href)}" data-web>${text}</a>`;
+const web = (href: string, text: string) => `<a class="link" href="${esc(href)}" data-web>${text}</a>`;
 const help = (p: App) => {
   const r = repo(p);
-  return r
-    ? `<p class="ap-help">${web(`${r}#readme`, "Guide and docs", "ap-link")}${web(`${r}/releases`, "Every release", "ap-link")}${web(`${r}/issues/new`, "Report a problem", "ap-link")}</p>`
-    : "";
+  return r ? `${web(`${r}#readme`, "Guide and docs")}${web(`${r}/releases`, "Every release")}${web(`${r}/issues/new`, "Report a problem")}` : "";
 };
 const feedback = (p: App) => {
   const r = repo(p);
-  return r ? `<p class="tile-help">${web(`${r}/issues/new?labels=beta&title=${encodeURIComponent(`${p.name} beta: `)}`, "Send feedback on the beta", "ap-link")}</p>` : "";
+  return r ? `<p class="row-help">${web(`${r}/issues/new?labels=beta&title=${encodeURIComponent(`${p.name} beta: `)}`, "Send feedback on the beta")}</p>` : "";
 };
-const meta = (extra = "") => `<span data-field="status"></span><span data-field="version"></span>${extra}`;
+const state = '<span class="state-text" data-field="status"></span><span class="state-ver" data-field="version"></span>';
 
 function renderPortal(html: string): string {
-  const cards = APPS.map(
-    (p) => `<li class="card" data-row="stable" data-product="${p.id}"${p.id === FIRST ? " data-on" : ""}>${shot(p, "card-shot")}<div class="card-body"><h2 class="card-name">${name(p)}</h2><p class="card-kind">${line(p)}</p><p class="card-sum">${esc(p.summary)}</p><p class="card-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></li>`,
+  const row = (p: App, channel: "stable" | "beta", extra = "") =>
+    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${p.group ?? "other"}" data-status="${p.status ?? "available"}" data-search="${searchable(p)}">${tile(p)}<div class="row-main"><button class="row-name" type="button" data-route-to="app-${p.id}">${esc(p.name)}${channel === "beta" ? " beta" : ""}</button><p class="row-sub">${line(p)}</p></div><p class="row-state">${state}</p><!-- @include row-actions.html -->${extra}</li>`;
+
+  const all = GROUPS.map(
+    ([group, title]) =>
+      `<li class="list-group" data-group-head="${group}"><h2 class="group-title">${title}</h2></li>${APPS.filter((p) => (p.group ?? "other") === group).map((p) => row(p, "stable")).join("")}`,
   );
-  const shelf = APPS.map(
-    (p) => `<button class="shelf-item" type="button" data-app-to="${p.id}" data-row="stable" data-product="${p.id}" aria-pressed="${p.id === FIRST}">${shot(p, "shelf-shot")}<span class="shelf-text"><span class="shelf-name">${esc(p.name)}</span><span class="shelf-kind">${kind(p)}</span><span class="shelf-status" data-field="status"></span></span></button>`,
-  );
-  const beta = APPS.filter((p) => (p.status ?? "available") === "available").map(
-    (p) => `<li class="tile" data-row="beta" data-product="${p.id}">${shot(p, "tile-shot")}<div class="tile-body"><h2 class="tile-name">${name(p)}</h2><p class="tile-kind">${kind(p)}, beta</p><p class="tile-meta">${meta()}</p><!-- @include row-actions.html -->${feedback(p)}</div></li>`,
-  );
-  const updates = APPS.flatMap((p) =>
-    ["stable", "beta"].map(
-      (channel) => `<li class="up" data-row="${channel}" data-product="${p.id}">${shot(p, "up-shot")}<div class="up-text"><h2 class="up-name">${esc(p.name)}${channel === "beta" ? ", beta" : ""}</h2><p class="up-meta">${meta('<span data-field="date"></span>')}</p></div><!-- @include row-actions.html --></li>`,
+  const updates = APPS.flatMap((p) => (["stable", "beta"] as const).map((channel) => row(p, channel)));
+  const beta = RELEASED.map((p) => row(p, "beta", feedback(p)));
+
+  const mine = RELEASED.flatMap((p) =>
+    (["stable", "beta"] as const).map(
+      (channel) =>
+        `<li class="mine" data-row="${channel}" data-product="${p.id}">${tile(p, "l")}<button class="mine-name" type="button" data-route-to="app-${p.id}">${esc(p.name)}${channel === "beta" ? " beta" : ""}</button><p class="mine-state">${state}</p><!-- @include card-actions.html --></li>`,
     ),
   );
-  const words: Record<string, string> = { available: "Available", "in-progress": "In progress", "in-development": "In development" };
-  const icons = APPS.map(
-    (p) => `<li data-product="${p.id}"><a class="lu-icon" href="#cell-${p.id}"><span class="lu-icon-tile">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span><span class="lu-icon-name">${esc(p.name)}</span></a></li>`,
-  );
-  const lineup = APPS.map((p, i) => {
-    const n = String(i + 1).padStart(2, "0");
-    const status = p.status ?? "available";
-    return `<li class="cell" id="cell-${p.id}" data-row="stable" data-product="${p.id}" data-status="${status}"><div class="cell-top"><span class="cell-num">${n}</span><span class="cell-cat">${kind(p)}</span></div><div class="cell-shot">${shot(p, "cell-img")}<span class="cell-icon" aria-hidden="true">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span></div><div class="cell-body"><h2 class="cell-name">${name(p)}</h2><p class="cell-line">${line(p)}</p><p class="cell-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip" data-field="status"></span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></li>`;
-  });
-  const badge = (p: App) => ({ "in-progress": "Soon", "in-development": "Later" })[p.status ?? ""] ?? "";
-  const tag = (p: App) => (badge(p) ? `<span class="tag">${badge(p)}</span>` : "");
-  const glyph = (p: App) => `<span class="glyph" aria-hidden="true">${esc(p.name.replace(/^Form/, "").slice(0, 2))}</span>`;
-  const nav = (group: string) =>
-    APPS.filter((p) => (p as App & { group?: string }).group === group).map(
-      (p) => `<li data-product="${p.id}"><button class="rail-item" type="button" data-route-to="app-${p.id}">${glyph(p)}<span class="rail-label">${esc(p.name)}</span>${tag(p)}</button></li>`,
-    );
-  const titles: Record<string, string> = { adobe: "Instead of Adobe", other: "More apps", next: "On the way" };
-  const home = GROUPS.map(
-    (group) =>
-      `<h2 class="home-group">${titles[group]}</h2><ul class="tools">${APPS.filter((p) => (p as App & { group?: string }).group === group)
+
+  const family = GROUPS.map(
+    ([group, title]) =>
+      `<section class="fam-group"><h3 class="group-title">${title}</h3><ul class="fam-list">${APPS.filter((p) => (p.group ?? "other") === group)
         .map(
-          (p) => `<li data-product="${p.id}"><button class="tool" type="button" data-route-to="app-${p.id}">${glyph(p)}<span class="tool-text"><span class="tool-name">${esc(p.name)}${tag(p)}</span><span class="tool-sum">${esc(p.summary)}</span></span><span class="tool-go" aria-hidden="true">%icon:arrow-right:ic-s%</span></button></li>`,
+          (p) =>
+            `<li class="fam" data-row="stable" data-product="${p.id}" data-status="${p.status ?? "available"}">${tile(p)}<div class="fam-text"><button class="fam-name" type="button" data-route-to="app-${p.id}">${esc(p.name)}</button><p class="fam-sub">${line(p)}</p><p class="fam-state">${(p.status ?? "available") === "available" ? state : `<span class="chip">${words(p)}</span>`}</p></div>${(p.status ?? "available") === "available" ? "<!-- @include card-actions.html -->" : ""}</li>`,
         )
-        .join("")}</ul>`,
+        .join("")}</ul></section>`,
   );
+
+  const whatsnew = RELEASED.map(
+    (p) =>
+      `<li class="wn" data-row="stable" data-product="${p.id}">${tile(p)}<div class="wn-text"><h3 class="wn-name">${esc(p.name)} <span class="wn-version" data-field="version"></span></h3><p class="wn-status" data-field="status"></p><p class="wn-notes" data-field="notes"></p></div></li>`,
+  );
+
   const pages = APPS.map((p) => {
-    const status = p.status ?? "available";
-    return `<section class="pane pane-app" data-pane="app-${p.id}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="ap-grid"><div class="ap-text"><p class="home-kicker">${kind(p)}</p><h1 class="ap-name">${name(p)}</h1><p class="ap-line">${line(p)}</p><p class="ap-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip">GPL-3.0-only</span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><div class="cell ap-cell" data-row="stable" data-product="${p.id}"><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div>${help(p)}</div><div class="ap-shot">${shot(p, "cell-img")}</div></div><h2 class="home-group">More in this group</h2><ul class="tools">${APPS.filter((q) => q.id !== p.id && (q as App & { group?: string }).group === (p as App & { group?: string }).group)
-      .slice(0, 6)
-      .map((q) => `<li data-product="${q.id}"><button class="tool" type="button" data-route-to="app-${q.id}">${glyph(q)}<span class="tool-text"><span class="tool-name">${esc(q.name)}${tag(q)}</span><span class="tool-sum">${esc(q.summary)}</span></span></button></li>`)
-      .join("")}</ul></section>`;
+    const available = (p.status ?? "available") === "available";
+    const shot = SHOTS.has(p.id)
+      ? `<img class="ap-shot" src="/media/${p.id}.webp" width="1600" height="1000" alt="${esc(p.name)} on screen" />`
+      : `<span class="ap-shot ap-plate" aria-hidden="true">${esc(p.name.replace(/^Form\.?/, ""))}</span>`;
+    const betaRow = available
+      ? `<div class="ap-beta" data-row="beta" data-product="${p.id}"><p class="ap-beta-text"><span class="ap-beta-label">Beta</span>${state}</p><!-- @include card-actions.html --></div>`
+      : "";
+    return `<section class="pane" data-pane="app-${p.id}" data-title="${esc(p.name)}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="page"><button class="back" type="button" data-route-to="apps">%icon:arrow-right:ic-s back-ic%<span>All apps</span></button><div class="ap" data-row="stable" data-product="${p.id}"><header class="ap-head">${tile(p, "xl")}<div class="ap-title"><h2 class="ap-name">${esc(p.name)}</h2><p class="ap-line">${line(p)}</p><p class="ap-state"><span class="chip">${words(p)}</span>${state}<span class="state-ver" data-field="size"></span></p></div><!-- @include row-actions.html --></header><p class="ap-sum">${esc(p.summary)}</p><div class="ap-body"><dl class="facts"><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>What's new</dt><dd class="facts-notes" data-field="notes"></dd></div><div><dt>Download</dt><dd data-field="file"></dd></div><div><dt>Needs</dt><dd data-field="minimum"></dd></div><div><dt>Project files</dt><dd data-field="project"></dd></div><div><dt>Licence</dt><dd data-field="licence"></dd></div><div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div></dl>${shot}</div></div>${betaRow}<p class="links">${help(p)}</p></div></section>`;
   });
-  const whatsnew = APPS.filter((p) => (p.status ?? "available") === "available").map(
-    (p) => `<li class="wn" data-row="stable" data-product="${p.id}">${glyph(p)}<div class="wn-text"><h3 class="wn-name">${esc(p.name)} <span class="wn-version" data-field="version"></span></h3><p class="wn-status" data-field="status"></p><p class="wn-notes" data-field="notes"></p></div></li>`,
+
+  const autolist = RELEASED.map(
+    (p) => `<li class="auto-item" data-row="stable" data-product="${p.id}"><label class="check">${tile(p, "s")}<span class="auto-name">${esc(p.name)}</span><input type="checkbox" class="switch" data-auto /></label></li>`,
   );
+
+  const learn = APPS.filter((p) => repo(p)).map(
+    (p) => `<li class="learn" data-product="${p.id}">${tile(p)}<div class="learn-text"><h3 class="learn-name">${esc(p.name)}</h3><p class="links">${help(p)}</p></div></li>`,
+  );
+
   const parts: Record<string, string[]> = {
-    whatsnew,
-    cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)],
-    "nav-adobe": nav("adobe"), "nav-other": nav("other"), "nav-next": nav("next"), home, pages,
-    "count-adobe": [String(nav("adobe").length)], "count-other": [String(nav("other").length)], "count-next": [String(nav("next").length)],
+    all, updates, beta, mine, family, whatsnew, pages, autolist, learn,
+    count: [String(APPS.length)],
+    released: [String(RELEASED.length)],
   };
   return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
 }
 
-function hubPlugin(): Plugin {
+function portalPlugin(): Plugin {
   return {
     name: "formportal",
     transformIndexHtml: {
       order: "pre",
       handler(source) {
-        const html = renderPortal(source);
-        const rows = /(<li class="row" data-row="[a-z]+" data-product="[a-z]+">[\s\S]*?<p class="row-version" data-field="version"><\/p>)/g;
-        const withActions = html.replace(rows, "$1\n              <!-- @include row-actions.html -->");
-        return renderMarkers(withActions, { icons, facts, chromeDir: ROOT, origin: "", rel: "" });
+        return renderMarkers(renderPortal(source), { icons, facts, chromeDir: ROOT, origin: "", rel: "" });
       },
     },
   };
@@ -129,7 +130,7 @@ function hubPlugin(): Plugin {
 export default defineConfig({
   root: ".",
   publicDir: "public",
-  plugins: [hubPlugin()],
+  plugins: [portalPlugin()],
   clearScreen: false,
   server: {
     port: FRONTEND_PORT,

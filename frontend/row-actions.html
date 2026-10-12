@@ -1,30 +1,15 @@
-<div class="row-actions">
-                <span class="row-bar" aria-hidden="true"></span>
-                <button class="act" type="button" data-act="open">Open</button>
-                <button class="act act-main" type="button" data-act="update">Update</button>
-                <button class="act act-main" type="button" data-act="install">Install</button>
+<div class="acts">
+                <span class="acts-bar" aria-hidden="true"></span>
+                <button class="btn" type="button" data-act="open">Open</button>
+                <button class="btn btn-primary" type="button" data-act="update">Update</button>
+                <button class="btn btn-primary" type="button" data-act="install">Install</button>
                 <details class="drop drop-more">
-                  <summary class="drop-toggle">More%icon:chevron-down:ic-s%</summary>
-                  <div class="drop-panel drop-menu">
+                  <summary class="icon-btn" aria-label="More actions"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
+                  <div class="drop-panel menu">
+                    <label class="drop-item menu-check"><span>Update automatically</span><input type="checkbox" class="switch" data-auto /></label>
+                    <div class="menu-versions"><span class="menu-label">Other versions</span><span class="menu-pick"><select class="field" data-versions aria-label="Other versions"></select><button class="btn btn-small drop-item drop-go" type="button" data-version-go>Install</button></span></div>
                     <button class="drop-item" type="button" data-act="rollback">Go back to the version before</button>
-                    <button class="drop-item" type="button" data-act="remove">Remove from this computer</button>
-                    <label class="drop-item check"><input type="checkbox" data-auto /><span>Update automatically</span></label>
-                    <div class="drop-versions"><select class="field drop-select" data-versions aria-label="Other versions"></select><button class="drop-item drop-go" type="button" data-version-go>Install</button></div>
-                  </div>
-                </details>
-                <details class="drop drop-info">
-                  <summary class="drop-toggle">Details%icon:chevron-down:ic-s%</summary>
-                  <div class="drop-panel">
-                    <dl class="drop-facts">
-                      <div><dt>Released</dt><dd data-field="date"></dd></div>
-                      <div><dt>What's new</dt><dd class="drop-notes" data-field="notes"></dd></div>
-                      <div><dt>Download</dt><dd data-field="file"></dd></div>
-                      <div><dt>Needs</dt><dd data-field="minimum"></dd></div>
-                      <div><dt>Project files</dt><dd data-field="project"></dd></div>
-                      <div><dt>Licence</dt><dd data-field="licence"></dd></div>
-                      <div><dt>SHA-256</dt><dd class="drop-hash" data-field="sha256"></dd></div>
-                    </dl>
-                    <p class="drop-fine">The download is checked against this hash before anything is installed.</p>
+                    <button class="drop-item menu-danger" type="button" data-act="remove">Remove from this computer</button>
                   </div>
                 </details>
               </div>

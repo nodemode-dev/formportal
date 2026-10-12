@@ -8,8 +8,9 @@ import { library } from "./extensions/library/index.ts";
 import { activateAll, register } from "./extensions/registry.ts";
 import { route } from "./extensions/route/index.ts";
 import { settings } from "./extensions/settings/index.ts";
-import { stage } from "./extensions/stage/index.ts";
-import { accordion } from "./extensions/accordion/index.ts";
+import { notices } from "./extensions/notices/index.ts";
+import { prefs } from "./extensions/prefs/index.ts";
+import { search } from "./extensions/search/index.ts";
 import { theme } from "./extensions/theme/index.ts";
 
 const engine = new Engine();
@@ -17,7 +18,7 @@ const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, stage, library, settings, accordion].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -45,6 +46,7 @@ engine.command("catalog.load", () =>
     engine.setCatalog(catalog, bridge.source);
     engine.setExtensions(extensions.index, extensions.installed);
     engine.setPrefs(await bridge.preferences());
+    document.documentElement.setAttribute("data-loaded", "");
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
@@ -97,7 +99,8 @@ engine.command("app.install", (arg) =>
         notes.push(`${label} ${version} is installed. Automatic updates for it are off so it stays; turn them back on under More.`);
       }
     }
-    if (notes.length) engine.setNotice(notes.join(" "), "info");
+    if (!notes.length) notes.push(`${label}${channel === "stable" ? "" : ` ${channel}`} ${installed} is installed.`);
+    engine.setNotice(notes.join(" "), "info");
   }),
 );
 
@@ -130,10 +133,9 @@ engine.command("link.open", (arg) => {
   const [head, id] = String(arg).split("/");
   if (head === "app" && id) {
     void engine.dispatch("route.go", `app-${id}`);
-    if (engine.state.route !== `app-${id}`) {
-      void engine.dispatch("route.go", "apps");
-      void engine.dispatch("app.show", id);
-    }
+    if (engine.state.route !== `app-${id}`) void engine.dispatch("route.go", "apps");
+  } else if (head === "settings" || head === "preferences") {
+    void engine.dispatch("prefs.open", id);
   } else {
     void engine.dispatch("route.go", head);
   }

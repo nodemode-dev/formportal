@@ -48,7 +48,7 @@ type Command = (arg: unknown) => void | Promise<void>;
 
 export class Engine {
   readonly state: HubState = {
-    route: "apps",
+    route: "home",
     light: false,
     platform: { os: "other", arch: "x86_64" },
     source: "none",

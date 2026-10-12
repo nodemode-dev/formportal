@@ -7,6 +7,7 @@ export const route: Extension = {
     const root = document.documentElement;
     const stage = document.querySelector<HTMLElement>(".stage");
     const links = Array.from(document.querySelectorAll<HTMLElement>("[data-route-to]"));
+    const nav = links.filter((link) => link.classList.contains("nav-item"));
     const panes = Array.from(document.querySelectorAll<HTMLElement>("[data-pane]"));
     const routes = new Set(panes.map((pane) => pane.dataset.pane as Route));
     const label = document.querySelector<HTMLElement>("[data-route-label]");
@@ -17,11 +18,17 @@ export const route: Extension = {
 
     engine.on("route", ({ route: next }) => {
       root.setAttribute("data-route", next);
-      for (const pane of panes) pane.toggleAttribute("data-on-route", pane.dataset.pane === next);
-      const named = links.find((link) => link.dataset.routeTo === next)?.querySelector(".rail-label")?.textContent ?? next;
-      if (label && label.firstChild) label.firstChild.nodeValue = named;
-      for (const link of links) {
+      let title = next;
+      for (const pane of panes) {
+        const on = pane.dataset.pane === next;
+        pane.toggleAttribute("data-on-route", on);
+        if (on) title = pane.dataset.title ?? next;
+      }
+      if (label && label.textContent !== title) label.textContent = title;
+      const owner = next.startsWith("app-") ? "apps" : next;
+      for (const link of nav) {
         if (link.dataset.routeTo === next) link.setAttribute("aria-current", "page");
+        else if (link.dataset.routeTo === owner) link.setAttribute("aria-current", "true");
         else link.removeAttribute("aria-current");
       }
       if (stage) stage.scrollTop = 0;

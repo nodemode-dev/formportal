@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-route="apps" data-source="none">
+<html lang="en" data-route="home" data-source="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,211 +13,249 @@
   </head>
   <body>
     <div id="app" class="shell">
-      <nav class="rail" aria-label="Sections">
-        <div class="rail-brand">
+      <nav class="side" aria-label="FormPortal">
+        <div class="brand">
           <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="mark-cut" fill="currentColor" d="M4 5h16a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-vis" fill="currentColor" d="M4 10.5h11a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-wav" fill="currentColor" d="M4 16h6a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/></svg>
-          <span class="rail-label">FormPortal</span>
+          <span>FormPortal</span>
         </div>
-        <div class="rail-scroll">
-          <ul class="rail-list">
-            <li><button class="rail-item" type="button" data-route-to="apps" aria-current="page">%icon:apps:ic-m%<span class="rail-label">Home</span></button></li>
-          </ul>
-          <details class="rail-group" data-group="adobe" open>
-            <summary class="rail-h"><span>Instead of Adobe</span><span class="rail-count"><!-- @portal:count-adobe --></span>%icon:chevron-down:ic-s rail-chev%</summary>
-            <ul class="rail-list"><!-- @portal:nav-adobe --></ul>
-          </details>
-          <details class="rail-group" data-group="other">
-            <summary class="rail-h"><span>More apps</span><span class="rail-count"><!-- @portal:count-other --></span>%icon:chevron-down:ic-s rail-chev%</summary>
-            <ul class="rail-list"><!-- @portal:nav-other --></ul>
-          </details>
-          <details class="rail-group" data-group="next">
-            <summary class="rail-h"><span>On the way</span><span class="rail-count"><!-- @portal:count-next --></span>%icon:chevron-down:ic-s rail-chev%</summary>
-            <ul class="rail-list"><!-- @portal:nav-next --></ul>
-          </details>
-          <details class="rail-group" data-group="library">
-            <summary class="rail-h"><span>Library</span><span class="rail-count">3</span>%icon:chevron-down:ic-s rail-chev%</summary>
-            <ul class="rail-list">
-              <li><button class="rail-item" type="button" data-route-to="updates">%icon:updates:ic-m%<span class="rail-label">Updates</span><span class="rail-badge" data-updates-count></span></button></li>
-              <li><button class="rail-item" type="button" data-route-to="beta">%icon:beta:ic-m%<span class="rail-label">Beta</span></button></li>
-              <li><button class="rail-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="rail-label">Extensions</span></button></li>
+        <ul class="nav">
+          <li><button class="nav-item" type="button" data-route-to="home" aria-current="page"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 10.5L12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="nav-label">Home</span></button></li>
+          <li>
+            <button class="nav-item" type="button" data-route-to="apps">%icon:apps:ic-m%<span class="nav-label">Apps</span><span class="nav-count"><!-- @portal:count --></span></button>
+            <ul class="nav-sub">
+              <li><button class="nav-item nav-item-sub" type="button" data-route-to="updates"><span class="nav-label">Updates</span><span class="badge" data-updates-count></span></button></li>
+              <li><button class="nav-item nav-item-sub" type="button" data-route-to="beta"><span class="nav-label">Beta</span></button></li>
             </ul>
-          </details>
-        </div>
-        <div class="rail-end">
-          <button class="rail-item" type="button" data-route-to="settings">%icon:settings:ic-m%<span class="rail-label">Settings</span></button>
-          <p class="rail-foot"><span class="rail-label">FormPortal </span>v%fact:version%</p>
-        </div>
+          </li>
+          <li><button class="nav-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="nav-label">Extensions</span></button></li>
+          <li><button class="nav-item" type="button" data-route-to="learn">%icon:book:ic-m%<span class="nav-label">Learn</span></button></li>
+        </ul>
       </nav>
 
-      <main class="stage">
-        <header class="topbar"><span class="topbar-label" data-route-label>Home</span><span class="topbar-note">Free and open source</span></header>
-        <!-- @portal:pages -->
-        <section class="pane pane-apps" data-pane="apps" data-app="formcut" data-on-route aria-labelledby="h-apps">
-          <div class="ruler" aria-hidden="true"><span class="ruler-label">Lineup</span></div>
-          <header class="lu-head">
-            <p class="lu-crumb">01 / FormPortal / <!-- @portal:count --> apps / open source</p>
-            <h1 id="h-apps" class="lu-title">Every Form app. <span class="lu-accent">One portal.</span></h1>
-            <p class="lu-big" aria-hidden="true">FORM APPS</p>
-            <p class="lu-lede">Photo, image, layout, vector, motion, video, sound, notes, slides and code. Free, open-source apps that run on your machine, installed and kept current from here.</p>
-            <ul class="lu-icons" aria-label="Jump to an app">
-              <!-- @portal:icons -->
-            </ul>
-          </header>
-          <ul class="lineup">
-            <!-- @portal:lineup -->
-          </ul>
-          <p class="pane-note pane-notice" data-notice role="status" aria-live="polite"></p>
-          <section class="wn-wrap" aria-labelledby="h-wn">
-            <h2 id="h-wn" class="home-group">What's new in your apps</h2>
-            <ul class="wn-list">
-              <!-- @portal:whatsnew -->
+      <div class="main">
+        <header class="top">
+          <h1 class="top-title" data-route-label>Home</h1>
+          <label class="search">
+            <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="search" data-search placeholder="Search Form apps" aria-label="Search Form apps" autocomplete="off" spellcheck="false" />
+          </label>
+          <div class="top-tools">
+            <button class="icon-btn bell" type="button" data-bell aria-label="Notifications" aria-expanded="false" aria-controls="bell-panel">
+              <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="bell-dot" aria-hidden="true"></span>
+            </button>
+            <button class="icon-btn" type="button" data-prefs-open aria-label="Preferences">%icon:settings:ic-m%</button>
+            <section class="bell-panel" id="bell-panel" data-bell-panel hidden aria-label="Notifications">
+              <header class="bell-head"><h2>Notifications</h2><button class="link-btn" type="button" data-bell-clear>Clear</button></header>
+              <ol class="bell-list" data-bell-list></ol>
+              <p class="bell-empty">Nothing yet. Updates, installs and anything that goes wrong are listed here.</p>
+            </section>
+          </div>
+        </header>
+
+        <main class="stage">
+          <section class="pane" data-pane="home" data-title="Home" data-on-route aria-label="Home">
+            <div class="page">
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Your apps</h2><button class="link-btn" type="button" data-route-to="apps">All apps</button></header>
+                <ul class="mine-list">
+                  <!-- @portal:mine -->
+                  <li class="mine-empty">Nothing is installed through FormPortal yet. Install an app below and it appears here.</li>
+                </ul>
+              </section>
+
+              <section class="block strip">
+                <p class="strip-text"><span class="strip-checking">Checking the catalogue for updates.</span><span class="strip-waiting"><span data-updates-count></span> waiting to update.</span><span class="strip-clear">Every installed app is up to date.</span></p>
+                <button class="btn" type="button" data-route-to="updates">Updates</button>
+                <button class="btn btn-primary strip-all" type="button" data-updates-all>Update all</button>
+              </section>
+
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">The Form family</h2><span class="block-note">Free and open source. No account.</span></header>
+                <!-- @portal:family -->
+              </section>
+
+              <section class="block wn-block">
+                <h2 class="block-title">What's new in your apps</h2>
+                <ul class="wn-list">
+                  <!-- @portal:whatsnew -->
+                </ul>
+              </section>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="apps" data-title="Apps" data-show="all" aria-label="Apps">
+            <div class="page">
+              <div class="toolbar">
+                <div class="seg" role="group" aria-label="Show">
+                  <button class="seg-item" type="button" data-show-set="all" aria-pressed="true">All</button>
+                  <button class="seg-item" type="button" data-show-set="installed" aria-pressed="false">Installed</button>
+                  <button class="seg-item" type="button" data-show-set="available" aria-pressed="false">Not installed</button>
+                </div>
+                <p class="toolbar-note"><span data-setting="source">Catalogue not loaded</span></p>
+              </div>
+              <ul class="list" data-app-list>
+                <!-- @portal:all -->
+              </ul>
+              <p class="empty" data-search-empty hidden>No Form app matches that search.</p>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="updates" data-title="Updates" aria-label="Updates">
+            <div class="page">
+              <div class="toolbar">
+                <p class="toolbar-note">What FormPortal installed, its version, and what has a newer one. Automatic updates run while FormPortal is open.</p>
+                <button class="btn btn-primary" type="button" data-updates-all>Update all</button>
+              </div>
+              <ul class="list list-updates">
+                <!-- @portal:updates -->
+              </ul>
+              <p class="empty ups-empty">Nothing is installed through FormPortal yet.</p>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="beta" data-title="Beta" aria-label="Beta">
+            <div class="page">
+              <p class="lede">Builds still being tested. A beta installs beside the stable build, keeps its own settings, and can be unstable.</p>
+              <ul class="list">
+                <!-- @portal:beta -->
+              </ul>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="extensions" data-title="Extensions" data-filter="all" aria-label="Extensions">
+            <div class="page">
+              <div class="toolbar">
+                <div class="seg" role="group" aria-label="Show extensions for">
+                  <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
+                  <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">FormCut</button>
+                  <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">FormVis</button>
+                  <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">FormWav</button>
+                </div>
+                <p class="toolbar-note">Checked against the catalogue before install. An app uses its extensions from its next start. Open a .formpkg file with FormPortal to install it.</p>
+              </div>
+              <ul class="list exts" data-ext-list></ul>
+              <p class="empty" data-ext-empty>The catalogue lists no extensions yet.</p>
+              <template id="ext-row">
+                <li class="row ext">
+                  <span class="mark">%icon:formcut:ic-m ic-formcut%%icon:formvis:ic-m ic-formvis%%icon:formwav:ic-m ic-formwav%%icon:formai:ic-m ic-formai%</span>
+                  <div class="row-main">
+                    <h3 class="row-name-text" data-field="name"></h3>
+                    <p class="row-sub" data-field="meta"></p>
+                    <p class="row-sub ext-sum" data-field="description"></p>
+                  </div>
+                  <p class="row-state ext-trust" data-field="trust"></p>
+                  <div class="acts">
+                    <label class="menu-check ext-on"><span>On</span><input type="checkbox" class="switch" data-ext-enabled /></label>
+                    <button class="btn" type="button" data-ext-act="remove">Remove</button>
+                    <button class="btn btn-primary" type="button" data-ext-act="install">Install</button>
+                    <details class="drop drop-more">
+                      <summary class="icon-btn" aria-label="What it can use"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
+                      <div class="drop-panel menu">
+                        <dl class="facts facts-menu">
+                          <div><dt>Can use</dt><dd data-field="permissions"></dd></div>
+                          <div><dt>Kind</dt><dd data-field="kind"></dd></div>
+                          <div><dt>Licence</dt><dd data-field="licence"></dd></div>
+                          <div><dt>Needs</dt><dd data-field="needs"></dd></div>
+                          <div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div>
+                        </dl>
+                      </div>
+                    </details>
+                  </div>
+                </li>
+              </template>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="learn" data-title="Learn" aria-label="Learn">
+            <div class="page">
+              <p class="lede">Each app's guide, its releases and where to report a problem. Links open in your browser.</p>
+              <section class="block">
+                <h2 class="block-title">FormPortal</h2>
+                <p class="links"><a class="link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-ai/formhub#readme" data-web>Community: FormHub</a></p>
+              </section>
+              <section class="block">
+                <h2 class="block-title">The apps</h2>
+                <ul class="learn-list">
+                  <!-- @portal:learn -->
+                </ul>
+              </section>
+            </div>
+          </section>
+
+          <!-- @portal:pages -->
+        </main>
+      </div>
+    </div>
+
+    <dialog class="prefs" data-prefs aria-labelledby="h-prefs">
+      <div class="prefs-frame">
+        <nav class="prefs-tabs" aria-label="Preferences">
+          <h2 id="h-prefs" class="prefs-title">Preferences</h2>
+          <button class="prefs-tab" type="button" data-prefs-tab="general" aria-current="page">General</button>
+          <button class="prefs-tab" type="button" data-prefs-tab="apps">Apps</button>
+          <button class="prefs-tab" type="button" data-prefs-tab="catalogue">Catalogue</button>
+          <button class="prefs-tab" type="button" data-prefs-tab="about">About</button>
+        </nav>
+        <div class="prefs-body">
+          <section class="prefs-panel" data-prefs-panel="general">
+            <h3 class="prefs-h">Appearance</h3>
+            <div class="seg" role="group" aria-label="Appearance">
+              <button class="seg-item" type="button" data-theme-set="system" aria-pressed="true">%icon:laptop:ic-s%<span>Match the system</span></button>
+              <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="false">%icon:moon:ic-s%<span>Dark</span></button>
+              <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
+            </div>
+            <h3 class="prefs-h">Notifications</h3>
+            <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
+            <p class="fine">Failures are always shown. Everything lands in the bell in the upper right.</p>
+            <h3 class="prefs-h">In the background</h3>
+            <p class="fine">Nothing. FormPortal checks for updates, and applies the automatic ones, only while it is open. It has no login item, no tray process and no account.</p>
+          </section>
+
+          <section class="prefs-panel" data-prefs-panel="apps" hidden>
+            <h3 class="prefs-h">Updates</h3>
+            <label class="menu-check"><span>Update apps automatically</span><input type="checkbox" class="switch" data-pref="auto_update" checked /></label>
+            <label class="menu-check"><span>Beta builds too</span><input type="checkbox" class="switch" data-pref="auto_update_beta" /></label>
+            <label class="menu-check"><span>Only apps that are not open</span><input type="checkbox" class="switch" data-pref="only_when_closed" checked /></label>
+            <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
+            <h3 class="prefs-h">Each app</h3>
+            <p class="fine">Turn automatic updates off for one app; the others follow the switch above.</p>
+            <ul class="auto-list">
+              <!-- @portal:autolist -->
             </ul>
           </section>
-        </section>
 
-        <section class="pane" data-pane="beta" aria-labelledby="h-beta">
-          <header class="pane-head">
-            <h1 id="h-beta" class="pane-title">Beta</h1>
-            <p class="pane-sub">Builds that are still being tested. A beta installs beside the stable build with its own settings, and it can be unstable.</p>
-          </header>
-          <ul class="tiles">
-            <!-- @portal:beta -->
-          </ul>
-        </section>
+          <section class="prefs-panel" data-prefs-panel="catalogue" hidden>
+            <h3 class="prefs-h">Catalogue</h3>
+            <p><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></p>
+            <label class="prefs-field"><span>Address</span><input class="field" type="url" inputmode="url" spellcheck="false" autocomplete="off" data-setting-input="catalog" placeholder="https://formai.dev/catalog/v1/apps.json" /></label>
+            <label class="menu-check"><span>Developer: accept a catalogue that is not signed</span><input type="checkbox" class="switch" data-setting-input="unsigned" /></label>
+            <h3 class="prefs-h">This computer</h3>
+            <dl class="facts">
+              <div><dt>System</dt><dd data-setting="platform"></dd></div>
+              <div><dt>Apps go in</dt><dd class="mono" data-setting="folder"></dd></div>
+              <div><dt>Permission</dt><dd>Your own folder; no administrator password.</dd></div>
+            </dl>
+          </section>
 
-        <section class="pane" data-pane="extensions" data-filter="all" aria-labelledby="h-extensions">
-          <header class="pane-head">
-            <h1 id="h-extensions" class="pane-title">Extensions</h1>
-            <p class="pane-sub">Effects, looks, templates and plugins from the open catalogue. Each one says who made it, what it is for and what it can use.</p>
-            <div class="seg" role="group" aria-label="Show extensions for">
-              <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
-              <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">FormCut</button>
-              <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">FormVis</button>
-              <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">FormWav</button>
+          <section class="prefs-panel" data-prefs-panel="about" hidden>
+            <h3 class="prefs-h">FormPortal %fact:version%</h3>
+            <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
+            <h3 class="prefs-h">Help</h3>
+            <p class="links"><a class="link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-ai/formhub#readme" data-web>Community: FormHub</a></p>
+            <h3 class="prefs-h">Licence</h3>
+            <p class="fine">GPL-3.0. Every Form app is open source.</p>
+            <div class="managed" data-managed hidden>
+              <h3 class="prefs-h">Managed</h3>
+              <p data-setting="managed"></p>
+              <p class="fine" data-setting="managed-detail"></p>
             </div>
-          </header>
-          <p class="pane-note">Each package is checked against the catalogue before it is installed. An app uses its extensions from the next time it starts. To install a .formpkg file, open it with FormPortal.</p>
-          <p class="pane-note pane-notice ext-notice" data-notice role="status" aria-live="polite"></p>
-          <ul class="exts" data-ext-list></ul>
-          <p class="pane-note" data-ext-empty>The catalogue lists no extensions yet.</p>
-          <template id="ext-row">
-            <li class="ext">
-              <span class="mark">%icon:formcut:ic-m ic-formcut%%icon:formvis:ic-m ic-formvis%%icon:formwav:ic-m ic-formwav%%icon:formai:ic-m ic-formai%</span>
-              <div class="ext-text">
-                <h2 class="ext-name" data-field="name"></h2>
-                <p class="ext-meta" data-field="meta"></p>
-                <p class="ext-sum" data-field="description"></p>
-              </div>
-              <div class="ext-foot">
-                <p class="ext-trust" data-field="trust"></p>
-                <div class="ext-actions">
-                  <label class="check ext-on"><input type="checkbox" data-ext-enabled /><span>On</span></label>
-                  <button class="act" type="button" data-ext-act="remove">Remove</button>
-                  <button class="act act-main" type="button" data-ext-act="install">Install</button>
-                </div>
-                <details class="drop drop-ext">
-                  <summary class="drop-toggle">What it can use%icon:chevron-down:ic-s%</summary>
-                  <div class="drop-panel">
-                    <dl class="drop-facts">
-                      <div><dt>Can use</dt><dd data-field="permissions"></dd></div>
-                      <div><dt>Kind</dt><dd data-field="kind"></dd></div>
-                      <div><dt>Licence</dt><dd data-field="licence"></dd></div>
-                      <div><dt>Needs</dt><dd data-field="needs"></dd></div>
-                      <div><dt>SHA-256</dt><dd class="drop-hash" data-field="sha256"></dd></div>
-                    </dl>
-                  </div>
-                </details>
-              </div>
-            </li>
-          </template>
-        </section>
+          </section>
+        </div>
+        <button class="icon-btn prefs-close" type="button" data-prefs-close aria-label="Close preferences"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+    </dialog>
 
-        <section class="pane" data-pane="updates" aria-labelledby="h-updates">
-          <header class="pane-head pane-head-split">
-            <div>
-              <h1 id="h-updates" class="pane-title">Updates</h1>
-              <p class="pane-sub">What is installed here, the version of each, and what has a newer one.</p>
-            </div>
-            <button class="act act-main ups-all" type="button" data-updates-all>Update all</button>
-          </header>
-          <ul class="ups">
-            <!-- @portal:updates -->
-          </ul>
-          <p class="pane-note ups-empty">Nothing is installed through FormPortal yet. Install an app from Apps and it appears here with its version.</p>
-        </section>
-
-        <section class="pane" data-pane="settings" aria-labelledby="h-settings">
-          <header class="pane-head">
-            <h1 id="h-settings" class="pane-title">Settings</h1>
-          </header>
-          <dl class="settings">
-            <div class="setting">
-              <dt>Appearance</dt>
-              <dd class="seg" role="group" aria-label="Appearance">
-                <button class="seg-item" type="button" data-theme-set="system" aria-pressed="true">%icon:laptop:ic-s%<span>System</span></button>
-                <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="false">%icon:moon:ic-s%<span>Dark</span></button>
-                <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
-              </dd>
-            </div>
-            <div class="setting">
-              <dt>Updates</dt>
-              <dd class="setting-stack">
-                <label class="check"><input type="checkbox" data-pref="auto_update" checked /><span>Update apps automatically</span></label>
-                <label class="check"><input type="checkbox" data-pref="auto_update_beta" /><span>Beta builds too</span></label>
-                <label class="check"><input type="checkbox" data-pref="only_when_closed" checked /><span>Only apps that are not open</span></label>
-                <label class="check"><input type="checkbox" data-pref="notices" checked /><span>Tell me what was updated</span></label>
-                <label class="check"><input type="checkbox" data-pref="keep_previous" checked /><span>Keep the version before, to go back to</span></label>
-              </dd>
-            </div>
-            <div class="setting">
-              <dt>Catalogue</dt>
-              <dd><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></dd>
-            </div>
-            <div class="setting">
-              <dt><label for="catalog-url">Catalogue address</label></dt>
-              <dd><input class="field" id="catalog-url" type="url" inputmode="url" spellcheck="false" autocomplete="off" data-setting-input="catalog" placeholder="https://formai.dev/catalog/v1/apps.json" /></dd>
-            </div>
-            <div class="setting">
-              <dt>Developer</dt>
-              <dd><label class="check"><input type="checkbox" data-setting-input="unsigned" /><span>Accept a catalogue that is not signed</span></label></dd>
-            </div>
-            <div class="setting">
-              <dt>This computer</dt>
-              <dd data-setting="platform"></dd>
-            </div>
-            <div class="setting">
-              <dt>Apps are installed in</dt>
-              <dd><span class="mono" data-setting="folder"></span> <span class="fine">Your own folder; no administrator password.</span></dd>
-            </div>
-            <div class="setting">
-              <dt>Account</dt>
-              <dd>None. Nothing here signs you in.</dd>
-            </div>
-            <div class="setting">
-              <dt>In the background</dt>
-              <dd>Nothing. FormPortal checks for updates, and applies the automatic ones, only while it is open, and stops when you close it.</dd>
-            </div>
-            <div class="setting">
-              <dt>Help</dt>
-              <dd class="ap-help"><a class="ap-link" href="https://github.com/nodemode-ai/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="ap-link" href="https://github.com/nodemode-ai/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="ap-link" href="https://github.com/nodemode-ai/formportal/issues/new" data-web>Report a problem</a><a class="ap-link" href="https://github.com/nodemode-ai/formhub#readme" data-web>Community: FormHub</a></dd>
-            </div>
-            <div class="setting">
-              <dt>Licence</dt>
-              <dd>GPL-3.0. Every Form app is open source.</dd>
-            </div>
-            <div class="setting">
-              <dt>Version</dt>
-              <dd class="setting-stack"><span>%fact:version%</span><span class="self-update"><button class="seg-item" type="button" data-self-check>Check for a newer FormPortal</button><button class="seg-item" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></span></dd>
-            </div>
-            <div class="setting" data-managed hidden>
-              <dt>Managed</dt>
-              <dd class="setting-stack"><span data-setting="managed"></span><span class="fine" data-setting="managed-detail"></span></dd>
-            </div>
-          </dl>
-        </section>
-      </main>
-    </div>
-    <div id="overlay-root"></div>
-    <div id="toast-root"></div>
+    <div id="toast-root" class="toasts" aria-live="polite"></div>
   </body>
 </html>

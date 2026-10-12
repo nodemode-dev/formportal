@@ -28,7 +28,6 @@ export const apps: Extension = {
   setup(engine) {
     const rows = Array.from(document.querySelectorAll<HTMLElement>("[data-row]"));
 
-    const notices = Array.from(document.querySelectorAll<HTMLElement>("[data-notice]"));
     const target = (row: HTMLElement) => ({ product: row.dataset.product ?? "", channel: (row.dataset.row ?? "stable") as Channel });
 
     const write = (node: HTMLElement | null, text: string) => {
@@ -91,9 +90,12 @@ export const apps: Extension = {
       field("project", info?.project_extensions?.join(", ") ?? "");
       field("licence", info?.licence ?? "");
       row.toggleAttribute("data-release", Boolean(view.artifact));
-      const waiting = document.querySelectorAll(".up[data-install='update']").length;
+      const waiting = document.querySelectorAll(".list-updates .row[data-install='update']").length;
       document.documentElement.setAttribute("data-updates", String(waiting));
-      write(document.querySelector<HTMLElement>("[data-updates-count]"), waiting > 0 ? String(waiting) : "");
+      const count = waiting > 0 ? String(waiting) : "";
+      document.querySelectorAll<HTMLElement>("[data-updates-count]").forEach((node) => write(node, count));
+      const installed = document.querySelectorAll(".list-updates .row[data-install='ready'], .list-updates .row[data-install='update'], .list-updates .row[data-install='busy']").length;
+      if (document.documentElement.dataset.installed !== String(installed)) document.documentElement.dataset.installed = String(installed);
     };
 
     engine.on("product", ({ id }) => {
@@ -113,7 +115,7 @@ export const apps: Extension = {
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") for (const drop of open()) drop.open = false;
     });
-    document.querySelector<HTMLButtonElement>("[data-updates-all]")?.addEventListener("click", () => void engine.dispatch("app.updateAll"));
+    document.querySelectorAll<HTMLButtonElement>("[data-updates-all]").forEach((button) => button.addEventListener("click", () => void engine.dispatch("app.updateAll")));
 
     engine.on("source", () => rows.forEach(patch));
     engine.on("prefs", () => rows.forEach(patch));
@@ -129,12 +131,6 @@ export const apps: Extension = {
         void engine.dispatch("prefs.set", { per_app: { [product]: auto.checked } });
       });
     }
-    engine.on("notice", ({ text, tone }) =>
-      notices.forEach((notice) => {
-        notice.setAttribute("data-tone", tone);
-        write(notice, text);
-      }),
-    );
     document.addEventListener("click", (event) => {
       const link = (event.target as HTMLElement).closest<HTMLAnchorElement>("a[data-web]");
       if (!link) return;
