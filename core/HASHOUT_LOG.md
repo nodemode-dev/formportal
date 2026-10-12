@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.40.0
-Last updated: 2026-10-12 · tutorials, the assistant, quiet notices
+Current build version: v0.41.0
+Last updated: 2026-10-12 · the language preference
+
+## v0.41.0 · the language preference {#language}
+
+### prefs.rs · language and page
+- refers-to: src/prefs.rs :: Preferences.language, LANGUAGES, Preferences::page
+- kind: decision
+- logged: v0.41.0 · 2026-10-12
+
+`language` is `None` for English; `page()` maps it to the built page the shell opens (`es/index.html`), falling back to `index.html` for anything unknown, so a hand-edited file can never leave the window blank.
 
 ## v0.40.0 · tutorials, the assistant, quiet notices {#learn}
 

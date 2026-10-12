@@ -7,3 +7,4 @@
 - [Fonts](Fonts)
 - [Stock and Templates](Stock-and-Templates)
 - [Learn and Assistant](Learn-and-Assistant)
+- [Languages and Launch](Languages-and-Launch)

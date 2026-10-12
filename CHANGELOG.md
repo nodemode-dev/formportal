@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.41.0 · 2026-10-12
+
+- Language: Preferences, General now offers English and a first draft in Spanish. FormPortal opens directly in the language you choose. The Spanish has not been reviewed by a Spanish speaker yet, and some messages are still in English.
+- When FormPortal opens: Home, or where you left off. It opens straight on that screen.
+
 ## v0.40.0 · 2026-10-12
 
 - Learn: tutorials you follow step by step, six for FormPortal itself and the Form apps' own from a signed index, with your progress kept on this computer. Each step can take you to the screen it is about.

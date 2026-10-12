@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.40.0
-Last updated: 2026-10-12 · the reading server and the assistant
+Current build version: v0.41.0
+Last updated: 2026-10-12 · the window opens in the chosen language
+
+## v0.41.0 · the window opens in the chosen language {#language}
+
+### create false, built in setup
+- refers-to: tauri.conf.json :: app.windows[0].create · src/main.rs :: setup
+- kind: decision
+- logged: v0.41.0 · 2026-10-12
+
+Creative Cloud restarts to change language; FormPortal decides before the window exists. The main window keeps its configuration (size, minimum, centred) but `create: false`; setup reads the preferences, sets the configuration's `url` to the page for the language, and builds it with `WebviewWindowBuilder::from_config`. Verified: the debug build under Xvfb, with `{"language":"es"}` in a test root, opened directly on the Spanish Home (screenshot in the sidecar's build notes); the single-instance focus still finds the window by its label.
 
 ## v0.40.0 · the reading server and the assistant {#learn}
 

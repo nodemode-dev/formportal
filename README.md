@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app. The Form family's Creative Cloud alternative: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.40.0-eef0f4" alt="version v0.40.0" />
+  <img src="https://img.shields.io/badge/version-v0.41.0-eef0f4" alt="version v0.41.0" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
@@ -28,6 +28,7 @@ FormPortal reads the signed catalogue formai.dev publishes and offers this compu
 - **Files on your own disk.** Pick folders; FormPortal lists your Form projects, opens each in the right app, keeps earlier versions you can go back to, and shows what it uses on disk. No cloud
 - **Fonts without an account.** Open-licensed families from a signed index, or your own TTF and OTF files, installed for you alone with no administrator
 - **Learn, and ask your own agent.** Step-by-step tutorials with progress kept on your computer, suggestions on Home worked out locally, notifications filed by kind, and Ask your agent: Claude Code or Codex answers questions about your apps through FormPortal's reading-only server
+- **Your language, your starting screen.** English and a Spanish draft, chosen before the window opens so the first frame is already in that language; open on Home or where you left off
 - **Stock and templates with their credits.** Open-licensed images, video, audio and Form app templates from a signed index, saved to your Library with the credit line beside each file; a template opens in its app in one step. No paid stock, no generative AI
 - **Built from the registry.** Every app's row, card, page and switch is written at build time from `catalog/products.json`, so the first frame is the final layout (layout shift 0 under 4x CPU throttling)
 

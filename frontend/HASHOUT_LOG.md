@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.40.0
-Last updated: 2026-10-12 · Learn, suggestions, notice categories, Ask your agent
+Current build version: v0.41.0
+Last updated: 2026-10-12 · languages and opening where you left off
+
+## v0.41.0 · languages and opening where you left off {#language}
+
+### English text as the key, a page per language
+- refers-to: src/i18n/translate.ts :: lookup, fill, translateHtml · src/i18n/index.ts :: t, LANGUAGES, pageFor · src/i18n/es.json · vite.config.ts :: languagePlugin
+- kind: decision
+- logged: v0.41.0 · 2026-10-12
+
+A key per string would have meant rewriting every line of `index.html` and `renderPortal`; keying by the English text (as gettext does) left them as they are. `translateHtml` runs on the finished page in `generateBundle`, skipping scripts, styles and inline SVG, and swaps text nodes and four attributes when the trimmed text has an entry; patterns with `{name}` cover the per-app sentences. The same table serves `t()` at run time, chosen by `<html lang>`. Switching language saves the preference and loads the other page: a page in one language never rewrites itself into another, which is what keeps zero flash. Run-time strings converted this version: app statuses (stable, beta, nightly), the extension Install or Update button, and every Learn label and suggestion. Still English: notices, the engine's error messages, tutorial content (data), Files, Fonts, Stock, agents and assistant run-time text. The Spanish is a draft and says so in Preferences. Measured at 4x CPU: layout shift 0 on the Spanish Home, and on switching both ways.
+
+### Opening where you left off
+- refers-to: public/prepaint.js · src/styles/main.css :: html[data-launch] · src/extensions/route :: route.launch, formportal-last · src/extensions/launch · src/main.ts :: route.launch before catalog.load
+- kind: decision
+- logged: v0.41.0 · 2026-10-12
+
+The router runs in a module script, which can come after the first frame, so the decision is made in `prepaint.js` (a classic script in the head): with `formportal-open` set to `last` and `formportal-last` one of the eight top-level screens, it sets `data-launch`, and eight stylesheet rules show that pane, light its sidebar entry and hide the title until the router writes it. `route.launch` is dispatched after every command is registered (a route event earlier would reach commands that do not exist yet) and then removes the attribute. A `?link=` (a `formai://` link) wins. Measured: when parsing ends, before any module runs, only the remembered pane is shown and only its entry is lit; layout shift 0.
 
 ## v0.40.0 · Learn, suggestions, notice categories, Ask your agent {#learn}
 
