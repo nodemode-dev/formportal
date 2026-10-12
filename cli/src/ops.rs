@@ -147,11 +147,40 @@ pub fn installs(ctx: &Ctx) -> Result<Value, CoreError> {
             let mut v = serde_json::to_value(&i).unwrap_or(Value::Null);
             if let Some(o) = v.as_object_mut() {
                 o.insert("open_processes".to_string(), json!(open));
+                o.insert("mcp_server".to_string(), json!(matches!(ctx.portal.agent_surface(&i.product, i.channel), Ok(Some(_)))));
             }
             v
         })
         .collect();
-    Ok(json!({ "root": ctx.portal.root(), "installs": rows }))
+    Ok(json!({ "root": ctx.portal.root(), "installs": rows, "next": "an install with mcp_server true can be connected to Claude Code, Codex and Cursor with connect_agents" }))
+}
+
+pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = product(args)?;
+    let ch = channel(args)?;
+    let surface = ctx.portal.agent_surface(&id, ch)?;
+    Ok(json!({
+        "product": id,
+        "channel": formportal_core::portal::channel_name(ch),
+        "server_name": formportal_core::agents::server_name(&id, ch),
+        "mcp_server": surface,
+        "clients": ctx.portal.agent_clients(&id, ch),
+        "note": if surface.is_some() { "connect_agents adds it to the clients; FormPortal starts the installed version each time, so updates need no change." } else { "No MCP server found in this install: the app ships none yet, or it is not installed. An app declares one in form-app.json." }
+    }))
+}
+
+pub fn connect_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = product(args)?;
+    let ch = channel(args)?;
+    let clients: Vec<formportal_core::agents::Client> = match args.get("clients") {
+        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        _ => formportal_core::agents::CLIENTS.to_vec(),
+    };
+    let connect = !flag(args, "disconnect").unwrap_or(false);
+    let launcher = formportal_core::agents::Launcher::current()?;
+    let result = ctx.portal.connect_agents(&id, ch, &clients, &launcher, connect)?;
+    Ok(json!({ "product": id, "server_name": formportal_core::agents::server_name(&id, ch), "launcher": launcher.program, "clients": result, "next": "Restart the client, or reload its MCP servers, to see the app's tools." }))
 }
 
 pub fn versions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {

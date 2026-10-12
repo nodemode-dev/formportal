@@ -96,6 +96,53 @@ fn policy() -> Result<Option<serde_json::Value>, String> {
 }
 
 #[tauri::command]
+fn app_agents(product: String, channel: Channel) -> Result<serde_json::Value, String> {
+    let hub = hub();
+    let surface = hub.agent_surface(&product, channel).map_err(text)?;
+    Ok(serde_json::json!({
+        "surface": surface.is_some(),
+        "server_name": formportal_core::agents::server_name(&product, channel),
+        "clients": if surface.is_some() { serde_json::to_value(hub.agent_clients(&product, channel)).unwrap_or_default() } else { serde_json::json!([]) },
+    }))
+}
+
+#[tauri::command]
+async fn connect_agents(product: String, channel: Channel, disconnect: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let launcher = formportal_core::agents::Launcher::current().map_err(text)?;
+        let clients = hub().connect_agents(&product, channel, &formportal_core::agents::CLIENTS, &launcher, !disconnect).map_err(text)?;
+        Ok(serde_json::json!({ "clients": clients }))
+    })
+    .await
+    .map_err(text)?
+}
+
+fn app_mcp_from_args() -> Option<i32> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) != Some("app-mcp") {
+        return None;
+    }
+    let product = args.get(2).cloned().unwrap_or_default();
+    let channel = match (args.get(3).map(String::as_str), args.get(4)) {
+        (Some("--channel"), Some(name)) => match serde_json::from_value::<Channel>(serde_json::json!(name)) {
+            Ok(channel) => channel,
+            Err(_) => {
+                eprintln!("FormPortal app-mcp: there is no channel {name:?}");
+                return Some(2);
+            }
+        },
+        _ => Channel::Stable,
+    };
+    Some(match hub().run_app_mcp(&product, channel) {
+        Ok(code) => code,
+        Err(e) => {
+            eprintln!("FormPortal app-mcp: {e}");
+            1
+        }
+    })
+}
+
+#[tauri::command]
 fn still_open(product: String, channel: Channel) -> Vec<u32> {
     let hub = hub();
     let current = hub.state().ok().and_then(|s| s.installs.into_iter().find(|i| i.product == product && i.channel == channel)).map(|i| i.current.path);
@@ -293,6 +340,9 @@ fn launch_link(pending: State<'_, Pending>) -> Option<String> {
 }
 
 fn main() {
+    if let Some(code) = app_mcp_from_args() {
+        std::process::exit(code);
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -324,7 +374,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

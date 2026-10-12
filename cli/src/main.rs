@@ -25,6 +25,10 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   rollback <product> [--channel C]
   remove <product> [--channel C]
   policy                          the organisation's policy, if this computer has one
+  app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
+  connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
+  disconnect <product> [--channel C] [--clients ...]               take it out again
+  app-mcp <product> [--channel C]          run the installed app's MCP server on stdio (what the clients start)
   mirror --to DIR --base-url URL [--platforms macos,windows,linux] [--channels stable,beta] [--history]
                                   copy the catalogue and its files for an internal server;
                                   FORMPORTAL_MIRROR_KEY (base64 Ed25519 seed) signs it
@@ -79,6 +83,19 @@ fn main() -> ExitCode {
     }
     let ctx = ops::Ctx::from_env();
     let args = args_to_json(&all[1..]);
+    if cmd == "app-mcp" {
+        let run = ops::channel(&args).and_then(|ch| {
+            let id = args.get("product").and_then(Value::as_str).unwrap_or_default().to_string();
+            ctx.portal.run_app_mcp(&id, ch)
+        });
+        return match run {
+            Ok(code) => ExitCode::from(u8::try_from(code).unwrap_or(1)),
+            Err(e) => {
+                eprintln!("formportal app-mcp: {e}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     let mut last = u64::MAX;
     let mut progress = |have: u64, total: u64| {
         let step = if total > 0 { have * 100 / total } else { 0 };
@@ -106,6 +123,15 @@ fn main() -> ExitCode {
         "rollback" => ops::rollback(&ctx, &args),
         "remove" => ops::remove(&ctx, &args),
         "policy" => ops::policy(&ctx),
+        "app-agents" => ops::app_agents(&ctx, &args),
+        "connect" => ops::connect_agents(&ctx, &args),
+        "disconnect" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                o.insert("disconnect".to_string(), json!(true));
+            }
+            ops::connect_agents(&ctx, &a)
+        }
         "mirror" => ops::mirror(&ctx, &args, &mut progress),
         "help" | "--help" | "-h" => {
             println!("{USAGE}");

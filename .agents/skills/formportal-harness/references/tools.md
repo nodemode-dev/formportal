@@ -26,6 +26,8 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
 | `policy` | no | Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\FormPortal\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists. |
+| `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
+| `connect_agents` | yes | Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
 | `rollback` | yes, destructive | Swaps the installed version for the previous one FormPortal kept. Fails when no previous version is kept. Confirm first. |
 | `remove` | yes, destructive | Uninstalls the product's channel and deletes its install folder, including the kept previous version. The app's own documents elsewhere are not touched. Refused while the app is open. Confirm first. |
@@ -116,6 +118,18 @@ No parameters.
 ### policy
 
 No parameters.
+
+### app_agents
+
+- `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
+- `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
+
+### connect_agents
+
+- `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
+- `clients` (optional): array. 
+- `disconnect` (optional): boolean. Take the app out of the clients instead.
+- `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
 
 ### open
 

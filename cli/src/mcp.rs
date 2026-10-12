@@ -90,6 +90,18 @@ fn tools() -> Value {
           "description": "Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\\FormPortal\\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists.",
           "inputSchema": { "type": "object", "properties": {} },
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
+        { "name": "app_agents", "title": "An app's MCP server",
+          "description": "Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed.",
+          "inputSchema": only_target(true),
+          "annotations": { "readOnlyHint": true, "openWorldHint": false } },
+        { "name": "connect_agents", "title": "Connect an app to Claude Code, Codex and Cursor",
+          "description": "Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first.",
+          "inputSchema": { "type": "object", "properties": {
+              "product": target()["product"], "channel": target()["channel"],
+              "clients": { "type": "array", "items": { "type": "string", "enum": ["claude", "codex", "cursor"] } },
+              "disconnect": { "type": "boolean", "description": "Take the app out of the clients instead." } },
+            "required": ["product"] },
+          "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "open", "title": "Open an installed app",
           "description": "Starts the installed app for the product and channel and returns its process id.",
           "inputSchema": only_target(true),
@@ -124,7 +136,9 @@ fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
         "rollback" => ops::rollback(ctx, args),
         "remove" => ops::remove(ctx, args),
         "policy" => ops::policy(ctx),
-        other => return Err(format!("no tool named {other:?}; tools/list has the seventeen tools")),
+        "app_agents" => ops::app_agents(ctx, args),
+        "connect_agents" => ops::connect_agents(ctx, args),
+        other => return Err(format!("no tool named {other:?}; tools/list has the nineteen tools")),
     };
     out.map_err(|e| e.to_string())
 }
