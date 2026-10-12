@@ -101,9 +101,27 @@ fn exts() -> std::collections::BTreeMap<String, String> {
     formportal_core::files::extensions_from_registry(REGISTRY)
 }
 
+static FILES_LOCK: Mutex<()> = Mutex::new(());
+
+fn watch_saves(app: AppHandle) {
+    std::thread::spawn(move || loop {
+        std::thread::sleep(std::time::Duration::from_secs(3));
+        let kept = {
+            let _held = FILES_LOCK.lock();
+            hub().keep_saved(&exts(), 2)
+        };
+        if let Ok(kept) = kept {
+            if !kept.is_empty() {
+                let _ = app.emit("versions-kept", kept);
+            }
+        }
+    });
+}
+
 #[tauri::command]
 async fn files_scan(query: Option<String>) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
+        let _held = FILES_LOCK.lock();
         let scan = hub().scan_files(&exts(), query.as_deref()).map_err(text)?;
         Ok(serde_json::json!({ "scan": scan, "suggested": formportal_core::files::suggested_folder(), "opens": exts() }))
     })
@@ -140,6 +158,7 @@ fn file_open(path: String) -> Result<String, String> {
 #[tauri::command]
 async fn file_versions(path: String, action: Option<String>, version: Option<String>) -> Result<Vec<formportal_core::files::Version>, String> {
     tauri::async_runtime::spawn_blocking(move || {
+        let _held = FILES_LOCK.lock();
         let hub = hub();
         let p = std::path::Path::new(&path);
         match action.as_deref() {
@@ -626,6 +645,7 @@ fn main() {
                 config.url = tauri::WebviewUrl::App(page.into());
                 tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?.build()?;
             }
+            watch_saves(app.handle().clone());
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
             Ok(())
