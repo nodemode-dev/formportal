@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.42.0
-Last updated: 2026-10-12 · repair, update later, files from the web
+Current build version: v0.43.0
+Last updated: 2026-10-12 · font updates
+
+## v0.43.0 · font updates {#font-updates}
+
+### font_updates
+- refers-to: src/fonts.rs :: Portal::font_updates
+- kind: explainer
+- logged: v0.43.0 · 2026-10-12
+
+An installed style from the index whose index entry now has a different SHA-256 is an update; the person's own fonts never are. `install_font` already replaces the file and the record. Verified with two signed local indexes (the same family, then a changed Regular): no update, then one, then none after installing it.
 
 ## v0.42.0 · repair, update later, files from the web {#repair}
 

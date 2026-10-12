@@ -16,6 +16,10 @@ An open font index (`fonts.json` beside the catalogue, signed the same way) list
 3. Their own file: `font_install {path, rights_confirmed: true}` only after the person has said they have the right to use that font on this computer. Never set `rights_confirmed` on their behalf. Web fonts (WOFF, WOFF2) are refused; they need the TTF or OTF.
 4. `font_remove {family}` (or with `style`) removes what FormPortal installed; it never touches other fonts.
 
+## Updates
+
+`fonts` also returns `updates`: styles FormPortal installed whose file in the index has changed since. Tell the person which families, and after they agree, `font_install {id, style}` for each listed style installs the new file over the old one. Apps see the new version after they restart.
+
 ## When it fails
 
 "is licensed ..., not an open font licence" means the index offers something FormPortal will not install; say so. "the font index was refused" means its signature did not match; stop and report it.

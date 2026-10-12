@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.42.0
-Last updated: 2026-10-12 · repair, later and web file commands; the browser leg
+Current build version: v0.43.0
+Last updated: 2026-10-12 · forwarding and double-click verified
+
+## v0.43.0 · forwarding and double-click verified {#forwarding}
+
+### A link and a .formpkg reach the open window
+- refers-to: src/main.rs :: single-instance callback, package_arg, route · tauri.conf.json :: fileAssociations
+- kind: explainer
+- logged: v0.43.0 · 2026-10-12
+
+Under `dbus-run-session` with Xvfb (so the single-instance plugin has a session bus), with the debug build running: `gio open formai://app/formcut` showed FormCut's page in the same window, and `gio open side-look.formpkg`, with a test desktop entry for `application/x-formpkg` standing in for the one the deb bundle writes from `fileAssociations`, installed the package into that window as sideloaded. The second process exited after handing over each time (the process count stayed the same). `fonts_view` also returns `updates`.
 
 ## v0.42.0 · repair, later and web file commands; the browser leg {#repair}
 

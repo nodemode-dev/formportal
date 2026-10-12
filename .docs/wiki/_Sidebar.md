@@ -9,3 +9,4 @@
 - [Learn and Assistant](Learn-and-Assistant)
 - [Languages and Launch](Languages-and-Launch)
 - [Repair and Handoff](Repair-and-Handoff)
+- [Extensions Troubleshooting](Extensions-Troubleshooting)

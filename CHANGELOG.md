@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.43.0 · 2026-10-12
+
+- Steadier start: the window no longer shows a half-built page for a moment on a busy computer, and notices no longer push each other around (one shows at a time; the bell keeps them all).
+- Font updates: when the font library has a newer version of a font you installed, the bell says so and Fonts offers Update.
+- A troubleshooting page for extensions that will not install, linked from Extensions.
+
 ## v0.42.0 · 2026-10-12
 
 - Check and repair, in Preferences, About: finds apps whose files went missing or have nothing to open, earlier versions that are gone, unfinished installs, leftovers and old downloads, and repairs them with one button. `formportal cli repair` reports, and `--fix` repairs, with no window.

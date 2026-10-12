@@ -2,8 +2,31 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.42.0
-Last updated: 2026-10-12 · repair, update later, files from a web page
+Current build version: v0.43.0
+Last updated: 2026-10-12 · the first-frame shift found and fixed; one toast at a time; font updates
+
+## v0.43.0 · the first-frame shift found and fixed {#stability}
+
+### The cause: a paint of a half-parsed page
+- refers-to: public/prepaint.js :: data-parsing · src/styles/main.css :: html[data-parsing] #app
+- kind: warning-context
+- logged: v0.43.0 · 2026-10-12
+
+The intermittent shifts logged since v0.38.0 were traced by recording each shift's rectangles and timing over 48 loads: the first paint came before the parser had finished the page (the page is large and the CPU throttled), so a family card was painted with only its name and, since `.fam:not(:has(.acts))` matched, without its action column; when the rest arrived it reflowed (a 231 px text box became 131 px). The fix holds the whole app out of layout while the document is parsing: `prepaint.js`, a classic script in the head, sets `data-parsing` and removes it at `readystatechange` past loading; `html[data-parsing] #app { display: none }`. The attribute is set only by the script, so a failed script never hides the page. `visibility: hidden` was not used because four rules set `visibility: visible` on descendants. Measured after: 100 diagnostic loads and a 160-load gate (sixteen screens, ten loads each, 4x CPU) with no shift and no error.
+
+### One toast at a time
+- refers-to: src/extensions/notices :: toast
+- kind: decision
+- logged: v0.43.0 · 2026-10-12
+
+A second toast in the bottom-anchored stack pushed the first one up, a 0.0045 shift whenever two notices came more than half a second after the last input. The stack now holds one toast, replaced by the next; an information notice never covers a failure still showing. Every notice stays in the bell.
+
+### Font updates
+- refers-to: index.html :: #font-row data-font-act="update" · src/extensions/fonts · src/main.ts :: font.update, the fonts notice, fonts.load at start-up
+- kind: decision
+- logged: v0.43.0 · 2026-10-12
+
+Creative Cloud's notices cover app and font updates. The font index is read at start-up; a family with a changed file says Update available with an Update button (which installs only the changed styles), and the bell says so once per session under Updates. Extensions links to the troubleshooting page.
 
 ## v0.42.0 · repair, update later, files from a web page {#repair}
 
