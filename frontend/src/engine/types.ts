@@ -81,6 +81,42 @@ export interface SelfUpdate {
   notes: string | null;
 }
 
+export interface FontStyleEntry {
+  style: string;
+  weight: number;
+  italic: boolean;
+  file: string;
+  url: string;
+  bytes: number;
+  sha256: string;
+}
+
+export interface FontFamilyEntry {
+  id: string;
+  family: string;
+  foundry: string;
+  licence: string;
+  category: string;
+  styles: FontStyleEntry[];
+}
+
+export interface InstalledFont {
+  family: string;
+  style: string;
+  family_id: string | null;
+  file: string;
+  sha256: string;
+  source: "index" | "own";
+  licence: string | null;
+}
+
+export interface FontsView {
+  index: { families: FontFamilyEntry[] } | null;
+  index_error: string | null;
+  installed: InstalledFont[];
+  folder: string;
+}
+
 export interface ProjectFile {
   path: string;
   name: string;

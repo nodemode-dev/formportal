@@ -1,4 +1,4 @@
-import type { AgentsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
+import type { AgentsView, FontsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -16,6 +16,7 @@ export interface EngineEvents {
   files: { result: FilesScan };
   storage: { view: StorageView };
   versions: { path: string; list: FileVersion[] };
+  fonts: { view: FontsView };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };
@@ -166,6 +167,7 @@ export class Engine {
   }
 
   policy: PolicyView | null = null;
+  lastFonts: FontsView | null = null;
 
   setPolicy(policy: PolicyView | null): void {
     this.policy = policy;

@@ -28,6 +28,7 @@
             </ul>
           </li>
           <li><button class="nav-item" type="button" data-route-to="files"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="nav-label">Files</span></button></li>
+          <li><button class="nav-item" type="button" data-route-to="fonts"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19L9.5 5h1L16 19M6.2 14h7.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 12.5a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zm2.2 0V19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="nav-label">Fonts</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="nav-label">Extensions</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="learn">%icon:book:ic-m%<span class="nav-label">Learn</span></button></li>
         </ul>
@@ -179,6 +180,50 @@
             </div>
           </section>
 
+          <section class="pane" data-pane="fonts" data-title="Fonts" data-category="all" aria-label="Fonts">
+            <div class="page">
+              <div class="toolbar">
+                <label class="search search-local">
+                  <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <input type="search" data-fonts-query placeholder="Search fonts" aria-label="Search fonts" autocomplete="off" spellcheck="false" />
+                </label>
+                <div class="seg" role="group" aria-label="Kind of font">
+                  <button class="seg-item" type="button" data-font-cat="all" aria-pressed="true">All</button>
+                  <button class="seg-item" type="button" data-font-cat="sans-serif" aria-pressed="false">Sans serif</button>
+                  <button class="seg-item" type="button" data-font-cat="serif" aria-pressed="false">Serif</button>
+                  <button class="seg-item" type="button" data-font-cat="monospace" aria-pressed="false">Mono</button>
+                  <button class="seg-item" type="button" data-font-cat="display" aria-pressed="false">Display</button>
+                </div>
+              </div>
+              <p class="fine fonts-note">Open-licensed fonts (OFL, Apache-2.0, MIT), installed for you only with no administrator. Every Form app and every other program on this computer can use them, usually after it restarts.</p>
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Font library</h2><span class="block-note" data-fonts-count></span></header>
+                <ul class="list" data-font-list></ul>
+                <p class="empty" data-fonts-error hidden></p>
+              </section>
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Your own fonts</h2><button class="btn" type="button" data-font-own-add>Add a font file</button></header>
+                <ul class="list" data-font-own></ul>
+                <p class="empty" data-font-own-empty>Add a TTF or OTF you have the right to use, and FormPortal installs it for you the same way.</p>
+              </section>
+              <template id="font-row">
+                <li class="row font">
+                  <span class="tile tile-font" aria-hidden="true">Aa</span>
+                  <div class="row-main"><span class="row-name-text" data-field="family"></span><p class="row-sub" data-field="meta"></p></div>
+                  <p class="row-state"><span class="state-text" data-field="state"></span></p>
+                  <div class="acts acts-files">
+                    <button class="btn btn-primary" type="button" data-font-act="install">Install family</button>
+                    <button class="btn" type="button" data-font-act="remove">Remove</button>
+                    <details class="drop drop-styles">
+                      <summary class="icon-btn" aria-label="Styles"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
+                      <div class="drop-panel menu" data-font-styles></div>
+                    </details>
+                  </div>
+                </li>
+              </template>
+            </div>
+          </section>
+
           <section class="pane" data-pane="extensions" data-title="Extensions" data-filter="all" aria-label="Extensions">
             <div class="page">
               <div class="toolbar">
@@ -317,6 +362,16 @@
         <header class="versions-head"><h2 id="h-versions" class="prefs-title" data-versions-title>Versions</h2><p class="fine mono" data-versions-path></p></header>
         <ol class="list versions-list" data-versions-list></ol>
         <footer class="agent-acts"><button class="btn" type="button" data-versions-save>Keep a version now</button><button class="btn" type="button" data-versions-close>Close</button></footer>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions" data-font-rights aria-labelledby="h-font-rights">
+      <div class="versions-frame">
+        <h2 id="h-font-rights" class="prefs-title">Add your own font</h2>
+        <p class="fine mono" data-font-rights-path></p>
+        <label class="menu-check"><span>I have the right to use this font on this computer</span><input type="checkbox" class="switch" data-font-rights-ok /></label>
+        <p class="fine">FormPortal copies it into your own font folder. It is not uploaded anywhere.</p>
+        <footer class="agent-acts"><button class="btn btn-primary" type="button" data-font-rights-add disabled>Add font</button><button class="btn" type="button" data-font-rights-cancel>Cancel</button></footer>
       </div>
     </dialog>
 

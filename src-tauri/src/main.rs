@@ -157,6 +157,58 @@ async fn file_versions(path: String, action: Option<String>, version: Option<Str
     .map_err(text)?
 }
 
+fn sibling(url: &str, name: &str) -> String {
+    match url.rsplit_once('/') {
+        Some((dir, _)) => format!("{dir}/{name}"),
+        None => name.to_string(),
+    }
+}
+
+#[tauri::command]
+async fn fonts_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let (index, error) = match hub.font_index(&sibling(&url, "fonts.json"), allow_unsigned) {
+            Ok(i) => (Some(i), None),
+            Err(e) => (None, Some(e.to_string())),
+        };
+        Ok(serde_json::json!({ "index": index, "index_error": error, "installed": hub.fonts_installed().map_err(text)?, "folder": formportal_core::fonts::font_dir() }))
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn font_install(id: String, style: Option<String>, url: String, allow_unsigned: bool) -> Result<Vec<formportal_core::fonts::InstalledFont>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let index = hub.font_index(&sibling(&url, "fonts.json"), allow_unsigned).map_err(text)?;
+        hub.install_font(&index, &id, style.as_deref(), &mut |_, _| {}).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn font_pick(app: AppHandle) -> Option<String> {
+    use tauri_plugin_dialog::DialogExt;
+    let (tx, rx) = std::sync::mpsc::channel();
+    app.dialog().file().set_title("Choose a font file (TTF or OTF)").add_filter("Fonts", &["ttf", "otf", "ttc"]).pick_file(move |picked| {
+        let _ = tx.send(picked.and_then(|p| p.into_path().ok()).map(|p| p.to_string_lossy().to_string()));
+    });
+    tauri::async_runtime::spawn_blocking(move || rx.recv().ok().flatten()).await.ok().flatten()
+}
+
+#[tauri::command]
+fn font_add(path: String, rights_confirmed: bool) -> Result<formportal_core::fonts::InstalledFont, String> {
+    hub().add_own_font(std::path::Path::new(&path), rights_confirmed).map_err(text)
+}
+
+#[tauri::command]
+fn font_remove(family: String, style: Option<String>) -> Result<usize, String> {
+    hub().remove_font(&family, style.as_deref()).map(|gone| gone.len()).map_err(text)
+}
+
 #[tauri::command]
 async fn storage() -> Result<formportal_core::files::Storage, String> {
     tauri::async_runtime::spawn_blocking(|| hub().storage().map_err(text)).await.map_err(text)?
@@ -442,7 +494,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

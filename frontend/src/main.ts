@@ -14,13 +14,14 @@ import { search } from "./extensions/search/index.ts";
 import { theme } from "./extensions/theme/index.ts";
 import { agents } from "./extensions/agents/index.ts";
 import { files } from "./extensions/files/index.ts";
+import { fonts } from "./extensions/fonts/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -273,6 +274,60 @@ engine.command("file.versions", (arg) =>
     }
   }),
 );
+
+engine.command("fonts.load", () =>
+  guard(async () => {
+    engine.emit("fonts", { view: await bridge.fonts() });
+  }),
+);
+
+engine.command("font.install", (arg) =>
+  guard(async () => {
+    const { id, style } = arg as { id: string; style?: string };
+    try {
+      await bridge.fontInstall(id, style);
+    } finally {
+      await engine.dispatch("fonts.load");
+    }
+    const family = engine.lastFonts?.index?.families.find((f) => f.id === id)?.family ?? id;
+    engine.setNotice(`${family}${style ? ` ${style}` : ""} is installed for you. Apps see it after they restart.`, "info");
+  }),
+);
+
+engine.command("font.remove", (arg) =>
+  guard(async () => {
+    const { family, style, label } = arg as { family: string; style?: string; label?: string };
+    try {
+      await bridge.fontRemove(family, style);
+    } finally {
+      await engine.dispatch("fonts.load");
+    }
+    engine.setNotice(`${label ?? family} is removed.`, "info");
+  }),
+);
+
+engine.command("font.pick", () =>
+  guard(async () => {
+    const path = await bridge.fontPick();
+    if (path) await engine.dispatch("font.ownConfirm", path);
+  }),
+);
+
+engine.command("font.add", (arg) =>
+  guard(async () => {
+    const { path, rights } = arg as { path: string; rights: boolean };
+    try {
+      await bridge.fontAdd(path, rights);
+    } finally {
+      await engine.dispatch("fonts.load");
+    }
+    engine.setNotice(`${path.split(/[\\/]/).pop()} is added for you. Apps see it after they restart.`, "info");
+  }),
+);
+
+engine.on("fonts", ({ view }) => {
+  engine.lastFonts = view;
+});
 
 engine.command("agents.check", async (arg) => {
   const product = String(arg);

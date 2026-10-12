@@ -1629,6 +1629,46 @@ details[open] > .icon-btn {
   border-block-end: 0;
 }
 
+/* Fonts */
+
+[data-pane="fonts"]:not([data-ready]) .block {
+  display: none;
+}
+
+.fonts-note {
+  margin-block-end: var(--sp-5);
+}
+
+.tile-font {
+  --hue: var(--ink-soft);
+  background: var(--control);
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.font .acts > [data-font-act] {
+  display: none;
+}
+
+.font:not([data-have="all"]) [data-font-act="install"],
+.font:is([data-have="all"], [data-have="some"]) [data-font-act="remove"] {
+  display: inline-flex;
+}
+
+.font .drop-styles {
+  display: block;
+}
+
+.menu-style {
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.menu-style-act {
+  color: var(--ink-soft);
+  font-size: var(--fs-xs);
+}
+
 /* Learn */
 
 .learn-list {

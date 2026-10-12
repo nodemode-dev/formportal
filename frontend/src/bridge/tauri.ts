@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, FontsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -125,6 +125,17 @@ export const tauriBridge: Bridge = {
   fileOpen: (path) => tauri().core.invoke<string>("file_open", { path }),
   fileVersions: (path, action, version) => tauri().core.invoke<FileVersion[]>("file_versions", { path, action: action ?? null, version: version ?? null }),
   storage: () => tauri().core.invoke<StorageView>("storage"),
+  fonts: () => tauri().core.invoke<FontsView>("fonts_view", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
+  fontInstall: async (id, style) => {
+    await tauri().core.invoke("font_install", { id, style: style ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() });
+  },
+  fontPick: () => tauri().core.invoke<string | null>("font_pick"),
+  fontAdd: async (path, rightsConfirmed) => {
+    await tauri().core.invoke("font_add", { path, rightsConfirmed });
+  },
+  fontRemove: async (family, style) => {
+    await tauri().core.invoke("font_remove", { family, style: style ?? null });
+  },
   appAgents: (product, channel) => tauri().core.invoke<AgentsView>("app_agents", { product, channel }),
   connectAgents: async (product, channel, disconnect) => (await tauri().core.invoke<{ clients: AgentClient[] }>("connect_agents", { product, channel, disconnect })).clients,
 };

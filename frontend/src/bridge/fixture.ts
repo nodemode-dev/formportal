@@ -1,7 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentClient, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -33,6 +33,19 @@ const versionsOf = (path: string, count: number): FileVersion[] => {
   if (!kept.has(path)) kept.set(path, Array.from({ length: count }, (_, i) => ({ id: `${stamp - i * day}-${(i + 1).toString(16).padStart(12, "0")}`, at: stamp - i * day, size: 1000 * (count - i), sha256: "0".repeat(64), reason: i === count - 1 ? "first seen" : "changed since the last version" })));
   return kept.get(path) ?? [];
 };
+const fam = (id: string, family: string, foundry: string, category: string, styles: [string, number][]): FontFamilyEntry => ({
+  id, family, foundry, licence: "OFL-1.1", category,
+  styles: styles.map(([style, weight]) => ({ style, weight, italic: /Italic/.test(style), file: `${id}-${style}.ttf`, url: `https://fonts.example/${id}-${style}.ttf`, bytes: 300_000, sha256: "0".repeat(64) })),
+});
+const fontIndex: FontFamilyEntry[] = [
+  fam("inter", "Inter", "Rasmus Andersson", "sans-serif", [["Regular", 400], ["Italic", 400], ["SemiBold", 600], ["Bold", 700]]),
+  fam("source-serif-4", "Source Serif 4", "Adobe", "serif", [["Regular", 400], ["Bold", 700]]),
+  fam("ibm-plex-mono", "IBM Plex Mono", "IBM", "monospace", [["Regular", 400], ["Medium", 500], ["Bold", 700]]),
+  fam("fira-sans", "Fira Sans", "Mozilla", "sans-serif", [["Regular", 400], ["Bold", 700]]),
+  fam("literata", "Literata", "TypeTogether", "serif", [["Regular", 400], ["Italic", 400]]),
+  fam("space-grotesk", "Space Grotesk", "Florian Karsten", "display", [["Regular", 400], ["Bold", 700]]),
+];
+const fontsIn: InstalledFont[] = [];
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
 const agentsFor = (product: string, channel: Channel): AgentClient[] =>
@@ -176,6 +189,27 @@ export const fixtureBridge: Bridge = {
     formportal_bytes: 231_000_000 * installed.size + 41_129_000,
     folders: folders.map((f) => ({ ...f, bytes: sampleFiles(f.path).reduce((n, x) => n + x.bytes, 0) })),
   }),
+  fonts: async () => ({ index: { families: fontIndex }, index_error: null, installed: fontsIn.map((f) => ({ ...f })), folder: "~/.local/share/fonts/FormPortal" }),
+  fontInstall: async (id, style) => {
+    await pause(250);
+    const family = fontIndex.find((f) => f.id === id);
+    if (!family) throw new Error(`${id} is not in the font index`);
+    for (const s of family.styles.filter((x) => !style || x.style === style)) {
+      if (!fontsIn.some((f) => f.family_id === id && f.style === s.style)) fontsIn.push({ family: family.family, style: s.style, family_id: id, file: `~/.local/share/fonts/FormPortal/FormPortal-${id}-${s.style}.ttf`, sha256: s.sha256, source: "index", licence: family.licence });
+    }
+  },
+  fontPick: async () => "/home/you/Downloads/Studio Grotesk.otf",
+  fontAdd: async (path, rights) => {
+    if (!rights) throw new Error("adding your own font needs your confirmation that you have the right to use it on this computer");
+    const stem = path.split("/").pop()?.replace(/\.[^.]+$/, "") ?? "font";
+    fontsIn.push({ family: stem, style: "as in the file", family_id: null, file: `~/.local/share/fonts/FormPortal/FormPortal-own-${stem}.otf`, sha256: "c".repeat(64), source: "own", licence: null });
+  },
+  fontRemove: async (family, style) => {
+    for (let i = fontsIn.length - 1; i >= 0; i -= 1) {
+      const f = fontsIn[i];
+      if ((f.family === family || f.family_id === family) && (!style || f.style === style)) fontsIn.splice(i, 1);
+    }
+  },
   appAgents: async (product, channel) => {
     const surface = installed.has(key(product, channel)) && (new URLSearchParams(window.location.search).get("agents") ?? "").split(",").includes(product);
     return { surface, server_name: channel === "stable" ? product : `${product}-${channel}`, clients: surface ? agentsFor(product, channel) : [] };
