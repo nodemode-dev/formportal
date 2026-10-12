@@ -6,3 +6,4 @@
 - [Organisations](Organisations)
 - [Fonts](Fonts)
 - [Stock and Templates](Stock-and-Templates)
+- [Learn and Assistant](Learn-and-Assistant)

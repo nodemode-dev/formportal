@@ -2,8 +2,24 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.39.0
-Last updated: 2026-10-12 · stock media; thirty tools
+Current build version: v0.40.0
+Last updated: 2026-10-12 · tutorials, reading-only server, ask; thirty-two tools
+
+## v0.40.0 · tutorials, a reading-only server, ask {#learn}
+
+### A library as well as a binary
+- refers-to: src/lib.rs · src/main.rs
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+`mcp` and `ops` moved behind `src/lib.rs` so the desktop shell can serve the same tools (`FormPortal mcp`) without shipping the command line beside it; `main.rs` imports them from `formportal_cli`.
+
+### learn, learn_progress, mcp --read-only, ask
+- refers-to: src/ops.rs :: learn_source, tutorials, learn, learn_progress, ask · src/mcp.rs :: read_only_tools, serve_with, answer
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+`learn` merges the bundled tutorials with the index (index entries with product `formportal` or a bundled id are dropped) and adds `done_steps` from 1 and `finished`. `learn_progress` takes the id (or the first positional), a step from 1 (a number or, from the command line, a string), `done`, or `reset`. `read_only_tools` reads the `readOnlyHint` annotations, so the reading server follows the tool list rather than a second list: thirteen tools today (files is not among them, because reading folders keeps versions). In reading mode `tools/list` lists only those and `tools/call` refuses the rest with a sentence that names FormPortal as the place to do it. `ask` is a command, not a tool: an agent asking an agent through FormPortal would only loop. Verified: the refused install, the thirteen tools, and two real Claude Code answers (a tutorial's next step; a request to install answered with where the button is).
 
 ## v0.39.0 · stock media and templates {#media}
 

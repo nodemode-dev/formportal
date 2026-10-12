@@ -2,8 +2,31 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.39.0
-Last updated: 2026-10-12 · stock media and templates
+Current build version: v0.40.0
+Last updated: 2026-10-12 · tutorials, the assistant, quiet notices
+
+## v0.40.0 · tutorials, the assistant, quiet notices {#learn}
+
+### learn.rs · bundled tutorials, a signed index, local progress
+- refers-to: src/learn.rs :: LearnIndex, Tutorial, Step, Progress, bundled, learn_index, learn_progress, learn_mark, learn_reset · data/learn-portal.json
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+FormPortal's own six tutorials are compiled in with `include_str!`, so they work offline and need no index; each step's text uses the interface's real labels. The apps' tutorials come from `formai-learn` beside the catalogue (or the policy's locked one), verified like fonts and media; "the tutorial index was refused" on a bad signature. Progress is a map of tutorial id to finished step indexes (from 0 in the file, from 1 everywhere a person or agent sees it), written atomically to `learn-progress.json`; an empty set removes the entry.
+
+### assistant.rs · ask the person's own agent, reading only
+- refers-to: src/assistant.rs :: AgentCli, Server, assistant_agents, ask_agent · src/agents.rs :: which, quote (now pub(crate))
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+Creative Cloud's assistant is Adobe's model in Adobe's window; the Form family's is whichever agent the person already runs. `ask_agent` finds Claude Code or Codex on PATH and runs it once, non-interactively, in FormPortal's `assistant` folder (so no project's instructions are picked up), with FormPortal's server attached and a short guide appended. Claude Code gets `--strict-mcp-config` and `--allowedTools` listing only the reading tools; Codex gets `--sandbox read-only` and the server through `-c` overrides. The server itself is the reading-only mode, so a refusal does not depend on the client honouring its allow list. Questions are capped at 4000 characters and the agent is stopped after 240 seconds. Verified with Claude Code 2.1.296 here; Codex was not on this machine, so its arguments are unverified.
+
+### prefs.rs · quiet
+- refers-to: src/prefs.rs :: Preferences.quiet
+- kind: explainer
+- logged: v0.40.0 · 2026-10-12
+
+The notice categories that go to the bell without a pop-up; serde default empty, so older files load unchanged.
 
 ## v0.39.0 · stock media and templates {#media}
 

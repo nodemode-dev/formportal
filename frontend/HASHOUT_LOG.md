@@ -2,8 +2,45 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.39.0
-Last updated: 2026-10-12 · Stock & templates
+Current build version: v0.40.0
+Last updated: 2026-10-12 · Learn, suggestions, notice categories, Ask your agent
+
+## v0.40.0 · Learn, suggestions, notice categories, Ask your agent {#learn}
+
+### Tutorials on Learn
+- refers-to: index.html :: data-pane learn, data-tutorials · src/extensions/learn · src/main.ts :: learn.load, learn.mark
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+Creative Cloud's Learn has tutorials with progress; here each tutorial is a row (app, title, summary, steps, minutes, level, a fixed-width progress bar and "2 of 4") that opens to its steps, each with a box, Go there when the step names a screen, and Read more for a link. In progress and Finished filter. The pane's blocks stay hidden until the first view (`data-ready`); learn.load runs at start-up so Home's suggestions have it. Finishing a tutorial and starting again are notices under Learning.
+
+### Suggested for you on Home
+- refers-to: index.html :: data-suggest · src/extensions/learn :: suggestions
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+Creative Cloud suggests by plan; FormPortal has no plan, so it suggests from this computer: the next step of a started tutorial, else a tutorial for an installed app, else FormPortal's own (Install your first Form app only when nothing is installed); choosing a projects folder when there are none; an installable app in the same registry group as one installed. At most three. The block is the last on Home and starts hidden, so it never moves anything above it; it is rebuilt only when its text changes. The app suggestion did not show in the browser mode, whose catalogue releases only FormCut.
+
+### Notice categories
+- refers-to: src/engine :: setNotice(text, tone, category), NoticeCategory · src/extensions/notices · src/main.ts :: guard(work, category) · index.html :: bell-cats, data-quiet
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+Creative Cloud's notifications have categories (app updates, services, files, community, announcements). Every setNotice now names one of six; `guard` takes the category for its failures. The bell has chips to show one kind; Preferences, General has a switch per kind for pop-ups, saved as `quiet`; failures always pop up.
+
+### Ask your agent
+- refers-to: index.html :: data-ask-open, dialog data-ask · src/extensions/assistant · src/main.ts :: assistant.agents, assistant.ask
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+A top-bar button opens a dialog: the agents found on this computer, a question box (Ctrl or Cmd and Enter sends), the answer below. When neither agent is installed the box is disabled and says so. The browser mode answers with a sentence that says no agent ran (`?assistant=none`, `?assistant=fail` exercise the other states).
+
+### Dialog heights
+- refers-to: src/styles/main.css :: .prefs.versions, .versions-frame .prefs-title
+- kind: warning-context
+- logged: v0.40.0 · 2026-10-12
+
+The small dialogs (versions, font rights, ask) carry `.prefs` for its frame, and `.prefs` sets a 580 px height later in the file, so they filled that height since v0.37.0. `.prefs.versions` now wins on specificity with `block-size: fit-content`; `auto` is not enough for a modal dialog, which then stretches to its inset.
 
 ## v0.39.0 · the Stock & templates screen {#media}
 

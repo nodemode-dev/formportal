@@ -2,6 +2,17 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.40.0 · 2026-10-12
+
+- Learn: tutorials you follow step by step, six for FormPortal itself and the Form apps' own from a signed index, with your progress kept on this computer. Each step can take you to the screen it is about.
+- Home ends with Suggested for you: your next tutorial step, a projects folder if you have none, and an app you could add. Worked out on this computer; nothing is sent.
+- Notifications are filed by kind (updates, installs, files and library, agents, learning, FormPortal). Show one kind in the bell, and choose in Preferences which kinds pop up.
+- Ask your agent: ask Claude Code or Codex, already on your computer, about your apps from the top bar. It can read FormPortal but cannot install or remove anything from there.
+- Ask the community beside every app's help links.
+- `FormPortal mcp` serves the tools from the desktop app too, and `--read-only` serves only the reading ones.
+- Command line and MCP: `learn`, `learn_progress`; `formportal ask`.
+- The small dialogs fit their content again.
+
 ## v0.39.0 · 2026-10-12
 
 - Stock & templates: open-licensed images, video, audio and Form app templates (CC0, CC BY, CC BY-SA, Apache-2.0, MIT, OFL) with search and kinds. Save one to your Library and its credit line is kept beside it and in `credits.json`; anything under another licence is not saved.

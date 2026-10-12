@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.39.0
-Last updated: 2026-10-12 · media commands
+Current build version: v0.40.0
+Last updated: 2026-10-12 · the reading server and the assistant
+
+## v0.40.0 · the reading server and the assistant {#learn}
+
+### FormPortal mcp, learn_view, learn_mark, assistant_agents, assistant_ask
+- refers-to: src/main.rs :: main, ctx, learn_view, learn_mark, assistant_agents, assistant_ask · Cargo.toml (formportal-cli)
+- kind: decision
+- logged: v0.40.0 · 2026-10-12
+
+`main` answers `mcp [--read-only]` before the builder, like `app-mcp`, so the single-instance plugin never sees an agent's server process. `assistant_ask` passes `current_exe()` with `mcp --read-only` as the agent's server, so the desktop app needs nothing else installed. Verified: the debug build served the reading server (thirteen tools, `remove` refused) and Claude Code answered through it; the window itself was not run here.
 
 ## v0.39.0 · media commands {#media}
 
