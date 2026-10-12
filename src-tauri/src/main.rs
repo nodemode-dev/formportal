@@ -252,6 +252,41 @@ async fn media_thumb(url: String) -> Result<String, String> {
     .map_err(text)?
 }
 
+fn ctx(url: String, allow_unsigned: bool) -> formportal_cli::ops::Ctx {
+    formportal_cli::ops::Ctx { portal: hub(), source: url, allow_unsigned }
+}
+
+#[tauri::command]
+async fn learn_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_cli::ops::learn(&ctx(url, allow_unsigned), &serde_json::json!({})).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn learn_mark(id: String, step: Option<u64>, done: bool, reset: bool, url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let args = serde_json::json!({ "id": id, "step": step, "done": done, "reset": reset });
+        formportal_cli::ops::learn_progress(&ctx(url, allow_unsigned), &args).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn assistant_agents() -> Vec<formportal_core::assistant::AgentCli> {
+    formportal_core::assistant::assistant_agents()
+}
+
+#[tauri::command]
+async fn assistant_ask(client: String, question: String, url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let exe = std::env::current_exe().map_err(text)?;
+        let args = serde_json::json!({ "client": client, "question": question });
+        formportal_cli::ops::ask(&ctx(url, allow_unsigned), &args, exe, vec!["mcp".to_string(), "--read-only".to_string()], formportal_cli::mcp::read_only_tools()).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
 #[tauri::command]
 async fn storage() -> Result<formportal_core::files::Storage, String> {
     tauri::async_runtime::spawn_blocking(|| hub().storage().map_err(text)).await.map_err(text)?
@@ -505,6 +540,17 @@ fn main() {
     if let Some(code) = app_mcp_from_args() {
         std::process::exit(code);
     }
+    let argv: Vec<String> = std::env::args().collect();
+    if argv.get(1).map(String::as_str) == Some("mcp") {
+        let read_only = argv.iter().any(|a| a == "--read-only");
+        std::process::exit(match formportal_cli::mcp::serve_with(read_only) {
+            Ok(()) => 0,
+            Err(e) => {
+                eprintln!("FormPortal mcp: {e}");
+                1
+            }
+        });
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -537,7 +583,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")
