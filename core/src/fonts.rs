@@ -146,6 +146,19 @@ impl Portal {
         Ok(self.font_state()?.fonts)
     }
 
+    pub fn font_updates(&self, index: &FontIndex) -> Result<Vec<InstalledFont>> {
+        Ok(self
+            .font_state()?
+            .fonts
+            .into_iter()
+            .filter(|f| f.source == FontSource::Index)
+            .filter(|f| {
+                let family = index.families.iter().find(|x| Some(&x.id) == f.family_id.as_ref());
+                family.and_then(|x| x.styles.iter().find(|s| s.style.eq_ignore_ascii_case(&f.style))).map(|s| s.sha256 != f.sha256).unwrap_or(false)
+            })
+            .collect())
+    }
+
     pub fn font_index(&self, url: &str, allow_unsigned: bool) -> Result<FontIndex> {
         let managed = self.policy()?;
         let locked = managed.as_ref().and_then(|m| m.policy.catalog.as_deref()).map(|c| match c.rsplit_once('/') {

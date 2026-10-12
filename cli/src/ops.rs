@@ -251,7 +251,8 @@ pub fn fonts(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
                 .collect()
         })
         .unwrap_or_default();
-    Ok(json!({ "font_folder": formportal_core::fonts::font_dir(), "index_error": error, "families": families, "installed": installed, "note": "Fonts install for this user only; every app sees them, usually after it restarts." }))
+    let updates = index.as_ref().map(|i| ctx.portal.font_updates(i)).transpose()?.unwrap_or_default();
+    Ok(json!({ "font_folder": formportal_core::fonts::font_dir(), "index_error": error, "families": families, "installed": installed, "updates": updates, "note": "Fonts install for this user only; every app sees them, usually after it restarts. A style in updates has a newer file in the index; font_install with its id and style installs it." }))
 }
 
 pub fn font_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
