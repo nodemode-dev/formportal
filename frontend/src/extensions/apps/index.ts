@@ -46,6 +46,8 @@ export const apps: Extension = {
       const progress = engine.progress.get(key);
       const offered = view.availability === "available" ? view.version : null;
       const state = progress !== undefined ? "busy" : !record ? "none" : offered && versionNewer(offered, record.version) ? "update" : "ready";
+      const blocked = engine.blocked(product, channel);
+      if (row.hasAttribute("data-blocked") !== blocked) row.toggleAttribute("data-blocked", blocked);
       row.setAttribute("data-availability", view.availability);
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
@@ -53,7 +55,9 @@ export const apps: Extension = {
       const words =
         state === "busy"
           ? `Installing ${Math.round((progress ?? 0) * 100)}%`
-          : state === "update"
+          : blocked && (state === "none" || state === "update")
+            ? "Not allowed by your organisation"
+            : state === "update"
             ? `Update to ${offered}`
             : state === "ready"
               ? "Installed"
@@ -113,6 +117,7 @@ export const apps: Extension = {
 
     engine.on("source", () => rows.forEach(patch));
     engine.on("prefs", () => rows.forEach(patch));
+    engine.on("policy", () => rows.forEach(patch));
     for (const row of rows) {
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
       row.querySelector<HTMLButtonElement>("[data-version-go]")?.addEventListener("click", () => {

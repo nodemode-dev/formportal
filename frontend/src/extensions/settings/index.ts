@@ -72,6 +72,50 @@ export const settings: Extension = {
       }
     });
     for (const box of prefBoxes) box.addEventListener("change", () => void engine.dispatch("prefs.set", { [box.dataset.pref ?? ""]: box.checked }));
+
+    const managedRow = document.querySelector<HTMLElement>("[data-managed]");
+    const LOCKS: Record<string, string> = {
+      catalog: "the catalogue address",
+      allow_unsigned: "unsigned catalogues refused",
+      auto_update: "automatic updates",
+      auto_update_beta: "automatic beta updates",
+      only_when_closed: "updating only apps that are not open",
+      keep_previous: "keeping the version before",
+    };
+    engine.on("policy", ({ policy }) => {
+      document.documentElement.toggleAttribute("data-policy", policy !== null);
+      document.documentElement.toggleAttribute("data-no-extensions", policy !== null && !policy.extensions);
+      if (managedRow && managedRow.hidden === (policy !== null)) managedRow.hidden = policy === null;
+      const locked = new Set(policy?.locked ?? []);
+      for (const box of prefBoxes) {
+        const on = locked.has(box.dataset.pref ?? "");
+        if (box.disabled !== on) box.disabled = on;
+        box.title = on ? "Set by your organisation" : "";
+      }
+      if (address) {
+        address.disabled = locked.has("catalog");
+        if (policy?.catalog && address.value !== policy.catalog) address.value = policy.catalog;
+      }
+      if (unsigned) {
+        unsigned.disabled = locked.has("allow_unsigned");
+        if (unsigned.disabled && unsigned.checked) unsigned.checked = false;
+      }
+      if (!policy) return;
+      const names = (ids: string[]) => ids.map((id) => engine.name(id)).join(", ");
+      const fixed = Array.from(locked).filter((k) => k in LOCKS).map((k) => LOCKS[k]);
+      const parts = [
+        fixed.length ? `Fixed: ${fixed.join("; ")}.` : "",
+        policy.apps ? `Apps allowed: ${names(policy.apps)}.` : "",
+        policy.channels ? `Builds allowed: ${policy.channels.join(", ")}.` : "",
+        !policy.extensions ? "Extensions are turned off." : !policy.sideload ? "Extensions from a file are not allowed." : "",
+      ].filter(Boolean);
+      const head = `By ${policy.managed_by ?? "your organisation"}, through ${policy.path}${policy.system ? "" : " (a test policy from FORMPORTAL_POLICY)"}.`;
+      const managed = field("managed");
+      const detail = field("managed-detail");
+      if (managed && managed.textContent !== head) managed.textContent = head;
+      const rest = parts.join(" ");
+      if (detail && detail.textContent !== rest) detail.textContent = rest;
+    });
     address?.addEventListener("change", () => {
       keep(CATALOG_KEY, address.value.trim());
       void engine.dispatch("catalog.load");

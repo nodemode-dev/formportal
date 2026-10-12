@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -21,6 +21,7 @@ export interface Bridge {
   onLink(handler: (target: string) => void): void;
   stillOpen(product: string, channel: Channel): Promise<number[]>;
   openWeb(url: string): Promise<void>;
+  policy(): Promise<PolicyView | null>;
   preferences(): Promise<Preferences>;
   setPreferences(prefs: Preferences): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;

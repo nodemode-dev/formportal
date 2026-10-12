@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -113,4 +113,5 @@ export const tauriBridge: Bridge = {
   openWeb: async (url) => {
     await tauri().core.invoke<null>("open_web", { url });
   },
+  policy: () => tauri().core.invoke<PolicyView | null>("policy"),
 };

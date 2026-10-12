@@ -109,6 +109,20 @@ export const fixtureBridge: Bridge = {
   openWeb: async (url) => {
     window.open(url, "_blank", "noopener");
   },
+  policy: async () =>
+    new URLSearchParams(window.location.search).get("policy") === "locked"
+      ? {
+          managed_by: "Example IT",
+          system: true,
+          path: "/etc/formportal/policy.json",
+          locked: ["catalog", "allow_unsigned", "auto_update", "per_app"],
+          catalog: "https://apps.example.internal/formportal/apps.json",
+          apps: ["formcut", "formvis"],
+          channels: ["stable"],
+          extensions: true,
+          sideload: false,
+        }
+      : null,
   preferences: async () => ({ ...prefs, per_app: { ...prefs.per_app } }),
   setPreferences: async (next) => {
     prefs = { ...next, per_app: { ...next.per_app } };

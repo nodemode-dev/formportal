@@ -1166,6 +1166,19 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   accent-color: var(--ink);
 }
 
+.check:has(input:disabled),
+.field:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+[data-blocked] [data-act="install"],
+[data-blocked] [data-act="update"],
+[data-blocked] .drop-go,
+[data-no-extensions] [data-ext-act="install"] {
+  visibility: hidden;
+}
+
 .setting-stack {
   display: grid;
   gap: var(--sp-2);

@@ -39,6 +39,7 @@ async function guard(work: () => Promise<void>): Promise<void> {
 engine.command("catalog.load", () =>
   guard(async () => {
     engine.setPlatform(await bridge.platform());
+    engine.setPolicy(await bridge.policy());
     await refresh();
     const [catalog, extensions] = await Promise.all([bridge.catalog(), bridge.extensions()]);
     engine.setCatalog(catalog, bridge.source);

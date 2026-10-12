@@ -81,6 +81,18 @@ export interface SelfUpdate {
   notes: string | null;
 }
 
+export interface PolicyView {
+  managed_by: string | null;
+  system: boolean;
+  path: string;
+  locked: string[];
+  catalog: string | null;
+  apps: string[] | null;
+  channels: Channel[] | null;
+  extensions: boolean;
+  sideload: boolean;
+}
+
 export interface InstalledExtension {
   id: string;
   name: string;

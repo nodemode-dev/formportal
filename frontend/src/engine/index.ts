@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, Preferences, Product, Route, Source } from "./types.ts";
+import type { Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -11,6 +11,7 @@ export interface EngineEvents {
   extensions: { count: number };
   prefs: { prefs: Preferences };
   self: { status: string; installable: boolean };
+  policy: { policy: PolicyView | null };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };
@@ -158,6 +159,20 @@ export class Engine {
   setPrefs(prefs: Preferences): void {
     this.state.prefs = prefs;
     this.emit("prefs", { prefs });
+  }
+
+  policy: PolicyView | null = null;
+
+  setPolicy(policy: PolicyView | null): void {
+    this.policy = policy;
+    this.emit("policy", { policy });
+    for (const p of this.state.catalog?.products ?? []) this.emit("product", { id: p.id });
+  }
+
+  blocked(product: string, channel: Channel): boolean {
+    const p = this.policy;
+    if (!p) return false;
+    return (p.apps !== null && !p.apps.includes(product)) || (p.channels !== null && !p.channels.includes(channel));
   }
 
   automatic(product: string, channel: Channel): boolean {
