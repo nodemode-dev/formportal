@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.36.0
-Last updated: 2026-10-12 · the apps' MCP servers on their pages; offline Home
+Current build version: v0.37.0
+Last updated: 2026-10-12 · Files
+
+## v0.37.0 · the Files screen {#files}
+
+### Files, where Creative Cloud has its Files tab
+- refers-to: index.html :: data-pane files, #file-row, #folder-row, the versions dialog · src/extensions/files · src/main.ts :: files.scan, folder.add, folder.remove, file.open, file.versions
+- kind: decision
+- logged: v0.37.0 · 2026-10-12
+
+A sidebar entry between Apps and Extensions. With no folder: a start card (suggested folder, or the picker). Then recent projects as rows (the owning app's tile and colour, where it lives, date, size, versions, Open and Versions), folders (Stop listing), and Storage. Rows are keyed by path and reordered in place. The versions dialog lists newest first with Go back to this on every earlier one, and Keep a version now. Every block stays `display: none` until the first scan arrives (`data-ready`), so the screen appears whole instead of growing; a scan also runs once after start-up so the data is ready before the person opens Files. Opening a project whose app is not installed says which app to install, by name. The browser mode takes `?files` for a sample folder. Measured at 4x CPU: 0 shift on Files empty and filled, and on Home.
 
 ## v0.36.0 · AI tools on the app page, and the window offline {#bridge}
 

@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.36.0
+Current build version: v0.37.0
 Last updated: 2026-10-12 · standalone repository
+
+## v0.37.0 · Files, and a folder picker {#files}
+
+### tauri-plugin-dialog for one native folder picker
+- refers-to: src/main.rs :: folder_pick, files_scan, folder_add, folder_remove, file_open, file_versions, storage · Cargo.toml · LICENSES.md
+- kind: decision
+- logged: v0.37.0 · 2026-10-12
+
+Typing a path is no way to choose a folder, so the window uses the operating system's picker through tauri-plugin-dialog (Apache-2.0 or MIT; it brings rfd, MIT, and tauri-plugin-fs, entered in LICENSES.md). It is called from Rust only, so no JavaScript package and no new capability were added. The registry is compiled in for the extension map. Verified: the window starts with the plugin under Xvfb; the picker itself was not opened (no desktop portal in the container).
 
 ## v0.36.0 · app-mcp before the window {#app-mcp}
 

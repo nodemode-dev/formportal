@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.36.0
-Last updated: 2026-10-12 · the apps' MCP servers; nineteen tools
+Current build version: v0.37.0
+Last updated: 2026-10-12 · Files; twenty-four tools
+
+## v0.37.0 · Files {#files}
+
+### Five tools, seven commands
+- refers-to: src/ops.rs :: files, folders, open_file, file_versions, storage, project_extensions · src/mcp.rs · src/main.rs
+- kind: decision
+- logged: v0.37.0 · 2026-10-12
+
+`files` is marked as not read-only because reading keeps versions of changed files. `folders` lists, adds (the suggested folder when no path) and removes; `file_versions` lists, saves and reverts. Paths on the command line come positionally (`open-file PATH`) or with `--path`. The extension map is the core's `extensions_from_registry` over the compiled-in registry.
 
 ## v0.36.0 · app-agents, connect, app-mcp {#bridge}
 

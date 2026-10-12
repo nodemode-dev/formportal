@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.36.0
-Last updated: 2026-10-12 · the apps' own MCP servers
+Current build version: v0.37.0
+Last updated: 2026-10-12 · Files, local first
+
+## v0.37.0 · Files {#files}
+
+### files.rs · folders, scan, versions, open, storage
+- refers-to: src/files.rs :: add_folder, remove_folder, scan_files, keep_version, file_versions, save_version, revert_file, open_file, storage, extensions_from_registry, suggested_folder
+- kind: decision
+- logged: v0.37.0 · 2026-10-12
+
+Creative Cloud's Files tab is cloud storage; FormPortal's answer is the person's own folders. `files.json` in the install root lists them (absolute paths only; FormPortal's own folder refused; `remove` never touches files). A scan walks each folder six levels deep, skips dot entries, follows no symlinks, stops at 5,000 projects, and keeps files whose extension a registry app claims (`extensions_from_registry`, so the command line and the window agree). In folders with versions on, a file whose size changed or whose modification time passed its last version's is copied into `history/[folder id of the path]/[time]-[sha prefix]` with an index in `history/index.json`; identical content is never stored twice, 20 versions are kept, files over 256 MB are not versioned. Reverting keeps the current file as a version first, checks the kept copy's SHA-256, writes through a hidden staging file and renames, then records the result. `open_file` picks the app by extension, the stable install first, and passes the path (macOS through `open -a`). `storage` sums the install root's parts and each folder. Versions are taken when FormPortal reads the folder, not on each save inside an app; the apps can hook their saves later.
 
 ## v0.36.0 · the family bridge {#bridge}
 
