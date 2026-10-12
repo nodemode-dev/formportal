@@ -95,6 +95,73 @@ fn policy() -> Result<Option<serde_json::Value>, String> {
     }))
 }
 
+const REGISTRY: &str = include_str!("../../catalog/products.json");
+
+fn exts() -> std::collections::BTreeMap<String, String> {
+    formportal_core::files::extensions_from_registry(REGISTRY)
+}
+
+#[tauri::command]
+async fn files_scan(query: Option<String>) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let scan = hub().scan_files(&exts(), query.as_deref()).map_err(text)?;
+        Ok(serde_json::json!({ "scan": scan, "suggested": formportal_core::files::suggested_folder(), "opens": exts() }))
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn folder_pick(app: AppHandle) -> Option<String> {
+    use tauri_plugin_dialog::DialogExt;
+    let start = formportal_core::files::suggested_folder();
+    let (tx, rx) = std::sync::mpsc::channel();
+    app.dialog().file().set_title("Choose a folder of Form projects").set_directory(if start.is_dir() { start } else { std::path::PathBuf::from(std::env::var_os("HOME").unwrap_or_default()) }).pick_folder(move |picked| {
+        let _ = tx.send(picked.and_then(|p| p.into_path().ok()).map(|p| p.to_string_lossy().to_string()));
+    });
+    tauri::async_runtime::spawn_blocking(move || rx.recv().ok().flatten()).await.ok().flatten()
+}
+
+#[tauri::command]
+fn folder_add(path: String, keep_versions: bool, create: bool) -> Result<formportal_core::files::Folder, String> {
+    hub().add_folder(std::path::Path::new(&path), keep_versions, create).map_err(text)
+}
+
+#[tauri::command]
+fn folder_remove(path: String) -> Result<(), String> {
+    hub().remove_folder(std::path::Path::new(&path)).map_err(text)
+}
+
+#[tauri::command]
+fn file_open(path: String) -> Result<String, String> {
+    hub().open_file(std::path::Path::new(&path), &exts()).map(|(product, _)| product).map_err(text)
+}
+
+#[tauri::command]
+async fn file_versions(path: String, action: Option<String>, version: Option<String>) -> Result<Vec<formportal_core::files::Version>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let p = std::path::Path::new(&path);
+        match action.as_deref() {
+            Some("save") => {
+                hub.save_version(p).map_err(text)?;
+            }
+            Some("revert") => {
+                hub.revert_file(p, version.as_deref().unwrap_or_default()).map_err(text)?;
+            }
+            _ => {}
+        }
+        hub.file_versions(p).map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn storage() -> Result<formportal_core::files::Storage, String> {
+    tauri::async_runtime::spawn_blocking(|| hub().storage().map_err(text)).await.map_err(text)?
+}
+
 #[tauri::command]
 fn app_agents(product: String, channel: Channel) -> Result<serde_json::Value, String> {
     let hub = hub();
@@ -355,6 +422,7 @@ fn main() {
         }))
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
         .manage(Pending(Mutex::new(None)))
         .manage(PendingPackage(Mutex::new(package_arg(std::env::args()))))
         .setup(|app| {
@@ -374,7 +442,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")
