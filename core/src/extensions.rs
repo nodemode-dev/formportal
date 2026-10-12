@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::{download, fetch_bytes, sha256_file};
 use crate::error::{CoreError, Result};
-use crate::signature::{trusted_keys, verify};
+use crate::signature::verify;
 use crate::{Arch, Artifact, ArtifactKind, Os, Portal};
 
 pub const INDEX_FORMAT: &str = "formai-extensions";
@@ -183,6 +183,13 @@ impl Portal {
     }
 
     pub fn extension_index(&self, url: &str, allow_unsigned: bool) -> Result<ExtensionIndex> {
+        let managed = self.policy()?;
+        let locked = managed.as_ref().and_then(|m| m.policy.catalog.as_deref()).map(|c| match c.rsplit_once('/') {
+            Some((dir, _)) => format!("{dir}/extensions.json"),
+            None => "extensions.json".to_string(),
+        });
+        let url = locked.as_deref().unwrap_or(url);
+        let (_, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             return parse_index(&fs::read_to_string(url)?);
         }
@@ -196,7 +203,7 @@ impl Portal {
             },
         };
         match &signature {
-            Some(s) => verify(&body, s, &trusted_keys())?,
+            Some(s) => verify(&body, s, &keys)?,
             None if allow_unsigned => {}
             None => return Err(CoreError::Invalid("the extension index was refused: it is not signed".to_string())),
         }
@@ -262,6 +269,13 @@ impl Portal {
 
     pub fn install_extension(&self, index: &ExtensionIndex, id: &str, allow_unsigned: bool, progress: &mut dyn FnMut(u64, u64)) -> Result<InstalledExtension> {
         let entry = index.packages.iter().find(|p| p.id == id).ok_or_else(|| CoreError::Invalid(format!("{id} is not in the extension index")))?;
+        let allow_unsigned = match self.policy()? {
+            Some(managed) => {
+                managed.policy.allows_extensions(false)?;
+                managed.policy.unsigned(allow_unsigned)
+            }
+            None => allow_unsigned,
+        };
         let file = format!("{}-{}.formpkg", entry.id, entry.version);
         let artifact = Artifact { platform: Os::Other, arch: Arch::X86_64, kind: ArtifactKind::Zip, file, url: entry.url.clone(), bytes: entry.bytes, sha256: entry.sha256.clone(), minimum_os: String::new(), signature: None };
         let package = download(&artifact, &self.root().join("downloads"), progress)?;
@@ -292,6 +306,13 @@ impl Portal {
                 None => None,
             },
             None => None,
+        };
+        let allow_unsigned = match self.policy()? {
+            Some(managed) => {
+                managed.policy.allows_extensions(listed.is_none())?;
+                managed.policy.unsigned(allow_unsigned)
+            }
+            None => allow_unsigned,
         };
         if manifest.native && signed_by.is_none() && !allow_unsigned {
             return Err(CoreError::Refused(format!("{} runs native code and is not a signed package from the index; only the developer setting installs it", manifest.name)));

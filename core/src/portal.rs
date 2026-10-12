@@ -8,6 +8,7 @@ use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::{installers, process};
 use crate::signature::{trusted_keys, verify};
+use crate::policy::{self, Managed};
 use crate::prefs::Preferences;
 use crate::state::{Install, InstalledVersion, State};
 use crate::{version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform};
@@ -193,11 +194,27 @@ impl Portal {
         State::load(&self.root)
     }
 
+    pub fn policy(&self) -> Result<Option<Managed>> {
+        policy::load()
+    }
+
+    pub fn source(&self, url: &str, allow_unsigned: bool) -> Result<(String, bool, Vec<String>)> {
+        let mut keys = trusted_keys();
+        match self.policy()? {
+            Some(managed) => {
+                keys.extend(managed.policy.catalog_keys.iter().cloned());
+                Ok((managed.policy.catalog_url(url), managed.policy.unsigned(allow_unsigned), keys))
+            }
+            None => Ok((url.to_string(), allow_unsigned, keys)),
+        }
+    }
+
     pub fn catalog(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
+        let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
         let dir = self.root.join("catalog");
         let kept = dir.join("apps.json");
         let kept_signature = dir.join("apps.json.sig");
-        let (body, signature, fresh) = match fetch_bytes(url) {
+        let (body, signature, fresh) = match fetch_bytes(&url) {
             Ok(body) => {
                 let signature = fetch_bytes(&format!("{url}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
                 (body, signature, true)
@@ -208,7 +225,7 @@ impl Portal {
             },
         };
         match &signature {
-            Some(signature) => verify(&body, signature, &trusted_keys())?,
+            Some(signature) => verify(&body, signature, &keys)?,
             None if allow_unsigned => {}
             None => return Err(CoreError::Signature("it is not signed".to_string())),
         }
@@ -228,6 +245,9 @@ impl Portal {
     }
 
     pub fn install(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
+        if let Some(managed) = self.policy()? {
+            managed.policy.allows(product, channel)?;
+        }
         let file = download(artifact, &self.root.join("downloads"), progress)?;
         let base = self.root.join("apps").join(product).join(channel_name(channel));
         let target = base.join(version);
@@ -307,21 +327,43 @@ impl Portal {
 
     pub fn hold_if_older(&self, catalog: &Catalog, product: &str, channel: Channel, installed: &str) -> Result<bool> {
         let newest = catalog.product(product).and_then(|p| p.channels.get(&channel)).map(|r| r.version.as_str());
-        let mut prefs = self.preferences()?;
-        if !newest.map(|n| version_newer(n, installed)).unwrap_or(false) || !prefs.automatic(product, channel) {
+        let forced = self.policy()?.map(|m| m.policy.auto_update.is_some()).unwrap_or(false);
+        if forced || !newest.map(|n| version_newer(n, installed)).unwrap_or(false) || !self.preferences()?.automatic(product, channel) {
             return Ok(false);
         }
+        let mut prefs = Preferences::load(&self.root)?;
         prefs.per_app.insert(product.to_string(), false);
         prefs.save(&self.root)?;
         Ok(true)
     }
 
     pub fn preferences(&self) -> Result<Preferences> {
-        Preferences::load(&self.root)
+        let own = Preferences::load(&self.root)?;
+        Ok(match self.policy()? {
+            Some(managed) => managed.policy.apply(own),
+            None => own,
+        })
     }
 
     pub fn set_preferences(&self, prefs: &Preferences) -> Result<()> {
-        prefs.save(&self.root)
+        let Some(managed) = self.policy()? else { return prefs.save(&self.root) };
+        let own = Preferences::load(&self.root)?;
+        let locked = managed.policy.locked();
+        let mut next = prefs.clone();
+        if locked.contains(&"auto_update") {
+            next.auto_update = own.auto_update;
+            next.per_app = own.per_app;
+        }
+        if locked.contains(&"auto_update_beta") {
+            next.auto_update_beta = own.auto_update_beta;
+        }
+        if locked.contains(&"only_when_closed") {
+            next.only_when_closed = own.only_when_closed;
+        }
+        if locked.contains(&"keep_previous") {
+            next.keep_previous = own.keep_previous;
+        }
+        next.save(&self.root)
     }
 
     pub fn updates(&self, catalog: &Catalog, platform: Platform) -> Result<Vec<Update>> {

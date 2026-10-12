@@ -7,6 +7,8 @@ pub mod download;
 pub mod error;
 pub mod extensions;
 pub mod installers;
+pub mod mirror;
+pub mod policy;
 pub mod portal;
 pub mod prefs;
 pub mod process;
