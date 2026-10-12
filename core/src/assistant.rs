@@ -11,7 +11,7 @@ use crate::error::{CoreError, Result};
 
 pub const ASK_LIMIT: Duration = Duration::from_secs(240);
 const PROMPT_LIMIT: usize = 4000;
-const GUIDE: &str = "You are answering inside FormPortal, the Form family's app portal. Use the formportal tools to answer about the person's Form apps, installs, updates, files, fonts, stock and tutorials. From here you can only read: if the person wants something installed, updated, rolled back or removed, tell them which button in FormPortal does it. Answer in a few plain sentences.";
+const GUIDE: &str = "You are answering inside FormPortal, the Form family's app portal. Use the formportal tools to answer about the person's Form apps, installs, updates, disk use, fonts, stock, extensions and tutorials. From here you can only read: if the person wants something installed, updated, rolled back or removed, tell them which button in FormPortal does it. Answer in a few plain sentences.";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AgentCli {

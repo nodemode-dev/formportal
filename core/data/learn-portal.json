@@ -80,7 +80,7 @@
       "level": "intermediate",
       "steps": [
         { "title": "Connect an app", "body": "An app that ships its own MCP server has a section on its page called Use (the app) with your AI tools. Choose Connect beside Claude Code, Codex or Cursor; it stays connected across updates.", "route": "apps" },
-        { "title": "Ask your agent here", "body": "Ask your agent, in the top bar, sends a question to the agent installed on this computer. It can read FormPortal (apps, installs, updates, files, fonts, stock, tutorials) but cannot install or remove anything from there." },
+        { "title": "Ask your agent here", "body": "Ask your agent, in the top bar, sends a question to the agent installed on this computer. It can read FormPortal (apps, installs, updates, disk use, fonts, stock, extensions, tutorials) but cannot install or remove anything from there." },
         { "title": "Let it do the work", "body": "To have an agent install or update apps, add FormPortal's own server (./formportal mcp) to it; it asks you before installing, going back or removing." }
       ]
     }
