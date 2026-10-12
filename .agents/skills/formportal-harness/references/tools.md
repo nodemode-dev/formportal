@@ -26,6 +26,11 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
 | `policy` | no | Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\FormPortal\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists. |
+| `files` | yes | The person's Form project files (by each app's project extensions, e.g. .fc for FormCut) in the folders they gave FormPortal, newest first, with the app that opens each, size, date and how many earlier versions FormPortal keeps; plus each folder's file count and size. query filters by name or app. Reading also keeps a version of any file that changed since the last one, in folders where versions are on. Local only: nothing leaves the computer. |
+| `folders` | yes | Lists the folders FormPortal looks in; with action add and a path (the suggested folder if none), adds one (create true makes it), keep_versions on by default; with action remove, stops listing one without touching its files. Changing them is the person's choice: confirm first. |
+| `open_file` | yes | Opens a project file with the installed Form app that makes it (by extension), stable first, then beta. Says which app to install if none is. |
+| `file_versions` | yes | The versions FormPortal kept of a project file in one of its folders, newest first (id, time, size, SHA-256, why it was kept). action save keeps one now; action revert with version puts that version back after keeping the current file as a version too, so nothing is lost. Reverting changes the person's file: confirm first. |
+| `storage` | no | What FormPortal uses on disk (installed apps, downloads, extensions, kept file versions, the catalogue copy) and the size of each projects folder. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
 | `connect_agents` | yes | Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
@@ -116,6 +121,32 @@ No parameters.
 - `product`: string. 
 
 ### policy
+
+No parameters.
+
+### files
+
+- `limit` (optional): integer. At most this many files (default 200).
+- `query` (optional): string. 
+
+### folders
+
+- `action` (optional): list|add|remove. 
+- `create` (optional): boolean. 
+- `keep_versions` (optional): boolean. 
+- `path` (optional): string. 
+
+### open_file
+
+- `path`: string. 
+
+### file_versions
+
+- `action` (optional): list|save|revert. 
+- `path`: string. 
+- `version` (optional): string. 
+
+### storage
 
 No parameters.
 

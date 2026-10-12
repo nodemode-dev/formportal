@@ -155,6 +155,71 @@ pub fn installs(ctx: &Ctx) -> Result<Value, CoreError> {
     Ok(json!({ "root": ctx.portal.root(), "installs": rows, "next": "an install with mcp_server true can be connected to Claude Code, Codex and Cursor with connect_agents" }))
 }
 
+pub fn project_extensions() -> std::collections::BTreeMap<String, String> {
+    formportal_core::files::extensions_from_registry(REGISTRY)
+}
+
+fn path_arg(args: &Value) -> Result<std::path::PathBuf, CoreError> {
+    text(args, "path").or_else(|| text(args, "product")).map(std::path::PathBuf::from).ok_or_else(|| fail("give the full path of the file or folder"))
+}
+
+pub fn files(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let exts = project_extensions();
+    let scan = ctx.portal.scan_files(&exts, text(args, "query").as_deref())?;
+    let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(200) as usize;
+    let total = scan.files.len();
+    let shown: Vec<_> = scan.files.iter().take(limit).collect();
+    Ok(json!({
+        "folders": scan.folders,
+        "files": shown,
+        "total": total,
+        "truncated": scan.truncated,
+        "new_versions": scan.new_versions,
+        "opens": exts,
+        "suggested_folder": formportal_core::files::suggested_folder(),
+        "next": if scan.folders.is_empty() { "No folder yet: folders with action add and a path (the suggested folder is a good start)." } else { "open_file opens one in its app; file_versions lists, saves or goes back to versions." }
+    }))
+}
+
+pub fn folders(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    match text(args, "action").as_deref() {
+        Some("add") => {
+            let path = text(args, "path").map(std::path::PathBuf::from).unwrap_or_else(formportal_core::files::suggested_folder);
+            let folder = ctx.portal.add_folder(&path, flag(args, "keep_versions").unwrap_or(true), flag(args, "create").unwrap_or(false))?;
+            Ok(json!({ "added": folder }))
+        }
+        Some("remove") => {
+            let path = path_arg(args)?;
+            ctx.portal.remove_folder(&path)?;
+            Ok(json!({ "removed": path, "note": "The folder and its files are untouched; FormPortal only stops listing them. Their kept versions stay until removed from the history folder." }))
+        }
+        _ => Ok(json!({ "folders": ctx.portal.folders()?, "suggested_folder": formportal_core::files::suggested_folder() })),
+    }
+}
+
+pub fn open_file(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let path = path_arg(args)?;
+    let (product, pid) = ctx.portal.open_file(&path, &project_extensions())?;
+    Ok(json!({ "opened": path, "with": product, "pid": pid }))
+}
+
+pub fn file_versions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let path = path_arg(args)?;
+    match text(args, "action").as_deref() {
+        Some("save") => Ok(json!({ "saved": ctx.portal.save_version(&path)?, "versions": ctx.portal.file_versions(&path)? })),
+        Some("revert") => {
+            let id = text(args, "version").or_else(|| text(args, "to")).ok_or_else(|| fail("give the version id to go back to (from file_versions)"))?;
+            let now = ctx.portal.revert_file(&path, &id)?;
+            Ok(json!({ "reverted": path, "to": id, "now": now, "note": "The file as it was just before is kept as a version too." }))
+        }
+        _ => Ok(json!({ "path": path, "versions": ctx.portal.file_versions(&path)? })),
+    }
+}
+
+pub fn storage(ctx: &Ctx) -> Result<Value, CoreError> {
+    Ok(json!({ "storage": ctx.portal.storage()? }))
+}
+
 pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;

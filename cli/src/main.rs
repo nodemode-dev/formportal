@@ -24,6 +24,11 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]
+  files [--query Q]               the Form projects in your folders, newest first
+  folders | folder-add [PATH] [--create] [--keep-versions false] | folder-remove PATH
+  open-file PATH                  open a project in the app that makes it
+  file-versions PATH [--action save | --action revert --version ID]
+  storage                         what FormPortal and your folders use on disk
   policy                          the organisation's policy, if this computer has one
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
@@ -123,6 +128,28 @@ fn main() -> ExitCode {
         "rollback" => ops::rollback(&ctx, &args),
         "remove" => ops::remove(&ctx, &args),
         "policy" => ops::policy(&ctx),
+        "files" => ops::files(&ctx, &args),
+        "folders" => ops::folders(&ctx, &args),
+        "folder-add" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                o.insert("action".to_string(), json!("add"));
+                if let Some(p) = o.remove("product") {
+                    o.insert("path".to_string(), p);
+                }
+            }
+            ops::folders(&ctx, &a)
+        }
+        "folder-remove" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                o.insert("action".to_string(), json!("remove"));
+            }
+            ops::folders(&ctx, &a)
+        }
+        "open-file" => ops::open_file(&ctx, &args),
+        "file-versions" => ops::file_versions(&ctx, &args),
+        "storage" => ops::storage(&ctx),
         "app-agents" => ops::app_agents(&ctx, &args),
         "connect" => ops::connect_agents(&ctx, &args),
         "disconnect" => {
