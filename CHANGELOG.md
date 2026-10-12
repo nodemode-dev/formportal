@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.0 · 2026-10-12
+
+- Files keeps a version each time you save while FormPortal is open, not only when you look. An open Versions window tells you when a new one was kept.
+- A project's preview shows in Files when its app writes one beside it (`[file].preview.webp`).
+- `formportal cli watch` keeps versions the same way from a terminal.
+
 ## v0.43.0 · 2026-10-12
 
 - Steadier start: the window no longer shows a half-built page for a moment on a busy computer, and notices no longer push each other around (one shows at a time; the bell keeps them all).

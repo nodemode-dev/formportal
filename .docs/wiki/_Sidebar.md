@@ -4,6 +4,7 @@
 - [Agents](Agents)
 - [Releasing](Releasing)
 - [Organisations](Organisations)
+- [Files and Versions](Files-and-Versions)
 - [Fonts](Fonts)
 - [Stock and Templates](Stock-and-Templates)
 - [Learn and Assistant](Learn-and-Assistant)

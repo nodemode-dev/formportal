@@ -2,8 +2,24 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.43.0
-Last updated: 2026-10-12 · font updates
+Current build version: v0.44.0
+Last updated: 2026-10-12 · a version on each save; previews
+
+## v0.44.0 · a version on each save; previews {#saves}
+
+### keep_saved
+- refers-to: src/files.rs :: Portal::keep_saved
+- kind: decision
+- logged: v0.44.0 · 2026-10-12
+
+Creative Cloud keeps a version of a cloud document on every save. Without a resident process FormPortal can do that only while it runs, so the shell polls: `keep_saved` walks the folders that keep versions and keeps a version of each project whose size or time moved, but only once the time is two seconds old, so a file still being written is never copied. It reports only versions that are really new (the same SHA-256 updates the last one's time instead). Polling over a file-system watcher: no new dependency, the same walk the scan already does, and the same result on every system. Verified with `watch --interval 1`: two saves a second apart kept one version, a save after a pause another, a touch with no change none, a new project in a subfolder was first seen, a text file ignored.
+
+### Previews
+- refers-to: src/files.rs :: ProjectFile.preview, preview_of, PREVIEW_LIMIT, Portal::preview_data_url
+- kind: decision
+- logged: v0.44.0 · 2026-10-12
+
+A preview is the app's to write, as `[file].preview.webp`. FormPortal lists it when it is at most 256 KB and returns it only when the canonical path is inside a projects folder, the name ends in `.preview.webp` and the bytes are WebP, so the window cannot be made to read anything else. Verified: a real WebP listed, a 300 KB one ignored.
 
 ## v0.43.0 · font updates {#font-updates}
 

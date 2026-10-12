@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.43.0
-Last updated: 2026-10-12 · forwarding and double-click verified
+Current build version: v0.44.0
+Last updated: 2026-10-12 · the save watcher; file_preview
+
+## v0.44.0 · the save watcher {#saves}
+
+### watch_saves and FILES_LOCK
+- refers-to: src/main.rs :: watch_saves, FILES_LOCK, files_scan, file_versions, file_preview
+- kind: decision
+- logged: v0.44.0 · 2026-10-12
+
+A thread started in setup runs `keep_saved` every three seconds and emits `versions-kept` with the paths. The version index is read, changed and written whole, so the thread, `files_scan` and `file_versions` take one mutex; without it a scan and a tick could each write and lose the other's version. Verified: the debug build under Xvfb kept one version for each of two saves made eight seconds apart.
 
 ## v0.43.0 · forwarding and double-click verified {#forwarding}
 

@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.43.0
-Last updated: 2026-10-12 · fonts reports updates
+Current build version: v0.44.0
+Last updated: 2026-10-12 · watch
+
+## v0.44.0 · watch {#saves}
+
+### A command, not a tool
+- refers-to: src/ops.rs :: watch · src/main.rs :: watch
+- kind: decision
+- logged: v0.44.0 · 2026-10-12
+
+`watch` loops `keep_saved` (interval from `--interval`, default 3 seconds; `--rounds` to stop) and prints each kept version as a JSON line. It is not an MCP tool because it never returns; an agent asks for a version with `file_versions` and `action: save` instead.
 
 ## v0.43.0 · fonts reports updates {#font-updates}
 

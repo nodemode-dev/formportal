@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.43.0
-Last updated: 2026-10-12 · the first-frame shift found and fixed; one toast at a time; font updates
+Current build version: v0.44.0
+Last updated: 2026-10-12 · Files follows saves; previews
+
+## v0.44.0 · Files follows saves; previews {#saves}
+
+### The open Versions dialog does not move under the person
+- refers-to: index.html :: data-versions-new · src/extensions/files :: saved · src/main.ts :: onVersionsKept, file.preview
+- kind: decision
+- logged: v0.44.0 · 2026-10-12
+
+The first version refreshed an open Versions list when a save arrived and measured a 0.02 shift: the new version goes on top and every row below moves with no input. Now a line reserved in the dialog (kept with `visibility`, so it takes its space from the start) says a new version was kept, and Show it, a click, refreshes the list. Files itself rescans 400 ms after a save so the counts are current; the rows do not move because only text changes. A project's preview goes into its tile as a background image, so nothing changes size. Measured in the browser mode: layout shift 0.
 
 ## v0.43.0 · the first-frame shift found and fixed {#stability}
 

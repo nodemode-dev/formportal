@@ -19,4 +19,4 @@ Local only: FormPortal looks in folders the person chose on their own disk, find
 
 ## Limits to say plainly
 
-A version is kept when FormPortal reads the folder (opening FormPortal, the Files screen, `files`), not on every save inside an app. Files over 256 MB are listed but not versioned. A scan stops at 5,000 projects and six folders deep.
+While FormPortal's window is open it keeps a version within a few seconds of each save; with it closed, a version is kept the next time FormPortal reads the folder (opening FormPortal, the Files screen, `files`), unless the app itself asked for one (`file_versions` with `action: "save"`). `formportal cli watch` does the same as the open window, from a terminal. A project with a `[file].preview.webp` beside it shows that preview in Files. Files over 256 MB are listed but not versioned. A scan stops at 5,000 projects and six folders deep.
