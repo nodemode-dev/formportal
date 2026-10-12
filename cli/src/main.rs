@@ -29,6 +29,10 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   open-file PATH                  open a project in the app that makes it
   file-versions PATH [--action save | --action revert --version ID]
   storage                         what FormPortal and your folders use on disk
+  fonts [--query Q] [--fonts-source S]     the open font index and the fonts FormPortal installed
+  font-install ID [--style S]     install a family (or one style) for this user
+  font-add FILE --rights-confirmed true    add your own TTF or OTF for this user
+  font-remove FAMILY [--style S]
   policy                          the organisation's policy, if this computer has one
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
@@ -150,6 +154,18 @@ fn main() -> ExitCode {
         "open-file" => ops::open_file(&ctx, &args),
         "file-versions" => ops::file_versions(&ctx, &args),
         "storage" => ops::storage(&ctx),
+        "fonts" => ops::fonts(&ctx, &args),
+        "font-install" => ops::font_install(&ctx, &args, &mut progress),
+        "font-add" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                if let Some(p) = o.remove("product") {
+                    o.insert("path".to_string(), p);
+                }
+            }
+            ops::font_install(&ctx, &a, &mut progress)
+        }
+        "font-remove" => ops::font_remove(&ctx, &args),
         "app-agents" => ops::app_agents(&ctx, &args),
         "connect" => ops::connect_agents(&ctx, &args),
         "disconnect" => {
@@ -169,7 +185,7 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    if (cmd == "install" || cmd == "update" || cmd == "extension-install" || cmd == "mirror") && last != u64::MAX {
+    if (cmd == "install" || cmd == "update" || cmd == "extension-install" || cmd == "mirror" || cmd == "font-install") && last != u64::MAX {
         eprintln!();
     }
     match out {

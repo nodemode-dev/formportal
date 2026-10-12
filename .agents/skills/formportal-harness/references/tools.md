@@ -31,6 +31,9 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `open_file` | yes | Opens a project file with the installed Form app that makes it (by extension), stable first, then beta. Says which app to install if none is. |
 | `file_versions` | yes | The versions FormPortal kept of a project file in one of its folders, newest first (id, time, size, SHA-256, why it was kept). action save keeps one now; action revert with version puts that version back after keeping the current file as a version too, so nothing is lost. Reverting changes the person's file: confirm first. |
 | `storage` | no | What FormPortal uses on disk (installed apps, downloads, extensions, kept file versions, the catalogue copy) and the size of each projects folder. |
+| `fonts` | no | The open font index (families with foundry, licence, category and styles, each marked installed or not) read from fonts.json beside the catalogue (or fonts_source, FORMPORTAL_FONTS), signed like the catalogue; plus every font FormPortal installed, from the index or the person's own files, and the per-user font folder. query filters by family, foundry or category. |
+| `font_install` | yes | With id (and optionally style), downloads that family or style from the index, checks each file's SHA-256 and that it is a TrueType or OpenType font, refuses anything not under OFL-1.1, Apache-2.0 or MIT, and installs it for this user only (no administrator). With path, adds the person's own TTF or OTF file instead; rights_confirmed must be true, meaning the person said they have the right to use it. Apps see new fonts after they restart. Confirm first. |
+| `font_remove` | yes, destructive | Removes a font FormPortal installed (a whole family, or one style), from the per-user font folder. Never touches fonts it did not install. Confirm first. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
 | `connect_agents` | yes | Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
@@ -149,6 +152,28 @@ No parameters.
 ### storage
 
 No parameters.
+
+### fonts
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `fonts_source` (optional): string. 
+- `query` (optional): string. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+
+### font_install
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `fonts_source` (optional): string. 
+- `id` (optional): string. 
+- `path` (optional): string. 
+- `rights_confirmed` (optional): boolean. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+- `style` (optional): string. 
+
+### font_remove
+
+- `family`: string. 
+- `style` (optional): string. 
 
 ### app_agents
 

@@ -220,6 +220,57 @@ pub fn storage(ctx: &Ctx) -> Result<Value, CoreError> {
     Ok(json!({ "storage": ctx.portal.storage()? }))
 }
 
+fn fonts_source(ctx: &Ctx, args: &Value) -> String {
+    text(args, "fonts_source").or_else(|| std::env::var("FORMPORTAL_FONTS").ok().filter(|s| !s.trim().is_empty())).unwrap_or_else(|| {
+        let base = text(args, "source").unwrap_or_else(|| ctx.source.clone());
+        match base.rsplit_once('/') {
+            Some((dir, _)) => format!("{dir}/fonts.json"),
+            None => "fonts.json".to_string(),
+        }
+    })
+}
+
+pub fn fonts(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let installed = ctx.portal.fonts_installed()?;
+    let (index, error) = match ctx.portal.font_index(&fonts_source(ctx, args), allow) {
+        Ok(i) => (Some(i), None),
+        Err(e) => (None, Some(e.to_string())),
+    };
+    let q = text(args, "query").map(|q| q.to_lowercase());
+    let families: Vec<Value> = index
+        .as_ref()
+        .map(|i| {
+            i.families
+                .iter()
+                .filter(|f| q.as_ref().map(|q| format!("{} {} {}", f.family, f.foundry, f.category).to_lowercase().contains(q.as_str())).unwrap_or(true))
+                .map(|f| {
+                    let have: Vec<&str> = installed.iter().filter(|x| x.family_id.as_deref() == Some(f.id.as_str())).map(|x| x.style.as_str()).collect();
+                    json!({ "id": f.id, "family": f.family, "foundry": f.foundry, "licence": f.licence, "category": f.category, "styles": f.styles.iter().map(|s| json!({ "style": s.style, "weight": s.weight, "italic": s.italic, "bytes": s.bytes, "installed": have.contains(&s.style.as_str()) })).collect::<Vec<_>>() })
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    Ok(json!({ "font_folder": formportal_core::fonts::font_dir(), "index_error": error, "families": families, "installed": installed, "note": "Fonts install for this user only; every app sees them, usually after it restarts." }))
+}
+
+pub fn font_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    if let Some(path) = text(args, "path") {
+        let font = ctx.portal.add_own_font(std::path::Path::new(&path), flag(args, "rights_confirmed").unwrap_or(false))?;
+        return Ok(json!({ "added": font, "note": "Added for this user. Apps see it after they restart." }));
+    }
+    let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give a family id from fonts, or the path of your own font file"))?;
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let index = ctx.portal.font_index(&fonts_source(ctx, args), allow)?;
+    let done = ctx.portal.install_font(&index, &id, text(args, "style").as_deref(), progress)?;
+    Ok(json!({ "installed": done, "note": "Installed for this user. Apps see new fonts after they restart." }))
+}
+
+pub fn font_remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let family = text(args, "family").or_else(|| text(args, "id")).or_else(|| text(args, "product")).ok_or_else(|| fail("give the family (or its id) to remove"))?;
+    Ok(json!({ "removed": ctx.portal.remove_font(&family, text(args, "style").as_deref())? }))
+}
+
 pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
