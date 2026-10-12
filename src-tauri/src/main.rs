@@ -172,7 +172,11 @@ async fn fonts_view(url: String, allow_unsigned: bool) -> Result<serde_json::Val
             Ok(i) => (Some(i), None),
             Err(e) => (None, Some(e.to_string())),
         };
-        Ok(serde_json::json!({ "index": index, "index_error": error, "installed": hub.fonts_installed().map_err(text)?, "folder": formportal_core::fonts::font_dir() }))
+        let updates = match &index {
+            Some(i) => hub.font_updates(i).map_err(text)?,
+            None => Vec::new(),
+        };
+        Ok(serde_json::json!({ "index": index, "index_error": error, "installed": hub.fonts_installed().map_err(text)?, "updates": updates, "folder": formportal_core::fonts::font_dir() }))
     })
     .await
     .map_err(text)?
