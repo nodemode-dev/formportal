@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.35.0
-Last updated: 2026-10-12 · the interface rebuilt on the Creative Cloud app's layout
+Current build version: v0.36.0
+Last updated: 2026-10-12 · the apps' MCP servers on their pages; offline Home
+
+## v0.36.0 · AI tools on the app page, and the window offline {#bridge}
+
+### Use it with your AI tools
+- refers-to: vite.config.ts :: agents · src/extensions/agents · src/main.ts :: agents.check, agents.connect, app.install
+- kind: decision
+- logged: v0.36.0 · 2026-10-12
+
+Each released app's page ends with a section, hidden until the shell says the installed app ships an MCP server: Claude Code, Codex and Cursor with their state (connected, not connected, another server of that name left alone, not installed here), Connect and Disconnect. It is the last thing on the page, so appearing moves nothing. It is checked when the page opens and when that app's install changes. An install of such an app adds a line to its notice pointing there. The browser mode takes `?agents=formcut`.
+
+### Opened in the real window
+- refers-to: the debug shell under Xvfb, interface on 3250
+- kind: warning-context
+- logged: v0.36.0 · 2026-10-12
+
+The rebuilt interface rendered in WebKitGTK as in Chromium. With no network it showed the raw DNS error and still said every app was up to date, and installed apps had no Open because actions wait for `data-loaded`. Now installs and preferences load before the catalogue, `data-loaded` is set either way, Home says the catalogue could not be reached with Try again (in the same slot as Update all, so nothing moves), and the notice explains before the raw cause. `catalog.load` and the link hook now run last in `main.ts`, after every command exists: a link handled at start had dispatched `agents.check` before it was registered. The browser mode takes `?offline`.
 
 ## v0.35.0 · the interface rebuilt {#rebuild}
 

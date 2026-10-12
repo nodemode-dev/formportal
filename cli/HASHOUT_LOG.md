@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.34.0
-Last updated: 2026-10-12 · policy and mirror; seventeen tools
+Current build version: v0.36.0
+Last updated: 2026-10-12 · the apps' MCP servers; nineteen tools
+
+## v0.36.0 · app-agents, connect, app-mcp {#bridge}
+
+### Two tools, four commands
+- refers-to: src/ops.rs :: app_agents, connect_agents, installs · src/mcp.rs · src/main.rs :: app-mcp
+- kind: decision
+- logged: v0.36.0 · 2026-10-12
+
+`app_agents` (read) and `connect_agents` (write, `disconnect` to undo) are the eighteenth and nineteenth tools; `installs` gains `mcp_server`. On the command line: `app-agents`, `connect`, `disconnect`, and `app-mcp`, which is what the clients start: it prints nothing of its own on stdout, hands stdio to the app's server and exits with its code, before any JSON handling. The launcher written into the clients is this program's own path (`current_exe`).
 
 ---
 

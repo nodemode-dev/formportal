@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.36.0 · 2026-10-12
+
+- A Form app that ships its own MCP server can be connected to Claude Code, Codex and Cursor from its page, or with `connect_agents`. FormPortal starts whichever version is installed, so the connection survives updates and going back a version. It never replaces a server of the same name that it did not add, and backs up each config file first.
+- Command line and MCP: `app_agents`, `connect_agents`; `installs` says which apps have a server; `formportal app-mcp` is what the clients start.
+- With no network, installed apps still open, and Home says the catalogue could not be reached, with Try again.
+
 ## v0.35.0 · 2026-10-12
 
 - A new window, laid out like the Creative Cloud desktop app: a sidebar with Home, Apps (Updates and Beta beneath it), Extensions and Learn; a top bar with search, a notifications bell and Preferences.

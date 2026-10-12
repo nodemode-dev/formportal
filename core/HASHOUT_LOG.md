@@ -2,9 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.34.0
-Last updated: 2026-10-12 · organisation policy, mirror
+Current build version: v0.36.0
+Last updated: 2026-10-12 · the apps' own MCP servers
 
+## v0.36.0 · the family bridge {#bridge}
+
+### agents.rs · form-app.json, app-mcp, three clients
+- refers-to: src/agents.rs :: agent_surface, run_app_mcp, agent_clients, connect_agents, Launcher, server_name
+- kind: decision
+- logged: v0.36.0 · 2026-10-12
+
+An app declares its MCP server in `form-app.json` (format `form-app`) anywhere up to four levels inside its install; `command` is relative to the file and must canonicalise inside the install folder, or the file is refused. Client entries never point into a version folder, which an update or a sweep deletes: they point at FormPortal's own program with `app-mcp [product] [--channel C]`, and `run_app_mcp` resolves the current install each time and runs the server with stdio inherited. The server name is the product id (`-beta` for a beta). Claude Code goes through `claude mcp add --scope user` (the name precedes `-e`, which is variadic and swallowed it in a first try); Codex is a `[mcp_servers.NAME]` table in `$CODEX_HOME/config.toml` replaced or appended by section; Cursor is `mcpServers.NAME` in `~/.cursor/mcp.json`. An entry is FormPortal's when it mentions `app-mcp`; any other server of the same name is reported `taken` and never touched. Both files are copied to `.bak-[time]` before a write. `FORMPORTAL_ROOT`, when set, is written into each entry, because clients do not start servers with the person's shell.
 ## v0.34.0 · organisations {#organisations}
 
 ### policy.rs · a system file, read every time

@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.34.0
+Current build version: v0.36.0
 Last updated: 2026-10-12 · standalone repository
+
+## v0.36.0 · app-mcp before the window {#app-mcp}
+
+### The window's program serves the apps' MCP servers
+- refers-to: src/main.rs :: app_mcp_from_args, app_agents, connect_agents
+- kind: decision
+- logged: v0.36.0 · 2026-10-12
+
+An installed FormPortal has no command line beside it, so the window's own program answers `app-mcp [product] [--channel C]` itself: `main` checks the arguments before the Tauri builder, runs the core's `run_app_mcp` and exits, so no window, single-instance hand-off or deep-link registration happens. Verified on Linux with no display: it answered `initialize` from a test app's server and refused an app without one. `connect_agents` from the window writes this program's path into the clients. On Windows the release build has no console; stdio redirected by a client still reaches it, which has not been tried on Windows yet.
 
 ## v0.34.0 · the policy for the window {#policy}
 
