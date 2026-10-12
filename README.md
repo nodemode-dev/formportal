@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app. The Form family's Creative Cloud alternative: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.41.0-eef0f4" alt="version v0.41.0" />
+  <img src="https://img.shields.io/badge/version-v0.42.0-eef0f4" alt="version v0.42.0" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
@@ -15,7 +15,7 @@
 
 FormPortal reads the signed catalogue formai.dev publishes and offers this computer the right build of every Form app: FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormHub and the apps on the way. It checks each download's SHA-256 before unpacking, installs per user with no administrator (zip, AppImage, deb, rpm, dmg, msi or NSIS), keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build. The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family too.
 
-**Stack:** Rust (`formportal-core`, `formportal-cli`) · Tauri 2 shell · vanilla TypeScript + Vite interface · **Scale:** 32 MCP tools, 20 apps from one registry, one shared tokens file, zero runtime dependencies in the interface
+**Stack:** Rust (`formportal-core`, `formportal-cli`) · Tauri 2 shell · vanilla TypeScript + Vite interface · **Scale:** 33 MCP tools, 20 apps from one registry, one shared tokens file, zero runtime dependencies in the interface
 
 ## Highlights
 
@@ -23,11 +23,12 @@ FormPortal reads the signed catalogue formai.dev publishes and offers this compu
 - **Trust you can check.** An Ed25519-signed catalogue, a SHA-256 per file refused before unpacking on mismatch, https or this computer only. No flag skips the hash
 - **Rollback, betas side by side.** Every update keeps the version it replaced; each channel (stable, beta, nightly) is its own install
 - **Nothing resident.** No account, no login item, no tray process. FormPortal checks when it is open and stops when you close it
-- **Agent ready.** `./formportal mcp` serves `status`, `apps`, `app_info`, `installs`, `install`, `versions`, `updates`, `update`, `preferences`, `extensions`, `extension_install`, `extension_remove`, `extension_enable`, `policy`, `app_agents`, `connect_agents`, `files`, `folders`, `open_file`, `file_versions`, `storage`, `fonts`, `font_install`, `font_remove`, `media`, `media_save`, `media_remove`, `learn`, `learn_progress`, `open`, `rollback`, `remove`; `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are wired, and the `formportal-harness` skill teaches the workflow. A Form app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates (see `.docs/wiki/Agents.md`)
+- **Agent ready.** `./formportal mcp` serves `status`, `apps`, `app_info`, `installs`, `install`, `versions`, `updates`, `update`, `preferences`, `extensions`, `extension_install`, `extension_remove`, `extension_enable`, `policy`, `app_agents`, `connect_agents`, `files`, `folders`, `open_file`, `file_versions`, `storage`, `fonts`, `font_install`, `font_remove`, `media`, `media_save`, `media_remove`, `learn`, `learn_progress`, `repair`, `open`, `rollback`, `remove`; `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are wired, and the `formportal-harness` skill teaches the workflow. A Form app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates (see `.docs/wiki/Agents.md`)
 - **Laid out like the Creative Cloud app, without the marketing.** A two-level sidebar (Home, Apps with Updates and Beta, Extensions, Learn), search, a notifications bell and Preferences in the top bar, Home built around the apps you have, Apps as a list with one action each and a More menu, and Preferences as a dialog with a switch per app
 - **Files on your own disk.** Pick folders; FormPortal lists your Form projects, opens each in the right app, keeps earlier versions you can go back to, and shows what it uses on disk. No cloud
 - **Fonts without an account.** Open-licensed families from a signed index, or your own TTF and OTF files, installed for you alone with no administrator
 - **Learn, and ask your own agent.** Step-by-step tutorials with progress kept on your computer, suggestions on Home worked out locally, notifications filed by kind, and Ask your agent: Claude Code or Codex answers questions about your apps through FormPortal's reading-only server
+- **Repair, later, and links from the web.** Check and repair finds and fixes broken installs and leftovers (silently from the command line too); an update can wait until you close the app; a web page can hand a Form project file to the right app, after you say yes
 - **Your language, your starting screen.** English and a Spanish draft, chosen before the window opens so the first frame is already in that language; open on Home or where you left off
 - **Stock and templates with their credits.** Open-licensed images, video, audio and Form app templates from a signed index, saved to your Library with the credit line beside each file; a template opens in its app in one step. No paid stock, no generative AI
 - **Built from the registry.** Every app's row, card, page and switch is written at build time from `catalog/products.json`, so the first frame is the final layout (layout shift 0 under 4x CPU throttling)

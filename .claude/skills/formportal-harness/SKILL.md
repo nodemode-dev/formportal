@@ -43,6 +43,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | Extensions: finding, installing, sideloading a .formpkg, turning off, removing | `sub-skills/extensions/SUB-SKILL.md` |
 | Fonts: find, install a family or style, add their own TTF or OTF, remove | `sub-skills/fonts/SUB-SKILL.md` |
 | Stock images, video, audio and app templates: find, save with credit, start a project from a template, remove | `sub-skills/stock-and-templates/SUB-SKILL.md` |
+| Checking and repairing installs, cleaning leftovers and old downloads, an app that will not open, updates put off until an app is closed | `sub-skills/repair/SUB-SKILL.md` |
 | Tutorials: which exist, what is finished, the next step, marking a step, starting again; questions asked from Ask your agent | `sub-skills/learn/SUB-SKILL.md` |
 | The person's project files: find, search, open in the right app, versions and going back, disk use | `sub-skills/files/SUB-SKILL.md` |
 | A computer an organisation manages: a refusal naming a policy, locked settings, mirroring the catalogue, silent deployment | `sub-skills/organisations/SUB-SKILL.md` |

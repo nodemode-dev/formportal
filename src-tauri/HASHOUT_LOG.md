@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.41.0
-Last updated: 2026-10-12 · the window opens in the chosen language
+Current build version: v0.42.0
+Last updated: 2026-10-12 · repair, later and web file commands; the browser leg
+
+## v0.42.0 · repair, later and web file commands; the browser leg {#repair}
+
+### Commands, and formai:// links handed over by the system
+- refers-to: src/main.rs :: repair, later_list, update_later, web_plan, web_fetch, target, route
+- kind: explainer
+- logged: v0.42.0 · 2026-10-12
+
+Thin calls into the core. The browser leg of `formai://` links was tried for the first time: under Xvfb, with `formportal-handler.desktop` set as the default for `x-scheme-handler/formai`, `gio open formai://app/formcut` brought up FormCut's page and `gio open formai://file/formcut?url=...` the confirmation, in the debug build. Firefox and Chromium hand external schemes to the same GIO handler on Linux. With no session bus on that display, each link started FormPortal afresh (the `launch_link` path) rather than reaching an open window through the single-instance plugin, so that forwarding remains untested, as do macOS and Windows.
 
 ## v0.41.0 · the window opens in the chosen language {#language}
 

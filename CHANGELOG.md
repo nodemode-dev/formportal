@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.42.0 · 2026-10-12
+
+- Check and repair, in Preferences, About: finds apps whose files went missing or have nothing to open, earlier versions that are gone, unfinished installs, leftovers and old downloads, and repairs them with one button. `formportal cli repair` reports, and `--fix` repairs, with no window.
+- Update when I close it, in an app's More menu: the update waits until the app is closed, then installs while FormPortal is open or the next time it starts.
+- A web page can link to a Form project file (`formai://file/formcut?url=...`): FormPortal asks first, saves it in From the web in your projects folder and opens it in its app. Only Form project files are accepted.
+- Command line and MCP: `repair`; `update` takes `later`; `formportal cli later`, `open-url`.
+
 ## v0.41.0 · 2026-10-12
 
 - Language: Preferences, General now offers English and a first draft in Spanish. FormPortal opens directly in the language you choose. The Spanish has not been reviewed by a Spanish speaker yet, and some messages are still in English.

@@ -2,8 +2,31 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.41.0
-Last updated: 2026-10-12 · languages and opening where you left off
+Current build version: v0.42.0
+Last updated: 2026-10-12 · repair, update later, files from a web page
+
+## v0.42.0 · repair, update later, files from a web page {#repair}
+
+### Check and repair in Preferences, About
+- refers-to: index.html :: data-repair-* · src/extensions/repair · src/main.ts :: repair.run
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+Check now lists each finding in plain words with its fix and size; Repair appears only when there is something to repair, then the list shows what was done and the bell says how much was freed. It lives in About, beside FormPortal's own update, because it is about FormPortal rather than one app.
+
+### Update when I close it
+- refers-to: row-actions.html :: data-later · src/extensions/apps (data-later, status) · src/engine :: later, setLater · src/main.ts :: app.later, later.check, the five-minute interval
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+Two More-menu items shown by CSS from `data-install="update"` and `data-later`, so no menu is rebuilt; the status reads "Updates to X when closed". `later.check` runs the automatic pass only when something is put off. Verified in the browser mode with a fast-forwarded clock: the update applied five minutes later and the row became Installed.
+
+### Opening a file from a web page
+- refers-to: index.html :: dialog data-webfile · src/main.ts :: link.open (file/), web.ask, web.fetch
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+A `formai://file/<app>?url=` link never downloads on its own: the dialog names the site, the app, the file and the folder first. Installs are re-read before deciding the app is missing, because a link can arrive before the first load finishes. Spanish strings added for everything new. Layout shift 0 on the screens touched; no script error.
 
 ## v0.41.0 · languages and opening where you left off {#language}
 

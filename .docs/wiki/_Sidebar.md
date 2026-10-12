@@ -8,3 +8,4 @@
 - [Stock and Templates](Stock-and-Templates)
 - [Learn and Assistant](Learn-and-Assistant)
 - [Languages and Launch](Languages-and-Launch)
+- [Repair and Handoff](Repair-and-Handoff)

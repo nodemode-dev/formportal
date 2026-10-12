@@ -2,8 +2,31 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.41.0
-Last updated: 2026-10-12 · the language preference
+Current build version: v0.42.0
+Last updated: 2026-10-12 · repair, update later, files from the web
+
+## v0.42.0 · repair, update later, files from the web {#repair}
+
+### repair.rs · check, then fix only what was found
+- refers-to: src/repair.rs :: Finding, Report, Portal::repair
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+Creative Cloud's Cleaner Tool removes old installs and repairs the hosts file. FormPortal has no hosts entries; what can go wrong is a record whose folder vanished, a folder with nothing to open, a kept earlier version deleted by hand, and leftovers (versions no record names, `.tmp` staging, old downloads). The scan and the fix are one function with a flag, so the report the person approves is the list that is fixed. A broken app is reinstalled only when the catalogue's file for that version has the recorded SHA-256; anything else would silently change what is installed. Anything younger than ten minutes or holding a running process is skipped. A path already gone counts as fixed, because `install` sweeps its channel's leftovers when it reinstalls. Verified with a signed local catalogue: a broken app reinstalled, a missing earlier version forgotten, a leftover, a staging folder and an old download deleted, a fresh folder left alone, a missing folder reinstalled.
+
+### later.rs · put an update off until the app is closed
+- refers-to: src/later.rs :: later, is_later, set_later · src/portal.rs :: Update.later, apply_updates, uninstall
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+Creative Cloud's Later applies when the app is not running. `apply_updates` with `automatic_only` now also takes put-off updates, always waiting for the app to close, and clears them once installed; removing an app clears it too. Verified: with automatic updates off, a put-off FormCut update was installed by the next automatic pass and the list emptied.
+
+### web.rs · a Form project file from a web page
+- refers-to: src/web.rs :: WebPlan, web_plan, fetch_web_file
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+A link from any page can ask for a download, so only a file whose extension the registry gives to a Form app is accepted, only from https or this computer, up to 4 GB, written to a `.part` file and renamed, into From the web in the first projects folder with a numbered name if one exists. Verified: a percent-encoded name saved and numbered on a second fetch; an `.exe`, a plain-http remote address and an unreachable host refused.
 
 ## v0.41.0 · the language preference {#language}
 

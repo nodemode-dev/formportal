@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.40.0
-Last updated: 2026-10-12 · tutorials, reading-only server, ask; thirty-two tools
+Current build version: v0.42.0
+Last updated: 2026-10-12 · repair, later, open-url; thirty-three tools
+
+## v0.42.0 · repair, later, open-url {#repair}
+
+### One tool, three commands, update gains later
+- refers-to: src/ops.rs :: repair, web_file, update (later) · src/mcp.rs :: repair · src/main.rs :: repair, later, open-url
+- kind: decision
+- logged: v0.42.0 · 2026-10-12
+
+`repair` reads the catalogue when it can (a cached copy counts) and reports its error otherwise, so a repair without the network still deletes leftovers. It is destructive in its annotations, so the reading server does not offer it. `update` with product and `later` sets or clears the put-off flag before any catalogue is read, so it works offline. `open-url` is a command only: an agent fetching files from the web into the person's folders should go through the person, who clicks the link.
 
 ## v0.40.0 · tutorials, a reading-only server, ask {#learn}
 
