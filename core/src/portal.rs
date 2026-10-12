@@ -28,6 +28,7 @@ pub struct Update {
     pub notes: String,
     pub open: bool,
     pub automatic: bool,
+    pub later: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -385,6 +386,7 @@ impl Portal {
                 bytes: artifact.bytes,
                 notes: catalog.product(&install.product).and_then(|p| p.channels.get(&install.channel)).map(|r| r.notes.clone()).unwrap_or_default(),
                 open,
+                later: self.is_later(&install.product, install.channel),
             });
         }
         Ok(out)
@@ -394,7 +396,7 @@ impl Portal {
         let prefs = self.preferences()?;
         let mut done = Vec::new();
         for update in self.updates(catalog, platform)? {
-            if automatic_only && (!update.automatic || (prefs.only_when_closed && update.open)) {
+            if automatic_only && (!(update.automatic || update.later) || ((prefs.only_when_closed || update.later) && update.open)) {
                 continue;
             }
             let view = catalog.view(&update.product, update.channel, platform);
@@ -402,6 +404,9 @@ impl Portal {
             let product = update.product.clone();
             let channel = update.channel;
             let result = self.install(&product, channel, &update.to, artifact, &mut |have, total| progress(&product, channel, have, total));
+            if result.is_ok() && update.later {
+                let _ = self.set_later(&product, channel, false);
+            }
             done.push(UpdateOutcome { product, channel, from: update.from, to: update.to, error: result.err().map(|e| e.to_string()) });
         }
         Ok(done)
@@ -433,7 +438,9 @@ impl Portal {
             fs::remove_dir_all(&base)?;
         }
         state.installs.remove(index);
-        state.save(&self.root)
+        state.save(&self.root)?;
+        let _ = self.set_later(product, channel, false);
+        Ok(())
     }
 
     pub fn launch_target(&self, product: &str, channel: Channel) -> Result<PathBuf> {

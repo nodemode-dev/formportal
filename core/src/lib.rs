@@ -12,14 +12,17 @@ pub mod fonts;
 pub mod media;
 pub mod extensions;
 pub mod installers;
+pub mod later;
 pub mod learn;
 pub mod mirror;
 pub mod policy;
 pub mod portal;
 pub mod prefs;
 pub mod process;
+pub mod repair;
 pub mod signature;
 pub mod state;
+pub mod web;
 
 pub use error::CoreError;
 pub use portal::{Portal, Update, UpdateOutcome};
