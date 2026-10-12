@@ -24,7 +24,7 @@ const folders: FolderView[] = new URLSearchParams(window.location.search).has("f
 const day = 86400;
 const stamp = Math.floor(Date.parse("2026-10-12T09:00:00Z") / 1000);
 const sampleFiles = (folder: string): ProjectFile[] => [
-  { path: `${folder}/Trailer.fc`, name: "Trailer.fc", folder, product: "formcut", bytes: 18_400_000, modified: stamp, versions: 4 },
+  { path: `${folder}/Trailer.fc`, name: "Trailer.fc", folder, product: "formcut", bytes: 18_400_000, modified: stamp, versions: 4, preview: `${folder}/Trailer.fc.preview.webp` },
   { path: `${folder}/Posters/Launch poster.fmv`, name: "Launch poster.fmv", folder, product: "formvis", bytes: 52_300_000, modified: stamp - day, versions: 2 },
   { path: `${folder}/Audio/Interview mix.fmw`, name: "Interview mix.fmw", folder, product: "formwav", bytes: 9_100_000, modified: stamp - 3 * day, versions: 1 },
   { path: `${folder}/Cutdowns/Teaser 15s.fc`, name: "Teaser 15s.fc", folder, product: "formcut", bytes: 4_200_000, modified: stamp - 9 * day, versions: 1 },
@@ -249,6 +249,10 @@ export const fixtureBridge: Bridge = {
     if (at >= 0) savedMedia.splice(at, 1);
   },
   mediaThumb: async (url) => url,
+  filePreview: async (path) => {
+    if (!path.endsWith(".preview.webp")) throw new Error("only a project's .preview.webp is shown");
+    return "/media/formcut.webp";
+  },
   repair: async (fix) => {
     await pause(400);
     const findings = repairFindings.map((f) => ({ ...f }));

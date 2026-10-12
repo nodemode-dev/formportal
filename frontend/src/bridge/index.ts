@@ -34,6 +34,7 @@ export interface Bridge {
   mediaSave(id: string, useTemplate: boolean): Promise<{ copied_to?: string; opened_with?: string | null }>;
   mediaRemove(id: string): Promise<void>;
   mediaThumb(url: string): Promise<string>;
+  filePreview(path: string): Promise<string>;
   repair(fix: boolean): Promise<RepairReport>;
   laterList(): Promise<string[]>;
   updateLater(product: string, channel: Channel, on: boolean): Promise<string[]>;

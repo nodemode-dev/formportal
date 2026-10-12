@@ -134,6 +134,7 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke("media_remove", { id });
   },
   mediaThumb: (url) => tauri().core.invoke<string>("media_thumb", { url }),
+  filePreview: (path) => tauri().core.invoke<string>("file_preview", { path }),
   repair: (fix) => tauri().core.invoke<RepairReport>("repair", { url: catalogUrl(), allowUnsigned: allowUnsigned(), fix }),
   laterList: () => tauri().core.invoke<string[]>("later_list"),
   updateLater: (product, channel, on) => tauri().core.invoke<string[]>("update_later", { product, channel, on }),

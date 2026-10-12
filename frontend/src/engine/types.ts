@@ -159,6 +159,7 @@ export interface ProjectFile {
   bytes: number;
   modified: number;
   versions: number;
+  preview?: string | null;
 }
 
 export interface FolderView {

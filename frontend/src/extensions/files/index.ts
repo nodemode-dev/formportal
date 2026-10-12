@@ -49,6 +49,16 @@ export const files: Extension = {
       }
       if (row.dataset.product !== file.product) row.dataset.product = file.product;
       set(row, "short", engine.name(file.product).replace(/^Form\.?/, "").slice(0, 2));
+      const tile = row.querySelector<HTMLElement>("[data-field='short']");
+      const shot = file.preview ? `${file.preview}@${file.modified}` : "";
+      if (tile && tile.dataset.shot !== shot) {
+        tile.dataset.shot = shot;
+        if (file.preview) void engine.dispatch("file.preview", { path: file.preview, into: tile });
+        else {
+          tile.style.backgroundImage = "";
+          tile.toggleAttribute("data-has-shot", false);
+        }
+      }
       set(row, "name", file.name);
       const relative = file.path.startsWith(file.folder) ? file.path.slice(file.folder.length).replace(/^[\\/]/, "") : file.path;
       const dir = relative.includes("/") || relative.includes("\\") ? relative.slice(0, Math.max(relative.lastIndexOf("/"), relative.lastIndexOf("\\"))) : "";

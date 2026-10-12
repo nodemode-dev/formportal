@@ -380,6 +380,17 @@ engine.command("media.load", () =>
   }, "library"),
 );
 
+engine.command("file.preview", async (arg) => {
+  const { path, into } = arg as { path: string; into: HTMLElement | null };
+  try {
+    const src = await bridge.filePreview(path);
+    if (into) into.style.backgroundImage = `url("${src}")`;
+    into?.toggleAttribute("data-has-shot", true);
+  } catch {
+    into?.toggleAttribute("data-has-shot", false);
+  }
+});
+
 engine.command("media.thumb", async (arg) => {
   const { url, into } = arg as { url: string; into: HTMLElement | null };
   try {
