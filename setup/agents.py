@@ -46,6 +46,14 @@ def tools() -> list[dict]:
 
 def tools_md() -> str:
     out = ["# FormPortal MCP tools", "", HEAD, ""]
+    out.append("## Contents")
+    out.append("")
+    out.append("- The tool table, below")
+    out.append("- Parameters, one heading per tool")
+    out.append("- Shell equivalents, including `policy` and the command-line-only `mirror`")
+    out.append("")
+    out.append("## Tools")
+    out.append("")
     out.append("| Tool | Changes the computer | What it does |")
     out.append("| --- | --- | --- |")
     for t in tools():
@@ -68,7 +76,7 @@ def tools_md() -> str:
         out.append("")
     out.append("## Shell equivalents")
     out.append("")
-    out.append("`./formportal cli status`, `apps [--source S]`, `info [product]`, `installs`, `install [product] [--channel C] [--source S] [--allow-unsigned]`, `open [product]`, `rollback [product]`, `remove [product]`. Output is the same JSON the tools return.")
+    out.append("`./formportal cli status`, `apps [--source S]`, `info [product]`, `installs`, `install [product] [--channel C] [--source S] [--allow-unsigned]`, `open [product]`, `rollback [product]`, `remove [product]`, `policy`. Output is the same JSON the tools return. `mirror --to DIR --base-url URL` exists only on the command line (see sub-skills/organisations).")
     return "\n".join(out) + "\n"
 
 

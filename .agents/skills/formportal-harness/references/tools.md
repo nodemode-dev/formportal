@@ -2,6 +2,14 @@
 
 Generated from the FormPortal MCP server by `./formportal agents sync`; do not edit by hand.
 
+## Contents
+
+- The tool table, below
+- Parameters, one heading per tool
+- Shell equivalents, including `policy` and the command-line-only `mirror`
+
+## Tools
+
 | Tool | Changes the computer | What it does |
 | --- | --- | --- |
 | `status` | no | FormPortal's version, this computer's platform, the install folder, the catalogue source and everything installed. Call first. |
@@ -126,4 +134,4 @@ No parameters.
 
 ## Shell equivalents
 
-`./formportal cli status`, `apps [--source S]`, `info [product]`, `installs`, `install [product] [--channel C] [--source S] [--allow-unsigned]`, `open [product]`, `rollback [product]`, `remove [product]`. Output is the same JSON the tools return.
+`./formportal cli status`, `apps [--source S]`, `info [product]`, `installs`, `install [product] [--channel C] [--source S] [--allow-unsigned]`, `open [product]`, `rollback [product]`, `remove [product]`, `policy`. Output is the same JSON the tools return. `mirror --to DIR --base-url URL` exists only on the command line (see sub-skills/organisations).

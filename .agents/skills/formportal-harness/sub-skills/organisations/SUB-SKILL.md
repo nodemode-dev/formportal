@@ -50,7 +50,7 @@ The sentence names the policy ("Example IT's policy does not allow formlit on th
 For an administrator, not on a person's behalf without being asked:
 
 1. Make an Ed25519 pair for the mirror (formai_dev's `python -m app.signing` makes one) and keep the seed private.
-2. `FORMPORTAL_MIRROR_KEY=<seed> ./formportal cli mirror --to /srv/formportal --base-url https://apps.example.internal/formportal [--platforms windows,macos] [--channels stable] [--history]`. It reads and verifies the public catalogue, downloads every file it names and checks each SHA-256, rewrites the addresses to the base address, and signs the new `apps.json`.
+2. `FORMPORTAL_MIRROR_KEY=SEED ./formportal cli mirror --to /srv/formportal --base-url https://apps.example.internal/formportal [--platforms windows,macos] [--channels stable] [--history]`. It reads and verifies the public catalogue, downloads every file it names and checks each SHA-256, rewrites the addresses to the base address, and signs the new `apps.json`.
 3. Serve the folder at the base address, and put its `address` and `public_key` (from the result) into the policy as `catalog` and `catalog_keys`.
 
 Without a key the mirror is unsigned and computers refuse it unless the developer setting is on, which a policy usually forbids.
