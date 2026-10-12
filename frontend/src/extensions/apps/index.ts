@@ -124,7 +124,18 @@ export const apps: Extension = {
         void engine.dispatch("prefs.set", { per_app: { [product]: auto.checked } });
       });
     }
-    engine.on("notice", ({ text }) => notices.forEach((notice) => write(notice, text)));
+    engine.on("notice", ({ text, tone }) =>
+      notices.forEach((notice) => {
+        notice.setAttribute("data-tone", tone);
+        write(notice, text);
+      }),
+    );
+    document.addEventListener("click", (event) => {
+      const link = (event.target as HTMLElement).closest<HTMLAnchorElement>("a[data-web]");
+      if (!link) return;
+      event.preventDefault();
+      void engine.dispatch("web.open", link.href);
+    });
 
     for (const row of rows) {
       row.querySelectorAll<HTMLButtonElement>("[data-act]").forEach((button) => {

@@ -85,6 +85,11 @@ summary.rail-h > span:first-child {
   text-transform: uppercase;
 }
 
+.rail-group[data-current]:not([open]) > .rail-h {
+  color: var(--ink);
+  box-shadow: inset 2px 0 0 currentColor;
+}
+
 .glyph {
   display: grid;
   flex: none;
@@ -220,6 +225,97 @@ summary.rail-h > span:first-child {
 .tool-text {
   display: grid;
   gap: var(--sp-2);
+}
+
+.ap-help {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  margin-block-start: var(--sp-4);
+}
+
+.setting .ap-help {
+  margin-block-start: 0;
+}
+
+.tile-help {
+  margin-block-start: var(--sp-2);
+}
+
+.tile:not([data-install="ready"], [data-install="update"]) .tile-help {
+  visibility: hidden;
+}
+
+.ap-link {
+  color: var(--ink-soft);
+  font-size: var(--fs-s);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.ap-link:hover,
+.ap-link:focus-visible {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
+
+.wn-wrap {
+  padding-inline: var(--gutter);
+  padding-block-end: var(--sp-8);
+}
+
+.wn-wrap:not(:has(.wn[data-install="ready"], .wn[data-install="update"])) {
+  display: none;
+}
+
+.wn-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: var(--sp-3);
+}
+
+.wn {
+  display: none;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  border: 1px solid var(--edge-strong);
+  background: var(--pane);
+}
+
+.wn[data-install="ready"],
+.wn[data-install="update"] {
+  display: grid;
+}
+
+.wn .glyph {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  font-size: var(--fs-s);
+}
+
+.wn-text {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-1);
+}
+
+.wn-name {
+  font-size: var(--fs-m);
+}
+
+.wn-version,
+.wn-status {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+}
+
+.wn-notes {
+  color: var(--ink-soft);
+  font-size: var(--fs-s);
 }
 
 .tool-name {

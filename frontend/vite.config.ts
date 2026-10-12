@@ -20,6 +20,7 @@ interface App {
   alt_of?: string;
   note?: string;
   status?: string;
+  repository?: string;
 }
 
 const GROUPS = ["adobe", "other", "next"];
@@ -37,6 +38,18 @@ const shot = (p: App, cls: string) =>
   SHOTS.has(p.id)
     ? `<img class="${cls}" src="/media/${p.id}.webp" width="1600" height="1000" alt="" />`
     : `<span class="${cls} app-plate" aria-hidden="true">${esc(p.name.replace(/^Form/, ""))}</span>`;
+const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-ai/") ? p.repository.replace(/\/$/, "") : null);
+const web = (href: string, text: string, cls: string) => `<a class="${cls}" href="${esc(href)}" data-web>${text}</a>`;
+const help = (p: App) => {
+  const r = repo(p);
+  return r
+    ? `<p class="ap-help">${web(`${r}#readme`, "Guide and docs", "ap-link")}${web(`${r}/releases`, "Every release", "ap-link")}${web(`${r}/issues/new`, "Report a problem", "ap-link")}</p>`
+    : "";
+};
+const feedback = (p: App) => {
+  const r = repo(p);
+  return r ? `<p class="tile-help">${web(`${r}/issues/new?labels=beta&title=${encodeURIComponent(`${p.name} beta: `)}`, "Send feedback on the beta", "ap-link")}</p>` : "";
+};
 const meta = (extra = "") => `<span data-field="status"></span><span data-field="version"></span>${extra}`;
 
 function renderPortal(html: string): string {
@@ -47,7 +60,7 @@ function renderPortal(html: string): string {
     (p) => `<button class="shelf-item" type="button" data-app-to="${p.id}" data-row="stable" data-product="${p.id}" aria-pressed="${p.id === FIRST}">${shot(p, "shelf-shot")}<span class="shelf-text"><span class="shelf-name">${esc(p.name)}</span><span class="shelf-kind">${kind(p)}</span><span class="shelf-status" data-field="status"></span></span></button>`,
   );
   const beta = APPS.filter((p) => (p.status ?? "available") === "available").map(
-    (p) => `<li class="tile" data-row="beta" data-product="${p.id}">${shot(p, "tile-shot")}<div class="tile-body"><h2 class="tile-name">${name(p)}</h2><p class="tile-kind">${kind(p)}, beta</p><p class="tile-meta">${meta()}</p><!-- @include row-actions.html --></div></li>`,
+    (p) => `<li class="tile" data-row="beta" data-product="${p.id}">${shot(p, "tile-shot")}<div class="tile-body"><h2 class="tile-name">${name(p)}</h2><p class="tile-kind">${kind(p)}, beta</p><p class="tile-meta">${meta()}</p><!-- @include row-actions.html -->${feedback(p)}</div></li>`,
   );
   const updates = APPS.flatMap((p) =>
     ["stable", "beta"].map(
@@ -81,12 +94,16 @@ function renderPortal(html: string): string {
   );
   const pages = APPS.map((p) => {
     const status = p.status ?? "available";
-    return `<section class="pane pane-app" data-pane="app-${p.id}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="ap-grid"><div class="ap-text"><p class="home-kicker">${kind(p)}</p><h1 class="ap-name">${name(p)}</h1><p class="ap-line">${line(p)}</p><p class="ap-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip">GPL-3.0-only</span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><div class="cell ap-cell" data-row="stable" data-product="${p.id}"><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div></div><div class="ap-shot">${shot(p, "cell-img")}</div></div><h2 class="home-group">More in this group</h2><ul class="tools">${APPS.filter((q) => q.id !== p.id && (q as App & { group?: string }).group === (p as App & { group?: string }).group)
+    return `<section class="pane pane-app" data-pane="app-${p.id}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="ap-grid"><div class="ap-text"><p class="home-kicker">${kind(p)}</p><h1 class="ap-name">${name(p)}</h1><p class="ap-line">${line(p)}</p><p class="ap-sum">${esc(p.summary)}</p><p class="cell-chips"><span class="chip chip-status">${words[status]}</span><span class="chip">GPL-3.0-only</span><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux</span></p><div class="cell ap-cell" data-row="stable" data-product="${p.id}"><p class="cell-meta">${meta('<span data-field="size"></span>')}</p><!-- @include row-actions.html --></div>${help(p)}</div><div class="ap-shot">${shot(p, "cell-img")}</div></div><h2 class="home-group">More in this group</h2><ul class="tools">${APPS.filter((q) => q.id !== p.id && (q as App & { group?: string }).group === (p as App & { group?: string }).group)
       .slice(0, 6)
       .map((q) => `<li data-product="${q.id}"><button class="tool" type="button" data-route-to="app-${q.id}">${glyph(q)}<span class="tool-text"><span class="tool-name">${esc(q.name)}${tag(q)}</span><span class="tool-sum">${esc(q.summary)}</span></span></button></li>`)
       .join("")}</ul></section>`;
   });
+  const whatsnew = APPS.filter((p) => (p.status ?? "available") === "available").map(
+    (p) => `<li class="wn" data-row="stable" data-product="${p.id}">${glyph(p)}<div class="wn-text"><h3 class="wn-name">${esc(p.name)} <span class="wn-version" data-field="version"></span></h3><p class="wn-status" data-field="status"></p><p class="wn-notes" data-field="notes"></p></div></li>`,
+  );
   const parts: Record<string, string[]> = {
+    whatsnew,
     cards, shelf, beta, updates, icons, lineup, count: [String(APPS.length)],
     "nav-adobe": nav("adobe"), "nav-other": nav("other"), "nav-next": nav("next"), home, pages,
     "count-adobe": [String(nav("adobe").length)], "count-other": [String(nav("other").length)], "count-next": [String(nav("next").length)],

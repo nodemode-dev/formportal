@@ -36,8 +36,8 @@ export const accordion: Extension = {
 
     engine.on("route", ({ route }) => {
       const link = document.querySelector<HTMLElement>(`.rail-group [data-route-to="${route}"]`);
-      const holder = link?.closest<HTMLDetailsElement>("details.rail-group");
-      if (holder) open(holder);
+      const holder = link?.closest<HTMLDetailsElement>("details.rail-group") ?? null;
+      for (const group of groups) group.toggleAttribute("data-current", group === holder);
     });
   },
 };

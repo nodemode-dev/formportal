@@ -2,7 +2,7 @@ import type { Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension,
 
 export interface EngineEvents {
   install: { key: string };
-  notice: { text: string };
+  notice: { text: string; tone: "info" | "fault" };
   route: { route: Route };
   theme: { light: boolean };
   platform: { platform: Platform };
@@ -137,8 +137,18 @@ export class Engine {
     this.emit("install", { key });
   }
 
-  setNotice(text: string): void {
-    this.emit("notice", { text });
+  setNotice(text: string, tone: "info" | "fault" = "fault"): void {
+    this.emit("notice", { text, tone });
+  }
+
+  private names = new Map<string, string>();
+
+  setNames(names: Record<string, string>): void {
+    for (const [id, name] of Object.entries(names)) this.names.set(id, name);
+  }
+
+  name(id: string): string {
+    return this.names.get(id) ?? this.product(id)?.name ?? id;
   }
 
   setSelf(status: string, installable: boolean): void {

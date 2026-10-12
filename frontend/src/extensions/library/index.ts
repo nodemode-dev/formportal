@@ -11,7 +11,7 @@ const PERMISSIONS: Record<string, string> = {
   "native-code": "native code",
 };
 
-function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExtension | null): void {
+function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExtension | null, label: (id: string) => string): void {
   const set = (field: string, text: string) => {
     const node = row.querySelector<HTMLElement>(`[data-field='${field}']`);
     if (node && node.textContent !== text) node.textContent = text;
@@ -29,12 +29,13 @@ function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExt
   attr("data-trust", have?.source === "sideload" ? "sideload" : entry?.signature || have?.signed_by ? "signed" : "unsigned");
   set("name", entry?.name ?? have?.name ?? "");
   const version = have && entry && have.version !== entry.version ? `version ${have.version} installed, ${entry.version} available` : `version ${have?.version ?? entry?.version ?? ""}`;
-  set("meta", `For ${product}${entry ? `, by ${entry.author}` : ""}, ${version}`);
+  const app = label(product);
+  set("meta", `For ${app}${entry ? `, by ${entry.author}` : ""}, ${version}`);
   set("description", entry?.description ?? "Installed from a file; not in the catalogue.");
   set("permissions", permissions.map((p) => PERMISSIONS[p] ?? p).join(", ") || "nothing");
   set("kind", (entry?.kind ?? have?.kind ?? "").replace(/-/g, " "));
   set("licence", entry?.licence ?? "");
-  set("needs", entry?.minimum_app ? `${product} ${entry.minimum_app} or newer` : `any ${product}`);
+  set("needs", entry?.minimum_app ? `${app} ${entry.minimum_app} or newer` : `any ${app}`);
   set("sha256", have?.sha256 || entry?.sha256 || "");
   set(
     "trust",
@@ -97,10 +98,10 @@ export const library: Extension = {
           row = (template.content.firstElementChild as HTMLElement).cloneNode(true) as HTMLElement;
           row.dataset.ext = entry?.id ?? have?.id ?? "";
           mounted.set(key, row);
-          fill(row, entry, have);
+          fill(row, entry, have, (id) => engine.name(id));
           wire(row);
           list.appendChild(row);
-        } else fill(row, entry, have);
+        } else fill(row, entry, have, (id) => engine.name(id));
       }
       for (const [key, row] of mounted) {
         if (keys.has(key)) continue;

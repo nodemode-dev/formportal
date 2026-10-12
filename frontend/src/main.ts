@@ -2,6 +2,7 @@ import { pickBridge } from "./bridge/index.ts";
 import { Engine, versionNewer } from "./engine/index.ts";
 import type { Channel, Preferences } from "./engine/types.ts";
 import pkg from "../package.json";
+import registry from "../../catalog/products.json";
 import { apps } from "./extensions/apps/index.ts";
 import { library } from "./extensions/library/index.ts";
 import { activateAll, register } from "./extensions/registry.ts";
@@ -15,6 +16,7 @@ const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
+engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
 [route, theme, apps, stage, library, settings, accordion].forEach(register);
 activateAll(engine);
 
@@ -45,7 +47,7 @@ engine.command("catalog.load", () =>
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
-    const name = (id: string) => engine.product(id)?.name ?? id;
+    const name = (id: string) => engine.name(id);
     const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)} ${d.to}${d.channel === "stable" ? "" : ` (${d.channel})`}`);
     const failed = done.filter((d) => d.error).map((d) => `${name(d.product)}: ${d.error}`);
     const waiting = Array.from(engine.installs.values()).filter((r) => {
@@ -59,7 +61,7 @@ engine.command("catalog.load", () =>
       waiting ? `${waiting} ${waiting === 1 ? "update is" : "updates are"} waiting in Updates.` : "",
       self.version && versionNewer(self.version, pkg.version) ? `FormPortal ${self.version} is available at formai.dev/download.` : "",
     ].filter(Boolean);
-    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "));
+    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info");
   }),
 );
 
@@ -81,13 +83,20 @@ engine.command("app.install", (arg) =>
       engine.setProgress(product, channel, null);
     }
     await refresh();
+    const label = engine.name(product);
+    const open = await bridge.stillOpen(product, channel);
+    const installed = engine.installs.get(engine.key(product, channel))?.version ?? version ?? "";
+    const notes = open.length
+      ? [`An earlier copy of ${label} is still open (process ${open.join(", ")}). It keeps running untouched, and ${installed} opens next time.`]
+      : [];
     if (version) {
       const held = engine.automatic(product, channel);
       engine.setPrefs(await bridge.preferences());
       if (held && !engine.automatic(product, channel)) {
-        engine.setNotice(`${engine.product(product)?.name ?? product} ${version} is installed. Automatic updates for it are off so it stays; turn them back on under More.`);
+        notes.push(`${label} ${version} is installed. Automatic updates for it are off so it stays; turn them back on under More.`);
       }
     }
+    if (notes.length) engine.setNotice(notes.join(" "), "info");
   }),
 );
 
@@ -146,7 +155,7 @@ engine.command("ext.install", (arg) =>
       await extRefresh();
     }
     const label = done.source === "sideload" ? " It was installed from a file, not the catalogue." : "";
-    engine.setNotice(`${done.name} ${done.version} is installed; it is used the next time the app starts.${label}`);
+    engine.setNotice(`${done.name} ${done.version} is installed; ${engine.name(done.product)} uses it the next time it starts.${label}`, "info");
   }),
 );
 
@@ -189,6 +198,8 @@ engine.command("self.install", async () => {
     engine.setSelf(e instanceof Error ? e.message : String(e), false);
   }
 });
+
+engine.command("web.open", (arg) => guard(() => bridge.openWeb(String(arg))));
 
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");

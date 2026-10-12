@@ -1134,6 +1134,10 @@ html:not([data-updates="0"])[data-updates] .ups-all {
   color: var(--fault);
 }
 
+.pane-notice[data-tone="info"] {
+  color: var(--ink-soft);
+}
+
 .field {
   inline-size: 100%;
   block-size: var(--control-h-compact);
