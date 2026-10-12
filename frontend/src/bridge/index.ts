@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, FontsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -29,6 +29,10 @@ export interface Bridge {
   fileOpen(path: string): Promise<string>;
   fileVersions(path: string, action?: "save" | "revert", version?: string): Promise<FileVersion[]>;
   storage(): Promise<StorageView>;
+  media(): Promise<MediaView>;
+  mediaSave(id: string, useTemplate: boolean): Promise<{ copied_to?: string; opened_with?: string | null }>;
+  mediaRemove(id: string): Promise<void>;
+  mediaThumb(url: string): Promise<string>;
   fonts(): Promise<FontsView>;
   fontInstall(id: string, style?: string): Promise<void>;
   fontPick(): Promise<string | null>;

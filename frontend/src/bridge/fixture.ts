@@ -1,7 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentClient, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -46,6 +46,20 @@ const fontIndex: FontFamilyEntry[] = [
   fam("space-grotesk", "Space Grotesk", "Florian Karsten", "display", [["Regular", 400], ["Bold", 700]]),
 ];
 const fontsIn: InstalledFont[] = [];
+const mediaItem = (id: string, title: string, kind: MediaItem["kind"], licence: string, thumbnail: string | null, product: string | null = null): MediaItem => ({
+  id, title, kind, product, creator: "Sample creator", licence, source_url: `https://media.example/${id}`, file: `${id}${product === "formcut" ? ".fc" : product === "formwav" ? ".fmw" : ".bin"}`, bytes: 2_400_000, thumbnail, tags: [kind],
+});
+const mediaIndex: MediaItem[] = [
+  mediaItem("orange-render", "Orange swirl render", "image", "CC0-1.0", "/media/formvis.webp"),
+  mediaItem("dark-timeline", "Timeline at night", "image", "CC-BY-4.0", "/media/formcut.webp"),
+  mediaItem("wave-session", "Waveform session", "image", "CC-BY-SA-4.0", "/media/formwav.webp"),
+  mediaItem("rain-roof", "Rain on a roof", "audio", "CC0-1.0", null),
+  mediaItem("city-drone", "City from above", "video", "CC-BY-4.0", null),
+  mediaItem("social-cut", "Social cut 9:16", "template", "CC0-1.0", "/media/formcut.webp", "formcut"),
+  mediaItem("podcast-mix", "Podcast mix", "template", "CC0-1.0", "/media/formwav.webp", "formwav"),
+];
+const savedMedia: SavedMedia[] = [];
+const credit = (m: MediaItem) => (m.licence === "CC0-1.0" ? `${m.title} by ${m.creator}, public domain (CC0 1.0), ${m.source_url}` : `${m.title} by ${m.creator}, licensed ${m.licence}, ${m.source_url}`);
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
 const agentsFor = (product: string, channel: Channel): AgentClient[] =>
@@ -189,6 +203,20 @@ export const fixtureBridge: Bridge = {
     formportal_bytes: 231_000_000 * installed.size + 41_129_000,
     folders: folders.map((f) => ({ ...f, bytes: sampleFiles(f.path).reduce((n, x) => n + x.bytes, 0) })),
   }),
+  media: async () => ({ index: { items: mediaIndex }, credits: mediaIndex.map(credit), index_error: null, saved: savedMedia.map((s) => ({ ...s })), library: "/home/you/Documents/Form/Library" }),
+  mediaSave: async (id, useTemplate) => {
+    await pause(250);
+    const m = mediaIndex.find((x) => x.id === id);
+    if (!m) throw new Error(`${id} is not in the media index`);
+    if (!savedMedia.some((s) => s.id === id)) savedMedia.push({ id, title: m.title, kind: m.kind, creator: m.creator, licence: m.licence, source_url: m.source_url, file: `/home/you/Documents/Form/Library/${m.kind}/${m.file}`, credit: credit(m) });
+    if (useTemplate) return { copied_to: `/home/you/Documents/Form/${m.title}${m.file.slice(m.file.lastIndexOf("."))}`, opened_with: m.product && installed.has(key(m.product, "stable")) ? m.product : null };
+    return {};
+  },
+  mediaRemove: async (id) => {
+    const at = savedMedia.findIndex((s) => s.id === id);
+    if (at >= 0) savedMedia.splice(at, 1);
+  },
+  mediaThumb: async (url) => url,
   fonts: async () => ({ index: { families: fontIndex }, index_error: null, installed: fontsIn.map((f) => ({ ...f })), folder: "~/.local/share/fonts/FormPortal" }),
   fontInstall: async (id, style) => {
     await pause(250);

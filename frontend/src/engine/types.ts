@@ -81,6 +81,39 @@ export interface SelfUpdate {
   notes: string | null;
 }
 
+export interface MediaItem {
+  id: string;
+  title: string;
+  kind: "image" | "video" | "audio" | "template";
+  product: string | null;
+  creator: string;
+  licence: string;
+  source_url: string;
+  file: string;
+  bytes: number;
+  thumbnail: string | null;
+  tags: string[];
+}
+
+export interface SavedMedia {
+  id: string;
+  title: string;
+  kind: string;
+  creator: string;
+  licence: string;
+  source_url: string;
+  file: string;
+  credit: string;
+}
+
+export interface MediaView {
+  index: { items: MediaItem[] } | null;
+  credits: string[];
+  index_error: string | null;
+  saved: SavedMedia[];
+  library: string;
+}
+
 export interface FontStyleEntry {
   style: string;
   weight: number;

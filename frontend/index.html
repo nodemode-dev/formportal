@@ -29,6 +29,7 @@
           </li>
           <li><button class="nav-item" type="button" data-route-to="files"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="nav-label">Files</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="fonts"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19L9.5 5h1L16 19M6.2 14h7.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 12.5a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zm2.2 0V19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="nav-label">Fonts</span></button></li>
+          <li><button class="nav-item" type="button" data-route-to="stock"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 16.5l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="15.5" cy="9.5" r="1.5" fill="currentColor"/></svg><span class="nav-label">Stock &amp; templates</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="nav-label">Extensions</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="learn">%icon:book:ic-m%<span class="nav-label">Learn</span></button></li>
         </ul>
@@ -218,6 +219,47 @@
                       <summary class="icon-btn" aria-label="Styles"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
                       <div class="drop-panel menu" data-font-styles></div>
                     </details>
+                  </div>
+                </li>
+              </template>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="stock" data-title="Stock &amp; templates" data-kind="all" aria-label="Stock and templates">
+            <div class="page">
+              <div class="toolbar">
+                <label class="search search-local">
+                  <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <input type="search" data-media-query placeholder="Search images, video, audio and templates" aria-label="Search stock and templates" autocomplete="off" spellcheck="false" />
+                </label>
+                <div class="seg" role="group" aria-label="Kind">
+                  <button class="seg-item" type="button" data-media-kind="all" aria-pressed="true">All</button>
+                  <button class="seg-item" type="button" data-media-kind="image" aria-pressed="false">Images</button>
+                  <button class="seg-item" type="button" data-media-kind="video" aria-pressed="false">Video</button>
+                  <button class="seg-item" type="button" data-media-kind="audio" aria-pressed="false">Audio</button>
+                  <button class="seg-item" type="button" data-media-kind="template" aria-pressed="false">Templates</button>
+                </div>
+              </div>
+              <p class="fine fonts-note">Openly licensed (CC0, CC BY, CC BY-SA and open software licences), free, no account. Saved items go to your Library with their credit line; a template is copied into your projects folder and opens in its app.</p>
+              <section class="block">
+                <ul class="media-grid" data-media-grid></ul>
+                <p class="empty" data-media-error hidden></p>
+              </section>
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Saved in your Library</h2><span class="block-note mono" data-media-library></span></header>
+                <ul class="list" data-media-saved></ul>
+                <p class="empty" data-media-saved-empty>Nothing saved yet.</p>
+              </section>
+              <template id="media-card">
+                <li class="media">
+                  <div class="media-shot" data-field="shot"><span class="media-kind" data-field="kind"></span></div>
+                  <div class="media-text">
+                    <h3 class="row-name-text" data-field="title"></h3>
+                    <p class="row-sub" data-field="by"></p>
+                  </div>
+                  <div class="media-acts">
+                    <button class="btn btn-primary" type="button" data-media-act="save">Save</button>
+                    <button class="btn btn-primary" type="button" data-media-act="use">Use template</button>
                   </div>
                 </li>
               </template>

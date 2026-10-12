@@ -15,13 +15,14 @@ import { theme } from "./extensions/theme/index.ts";
 import { agents } from "./extensions/agents/index.ts";
 import { files } from "./extensions/files/index.ts";
 import { fonts } from "./extensions/fonts/index.ts";
+import { stock } from "./extensions/stock/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -272,6 +273,56 @@ engine.command("file.versions", (arg) =>
       engine.setNotice(`${name} is back to the version you chose; the one before is kept too.`, "info");
       await engine.dispatch("files.scan");
     }
+  }),
+);
+
+engine.command("media.load", () =>
+  guard(async () => {
+    engine.emit("media", { view: await bridge.media() });
+  }),
+);
+
+engine.command("media.thumb", async (arg) => {
+  const { url, into } = arg as { url: string; into: HTMLElement | null };
+  try {
+    const src = await bridge.mediaThumb(url);
+    if (into) into.style.backgroundImage = `url("${src}")`;
+    into?.toggleAttribute("data-has-shot", true);
+  } catch {
+    into?.toggleAttribute("data-no-shot", true);
+  }
+});
+
+engine.command("media.save", (arg) =>
+  guard(async () => {
+    const { id, title, use } = arg as { id: string; title: string; use?: boolean };
+    let done;
+    try {
+      done = await bridge.mediaSave(id, Boolean(use));
+    } finally {
+      await engine.dispatch("media.load");
+    }
+    if (use) {
+      const where = done?.copied_to ?? "";
+      engine.setNotice(
+        done?.opened_with ? `${title} is copied to ${where} and opening in ${engine.name(done.opened_with)}.` : `${title} is copied to ${where}. Its app is not installed, so it did not open.`,
+        "info",
+      );
+    } else {
+      engine.setNotice(`${title} is saved in your Library with its credit line.`, "info");
+    }
+  }),
+);
+
+engine.command("media.remove", (arg) =>
+  guard(async () => {
+    const { id, title } = arg as { id: string; title: string };
+    try {
+      await bridge.mediaRemove(id);
+    } finally {
+      await engine.dispatch("media.load");
+    }
+    engine.setNotice(`${title} is removed from your Library.`, "info");
   }),
 );
 
