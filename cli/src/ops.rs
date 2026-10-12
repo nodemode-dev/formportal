@@ -333,6 +333,85 @@ pub fn media_remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     Ok(json!({ "removed": ctx.portal.remove_media(&id)? }))
 }
 
+fn learn_source(ctx: &Ctx, args: &Value) -> String {
+    text(args, "learn_source").or_else(|| std::env::var("FORMPORTAL_LEARN").ok().filter(|s| !s.trim().is_empty())).unwrap_or_else(|| {
+        let base = text(args, "source").unwrap_or_else(|| ctx.source.clone());
+        match base.rsplit_once('/') {
+            Some((dir, _)) => format!("{dir}/learn.json"),
+            None => "learn.json".to_string(),
+        }
+    })
+}
+
+fn tutorials(ctx: &Ctx, args: &Value) -> (Vec<formportal_core::learn::Tutorial>, Option<String>) {
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let mut list = formportal_core::learn::bundled().tutorials;
+    let error = match ctx.portal.learn_index(&learn_source(ctx, args), allow) {
+        Ok(i) => {
+            let own: Vec<String> = list.iter().map(|t| t.id.clone()).collect();
+            list.extend(i.tutorials.into_iter().filter(|t| t.product != "formportal" && !own.contains(&t.id)));
+            None
+        }
+        Err(e) => Some(e.to_string()),
+    };
+    (list, error)
+}
+
+pub fn learn(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let (list, error) = tutorials(ctx, args);
+    let progress = ctx.portal.learn_progress()?;
+    let words: Vec<String> = text(args, "query").map(|q| q.to_lowercase().split_whitespace().map(str::to_string).collect()).unwrap_or_default();
+    let only = text(args, "product");
+    let items: Vec<Value> = list
+        .iter()
+        .filter(|t| only.as_ref().map(|p| &t.product == p).unwrap_or(true))
+        .filter(|t| {
+            let hay = format!("{} {} {} {}", t.title, t.summary, t.product, t.level).to_lowercase();
+            words.iter().all(|w| hay.contains(w.as_str()))
+        })
+        .map(|t| {
+            let done: Vec<usize> = progress.done.get(&t.id).map(|s| s.iter().map(|n| n + 1).collect()).unwrap_or_default();
+            let mut v = serde_json::to_value(t).unwrap_or(Value::Null);
+            if let Some(o) = v.as_object_mut() {
+                o.insert("done_steps".to_string(), json!(done));
+                o.insert("finished".to_string(), json!(done.len() == t.steps.len()));
+            }
+            v
+        })
+        .collect();
+    Ok(json!({ "index_error": error, "tutorials": items }))
+}
+
+pub fn learn_progress(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give the tutorial's id"))?;
+    let (list, _) = tutorials(ctx, args);
+    let tutorial = list.iter().find(|t| t.id == id).ok_or_else(|| fail(format!("there is no tutorial {id}")))?;
+    let progress = if flag(args, "reset").unwrap_or(false) {
+        ctx.portal.learn_reset(&id)?
+    } else {
+        let step = args.get("step").and_then(|v| v.as_u64().or_else(|| v.as_str().and_then(|s| s.parse().ok()))).ok_or_else(|| fail("give the step number (1 is the first), or reset true"))? as usize;
+        if step == 0 {
+            return Err(fail("steps are numbered from 1"));
+        }
+        ctx.portal.learn_mark(tutorial, step - 1, flag(args, "done").unwrap_or(true))?
+    };
+    let done: Vec<usize> = progress.done.get(&id).map(|s| s.iter().map(|n| n + 1).collect()).unwrap_or_default();
+    Ok(json!({ "id": id, "title": tutorial.title, "done_steps": done, "steps": tutorial.steps.len(), "finished": done.len() == tutorial.steps.len() }))
+}
+
+pub fn ask(ctx: &Ctx, args: &Value, command: std::path::PathBuf, prefix: Vec<String>, tools: Vec<String>) -> Result<Value, CoreError> {
+    let question = text(args, "question").or_else(|| text(args, "product")).ok_or_else(|| fail("give the question"))?;
+    let agents = formportal_core::assistant::assistant_agents();
+    let client = text(args, "client").or_else(|| agents.iter().find(|a| a.path.is_some()).map(|a| a.client.clone())).ok_or_else(|| fail("neither Claude Code nor Codex is installed on this computer (neither is on PATH)"))?;
+    let mut env = vec![("FORMPORTAL_ROOT".to_string(), ctx.portal.root().to_string_lossy().to_string()), ("FORMPORTAL_CATALOG".to_string(), ctx.source.clone())];
+    if ctx.allow_unsigned {
+        env.push(("FORMPORTAL_ALLOW_UNSIGNED".to_string(), "1".to_string()));
+    }
+    let server = formportal_core::assistant::Server { command, args: prefix, env, tools };
+    let answer = formportal_core::assistant::ask_agent(&client, &question, &server, &ctx.portal.root().join("assistant"))?;
+    Ok(json!({ "client": client, "answer": answer }))
+}
+
 pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;

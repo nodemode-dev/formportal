@@ -1,5 +1,4 @@
-mod mcp;
-mod ops;
+use formportal_cli::{mcp, ops};
 
 use std::io::Write;
 use std::process::ExitCode;
@@ -37,7 +36,11 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   media-save ID                   save an item into your Library with its credit line
   template-use ID [--folder DIR]  copy a template into your projects folder and open it
   media-remove ID
-  policy                          the organisation's policy, if this computer has one
+  learn [PRODUCT] [--query Q] [--learn-source S]   tutorials and the steps you have finished
+  learn-step ID --step N [--done false]   mark a step finished (or not); steps count from 1
+  learn-reset ID                  clear a tutorial's progress
+  ask \"QUESTION\" [--client claude|codex]   ask your own agent about your Form apps; it can only read
+  policy                         the organisation's policy, if this computer has one
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
   disconnect <product> [--channel C] [--clients ...]               take it out again
@@ -45,7 +48,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   mirror --to DIR --base-url URL [--platforms macos,windows,linux] [--channels stable,beta] [--history]
                                   copy the catalogue and its files for an internal server;
                                   FORMPORTAL_MIRROR_KEY (base64 Ed25519 seed) signs it
-  mcp                            serve the MCP tools on stdin and stdout
+  mcp [--read-only]              serve the MCP tools on stdin and stdout (only the reading tools with --read-only)
 
   C is stable (default), beta or nightly. S is an https catalogue or a local file.
   FORMPORTAL_ROOT moves the install folder; FORMPORTAL_CATALOG sets the default source.";
@@ -86,7 +89,7 @@ fn main() -> ExitCode {
         return ExitCode::from(2);
     };
     if cmd == "mcp" {
-        return match mcp::serve() {
+        return match mcp::serve_with(all.iter().any(|a| a == "--read-only")) {
             Ok(()) => ExitCode::SUCCESS,
             Err(e) => {
                 eprintln!("formportal mcp: {e}");
@@ -180,6 +183,19 @@ fn main() -> ExitCode {
             ops::media_save(&ctx, &a, &mut progress)
         }
         "media-remove" => ops::media_remove(&ctx, &args),
+        "learn" => ops::learn(&ctx, &args),
+        "learn-step" => ops::learn_progress(&ctx, &args),
+        "learn-reset" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                o.insert("reset".to_string(), json!(true));
+            }
+            ops::learn_progress(&ctx, &a)
+        }
+        "ask" => match std::env::current_exe() {
+            Ok(exe) => ops::ask(&ctx, &args, exe, vec!["mcp".to_string(), "--read-only".to_string()], mcp::read_only_tools()),
+            Err(e) => Err(formportal_core::CoreError::Io(e)),
+        },
         "app-agents" => ops::app_agents(&ctx, &args),
         "connect" => ops::connect_agents(&ctx, &args),
         "disconnect" => {

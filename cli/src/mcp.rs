@@ -134,6 +134,14 @@ fn tools() -> Value {
           "description": "Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first.",
           "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": true, "openWorldHint": false } },
+        { "name": "learn", "title": "Tutorials and progress",
+          "description": "Tutorials: FormPortal's own six (installing, betas, going back, files, fonts and stock, agents) plus the Form apps' tutorials from the signed tutorial index (learn.json beside the catalogue, or learn_source or FORMPORTAL_LEARN). Each has its steps (some name the FormPortal screen they happen on), minutes, level, and the steps this person has finished (numbered from 1), kept on this computer only. product and query filter.",
+          "inputSchema": { "type": "object", "properties": props(json!({ "product": { "type": "string" }, "query": { "type": "string" }, "learn_source": { "type": "string" } })) },
+          "annotations": { "readOnlyHint": true, "openWorldHint": true } },
+        { "name": "learn_progress", "title": "Mark a tutorial step",
+          "description": "Marks a tutorial step finished (done true, the default) or not (done false), steps numbered from 1; or with reset true clears the tutorial's progress. Progress is kept on this computer only.",
+          "inputSchema": { "type": "object", "properties": props(json!({ "id": { "type": "string" }, "step": { "type": "integer", "minimum": 1 }, "done": { "type": "boolean" }, "reset": { "type": "boolean" }, "learn_source": { "type": "string" } })), "required": ["id"] },
+          "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "app_agents", "title": "An app's MCP server",
           "description": "Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed.",
           "inputSchema": only_target(true),
@@ -193,12 +201,26 @@ fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
         "media" => ops::media(ctx, args),
         "media_save" => ops::media_save(ctx, args, &mut |_, _| {}),
         "media_remove" => ops::media_remove(ctx, args),
-        other => return Err(format!("no tool named {other:?}; tools/list has the thirty tools")),
+        "learn" => ops::learn(ctx, args),
+        "learn_progress" => ops::learn_progress(ctx, args),
+        other => return Err(format!("no tool named {other:?}; tools/list has the thirty-two tools")),
     };
     out.map_err(|e| e.to_string())
 }
 
-fn answer(ctx: &Ctx, msg: &Value) -> Option<Value> {
+pub fn read_only_tools() -> Vec<String> {
+    tools()
+        .as_array()
+        .map(|list| {
+            list.iter()
+                .filter(|t| t.pointer("/annotations/readOnlyHint").and_then(Value::as_bool) == Some(true))
+                .filter_map(|t| t.get("name").and_then(Value::as_str).map(str::to_string))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn answer(ctx: &Ctx, msg: &Value, read_only: bool) -> Option<Value> {
     let id = msg.get("id").cloned();
     let method = msg.get("method").and_then(Value::as_str).unwrap_or_default();
     let params = msg.get("params").cloned().unwrap_or(Value::Null);
@@ -215,11 +237,18 @@ fn answer(ctx: &Ctx, msg: &Value) -> Option<Value> {
             })
         }
         "ping" => json!({}),
+        "tools/list" if read_only => {
+            let allowed = read_only_tools();
+            let list: Vec<Value> = tools().as_array().cloned().unwrap_or_default().into_iter().filter(|t| t.get("name").and_then(Value::as_str).map(|n| allowed.iter().any(|a| a == n)).unwrap_or(false)).collect();
+            json!({ "tools": list })
+        }
         "tools/list" => json!({ "tools": tools() }),
         "tools/call" => {
             let name = params.get("name").and_then(Value::as_str).unwrap_or_default();
             let args = params.get("arguments").cloned().unwrap_or_else(|| json!({}));
-            match call(ctx, name, &args) {
+            let refused = read_only && !read_only_tools().iter().any(|t| t == name);
+            let outcome = if refused { Err(format!("{name} changes this computer, and this FormPortal server only reads; use FormPortal itself to do it")) } else { call(ctx, name, &args) };
+            match outcome {
                 Ok(v) => json!({ "content": [{ "type": "text", "text": serde_json::to_string_pretty(&v).unwrap_or_default() }], "structuredContent": v, "isError": false }),
                 Err(e) => json!({ "content": [{ "type": "text", "text": e }], "isError": true }),
             }
@@ -232,6 +261,10 @@ fn answer(ctx: &Ctx, msg: &Value) -> Option<Value> {
 }
 
 pub fn serve() -> io::Result<()> {
+    serve_with(false)
+}
+
+pub fn serve_with(read_only: bool) -> io::Result<()> {
     let ctx = Ctx::from_env();
     let stdin = io::stdin();
     let mut out = io::stdout().lock();
@@ -242,10 +275,10 @@ pub fn serve() -> io::Result<()> {
         }
         let reply = match serde_json::from_str::<Value>(&line) {
             Ok(Value::Array(batch)) => {
-                let replies: Vec<Value> = batch.iter().filter_map(|m| answer(&ctx, m)).collect();
+                let replies: Vec<Value> = batch.iter().filter_map(|m| answer(&ctx, m, read_only)).collect();
                 if replies.is_empty() { None } else { Some(Value::Array(replies)) }
             }
-            Ok(msg) => answer(&ctx, &msg),
+            Ok(msg) => answer(&ctx, &msg, read_only),
             Err(_) => Some(json!({ "jsonrpc": "2.0", "id": null, "error": { "code": -32700, "message": "Parse error" } })),
         };
         if let Some(reply) = reply {

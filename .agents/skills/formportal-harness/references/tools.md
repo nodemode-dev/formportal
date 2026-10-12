@@ -37,6 +37,8 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `media` | no | The open media index (media.json beside the catalogue, or media_source or FORMPORTAL_MEDIA, signed like the catalogue): images, video, audio and Form app templates, each with creator, licence (CC0, CC BY, CC BY-SA, Apache, MIT, OFL), source page, credit line and whether it is saved; plus everything saved in the person's Library. query and kind filter. |
 | `media_save` | yes | Saves an item from the media index into the person's Library (Documents/Form/Library by default, or FORMPORTAL_LIBRARY), checking its SHA-256 and writing its credit line beside it and into credits.json. With use true on a template, also copies it into the first projects folder (or folder) and opens it in its app. Confirm first. |
 | `media_remove` | yes, destructive | Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first. |
+| `learn` | no | Tutorials: FormPortal's own six (installing, betas, going back, files, fonts and stock, agents) plus the Form apps' tutorials from the signed tutorial index (learn.json beside the catalogue, or learn_source or FORMPORTAL_LEARN). Each has its steps (some name the FormPortal screen they happen on), minutes, level, and the steps this person has finished (numbered from 1), kept on this computer only. product and query filter. |
+| `learn_progress` | yes | Marks a tutorial step finished (done true, the default) or not (done false), steps numbered from 1; or with reset true clears the tutorial's progress. Progress is kept on this computer only. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
 | `connect_agents` | yes | Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
@@ -198,6 +200,24 @@ No parameters.
 ### media_remove
 
 - `id`: string. 
+
+### learn
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `learn_source` (optional): string. 
+- `product` (optional): string. 
+- `query` (optional): string. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+
+### learn_progress
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `done` (optional): boolean. 
+- `id`: string. 
+- `learn_source` (optional): string. 
+- `reset` (optional): boolean. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+- `step` (optional): integer. 
 
 ### app_agents
 
