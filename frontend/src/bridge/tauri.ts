@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -114,4 +114,6 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke<null>("open_web", { url });
   },
   policy: () => tauri().core.invoke<PolicyView | null>("policy"),
+  appAgents: (product, channel) => tauri().core.invoke<AgentsView>("app_agents", { product, channel }),
+  connectAgents: async (product, channel, disconnect) => (await tauri().core.invoke<{ clients: AgentClient[] }>("connect_agents", { product, channel, disconnect })).clients,
 };

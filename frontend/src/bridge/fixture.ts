@@ -1,7 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -18,6 +18,10 @@ const catalog = apps as unknown as Catalog;
 const installed = new Map<string, InstallRecord>();
 const pause = (ms: number) => new Promise<void>((done) => window.setTimeout(done, ms));
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
+const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
+const linked = new Set<string>();
+const agentsFor = (product: string, channel: Channel): AgentClient[] =>
+  (["claude", "codex", "cursor"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
 
 for (const seed of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",")) {
   const [product, version] = seed.split(":");
@@ -111,6 +115,19 @@ export const fixtureBridge: Bridge = {
   stillOpen: async (product) => ((new URLSearchParams(window.location.search).get("open") ?? "").split(",").includes(product) ? [4242] : []),
   openWeb: async (url) => {
     window.open(url, "_blank", "noopener");
+  },
+  appAgents: async (product, channel) => {
+    const surface = installed.has(key(product, channel)) && (new URLSearchParams(window.location.search).get("agents") ?? "").split(",").includes(product);
+    return { surface, server_name: channel === "stable" ? product : `${product}-${channel}`, clients: surface ? agentsFor(product, channel) : [] };
+  },
+  connectAgents: async (product, channel, disconnect) => {
+    await pause(300);
+    for (const client of ["claude", "codex", "cursor"]) {
+      const id = `${key(product, channel)}:${client}`;
+      if (disconnect) linked.delete(id);
+      else linked.add(id);
+    }
+    return agentsFor(product, channel);
   },
   policy: async () =>
     new URLSearchParams(window.location.search).get("policy") === "locked"

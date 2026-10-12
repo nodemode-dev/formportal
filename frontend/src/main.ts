@@ -12,13 +12,14 @@ import { notices } from "./extensions/notices/index.ts";
 import { prefs } from "./extensions/prefs/index.ts";
 import { search } from "./extensions/search/index.ts";
 import { theme } from "./extensions/theme/index.ts";
+import { agents } from "./extensions/agents/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -111,6 +112,10 @@ engine.command("app.install", (arg) =>
       }
     }
     if (!notes.length) notes.push(`${label}${channel === "stable" ? "" : ` ${channel}`} ${installed} is installed.`);
+    const view = await bridge.appAgents(product, channel).catch(() => null);
+    if (view?.surface && !view.clients.some((c) => c.state === "connected")) {
+      notes.push(`It has its own MCP server: connect it to Claude Code, Codex and Cursor from its page.`);
+    }
     engine.setNotice(notes.join(" "), "info");
   }),
 );
@@ -151,9 +156,6 @@ engine.command("link.open", (arg) => {
     void engine.dispatch("route.go", head);
   }
 });
-
-void engine.dispatch("catalog.load");
-bridge.onLink((link) => void engine.dispatch("link.open", link));
 
 const extRefresh = async () => {
   const view = await bridge.extensions();
@@ -215,9 +217,40 @@ engine.command("self.install", async () => {
 
 engine.command("web.open", (arg) => guard(() => bridge.openWeb(String(arg))));
 
+engine.command("agents.check", async (arg) => {
+  const product = String(arg);
+  try {
+    engine.emit("agents", { product, view: await bridge.appAgents(product, "stable") });
+  } catch (e) {
+    engine.setNotice(e instanceof Error ? e.message : String(e));
+  }
+});
+
+engine.command("agents.connect", (arg) =>
+  guard(async () => {
+    const { product, disconnect } = arg as { product: string; disconnect: boolean };
+    try {
+      const clients = await bridge.connectAgents(product, "stable", disconnect);
+      engine.emit("agents", { product, view: { surface: true, server_name: product, clients } });
+      const done = clients.filter((c) => c.state === "connected").map((c) => c.label);
+      engine.setNotice(
+        disconnect
+          ? `${engine.name(product)} was taken out of Claude Code, Codex and Cursor.`
+          : `${engine.name(product)} is connected to ${done.join(", ") || "no client"}. Restart the client, or reload its MCP servers, to see its tools.`,
+        "info",
+      );
+    } finally {
+      await engine.dispatch("agents.check", product);
+    }
+  }),
+);
+
 document.querySelectorAll<HTMLButtonElement>("[data-retry]").forEach((button) => button.addEventListener("click", () => void engine.dispatch("catalog.load")));
 
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");
   void engine.dispatch("ext.install", { path });
 });
+
+void engine.dispatch("catalog.load");
+bridge.onLink((link) => void engine.dispatch("link.open", link));

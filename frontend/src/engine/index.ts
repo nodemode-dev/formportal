@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
+import type { AgentsView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -12,6 +12,7 @@ export interface EngineEvents {
   prefs: { prefs: Preferences };
   self: { status: string; installable: boolean };
   policy: { policy: PolicyView | null };
+  agents: { product: string; view: AgentsView };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true };

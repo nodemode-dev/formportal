@@ -81,6 +81,19 @@ export interface SelfUpdate {
   notes: string | null;
 }
 
+export interface AgentClient {
+  client: "claude" | "codex" | "cursor";
+  label: string;
+  state: "connected" | "not-connected" | "taken" | "no-client";
+  note: string | null;
+}
+
+export interface AgentsView {
+  surface: boolean;
+  server_name: string;
+  clients: AgentClient[];
+}
+
 export interface PolicyView {
   managed_by: string | null;
   system: boolean;

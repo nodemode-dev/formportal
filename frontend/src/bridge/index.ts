@@ -1,4 +1,4 @@
-import type { Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -22,6 +22,8 @@ export interface Bridge {
   stillOpen(product: string, channel: Channel): Promise<number[]>;
   openWeb(url: string): Promise<void>;
   policy(): Promise<PolicyView | null>;
+  appAgents(product: string, channel: Channel): Promise<AgentsView>;
+  connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
   preferences(): Promise<Preferences>;
   setPreferences(prefs: Preferences): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
