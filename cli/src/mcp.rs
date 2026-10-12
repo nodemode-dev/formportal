@@ -111,7 +111,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": {} },
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "fonts", "title": "Fonts",
-          "description": "The open font index (families with foundry, licence, category and styles, each marked installed or not) read from fonts.json beside the catalogue (or fonts_source, FORMPORTAL_FONTS), signed like the catalogue; plus every font FormPortal installed, from the index or the person's own files, and the per-user font folder. query filters by family, foundry or category.",
+          "description": "The open font index (families with foundry, licence, category and styles, each marked installed or not) read from fonts.json beside the catalogue (or fonts_source, FORMPORTAL_FONTS), signed like the catalogue; plus every font FormPortal installed, from the index or the person's own files, the per-user font folder, and updates: installed styles whose file in the index has changed (font_install with the id and style installs the new one). query filters by family, foundry or category.",
           "inputSchema": { "type": "object", "properties": props(json!({ "query": { "type": "string" }, "fonts_source": { "type": "string" } })) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "font_install", "title": "Install a font",

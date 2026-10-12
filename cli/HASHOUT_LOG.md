@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.42.0
-Last updated: 2026-10-12 · repair, later, open-url; thirty-three tools
+Current build version: v0.43.0
+Last updated: 2026-10-12 · fonts reports updates
+
+## v0.43.0 · fonts reports updates {#font-updates}
+
+### updates in the fonts result
+- refers-to: src/ops.rs :: fonts · src/mcp.rs :: fonts description
+- kind: explainer
+- logged: v0.43.0 · 2026-10-12
+
+`fonts` adds `updates` when the index was read; the tool's description says how to apply them. No new tool: `font_install` already does it.
 
 ## v0.42.0 · repair, later, open-url {#repair}
 
