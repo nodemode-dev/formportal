@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -114,6 +114,17 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke<null>("open_web", { url });
   },
   policy: () => tauri().core.invoke<PolicyView | null>("policy"),
+  filesScan: (query) => tauri().core.invoke<FilesScan>("files_scan", { query: query ?? null }),
+  folderPick: () => tauri().core.invoke<string | null>("folder_pick"),
+  folderAdd: async (path, keepVersions, create) => {
+    await tauri().core.invoke("folder_add", { path, keepVersions, create });
+  },
+  folderRemove: async (path) => {
+    await tauri().core.invoke("folder_remove", { path });
+  },
+  fileOpen: (path) => tauri().core.invoke<string>("file_open", { path }),
+  fileVersions: (path, action, version) => tauri().core.invoke<FileVersion[]>("file_versions", { path, action: action ?? null, version: version ?? null }),
+  storage: () => tauri().core.invoke<StorageView>("storage"),
   appAgents: (product, channel) => tauri().core.invoke<AgentsView>("app_agents", { product, channel }),
   connectAgents: async (product, channel, disconnect) => (await tauri().core.invoke<{ clients: AgentClient[] }>("connect_agents", { product, channel, disconnect })).clients,
 };

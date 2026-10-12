@@ -81,6 +81,43 @@ export interface SelfUpdate {
   notes: string | null;
 }
 
+export interface ProjectFile {
+  path: string;
+  name: string;
+  folder: string;
+  product: string;
+  bytes: number;
+  modified: number;
+  versions: number;
+}
+
+export interface FolderView {
+  path: string;
+  keep_versions: boolean;
+  exists: boolean;
+  files: number;
+  bytes: number;
+}
+
+export interface FilesScan {
+  scan: { folders: FolderView[]; files: ProjectFile[]; truncated: boolean; new_versions: number };
+  suggested: string;
+}
+
+export interface FileVersion {
+  id: string;
+  at: number;
+  size: number;
+  sha256: string;
+  reason: string;
+}
+
+export interface StorageView {
+  formportal: { what: string; path: string; bytes: number }[];
+  formportal_bytes: number;
+  folders: FolderView[];
+}
+
 export interface AgentClient {
   client: "claude" | "codex" | "cursor";
   label: string;

@@ -27,6 +27,7 @@
               <li><button class="nav-item nav-item-sub" type="button" data-route-to="beta"><span class="nav-label">Beta</span></button></li>
             </ul>
           </li>
+          <li><button class="nav-item" type="button" data-route-to="files"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="nav-label">Files</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="nav-label">Extensions</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="learn">%icon:book:ic-m%<span class="nav-label">Learn</span></button></li>
         </ul>
@@ -120,6 +121,61 @@
               <ul class="list">
                 <!-- @portal:beta -->
               </ul>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="files" data-title="Files" aria-label="Files">
+            <div class="page">
+              <div class="toolbar">
+                <label class="search search-local">
+                  <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <input type="search" data-files-query placeholder="Search your projects" aria-label="Search your projects" autocomplete="off" spellcheck="false" />
+                </label>
+                <p class="toolbar-note">Form projects in folders you choose, on this computer only. FormPortal keeps earlier versions you can go back to.</p>
+              </div>
+
+              <section class="block files-start" data-files-start>
+                <h2 class="block-title">Choose where your projects live</h2>
+                <p class="fine">Pick a folder, or start with the suggested one below. FormPortal lists the FormCut, FormVis and FormWav projects inside it and keeps a version each time one changes.</p>
+                <p class="fine mono files-suggested" data-files-suggested></p>
+                <div class="agent-acts"><button class="btn btn-primary" type="button" data-folder-suggested>Use the suggested folder</button><button class="btn" type="button" data-folder-add>Choose a folder</button></div>
+              </section>
+
+              <section class="block files-main" data-files-main hidden>
+                <header class="block-head"><h2 class="block-title">Recent projects</h2><span class="block-note" data-files-count></span></header>
+                <ul class="list" data-file-list></ul>
+                <p class="empty" data-files-empty hidden>No project matches, or the folders hold none yet.</p>
+              </section>
+
+              <section class="block files-main" data-files-main hidden>
+                <header class="block-head"><h2 class="block-title">Folders</h2><button class="btn" type="button" data-folder-add>Add a folder</button></header>
+                <ul class="list" data-folder-list></ul>
+              </section>
+
+              <section class="block">
+                <header class="block-head"><h2 class="block-title">Storage</h2><span class="block-note" data-storage-total></span></header>
+                <ul class="list" data-storage-list></ul>
+              </section>
+
+              <template id="file-row">
+                <li class="row file">
+                  <span class="tile" aria-hidden="true" data-field="short"></span>
+                  <div class="row-main"><span class="row-name-text" data-field="name"></span><p class="row-sub" data-field="where"></p></div>
+                  <p class="row-state"><span class="state-text" data-field="when"></span><span class="state-ver" data-field="meta"></span></p>
+                  <div class="acts acts-files">
+                    <button class="btn btn-primary" type="button" data-file-act="open">Open</button>
+                    <button class="btn" type="button" data-file-act="versions">Versions</button>
+                  </div>
+                </li>
+              </template>
+              <template id="folder-row">
+                <li class="row folder">
+                  <span class="mark" aria-hidden="true"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+                  <div class="row-main"><span class="row-name-text mono" data-field="path"></span><p class="row-sub" data-field="meta"></p></div>
+                  <p class="row-state"><span class="state-text" data-field="history"></span></p>
+                  <div class="acts acts-files"><button class="btn" type="button" data-folder-remove>Stop listing</button></div>
+                </li>
+              </template>
             </div>
           </section>
 
@@ -253,6 +309,14 @@
           </section>
         </div>
         <button class="icon-btn prefs-close" type="button" data-prefs-close aria-label="Close preferences"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions" data-versions-dialog aria-labelledby="h-versions">
+      <div class="versions-frame">
+        <header class="versions-head"><h2 id="h-versions" class="prefs-title" data-versions-title>Versions</h2><p class="fine mono" data-versions-path></p></header>
+        <ol class="list versions-list" data-versions-list></ol>
+        <footer class="agent-acts"><button class="btn" type="button" data-versions-save>Keep a version now</button><button class="btn" type="button" data-versions-close>Close</button></footer>
       </div>
     </dialog>
 

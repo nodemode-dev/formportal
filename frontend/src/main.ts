@@ -13,13 +13,14 @@ import { prefs } from "./extensions/prefs/index.ts";
 import { search } from "./extensions/search/index.ts";
 import { theme } from "./extensions/theme/index.ts";
 import { agents } from "./extensions/agents/index.ts";
+import { files } from "./extensions/files/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -59,6 +60,7 @@ engine.command("catalog.load", () =>
     const extensions = await bridge.extensions();
     engine.setExtensions(extensions.index, extensions.installed);
     root.setAttribute("data-loaded", "");
+    void engine.dispatch("files.scan");
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
@@ -216,6 +218,61 @@ engine.command("self.install", async () => {
 });
 
 engine.command("web.open", (arg) => guard(() => bridge.openWeb(String(arg))));
+
+let lastQuery = "";
+engine.command("files.scan", (arg) =>
+  guard(async () => {
+    if (typeof arg === "string") lastQuery = arg;
+    engine.emit("files", { result: await bridge.filesScan(lastQuery || undefined) });
+    engine.emit("storage", { view: await bridge.storage() });
+  }),
+);
+
+engine.command("folder.add", (arg) =>
+  guard(async () => {
+    const { path, create } = (arg ?? {}) as { path?: string; create?: boolean };
+    const chosen = path ?? (await bridge.folderPick());
+    if (!chosen) return;
+    await bridge.folderAdd(chosen, true, Boolean(create));
+    engine.setNotice(`FormPortal now lists the Form projects in ${chosen} and keeps their versions.`, "info");
+    await engine.dispatch("files.scan");
+  }),
+);
+
+engine.command("folder.remove", (arg) =>
+  guard(async () => {
+    await bridge.folderRemove(String(arg));
+    engine.setNotice(`FormPortal no longer lists ${String(arg)}. Its files are untouched.`, "info");
+    await engine.dispatch("files.scan");
+  }),
+);
+
+engine.command("file.open", (arg) =>
+  guard(async () => {
+    const { path, product: owner } = arg as { path: string; product?: string };
+    const name = path.split(/[\\/]/).pop();
+    if (owner && ![...engine.installs.values()].some((r) => r.product === owner)) {
+      engine.setNotice(`${engine.name(owner)} is not installed, so ${name} cannot open yet. Install ${engine.name(owner)} from Apps.`);
+      return;
+    }
+    const product = await bridge.fileOpen(path);
+    engine.setNotice(`Opening ${name} in ${engine.name(product)}.`, "info");
+  }),
+);
+
+engine.command("file.versions", (arg) =>
+  guard(async () => {
+    const { path, action, version } = arg as { path: string; action?: "save" | "revert"; version?: string };
+    const list = await bridge.fileVersions(path, action, version);
+    engine.emit("versions", { path, list });
+    const name = path.split(/[\\/]/).pop();
+    if (action === "save") engine.setNotice(`A version of ${name} is kept.`, "info");
+    if (action === "revert") {
+      engine.setNotice(`${name} is back to the version you chose; the one before is kept too.`, "info");
+      await engine.dispatch("files.scan");
+    }
+  }),
+);
 
 engine.command("agents.check", async (arg) => {
   const product = String(arg);

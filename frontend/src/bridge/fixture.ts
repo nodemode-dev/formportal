@@ -1,7 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentClient, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -18,6 +18,21 @@ const catalog = apps as unknown as Catalog;
 const installed = new Map<string, InstallRecord>();
 const pause = (ms: number) => new Promise<void>((done) => window.setTimeout(done, ms));
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
+const SAMPLE = "/home/you/Documents/Form";
+const folders: FolderView[] = new URLSearchParams(window.location.search).has("files") ? [{ path: SAMPLE, keep_versions: true, exists: true, files: 0, bytes: 0 }] : [];
+const day = 86400;
+const stamp = Math.floor(Date.parse("2026-10-12T09:00:00Z") / 1000);
+const sampleFiles = (folder: string): ProjectFile[] => [
+  { path: `${folder}/Trailer.fc`, name: "Trailer.fc", folder, product: "formcut", bytes: 18_400_000, modified: stamp, versions: 4 },
+  { path: `${folder}/Posters/Launch poster.fmv`, name: "Launch poster.fmv", folder, product: "formvis", bytes: 52_300_000, modified: stamp - day, versions: 2 },
+  { path: `${folder}/Audio/Interview mix.fmw`, name: "Interview mix.fmw", folder, product: "formwav", bytes: 9_100_000, modified: stamp - 3 * day, versions: 1 },
+  { path: `${folder}/Cutdowns/Teaser 15s.fc`, name: "Teaser 15s.fc", folder, product: "formcut", bytes: 4_200_000, modified: stamp - 9 * day, versions: 1 },
+];
+const kept = new Map<string, FileVersion[]>();
+const versionsOf = (path: string, count: number): FileVersion[] => {
+  if (!kept.has(path)) kept.set(path, Array.from({ length: count }, (_, i) => ({ id: `${stamp - i * day}-${(i + 1).toString(16).padStart(12, "0")}`, at: stamp - i * day, size: 1000 * (count - i), sha256: "0".repeat(64), reason: i === count - 1 ? "first seen" : "changed since the last version" })));
+  return kept.get(path) ?? [];
+};
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
 const agentsFor = (product: string, channel: Channel): AgentClient[] =>
@@ -116,6 +131,51 @@ export const fixtureBridge: Bridge = {
   openWeb: async (url) => {
     window.open(url, "_blank", "noopener");
   },
+  filesScan: async (query) => {
+    await pause(150);
+    const words = (query ?? "").toLowerCase().split(/\s+/).filter(Boolean);
+    const files = folders.flatMap((f) => sampleFiles(f.path)).filter((f) => words.every((w) => `${f.name} ${f.product}`.toLowerCase().includes(w)));
+    const views = folders.map((f) => ({ ...f, files: sampleFiles(f.path).length, bytes: sampleFiles(f.path).reduce((n, x) => n + x.bytes, 0) }));
+    return { scan: { folders: views, files: files.map((f) => ({ ...f, versions: versionsOf(f.path, f.versions).length })), truncated: false, new_versions: 0 }, suggested: SAMPLE };
+  },
+  folderPick: async () => SAMPLE,
+  folderAdd: async (path, keepVersions) => {
+    if (!path.startsWith("/")) throw new Error(`${path} is not a full path; give the whole path to the folder`);
+    if (!folders.some((f) => f.path === path)) folders.push({ path, keep_versions: keepVersions, exists: true, files: 0, bytes: 0 });
+  },
+  folderRemove: async (path) => {
+    const at = folders.findIndex((f) => f.path === path);
+    if (at < 0) throw new Error(`${path} is not one of FormPortal's folders`);
+    folders.splice(at, 1);
+  },
+  fileOpen: async (path) => {
+    const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
+    if (!file) throw new Error(`${path} does not exist`);
+    if (!installed.has(key(file.product, "stable"))) throw new Error(`${file.product}, which opens ${path.slice(path.lastIndexOf("."))} files, is not installed`);
+    return file.product;
+  },
+  fileVersions: async (path, action, version) => {
+    const list = kept.get(path) ?? versionsOf(path, 1);
+    if (action === "save") list.unshift({ id: `${stamp + 60}-${"a".repeat(12)}`, at: stamp + 60, size: list[0]?.size ?? 0, sha256: "a".repeat(64), reason: "saved by hand" });
+    if (action === "revert") {
+      const target = list.find((v) => v.id === version);
+      if (!target) throw new Error(`${version} is not a version of ${path}`);
+      list.unshift({ ...target, id: `${stamp + 120}-${"b".repeat(12)}`, at: stamp + 120, reason: "went back to an earlier version" });
+    }
+    kept.set(path, list);
+    return [...list];
+  },
+  storage: async () => ({
+    formportal: [
+      { what: "Installed apps", path: "~/.local/share/formportal/apps", bytes: 231_000_000 * installed.size },
+      { what: "Downloads in progress", path: "~/.local/share/formportal/downloads", bytes: 0 },
+      { what: "Extensions", path: "~/.local/share/formportal/extensions", bytes: 120_000 },
+      { what: "File versions", path: "~/.local/share/formportal/history", bytes: 41_000_000 },
+      { what: "Catalogue copy", path: "~/.local/share/formportal/catalog", bytes: 9_000 },
+    ],
+    formportal_bytes: 231_000_000 * installed.size + 41_129_000,
+    folders: folders.map((f) => ({ ...f, bytes: sampleFiles(f.path).reduce((n, x) => n + x.bytes, 0) })),
+  }),
   appAgents: async (product, channel) => {
     const surface = installed.has(key(product, channel)) && (new URLSearchParams(window.location.search).get("agents") ?? "").split(",").includes(product);
     return { surface, server_name: channel === "stable" ? product : `${product}-${channel}`, clients: surface ? agentsFor(product, channel) : [] };

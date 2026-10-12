@@ -1,4 +1,4 @@
-import type { AgentClient, AgentsView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
+import type { AgentClient, AgentsView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -22,6 +22,13 @@ export interface Bridge {
   stillOpen(product: string, channel: Channel): Promise<number[]>;
   openWeb(url: string): Promise<void>;
   policy(): Promise<PolicyView | null>;
+  filesScan(query?: string): Promise<FilesScan>;
+  folderPick(): Promise<string | null>;
+  folderAdd(path: string, keepVersions: boolean, create: boolean): Promise<void>;
+  folderRemove(path: string): Promise<void>;
+  fileOpen(path: string): Promise<string>;
+  fileVersions(path: string, action?: "save" | "revert", version?: string): Promise<FileVersion[]>;
+  storage(): Promise<StorageView>;
   appAgents(product: string, channel: Channel): Promise<AgentsView>;
   connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
   preferences(): Promise<Preferences>;
