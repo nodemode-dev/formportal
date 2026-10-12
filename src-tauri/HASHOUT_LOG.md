@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.37.0
+Current build version: v0.38.0
 Last updated: 2026-10-12 · standalone repository
+
+## v0.38.0 · font commands {#fonts}
+
+### fonts_view, font_install, font_pick, font_add, font_remove
+- refers-to: src/main.rs
+- kind: explainer
+- logged: v0.38.0 · 2026-10-12
+
+Thin calls into the core; the index address is `fonts.json` beside the catalogue the interface uses. `font_pick` uses the dialog plugin's file picker filtered to TTF, OTF and TTC. Compiled on Linux; the pickers were not opened here.
 
 ## v0.37.0 · Files, and a folder picker {#files}
 

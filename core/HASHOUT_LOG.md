@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.37.0
-Last updated: 2026-10-12 · Files, local first
+Current build version: v0.38.0
+Last updated: 2026-10-12 · fonts
+
+## v0.38.0 · fonts {#fonts}
+
+### fonts.rs · a signed open index, per-user installs, the person's own files
+- refers-to: src/fonts.rs :: FontIndex, font_index, install_font, add_own_font, remove_font, font_dir, font_kind
+- kind: decision
+- logged: v0.38.0 · 2026-10-12
+
+The index (`formai-fonts`) is fetched beside the catalogue (or the policy's locked catalogue) and verified with the same keys; a bad signature reads "the font index was refused". Only OFL-1.1, Apache-2.0 and MIT families install. Each style downloads through the ordinary checked `download`, is sniffed for a TrueType, OpenType or collection header (WOFF refused), and is copied into the per-user font folder as `FormPortal-[family]-[style].[ext]`, so FormPortal's files are recognisable and removal touches only them. Linux runs `fc-cache -f` on its folder; Windows adds a per-user registry value with `reg`; macOS needs nothing. The person's own font needs `rights_confirmed`, the same promise Creative Cloud asks for before an upload. `FORMPORTAL_FONTS_DIR` redirects for tests and skips the system steps. Verified with Liberation fonts (OFL-1.1) served from a signed local index: family and single style installed, a proprietary family refused, a text file and a WOFF refused, a tampered index refused, removal by style and family, and without the test variable `fc-list` saw the installed font.
 
 ## v0.37.0 · Files {#files}
 

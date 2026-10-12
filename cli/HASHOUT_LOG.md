@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.37.0
-Last updated: 2026-10-12 · Files; twenty-four tools
+Current build version: v0.38.0
+Last updated: 2026-10-12 · fonts; twenty-seven tools
+
+## v0.38.0 · fonts {#fonts}
+
+### Three tools, four commands
+- refers-to: src/ops.rs :: fonts, font_install, font_remove, fonts_source · src/mcp.rs · src/main.rs
+- kind: decision
+- logged: v0.38.0 · 2026-10-12
+
+`fonts` reads the index (from `--fonts-source`, `FORMPORTAL_FONTS`, or `fonts.json` beside the catalogue) and what is installed, marking each style. `font_install` takes an index id (and style) or a path with `rights_confirmed`; on the command line `font-install` and `font-add` are the two forms. `font_remove` is destructive in its annotations.
 
 ## v0.37.0 · Files {#files}
 

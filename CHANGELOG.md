@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.38.0 · 2026-10-12
+
+- Fonts: an open font library (OFL, Apache-2.0, MIT) with search and kinds. Install a whole family or one style, for you only and with no administrator, and remove it again. Every app on the computer can use them, usually after it restarts.
+- Add your own TTF or OTF files once you confirm you have the right to use them.
+- Command line and MCP: `fonts`, `font_install`, `font_remove`.
+
 ## v0.37.0 · 2026-10-12
 
 - Files: choose folders on your own disk (the system's folder picker, or the suggested Documents/Form). FormPortal lists the Form projects in them, newest first, with search; opens each in the app that makes it; and keeps up to 20 earlier versions of each, with Go back to this. Nothing leaves your computer.

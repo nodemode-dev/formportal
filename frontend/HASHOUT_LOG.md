@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.37.0
-Last updated: 2026-10-12 · Files
+Current build version: v0.38.0
+Last updated: 2026-10-12 · Fonts
+
+## v0.38.0 · the Fonts screen {#fonts}
+
+### Library, styles, your own fonts
+- refers-to: index.html :: data-pane fonts, #font-row, the rights dialog · src/extensions/fonts · src/main.ts :: fonts.load, font.install, font.remove, font.pick, font.add
+- kind: decision
+- logged: v0.38.0 · 2026-10-12
+
+A sidebar entry under Files, where Creative Cloud keeps fonts as a panel. Families as rows (Install family while any style is missing, Remove while any is installed, the More menu lists each style with Install or Remove), search and kinds (sans serif, serif, mono, display), and Your own fonts with Add a font file. Adding one opens a small dialog whose Add stays disabled until the person ticks "I have the right to use this font on this computer". No previews of the typefaces yet: the window would have to fetch each font file or read it from disk through an asset protocol, which is a separate decision. Blocks stay hidden until the first load (`data-ready`). Measured at 4x CPU: 0 shift on Fonts. The browser mode has six real OFL families as sample data.
+
+### Known, again
+- refers-to: the first frame
+- kind: warning-context
+- logged: v0.38.0 · 2026-10-12
+
+The intermittent first-frame shifts logged in 0.35.0 showed again in two of eight loads (the bell icon 40 px, a family card), under 0.0001 each, before any script. Still not reproduced on demand.
 
 ## v0.37.0 · the Files screen {#files}
 
