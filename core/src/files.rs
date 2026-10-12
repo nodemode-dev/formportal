@@ -271,6 +271,44 @@ impl Portal {
         Ok(Scan { folders: views, files, truncated, new_versions })
     }
 
+    pub fn keep_saved(&self, extensions: &BTreeMap<String, String>, settle_secs: u64) -> Result<Vec<PathBuf>> {
+        let state = self.files_state()?;
+        let mut history = self.history()?;
+        let mut kept = Vec::new();
+        let mut touched = false;
+        let settled = now().saturating_sub(settle_secs);
+        for folder in state.folders.iter().filter(|f| f.keep_versions && f.path.is_dir()) {
+            let mut found = Vec::new();
+            let mut truncated = false;
+            walk(&folder.path, SCAN_DEPTH, extensions, &mut found, &mut truncated);
+            for (path, _, meta) in found {
+                if meta.len() > VERSION_LIMIT || modified(&meta) > settled {
+                    continue;
+                }
+                let k = key(&path);
+                let last = history.files.get(&k).and_then(|v| v.last()).cloned();
+                let changed = match &last {
+                    Some(v) => v.size != meta.len() || v.at < modified(&meta),
+                    None => true,
+                };
+                if !changed {
+                    continue;
+                }
+                let reason = if last.is_none() { "first seen" } else { "saved" };
+                if let Ok(v) = self.keep_version(&mut history, &path, reason) {
+                    touched = true;
+                    if last.map(|l| l.id != v.id).unwrap_or(true) {
+                        kept.push(path);
+                    }
+                }
+            }
+        }
+        if touched {
+            self.history_save(&history)?;
+        }
+        Ok(kept)
+    }
+
     fn keep_version(&self, history: &mut History, path: &Path, reason: &str) -> Result<Version> {
         let meta = fs::metadata(path)?;
         let sha256 = sha256_file(path)?;

@@ -517,6 +517,25 @@ pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Re
     }
 }
 
+pub fn watch(ctx: &Ctx, args: &Value, out: &mut dyn FnMut(&Value)) -> Result<Value, CoreError> {
+    let every = args.get("interval").and_then(|v| v.as_u64().or_else(|| v.as_str().and_then(|s| s.parse().ok()))).unwrap_or(3).max(1);
+    let rounds = args.get("rounds").and_then(|v| v.as_u64().or_else(|| v.as_str().and_then(|s| s.parse().ok())));
+    let exts = project_extensions();
+    let mut total = 0u64;
+    let mut n = 0u64;
+    loop {
+        for path in ctx.portal.keep_saved(&exts, 2)? {
+            total += 1;
+            out(&json!({ "kept": path }));
+        }
+        n += 1;
+        if rounds.map(|r| n >= r).unwrap_or(false) {
+            return Ok(json!({ "rounds": n, "kept": total }));
+        }
+        std::thread::sleep(std::time::Duration::from_secs(every));
+    }
+}
+
 pub fn repair(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
     let fix = flag(args, "fix").unwrap_or(false);
     let (catalog, error) = match load(ctx, args) {

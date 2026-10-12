@@ -36,6 +36,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   media-save ID                   save an item into your Library with its credit line
   template-use ID [--folder DIR]  copy a template into your projects folder and open it
   media-remove ID
+  watch [--interval 3] [--rounds N]       keep a version of each project as it is saved (in folders that keep versions); one JSON line per version
   repair [--fix]                  check installs and FormPortal's folders; --fix repairs (JSON, for scripts)
   later <product> [--channel C] [--off]   put an update off until the app is closed, or cancel that
   open-url URL [--check] [--no-open]      download a Form project file from the web into your projects folder and open it
@@ -187,6 +188,10 @@ fn main() -> ExitCode {
         }
         "media-remove" => ops::media_remove(&ctx, &args),
         "repair" => ops::repair(&ctx, &args, &mut progress),
+        "watch" => ops::watch(&ctx, &args, &mut |line| {
+            println!("{line}");
+            let _ = std::io::stdout().flush();
+        }),
         "later" => {
             let mut a = args.clone();
             if let Some(o) = a.as_object_mut() {
