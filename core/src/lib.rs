@@ -3,6 +3,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+pub mod agents;
 pub mod download;
 pub mod error;
 pub mod extensions;
