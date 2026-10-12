@@ -210,6 +210,49 @@ fn font_remove(family: String, style: Option<String>) -> Result<usize, String> {
 }
 
 #[tauri::command]
+async fn media_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let (index, error) = match hub.media_index(&sibling(&url, "media.json"), allow_unsigned) {
+            Ok(i) => (Some(i), None),
+            Err(e) => (None, Some(e.to_string())),
+        };
+        let credits: Vec<String> = index.as_ref().map(|i| i.items.iter().map(formportal_core::media::credit_line).collect()).unwrap_or_default();
+        Ok(serde_json::json!({ "index": index, "credits": credits, "index_error": error, "saved": hub.saved_media().map_err(text)?, "library": formportal_core::media::library_dir() }))
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn media_save(id: String, use_template: bool, url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let hub = hub();
+        let index = hub.media_index(&sibling(&url, "media.json"), allow_unsigned).map_err(text)?;
+        if use_template {
+            let path = hub.use_template(&index, &id, None, &mut |_, _| {}).map_err(text)?;
+            let opened = hub.open_file(&path, &exts()).ok().map(|(p, _)| p);
+            return Ok(serde_json::json!({ "copied_to": path, "opened_with": opened }));
+        }
+        Ok(serde_json::json!({ "saved": hub.save_media(&index, &id, &mut |_, _| {}).map_err(text)? }))
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn media_remove(id: String) -> Result<(), String> {
+    hub().remove_media(&id).map(|_| ()).map_err(text)
+}
+
+#[tauri::command]
+async fn media_thumb(url: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().thumbnail_data_url(&url).map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
 async fn storage() -> Result<formportal_core::files::Storage, String> {
     tauri::async_runtime::spawn_blocking(|| hub().storage().map_err(text)).await.map_err(text)?
 }
@@ -494,7 +537,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

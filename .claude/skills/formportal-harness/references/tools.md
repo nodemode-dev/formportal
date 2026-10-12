@@ -34,6 +34,9 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `fonts` | no | The open font index (families with foundry, licence, category and styles, each marked installed or not) read from fonts.json beside the catalogue (or fonts_source, FORMPORTAL_FONTS), signed like the catalogue; plus every font FormPortal installed, from the index or the person's own files, and the per-user font folder. query filters by family, foundry or category. |
 | `font_install` | yes | With id (and optionally style), downloads that family or style from the index, checks each file's SHA-256 and that it is a TrueType or OpenType font, refuses anything not under OFL-1.1, Apache-2.0 or MIT, and installs it for this user only (no administrator). With path, adds the person's own TTF or OTF file instead; rights_confirmed must be true, meaning the person said they have the right to use it. Apps see new fonts after they restart. Confirm first. |
 | `font_remove` | yes, destructive | Removes a font FormPortal installed (a whole family, or one style), from the per-user font folder. Never touches fonts it did not install. Confirm first. |
+| `media` | no | The open media index (media.json beside the catalogue, or media_source or FORMPORTAL_MEDIA, signed like the catalogue): images, video, audio and Form app templates, each with creator, licence (CC0, CC BY, CC BY-SA, Apache, MIT, OFL), source page, credit line and whether it is saved; plus everything saved in the person's Library. query and kind filter. |
+| `media_save` | yes | Saves an item from the media index into the person's Library (Documents/Form/Library by default, or FORMPORTAL_LIBRARY), checking its SHA-256 and writing its credit line beside it and into credits.json. With use true on a template, also copies it into the first projects folder (or folder) and opens it in its app. Confirm first. |
+| `media_remove` | yes, destructive | Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. |
 | `connect_agents` | yes | Adds the installed app's MCP server to the clients given (claude, codex, cursor; all three by default) at user scope, or with disconnect true takes it out. The entry starts FormPortal's app-mcp, which runs whichever version is installed, so updates and rollbacks need no change. Never overwrites a server of the same name that FormPortal did not add; backs up each config file it changes. Changes the person's agent configuration: confirm first. |
 | `open` | yes | Starts the installed app for the product and channel and returns its process id. |
@@ -174,6 +177,27 @@ No parameters.
 
 - `family`: string. 
 - `style` (optional): string. 
+
+### media
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `kind` (optional): image|video|audio|template. 
+- `media_source` (optional): string. 
+- `query` (optional): string. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+
+### media_save
+
+- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
+- `folder` (optional): string. 
+- `id`: string. 
+- `media_source` (optional): string. 
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://formai.dev/catalog/v1/apps.json.
+- `use` (optional): boolean. 
+
+### media_remove
+
+- `id`: string. 
 
 ### app_agents
 

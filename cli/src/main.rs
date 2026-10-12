@@ -33,6 +33,10 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   font-install ID [--style S]     install a family (or one style) for this user
   font-add FILE --rights-confirmed true    add your own TTF or OTF for this user
   font-remove FAMILY [--style S]
+  media [--query Q] [--kind image|video|audio|template] [--media-source S]   open-licensed media and templates
+  media-save ID                   save an item into your Library with its credit line
+  template-use ID [--folder DIR]  copy a template into your projects folder and open it
+  media-remove ID
   policy                          the organisation's policy, if this computer has one
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
@@ -166,6 +170,16 @@ fn main() -> ExitCode {
             ops::font_install(&ctx, &a, &mut progress)
         }
         "font-remove" => ops::font_remove(&ctx, &args),
+        "media" => ops::media(&ctx, &args),
+        "media-save" => ops::media_save(&ctx, &args, &mut progress),
+        "template-use" => {
+            let mut a = args.clone();
+            if let Some(o) = a.as_object_mut() {
+                o.insert("use".to_string(), json!(true));
+            }
+            ops::media_save(&ctx, &a, &mut progress)
+        }
+        "media-remove" => ops::media_remove(&ctx, &args),
         "app-agents" => ops::app_agents(&ctx, &args),
         "connect" => ops::connect_agents(&ctx, &args),
         "disconnect" => {
@@ -185,7 +199,7 @@ fn main() -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    if (cmd == "install" || cmd == "update" || cmd == "extension-install" || cmd == "mirror" || cmd == "font-install") && last != u64::MAX {
+    if (cmd == "install" || cmd == "update" || cmd == "extension-install" || cmd == "mirror" || cmd == "font-install" || cmd == "media-save" || cmd == "template-use") && last != u64::MAX {
         eprintln!();
     }
     match out {

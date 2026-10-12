@@ -271,6 +271,68 @@ pub fn font_remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     Ok(json!({ "removed": ctx.portal.remove_font(&family, text(args, "style").as_deref())? }))
 }
 
+fn media_source(ctx: &Ctx, args: &Value) -> String {
+    text(args, "media_source").or_else(|| std::env::var("FORMPORTAL_MEDIA").ok().filter(|s| !s.trim().is_empty())).unwrap_or_else(|| {
+        let base = text(args, "source").unwrap_or_else(|| ctx.source.clone());
+        match base.rsplit_once('/') {
+            Some((dir, _)) => format!("{dir}/media.json"),
+            None => "media.json".to_string(),
+        }
+    })
+}
+
+pub fn media(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let saved = ctx.portal.saved_media()?;
+    let (index, error) = match ctx.portal.media_index(&media_source(ctx, args), allow) {
+        Ok(i) => (Some(i), None),
+        Err(e) => (None, Some(e.to_string())),
+    };
+    let words: Vec<String> = text(args, "query").map(|q| q.to_lowercase().split_whitespace().map(str::to_string).collect()).unwrap_or_default();
+    let kind = text(args, "kind");
+    let items: Vec<Value> = index
+        .as_ref()
+        .map(|i| {
+            i.items
+                .iter()
+                .filter(|m| kind.as_ref().map(|k| &m.kind == k).unwrap_or(true))
+                .filter(|m| {
+                    let hay = format!("{} {} {} {}", m.title, m.creator, m.kind, m.tags.join(" ")).to_lowercase();
+                    words.iter().all(|w| hay.contains(w.as_str()))
+                })
+                .map(|m| {
+                    let mut v = serde_json::to_value(m).unwrap_or(Value::Null);
+                    if let Some(o) = v.as_object_mut() {
+                        o.insert("saved".to_string(), json!(saved.iter().any(|s| s.id == m.id)));
+                        o.insert("credit".to_string(), json!(formportal_core::media::credit_line(m)));
+                    }
+                    v
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    Ok(json!({ "library": formportal_core::media::library_dir(), "index_error": error, "items": items, "saved": saved }))
+}
+
+pub fn media_save(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
+    let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give an item id from media"))?;
+    let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
+    let index = ctx.portal.media_index(&media_source(ctx, args), allow)?;
+    if flag(args, "use").unwrap_or(false) {
+        let folder = text(args, "folder").map(std::path::PathBuf::from);
+        let path = ctx.portal.use_template(&index, &id, folder.as_deref(), progress)?;
+        let opened = ctx.portal.open_file(&path, &project_extensions()).ok().map(|(p, _)| p);
+        return Ok(json!({ "copied_to": path, "opened_with": opened, "note": if opened.is_none() { "Copied; its app is not installed, so it was not opened." } else { "Copied into the projects folder and opened." } }));
+    }
+    let saved = ctx.portal.save_media(&index, &id, progress)?;
+    Ok(json!({ "saved": saved, "note": "Keep the credit line with the work where the licence asks for it (CC BY and CC BY-SA do; CC0 does not)." }))
+}
+
+pub fn media_remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give the saved item's id"))?;
+    Ok(json!({ "removed": ctx.portal.remove_media(&id)? }))
+}
+
 pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
