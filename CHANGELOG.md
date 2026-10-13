@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.1 · 2026-10-13
+
+- `./formportal desktop build` builds the desktop app from the repo root: the macOS build on a Mac, the Linux .deb and AppImage elsewhere.
+
 ## v0.44.0 · 2026-10-12
 
 - Files keeps a version each time you save while FormPortal is open, not only when you look. An open Versions window tells you when a new one was kept.
