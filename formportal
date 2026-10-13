@@ -14,6 +14,12 @@ case "${1:-}" in
   agents)
     exec python3 setup/agents.py "${@:2}"
     ;;
+  desktop)
+    if [ "${2:-}" = build ]; then
+      [ "$(uname -s)" = Darwin ] && exec setup/build_macos_app "${@:3}"
+      exec setup/build_linux_app "${@:3}"
+    fi
+    ;;
 esac
 
 command -v cargo >/dev/null || { echo "Rust is required: https://rustup.rs. Then run ./formportal_oc_install"; exit 1; }
