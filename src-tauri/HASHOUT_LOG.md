@@ -239,11 +239,11 @@ Commands defined in `main.rs` are part of the app and need no plugin permission.
 ## icons/ {#icons}
 
 ### icons/ · how they were made
-- refers-to: icons/icon.png and the set beside it
+- refers-to: icons/icon.png and the set beside it; ../assets/formportal_icon.png, formportal_icon_macos.png; ../frontend/public/favicon.svg; ../assets/icon_src/
 - kind: explainer
-- logged: v0.1.0 · 2026-10-04
+- logged: v0.1.0 · 2026-10-04 · redrawn v0.44.2 · 2026-10-20
 
-Drawn once at 1024 pixels from the family mark (three bars in amber, off-purple and teal on the family ground, in a rounded square) and resized to the set `tauri.conf.json` lists. A placeholder until the owner supplies a mark; Phase 6's build scripts regenerate the set from `icon.png` with `cargo tauri icon`.
+The placeholder (three bars in amber, off-purple and teal) is replaced by a mark in the redrawn Form family construction that says what FormPortal does: an app rising out of a portal. A glossy ring in the family paint (blue, violet, pink, amber), seen in perspective, glows pink and violet from inside with light rising out of it, and a dark glass app tile carrying the old three bars, now in the family gradients, emerges from it; the tile is clipped along the ring's front inner edge so its base is inside the portal, and the ring's front half is drawn over it. Family tile with bloom, rim and drop shadow. The macOS .icns uses the 824 px tile inside a 1024 canvas with a 100 px margin; .ico and the PNGs stay full bleed; one design at every size and in the favicon. assets/icon_src/ regenerates every file (python3 gen.py, node render.mjs).
 
 ---
 
