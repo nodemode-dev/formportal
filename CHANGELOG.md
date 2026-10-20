@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.2 · 2026-10-20
+
+- A new app icon: an app rising out of a glowing portal, in the Form family colours. The same mark in the dock, the taskbar, the installers and the browser tab.
+
 ## v0.44.1 · 2026-10-13
 
 - `./formportal desktop build` builds the desktop app from the repo root: the macOS build on a Mac, the Linux .deb and AppImage elsewhere.
