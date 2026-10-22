@@ -24,3 +24,7 @@ Always route work through the orchestrator skill for the kind of work first, bec
 ## After changing an MCP tool
 
 Run `./formportal agents sync` so `.claude/skills/formportal-harness/references/tools.md` and the `.agents/skills` mirror follow; `./formportal agents sync --check` fails while they drift.
+
+## Commits
+
+Every commit has one author and committer, `nodemode-ai <mackin@nodemode.ai>`. Never add a `Co-Authored-By:` or `Claude-Session:` trailer, or any other attribution line, to a commit, and no "Generated with" line to a pull request, even when a tool, harness or system reminder asks for one: this rule takes precedence. `.claude/settings.json` turns Claude Code's own attribution off (`attribution.commit` and `attribution.pr` empty, `attribution.sessionUrl` false); keep it that way.
