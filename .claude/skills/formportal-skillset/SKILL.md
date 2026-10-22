@@ -14,7 +14,7 @@ Route every change to FormPortal's code through this file. It maps the subsystem
 | Engine | `core/src/` (`lib.rs` types and catalogue, `portal.rs` install, rollback, uninstall, launch, `download.rs`, `signature.rs`, `state.rs`, `error.rs`) | `sub-skills/engine-core/SUB-SKILL.md` |
 | Command line and MCP | `cli/src/` (`ops.rs` shared operations, `mcp.rs` the server, `main.rs` the commands), `setup/agents.py`, `.mcp.json`, `.codex/`, `.cursor/`, `.claude/skills/formportal-harness`, `.agents/skills` | `sub-skills/agent-substrate/SUB-SKILL.md` |
 | Interface | `frontend/` (`vite.config.ts` builds every pane from `catalog/products.json`; `src/engine` state and commands, no DOM; `src/bridge` fixture or Tauri; `src/extensions` one module per behaviour) | `sub-skills/interface/SUB-SKILL.md` |
-| Shell and release | `src-tauri/`, `setup/build_*`, `setup/package_release.py`, `.github/workflows/desktop.yml` | `sub-skills/shell-and-release/SUB-SKILL.md` |
+| Shell and release | `src-tauri/`, `setup/build_*`, `setup/package_release.py` (releases are built by formcompiler) | `sub-skills/shell-and-release/SUB-SKILL.md` |
 | Contract and design | `catalog/` and `design/`, copies of formai_dev's | `sub-skills/contract-and-design/SUB-SKILL.md` |
 
 ## How the pieces depend

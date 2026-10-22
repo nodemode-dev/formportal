@@ -9,7 +9,7 @@ description: Changes to FormPortal's Tauri 2 shell and its releases. Use for Tau
 
 - `src-tauri/src/main.rs`: commands `platform`, `catalog`, `installs`, `install` (emits `install-progress`), `open`, `rollback`, `remove`, `launch_link`; plugins single-instance (with deep-link) and deep-link; a link held at start-up is handed over once.
 - `tauri.conf.json`: product FormPortal, identifier `dev.formai.portal`, scheme `formai`, CSP `script-src 'self'`, macOS ad hoc signing (`signingIdentity` "-").
-- `setup/build_macos_app`, `build_linux_app`, `build_windows_app.bat` build bundles; `setup/package_release.py` packs them into `release-dist/` with `manifest.json` and `SHA256SUMS`; `.github/workflows/desktop.yml` runs all three and drafts a release.
+- `setup/build_macos_app`, `build_linux_app`, `build_windows_app.bat` build bundles; `setup/package_release.py` packs them into `release-dist/` with `manifest.json` and `SHA256SUMS`; formcompiler (`nodemode-ai/formcompiler`) runs all three from a `compile_vX.Y.Z` branch and drafts the release `formportal-vX.Y.Z` on its own release page. This repository's CI only runs the checks.
 
 ## Rules
 

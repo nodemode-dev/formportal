@@ -13,7 +13,7 @@
 
 <p align="center"><img src="assets/formportal_linux.png" alt="FormPortal on Linux" width="760" /></p>
 
-FormPortal reads the signed catalogue formai.dev publishes and offers this computer the right build of every Form app: FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormHub and the apps on the way. It checks each download's SHA-256 before unpacking, installs per user with no administrator (zip, AppImage, deb, rpm, dmg, msi or NSIS), keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build. The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family too.
+FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcompiler`, where every Form app is released) publishes and offers this computer the right build of every Form app: FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormHub and the apps on the way. It checks each download's SHA-256 before unpacking, installs per user with no administrator (zip, AppImage, deb, rpm, dmg, msi or NSIS), keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build. The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family too.
 
 **Stack:** Rust (`formportal-core`, `formportal-cli`) · Tauri 2 shell · vanilla TypeScript + Vite interface · **Scale:** 33 MCP tools, 20 apps from one registry, one shared tokens file, zero runtime dependencies in the interface
 
@@ -47,7 +47,7 @@ chmod +x formportal formportal_oc_install
 ./formportal              # opens the FormPortal window; closing it stops everything it started
 ```
 
-The first boot compiles the shell, which takes a few minutes. Until formai.dev publishes its signed catalogue and key, run formai_dev's site locally and set the catalogue address in Settings to `http://127.0.0.1:8240/catalog/v1/apps.json` with the Developer box ticked.
+The first boot compiles the shell, which takes a few minutes. Until formcompiler publishes its signed catalogue and this build trusts its key, run formai_dev's site locally and set the catalogue address in Settings to `http://127.0.0.1:8240/catalog/v1/apps.json` with the Developer box ticked.
 
 ### Windows
 

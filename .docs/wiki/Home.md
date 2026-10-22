@@ -7,4 +7,4 @@ FormPortal is the Form family's app portal and its Creative Cloud alternative: o
 - [Agents](Agents)
 - [Releasing](Releasing)
 
-FormPortal reads the catalogue formai.dev publishes. The apps themselves live in their own repositories and stay downloadable on their own; FormPortal is never required to run one.
+FormPortal reads the catalogue formcompiler (`nodemode-ai/formcompiler`) publishes beside every Form app's releases. The apps themselves live in their own repositories and stay downloadable on their own; FormPortal is never required to run one.
