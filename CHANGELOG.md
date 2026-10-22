@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.3 · 2026-10-22
+
+- FormPortal reads the Form family's signed catalogue from formcompiler (`nodemode-ai/formcompiler`), where every Form app is now released. A custom catalogue address in Settings still wins.
+- FormPortal's own updates come from formcompiler's `formportal-updates` feed, and each app's "Every release" link opens formcompiler's release page.
+- The repository's GitHub Actions now run checks only (interface, engine and scripts); releases are built by formcompiler as `formportal-vX.Y.Z`.
+
 ## v0.44.2 · 2026-10-20
 
 - A new app icon: an app rising out of a glowing portal, in the Form family colours. The same mark in the dock, the taskbar, the installers and the browser tab.
