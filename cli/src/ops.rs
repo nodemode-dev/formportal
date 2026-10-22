@@ -3,7 +3,7 @@ use std::fs;
 use formportal_core::{Availability, Catalog, Channel, CoreError, Platform, Portal, CORE_VERSION};
 use serde_json::{json, Map, Value};
 
-pub const DEFAULT_SOURCE: &str = "https://formai.dev/catalog/v1/apps.json";
+pub const DEFAULT_SOURCE: &str = "https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json";
 const REGISTRY: &str = include_str!("../../catalog/products.json");
 
 pub struct Ctx {

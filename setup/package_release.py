@@ -11,6 +11,7 @@ from pathlib import Path
 
 HUB = Path(__file__).resolve().parent.parent
 REPOSITORY = "https://github.com/nodemode-ai/formportal"
+RELEASES = "https://github.com/nodemode-ai/formcompiler/releases"
 FLOORS = {"macos": "macOS 12", "windows": "Windows 10"}
 
 
@@ -108,7 +109,7 @@ def finish(out: Path) -> dict:
             "version": version(),
             "notes": f"{REPOSITORY}/blob/main/CHANGELOG.md",
             "pub_date": manifest["published"],
-            "platforms": {p["key"]: {"signature": p["signature"], "url": f"{REPOSITORY}/releases/download/v{version()}/{p['file']}"} for p in parts},
+            "platforms": {p["key"]: {"signature": p["signature"], "url": f"{RELEASES}/download/formportal-v{version()}/{p['file']}"} for p in parts},
         }
         (out / "latest.json").write_text(json.dumps(latest, indent=2) + "\n", encoding="utf-8")
     for part in list(out.glob("manifest-*.json")) + list(out.glob("updater-*.json")):
