@@ -1,6 +1,6 @@
 # formportal
 
-FormPortal, the Form family's app portal (a Creative Cloud desktop app alternative): it installs, opens, updates, rolls back and removes the Form apps from the signed catalogue formcompiler (`nodemode-ai/formcompiler`) publishes. Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
+FormPortal, the Form family's app portal: it installs, opens, updates, rolls back and removes the Form apps from the signed catalogue formcompiler (`nodemode-ai/formcompiler`) publishes. Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
 
 ## Two kinds of work
 
@@ -24,6 +24,12 @@ Always route work through the orchestrator skill for the kind of work first, bec
 ## After changing an MCP tool
 
 Run `./formportal agents sync` so `.claude/skills/formportal-harness/references/tools.md` and the `.agents/skills` mirror follow; `./formportal agents sync --check` fails while they drift.
+
+## Trademarks, copyright and licences
+
+- Other vendors' product names appear only to say which product a Form app stands in for (`alt_of` in the catalogue, shown as "in place of") or for compatibility. Never as FormPortal's own feature names, and never as "like the Creative Cloud app" or "Creative Cloud alternative" in UI text, READMEs or the wiki. Form apps are shown with their own icons; never two-letter tiles on coloured squares. The notice in `README.md` and `NOTICE` covers the marks named.
+- Never copy vendor help or documentation text, and never import or trace vendor icons.
+- Every new dependency, binary, font or data file gets a row in `LICENSES.md` before it is used. GPL stays outside the distributed bundle, AGPL nowhere, LGPL dynamically linked and replaceable, MPL files unedited; CC BY credited, CC BY-SA only unmodified, CC NC and ND never.
 
 ## Commits
 
