@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.4 · 2026-10-23
+
+- A trademark notice in the README and NOTICE, and the README, wiki and agent notes no longer describe FormPortal as a Creative Cloud alternative or layout. No change to the app itself.
+
 ## v0.44.3 · 2026-10-22
 
 - FormPortal reads the Form family's signed catalogue from formcompiler (`nodemode-ai/formcompiler`), where every Form app is now released. A custom catalogue address in Settings still wins.
