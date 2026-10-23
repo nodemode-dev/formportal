@@ -1,6 +1,6 @@
 <h1 align="center">FormPortal</h1>
 
-<p align="center"><b>One place to install, open, update and roll back every Form app. The Form family's Creative Cloud alternative: no account, no background process, GPL-3.0.</b></p>
+<p align="center"><b>One place to install, open, update and roll back every Form app: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-v0.44.0-eef0f4" alt="version v0.44.0" />
@@ -24,7 +24,7 @@ FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcomp
 - **Rollback, betas side by side.** Every update keeps the version it replaced; each channel (stable, beta, nightly) is its own install
 - **Nothing resident.** No account, no login item, no tray process. FormPortal checks when it is open and stops when you close it
 - **Agent ready.** `./formportal mcp` serves `status`, `apps`, `app_info`, `installs`, `install`, `versions`, `updates`, `update`, `preferences`, `extensions`, `extension_install`, `extension_remove`, `extension_enable`, `policy`, `app_agents`, `connect_agents`, `files`, `folders`, `open_file`, `file_versions`, `storage`, `fonts`, `font_install`, `font_remove`, `media`, `media_save`, `media_remove`, `learn`, `learn_progress`, `repair`, `open`, `rollback`, `remove`; `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are wired, and the `formportal-harness` skill teaches the workflow. A Form app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates (see `.docs/wiki/Agents.md`)
-- **Laid out like the Creative Cloud app, without the marketing.** A two-level sidebar (Home, Apps with Updates and Beta, Extensions, Learn), search, a notifications bell and Preferences in the top bar, Home built around the apps you have, Apps as a list with one action each and a More menu, and Preferences as a dialog with a switch per app
+- **A calm layout, without the marketing.** A two-level sidebar (Home, Apps with Updates and Beta, Extensions, Learn), search, a notifications bell and Preferences in the top bar, Home built around the apps you have, Apps as a list with one action each and a More menu, and Preferences as a dialog with a switch per app
 - **Files on your own disk.** Pick folders; FormPortal lists your Form projects, opens each in the right app, keeps a version each time you save while it is open (up to 20 to go back to), shows previews the apps write, and shows what it uses on disk. No cloud
 - **Fonts without an account.** Open-licensed families from a signed index, or your own TTF and OTF files, installed for you alone with no administrator
 - **Learn, and ask your own agent.** Step-by-step tutorials with progress kept on your computer, suggestions on Home worked out locally, notifications filed by kind, and Ask your agent: Claude Code or Codex answers questions about your apps through FormPortal's reading-only server
@@ -117,3 +117,7 @@ Wiki pages live in `.docs/wiki` (Home, Getting Started, Architecture, Agents, Re
 ## License
 
 FormPortal is licensed under the GNU General Public License v3.0 (`LICENSE`, SPDX `GPL-3.0-only`), as ComfyUI, formpromo, formMCP and formskills are. Copyright 2026 NodeAgentc, Inc. See `LICENSE`, `NOTICE` and `LICENSES.md`.
+
+## Trademarks
+
+Adobe and Creative Cloud are either registered trademarks or trademarks of Adobe in the United States and/or other countries. Product names shown beside Form apps (for example in Learn) belong to their owners. FormPortal is not affiliated with or endorsed by Adobe or any of them.

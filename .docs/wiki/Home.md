@@ -1,6 +1,6 @@
 # FormPortal
 
-FormPortal is the Form family's app portal and its Creative Cloud alternative: one window that installs, opens, updates, rolls back and removes every Form app, with betas beside the stable builds and an open extension index. No account and no background process.
+FormPortal is the Form family's app portal: one window that installs, opens, updates, rolls back and removes every Form app, with betas beside the stable builds and an open extension index. No account and no background process.
 
 - [Getting Started](Getting-Started)
 - [Architecture](Architecture)
