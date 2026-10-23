@@ -63,6 +63,9 @@ def pack(system: str, arch: str, bundle: Path, out: Path) -> dict:
                 info.compress_type = zipfile.ZIP_DEFLATED
                 with path.open("rb") as source, archive.open(info, "w") as sink:
                     shutil.copyfileobj(source, sink)
+    with zipfile.ZipFile(target, "a", zipfile.ZIP_DEFLATED) as archive:
+        for notice in ("LICENSE", "LICENSES.md"):
+            archive.write(HUB / notice, notice)
     entry = {"platform": system, "arch": arch, "file": name, "bytes": target.stat().st_size, "sha256": sha256(target), "minimum_os": floor(system)}
     (out / f"manifest-{system}-{arch}.json").write_text(json.dumps(entry, indent=2) + "\n", encoding="utf-8")
     updater(system, arch, bundle, out)
