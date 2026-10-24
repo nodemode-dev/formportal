@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.45.0 · 2026-10-24
+
+- Reads an app's `form-app.json` in format 2, which formcompiler now writes into every release: whether the app has an MCP server, and its skills. Format 1 files still work. `app-agents` shows the file as read, and an app is only offered to Claude Code, Codex and Cursor when its install names a server FormPortal can start.
+- The catalogue's new agents fields (whether an app has an MCP server and skills; each release's manifest and skills archive with its digest) are read and kept, and the catalogue schema accepts them.
+
 ## v0.44.6 · 2026-10-24
 
 - LICENSE, NOTICE and the README name the copyright holder, NodeAgentc, Inc., and Preferences, About shows "by nodemode.ai" under the version.
