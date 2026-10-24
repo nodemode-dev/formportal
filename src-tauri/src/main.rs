@@ -583,6 +583,28 @@ fn set_preferences(preferences: Preferences) -> Result<(), String> {
     sync_login()
 }
 
+#[tauri::command]
+async fn github_status() -> Result<formportal_core::github::Status, String> {
+    tauri::async_runtime::spawn_blocking(|| formportal_core::github::status().map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_start(share: bool) -> Result<formportal_core::github::DeviceCode, String> {
+    use formportal_core::github::{start, SHARE_SCOPE, SIGN_IN_SCOPE};
+    let scope = if share { format!("{SIGN_IN_SCOPE} {SHARE_SCOPE}") } else { SIGN_IN_SCOPE.to_string() };
+    tauri::async_runtime::spawn_blocking(move || start(&scope).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_poll(device_code: String, interval: u64) -> Result<formportal_core::github::Poll, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::github::poll(&device_code, interval).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_sign_out() -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(|| formportal_core::github::sign_out().map_err(text)).await.map_err(text)?
+}
+
 fn sync_login() -> Result<(), String> {
     let on = hub().preferences().map_err(text)?.open_at_login;
     let program = std::env::var_os("APPIMAGE").map(std::path::PathBuf::from).or_else(|| std::env::current_exe().ok()).ok_or("no program path")?;
@@ -665,7 +687,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

@@ -2,7 +2,7 @@ import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome } from "../engine/types.ts";
+import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -75,6 +75,7 @@ type FixtureTutorial = { id: string; product: string; title: string; summary: st
 const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutorial[]), sampleTutorial];
 const progress = new Map<string, Set<number>>();
 const later = new Set<string>();
+const github: { account: GithubAccount | null; polls: number; share: boolean } = { account: null, polls: 0, share: false };
 const repairFindings: RepairFinding[] = params.has("repair")
   ? [
       { kind: "broken", product: "formcut", channel: "stable", path: "/home/you/.local/share/formportal/apps/formcut/stable/2.6.2", bytes: 0, problem: "formcut 2.6.2 has nothing FormPortal can open in its folder", fix: "install the same version again from the catalogue, checking its SHA-256", fixed: false, error: null },
@@ -351,6 +352,21 @@ export const fixtureBridge: Bridge = {
       else linked.add(id);
     }
     return agentsFor(product, channel);
+  },
+  githubStatus: async () => ({ configured: new URLSearchParams(window.location.search).has("github"), account: github.account }),
+  githubStart: async (share) => {
+    github.polls = 0;
+    github.share = share;
+    return { device_code: "fixture-device-code", user_code: "WDJB-MJHT", verification_uri: "https://github.com/login/device", expires_in: 900, interval: 1 };
+  },
+  githubPoll: async (_code, interval) => {
+    github.polls += 1;
+    if (github.polls < 3) return { state: "waiting", interval };
+    github.account = { login: "octo-tester", name: "Octo Tester", scopes: github.share ? ["read:user", "repo"] : ["read:user"] };
+    return { state: "signed-in", account: github.account };
+  },
+  githubSignOut: async () => {
+    github.account = null;
   },
   policy: async () =>
     new URLSearchParams(window.location.search).get("policy") === "locked"

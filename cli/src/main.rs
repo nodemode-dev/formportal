@@ -45,6 +45,9 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   learn-reset ID                  clear a tutorial's progress
   ask \"QUESTION\" [--client claude|codex]   ask your own agent about your Form apps; it can only read
   policy                         the organisation's policy, if this computer has one
+  account                        whether you are signed in to GitHub, and as whom (optional; nothing needs it to install)
+  sign-in [--share true]         sign in to GitHub with a code you enter on github.com; --share also asks for repository access
+  sign-out                       forget the GitHub sign-in (removes it from the system keychain)
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
   disconnect <product> [--channel C] [--clients ...]               take it out again
@@ -143,6 +146,11 @@ fn main() -> ExitCode {
         "rollback" => ops::rollback(&ctx, &args),
         "remove" => ops::remove(&ctx, &args),
         "policy" => ops::policy(&ctx),
+        "account" => ops::account(),
+        "sign-in" => ops::sign_in(&args, &mut |code| {
+            eprintln!("Open {} and enter the code {} (it expires in {} minutes).", code.verification_uri, code.user_code, code.expires_in / 60);
+        }),
+        "sign-out" => ops::sign_out(),
         "files" => ops::files(&ctx, &args),
         "folders" => ops::folders(&ctx, &args),
         "folder-add" => {

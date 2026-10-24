@@ -2270,6 +2270,71 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   min-block-size: 32px;
 }
 
+.account {
+  display: grid;
+  gap: var(--sp-2);
+  margin-block: var(--sp-3);
+}
+
+.account-line {
+  min-block-size: 1.5em;
+  line-height: 1.5;
+}
+
+.account-say {
+  display: none;
+}
+
+.account[data-account="checking"] [data-say="checking"],
+.account[data-account="busy"] [data-say="checking"],
+.account[data-account="off"] [data-say="off"],
+.account[data-account="unset"] [data-say="unset"],
+.account[data-account="code"] [data-say="code"],
+.account[data-account="on"] [data-say="on"],
+.account[data-account="error"] [data-say="error"] {
+  display: inline;
+}
+
+.account-code {
+  block-size: 1.6em;
+  font-size: var(--fs-l);
+  letter-spacing: 0.08em;
+  visibility: hidden;
+}
+
+.account[data-account="code"] .account-code {
+  visibility: visible;
+}
+
+.account-scopes {
+  block-size: 1.5em;
+  line-height: 1.5;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.account[data-account="on"] .account-scopes {
+  visibility: visible;
+}
+
+.account-acts {
+  display: flex;
+  gap: var(--sp-2);
+  min-block-size: 32px;
+}
+
+.account-acts > .btn {
+  display: none;
+}
+
+.account[data-account="off"] .account-in,
+.account[data-account="error"] .account-in,
+.account[data-account="code"] .account-open,
+.account[data-account="code"] .account-cancel,
+.account[data-account="on"] .account-out {
+  display: inline-flex;
+}
+
 /* toasts */
 
 .toasts {

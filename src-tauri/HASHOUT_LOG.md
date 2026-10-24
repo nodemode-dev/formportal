@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.46.0
-Last updated: 2026-10-24 · the login item; the save watcher; file_preview
+Current build version: v0.47.0
+Last updated: 2026-10-24 · the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.47.0 · the GitHub sign-in commands {#github}
+
+### github_status, github_start, github_poll, github_sign_out
+- refers-to: src/main.rs :: the four commands and the invoke_handler list
+- kind: decision
+- logged: v0.47.0 · 2026-10-24
+
+Thin surfaces over `formportal_core::github`, each on `spawn_blocking` like `catalog` and `install`, because every one of them can wait on the network or the keychain. The window runs the polling loop, one `github_poll` per interval, so Cancel only has to stop asking. Checked: `cargo check -p formportal`, no warnings. Not run in the window under Tauri.
 
 ## v0.46.0 · the login item {#login}
 

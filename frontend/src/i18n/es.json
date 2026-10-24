@@ -299,7 +299,21 @@
     "{title} is copied to {folder}. Its app is not installed, so it did not open.": "{title} se ha copiado en {folder}. Su app no está instalada, así que no se abrió.",
     "{title} is removed from your Library.": "{title} se ha quitado de tu Biblioteca.",
     "{title} is saved in your Library with its credit line.": "{title} se ha guardado en tu Biblioteca con su línea de crédito.",
-    "{title} starts again from the first step.": "{title} vuelve a empezar desde el primer paso."
+    "{title} starts again from the first step.": "{title} vuelve a empezar desde el primer paso.",
+    "Account": "Cuenta",
+    "Optional. Installing, updating and everything else in FormPortal work without an account. Signing in uses your own GitHub account, for sharing from Files.": "Opcional. Instalar, actualizar y todo lo demás en FormPortal funciona sin cuenta. Al iniciar sesión se usa tu propia cuenta de GitHub, para compartir desde Archivos.",
+    "Not signed in.": "Sin sesión iniciada.",
+    "This FormPortal has no GitHub app set up, so signing in is not available.": "Este FormPortal no tiene configurada ninguna app de GitHub, así que no se puede iniciar sesión.",
+    "On GitHub, enter this code:": "En GitHub, introduce este código:",
+    "Signed in as": "Sesión iniciada como",
+    "Sign in with GitHub": "Iniciar sesión con GitHub",
+    "Open github.com": "Abrir github.com",
+    "Sign out": "Cerrar sesión",
+    "FormPortal asks only to read your profile when you sign in, and asks again for repository access the first time you share. Your sign-in is kept in this computer's keychain, never in a file; sign out to remove it.": "FormPortal solo pide leer tu perfil al iniciar sesión, y vuelve a pedir acceso a tus repositorios la primera vez que compartes. Tu sesión se guarda en el llavero de este equipo, nunca en un archivo; cierra la sesión para quitarla.",
+    "The code expired before it was entered; start again.": "El código caducó antes de introducirlo; vuelve a empezar.",
+    "Signed in to GitHub as {login}.": "Sesión iniciada en GitHub como {login}.",
+    "Access granted: your profile and your repositories.": "Acceso concedido: tu perfil y tus repositorios.",
+    "Access granted: your profile only.": "Acceso concedido: solo tu perfil."
   },
   "patterns": [
     ["Instead of {x}", "En lugar de {x}"],

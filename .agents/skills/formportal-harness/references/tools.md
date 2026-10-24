@@ -25,6 +25,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
+| `account` | no | Whether the person has signed in to GitHub in FormPortal (optional: installing and updating never need it), as whom, and which access they granted (scopes). configured false means this FormPortal has no GitHub app set up. Signing in and out is the person's own step in FormPortal's Preferences or with formportal-cli sign-in; this tool never starts it. |
 | `policy` | no | Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\FormPortal\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists. |
 | `files` | yes | The person's Form project files (by each app's project extensions, e.g. .fc for FormCut) in the folders they gave FormPortal, newest first, with the app that opens each, size, date and how many earlier versions FormPortal keeps; plus each folder's file count and size. query filters by name or app. Reading also keeps a version of any file that changed since the last one, in folders where versions are on. Local only: nothing leaves the computer. |
 | `folders` | yes | Lists the folders FormPortal looks in; with action add and a path (the suggested folder if none), adds one (create true makes it), keep_versions on by default; with action remove, stops listing one without touching its files. Changing them is the person's choice: confirm first. |
@@ -130,6 +131,10 @@ No parameters.
 - `enabled`: boolean. 
 - `id`: string. 
 - `product`: string. 
+
+### account
+
+No parameters.
 
 ### policy
 

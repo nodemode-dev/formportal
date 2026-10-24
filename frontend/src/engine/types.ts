@@ -202,6 +202,27 @@ export interface AgentsView {
   clients: AgentClient[];
 }
 
+export interface GithubAccount {
+  login: string;
+  name: string | null;
+  scopes: string[];
+}
+
+export interface GithubStatus {
+  configured: boolean;
+  account: GithubAccount | null;
+}
+
+export interface DeviceCode {
+  device_code: string;
+  user_code: string;
+  verification_uri: string;
+  expires_in: number;
+  interval: number;
+}
+
+export type GithubPoll = { state: "waiting"; interval: number } | { state: "signed-in"; account: GithubAccount };
+
 export interface PolicyView {
   managed_by: string | null;
   system: boolean;

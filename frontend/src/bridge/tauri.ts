@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome } from "../engine/types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -117,6 +117,12 @@ export const tauriBridge: Bridge = {
     await tauri().core.invoke<null>("open_web", { url });
   },
   policy: () => tauri().core.invoke<PolicyView | null>("policy"),
+  githubStatus: () => tauri().core.invoke<GithubStatus>("github_status"),
+  githubStart: (share) => tauri().core.invoke<DeviceCode>("github_start", { share }),
+  githubPoll: (deviceCode, interval) => tauri().core.invoke<GithubPoll>("github_poll", { deviceCode, interval }),
+  githubSignOut: async () => {
+    await tauri().core.invoke<null>("github_sign_out");
+  },
   filesScan: (query) => tauri().core.invoke<FilesScan>("files_scan", { query: query ?? null }),
   folderPick: () => tauri().core.invoke<string | null>("folder_pick"),
   folderAdd: async (path, keepVersions, create) => {

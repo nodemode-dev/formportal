@@ -21,13 +21,14 @@ import { assistant } from "./extensions/assistant/index.ts";
 import { goToLanguage, launch } from "./extensions/launch/index.ts";
 import { repair } from "./extensions/repair/index.ts";
 import { t } from "./i18n/index.ts";
+import { account } from "./extensions/account/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -540,6 +541,60 @@ engine.command("agents.connect", (arg) =>
     }
   }, "agents"),
 );
+
+let accountRun = 0;
+const accountFail = (e: unknown) => engine.emit("account", { status: null, code: null, busy: false, error: e instanceof Error ? e.message : String(e) });
+
+engine.command("account.check", async () => {
+  try {
+    engine.emit("account", { status: await bridge.githubStatus(), code: null, busy: false, error: null });
+  } catch (e) {
+    accountFail(e);
+  }
+});
+
+engine.command("account.start", async (arg) => {
+  const run = ++accountRun;
+  engine.emit("account", { status: null, code: null, busy: true, error: null });
+  try {
+    const code = await bridge.githubStart(Boolean(arg));
+    if (run !== accountRun) return;
+    engine.emit("account", { status: null, code, busy: false, error: null });
+    const until = Date.now() + code.expires_in * 1000;
+    let interval = Math.max(1, code.interval);
+    while (run === accountRun) {
+      await new Promise((done) => window.setTimeout(done, interval * 1000));
+      if (run !== accountRun) return;
+      if (Date.now() > until) throw new Error(t("The code expired before it was entered; start again."));
+      const poll = await bridge.githubPoll(code.device_code, interval);
+      if (run !== accountRun) return;
+      if (poll.state === "waiting") interval = Math.max(1, poll.interval);
+      else {
+        accountRun += 1;
+        engine.emit("account", { status: { configured: true, account: poll.account }, code: null, busy: false, error: null });
+        engine.setNotice(t("Signed in to GitHub as {login}.", { login: poll.account.login }), "info", "system");
+        return;
+      }
+    }
+  } catch (e) {
+    if (run === accountRun) accountFail(e);
+  }
+});
+
+engine.command("account.cancel", () => {
+  accountRun += 1;
+  void engine.dispatch("account.check");
+});
+
+engine.command("account.signOut", async () => {
+  accountRun += 1;
+  try {
+    await bridge.githubSignOut();
+    await engine.dispatch("account.check");
+  } catch (e) {
+    accountFail(e);
+  }
+});
 
 engine.command("learn.load", () =>
   guard(async () => {

@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.46.0
-Last updated: 2026-10-24 · preferences open_at_login; app-agents returns the manifest
+Current build version: v0.47.0
+Last updated: 2026-10-24 · account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.47.0 · the GitHub sign-in {#github}
+
+### ops.rs · account, sign_in, sign_out · mcp.rs · account
+- refers-to: src/ops.rs :: account, sign_in, sign_out · src/main.rs :: account, sign-in, sign-out and their usage lines · src/mcp.rs :: the account tool · src/lib.rs :: recursion_limit
+- kind: decision
+- logged: v0.47.0 · 2026-10-24
+
+`sign-in` prints the code and address on stderr through the `announce` callback, polls at GitHub's interval until signed in or the code's 15 minutes run out, and prints the account as JSON; `--share true` also asks for repository access. The MCP server only reads (`account`, read-only, so `mcp --read-only` keeps it): an agent can see whether the person is signed in, never start or end it, because entering a code on github.com is the person's step. The tools list grew past the `json!` macro's default recursion limit, so the crate sets `#![recursion_limit = "256"]`; nothing else changed in how the list is built.
 
 ## v0.46.0 · preferences open_at_login {#login}
 

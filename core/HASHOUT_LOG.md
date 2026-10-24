@@ -2,8 +2,24 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.46.0
-Last updated: 2026-10-24 · the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.47.0
+Last updated: 2026-10-24 · the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.47.0 · the optional GitHub sign-in {#github}
+
+### github.rs · device flow, keychain, no secret
+- refers-to: core/src/github.rs :: client_id, start, poll, whoami, store, token, status, sign_out · core/github_client.txt · core/Cargo.toml :: keyring per target · core/src/error.rs :: CoreError::Account
+- kind: decision
+- logged: v0.47.0 · 2026-10-24
+
+The family plan's Phase 1b (owner: the sign-in and cloud rows connect to formcompiler). FormPortal signs in with GitHub's device flow: `start` posts `client_id` and `scope` to `/login/device/code`, the person enters the code on github.com, and `poll` posts `client_id`, `device_code` and the device-code grant to `/login/oauth/access_token` (GitHub's docs: no client secret is needed for the device flow, and device flow must be turned on in the app's settings). Both requests send `Accept: application/json`. `authorization_pending` keeps waiting, `slow_down` takes the new interval (or adds 5 seconds), `expired_token` (and `token_expired`, which GitHub's prose also uses), `access_denied` and `device_flow_disabled` end with a plain reason. The token goes to the system keychain (keyring 3.6.3: Keychain on macOS, Credential Manager on Windows, the Secret Service over D-Bus on Linux) under service `FormPortal GitHub`; with no keychain, signing in is refused before a code is shown, and nothing is ever written to a file. `whoami` reads `/user` and the granted scopes from `X-OAuth-Scopes`. `status` answers "not set up" before touching the keychain, so a computer without one does not show a keychain error for a feature it cannot use anyway. Scopes: `read:user` at sign-in, plus `repo` only when sharing asks (`SHARE_SCOPE`), because GitHub's docs give OAuth apps no narrower scope for private repositories and collaborators. The client ID is public and comes from the one-line `core/github_client.txt` (empty until the owner registers the app, then sign-in says it is not set up) or `FORMPORTAL_GITHUB_CLIENT_ID`; `FORMPORTAL_GITHUB_WEB` and `FORMPORTAL_GITHUB_API` point at a stand-in, and `check_url` still allows only https or this computer. `CoreError::Account` prefixes "GitHub sign-in:". Checked against a stand-in GitHub on loopback inside a D-Bus session with an unlocked gnome-keyring: not set up, signed out, sign-in through pending and slow_down (4 s), the token in the Secret Service (secret-tool finds it), status, sign-out, the share scope, a cancelled sign-in, device flow off, a plain http host refused, and no keychain (refused before the code). Not run against github.com (no client ID yet), macOS or Windows.
+
+### login.rs · the Windows failure's wording
+- refers-to: core/src/login.rs :: sync (Windows)
+- kind: fix
+- logged: v0.47.0 · 2026-10-24
+
+A failed `reg add` was `CoreError::State`, which reads "the record of installed apps could not be read"; it is `Invalid` with "the login item could not be added" and reg's message.
 
 ## v0.46.0 · the login item {#login}
 

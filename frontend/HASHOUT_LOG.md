@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.46.1
-Last updated: 2026-10-24 · the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.47.0
+Last updated: 2026-10-24 · Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.47.0 · Preferences, Account {#account}
+
+### The Account panel
+- refers-to: index.html :: data-prefs-tab="account", data-prefs-panel="account", data-account and its children · src/extensions/account · src/styles/main.css :: .account and its states · src/main.ts :: account.check, account.start, account.cancel, account.signOut · src/bridge :: githubStatus, githubStart, githubPoll, githubSignOut (fixture: `?github` in the address makes it set up, and the third poll signs in) · src/engine :: the account event, GithubStatus, DeviceCode, GithubPoll · src/i18n/es.json
+- kind: decision
+- logged: v0.47.0 · 2026-10-24
+
+The panel's markup holds every state at once (checking, not set up, signed out, the code, signed in, an error) and `data-account` on its box picks which line and which buttons show; the extension writes that attribute and the text of the login, the code, the access line and the error, nothing else. The code and access lines keep their height when hidden (`visibility` and a fixed 1.5em with a fixed line-height), and the buttons share one 32 px row, so the note below never moves. A first build let the access line grow from its 1.4em minimum to its text's line height, 2 px, when signed in; pinned. `account.start` owns the polling loop; `accountRun` numbers each attempt so Cancel, sign-out or a new attempt silently ends the old one. Open github.com goes through `web.open`, the system browser. Checked in the preview at 4x CPU and a slow network, in English and Spanish: signed out, code, signed in after the third poll, signed out, cancelled; the panel stays 130 px and the note stays put through every state; no layout shift recorded; no page error; unconfigured shows its own line.
 
 ## v0.46.1 · parity close-out, the language rows {#languages-2}
 

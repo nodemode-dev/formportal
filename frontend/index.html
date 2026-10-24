@@ -364,6 +364,7 @@
           <button class="prefs-tab" type="button" data-prefs-tab="general" aria-current="page">General</button>
           <button class="prefs-tab" type="button" data-prefs-tab="apps">Apps</button>
           <button class="prefs-tab" type="button" data-prefs-tab="catalogue">Catalogue</button>
+          <button class="prefs-tab" type="button" data-prefs-tab="account">Account</button>
           <button class="prefs-tab" type="button" data-prefs-tab="about">About</button>
         </nav>
         <div class="prefs-body">
@@ -426,6 +427,22 @@
             </dl>
           </section>
 
+          <section class="prefs-panel" data-prefs-panel="account" hidden>
+            <h3 class="prefs-h">GitHub</h3>
+            <p class="fine">Optional. Installing, updating and everything else in FormPortal work without an account. Signing in uses your own GitHub account, for sharing from Files.</p>
+            <div class="account" data-account="checking">
+              <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not signed in.</span><span class="account-say" data-say="unset">This FormPortal has no GitHub app set up, so signing in is not available.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Signed in as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
+              <p class="account-code mono" data-account-code aria-live="polite"></p>
+              <p class="fine account-scopes" data-account-scopes></p>
+              <div class="account-acts">
+                <button class="btn btn-primary account-in" type="button" data-account-in>Sign in with GitHub</button>
+                <button class="btn account-open" type="button" data-account-open>Open github.com</button>
+                <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
+                <button class="btn account-out" type="button" data-account-out>Sign out</button>
+              </div>
+            </div>
+            <p class="fine">FormPortal asks only to read your profile when you sign in, and asks again for repository access the first time you share. Your sign-in is kept in this computer's keychain, never in a file; sign out to remove it.</p>
+          </section>
           <section class="prefs-panel" data-prefs-panel="about" hidden>
             <h3 class="prefs-h">FormPortal %fact:version%</h3>
             <p class="fine" translate="no">by nodemode.ai</p>

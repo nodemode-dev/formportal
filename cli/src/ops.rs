@@ -566,6 +566,35 @@ pub fn web_file(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> 
     Ok(json!({ "saved": path, "product": plan.product, "opened_with": opened }))
 }
 
+pub fn account() -> Result<Value, CoreError> {
+    let s = formportal_core::github::status()?;
+    Ok(json!({ "configured": s.configured, "signed_in": s.account.is_some(), "account": s.account }))
+}
+
+pub fn sign_in(args: &Value, announce: &mut dyn FnMut(&formportal_core::github::DeviceCode)) -> Result<Value, CoreError> {
+    use formportal_core::github::{poll, start, Poll, SHARE_SCOPE, SIGN_IN_SCOPE};
+    let scope = if flag(args, "share") == Some(true) { format!("{SIGN_IN_SCOPE} {SHARE_SCOPE}") } else { SIGN_IN_SCOPE.to_string() };
+    let code = start(&scope)?;
+    announce(&code);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(code.expires_in);
+    let mut interval = code.interval.max(1);
+    loop {
+        std::thread::sleep(std::time::Duration::from_secs(interval));
+        if std::time::Instant::now() > deadline {
+            return Err(CoreError::Account("the code expired before it was entered; start again".to_string()));
+        }
+        match poll(&code.device_code, interval)? {
+            Poll::Waiting { interval: next } => interval = next.max(1),
+            Poll::SignedIn { account } => return Ok(json!({ "signed_in": true, "account": account })),
+        }
+    }
+}
+
+pub fn sign_out() -> Result<Value, CoreError> {
+    formportal_core::github::sign_out()?;
+    Ok(json!({ "signed_in": false }))
+}
+
 pub fn policy(ctx: &Ctx) -> Result<Value, CoreError> {
     Ok(match ctx.portal.policy()? {
         Some(m) => json!({
