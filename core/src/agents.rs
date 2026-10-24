@@ -332,9 +332,9 @@ fn client_state(client: Client, name: &str) -> ClientState {
         Client::Claude => match which("claude") {
             None => ClientState { client, label, state: Link::NoClient, config: None, note: Some("the claude command is not installed on this computer".to_string()) },
             Some(claude) => {
-                let got = Command::new(claude).args(["mcp", "get", name]).output();
+                let got = Command::new(claude).args(["mcp", "get", name]).current_dir(home()).output();
                 match got {
-                    Ok(out) if out.status.success() => {
+                    Ok(out) if out.status.success() && String::from_utf8_lossy(&out.stdout).contains("Scope: User") => {
                         let text = String::from_utf8_lossy(&out.stdout).to_string();
                         let state = if ours(&text) { Link::Connected } else { Link::Taken };
                         ClientState { client, label, state, config: None, note: (state == Link::Taken).then(|| format!("another server named {name} is set up; left alone")) }
