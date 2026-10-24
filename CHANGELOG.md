@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.46.1 · 2026-10-24
+
+- Notices, the self-update status and the Versions dialog follow the chosen language; only error text from the engine itself stays English.
+- A slow first start no longer swaps the font after the window is shown, so nothing on Home moves (it showed in Spanish).
+
 ## v0.46.0 · 2026-10-24
 
 - Preferences, General: Open FormPortal when I log in, off by default. It opens the window and nothing else; turn it off and the login item is removed.
