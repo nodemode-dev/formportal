@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.46.0 · 2026-10-24
+
+- Preferences, General: Open FormPortal when I log in, off by default. It opens the window and nothing else; turn it off and the login item is removed.
+- Other versions shows each release's date. With formcompiler 0.4.2 the list keeps the newest release of every earlier major version, not only the last five.
+- The `preferences` command and MCP tool take `open_at_login`; the window applies it when it next starts.
+
 ## v0.45.1 · 2026-10-24
 
 - Claude Code counts as connected only when the app is in your user settings; opening FormPortal inside a project whose `.mcp.json` names the app no longer reads as connected.
