@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.44.0
-Last updated: 2026-10-12 · Files follows saves; previews
+Current build version: v0.44.6
+Last updated: 2026-10-24 · by nodemode.ai in Preferences, About
+
+## v0.44.6 · by nodemode.ai in About {#credit}
+
+### The credit under the version heading
+- refers-to: index.html :: data-prefs-panel="about"
+- kind: decision
+- logged: v0.44.6 · 2026-10-24
+
+Owner decision of 2026-10-23 for the form family: where an app has an About, it carries "by nodemode.ai" there. A `p.fine` with `translate="no"` sits right under "FormPortal %fact:version%"; it is static markup in a panel that is hidden until its tab is chosen, so it adds nothing to the first frame. The Spanish table has no entry, so the line stays English in every language. Checked in Chromium at 4x CPU and a slow network: Preferences, About shows it, CLS 0, no page error.
 
 ## v0.44.0 · Files follows saves; previews {#saves}
 
