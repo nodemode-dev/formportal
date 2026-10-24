@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.46.0
-Last updated: 2026-10-24 · open at login; release dates in Other versions
+Current build version: v0.46.1
+Last updated: 2026-10-24 · the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.46.1 · parity close-out, the language rows {#languages-2}
+
+### The font is decided before the app is shown
+- refers-to: public/prepaint.js :: the readystatechange handler (started, inter, show) · src/styles/main.css :: html[data-font="fallback"]
+- kind: fix
+- logged: v0.46.1 · 2026-10-24
+
+The Spanish page had one first-load shift of 0.000048 on a slow network, inherited from v0.45.1. Traced over a throttled load: Inter arrived about 6.2 s in and was applied although its face says `font-display: optional`, widening every button; the update strip's buttons are right-anchored, so their left edges moved (7.3 px and 3.5 px in Spanish, 1.1 px in English, which is under the shift threshold and why English read 0). The swap happens because nothing uses Inter while `#app` is held out of layout, so its display period has not started when the file arrives. Now, when parsing ends, prepaint finds the Inter face and asks it to load, waiting at most 100 ms, the same short window `optional` gives; if it is loaded by then the app shows in Inter, otherwise `data-font="fallback"` makes `--font-ui` start at the metric-matched Inter Fallback for the whole of this page's life, so the late file changes nothing. The file is cached for the next start. A face that is missing (the stylesheet not parsed yet) or failed also means fallback. `started` keeps the second readystatechange (complete) from starting a second wait. A first try that called `document.fonts.check` answered true before the stylesheet was parsed, and a second that read `status` without `load()` saw `unloaded` even when cached and always fell back; both were replaced. Checked: 4x CPU and 400 ms, 50 kB/s: CLS 0 on five Spanish and five English loads, the first load in a profile falls back, the next one uses Inter; unthrottled and cached, both pages use Inter; no page error.
 
 ## v0.46.0 · parity close-out {#parity-close}
 

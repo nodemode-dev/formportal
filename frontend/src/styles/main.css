@@ -437,6 +437,10 @@ html[data-parsing] #app {
   display: none;
 }
 
+html[data-font="fallback"] {
+  --font-ui: "Inter Fallback", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
 .pane {
   display: none;
 }

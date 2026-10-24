@@ -1,8 +1,26 @@
 (function () {
   var d = document.documentElement;
   d.setAttribute("data-parsing", "");
+  var started = false;
   document.addEventListener("readystatechange", function () {
-    if (document.readyState !== "loading") d.removeAttribute("data-parsing");
+    if (document.readyState === "loading" || started) return;
+    started = true;
+    var inter = null;
+    if (document.fonts) {
+      document.fonts.forEach(function (face) {
+        if (face.family.replace(/"/g, "") === "Inter") inter = face;
+      });
+    }
+    var done = false;
+    var show = function () {
+      if (done) return;
+      done = true;
+      if (!inter || inter.status !== "loaded") d.setAttribute("data-font", "fallback");
+      d.removeAttribute("data-parsing");
+    };
+    if (!inter || inter.status === "loaded" || inter.status === "error") return show();
+    inter.load().then(show, show);
+    setTimeout(show, 100);
   });
   try {
     var mode = localStorage.getItem("formportal-theme");
