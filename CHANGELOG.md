@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.44.6 · 2026-10-24
+
+- LICENSE, NOTICE and the README name the copyright holder, NodeAgentc, Inc., and Preferences, About shows "by nodemode.ai" under the version.
+
 ## v0.44.5 · 2026-10-23
 
 - The installed app and every release zip carry FormPortal's licence and third-party licence ledger (LICENSE, LICENSES.md, NOTICE). The crate audit is recorded in LICENSES.md, with the crates under other licences in their own table.
