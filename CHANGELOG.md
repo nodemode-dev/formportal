@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.47.0 · 2026-10-24
+
+- Preferences, Account: sign in to your own GitHub account, optionally, with a code you enter on github.com. Nothing in FormPortal needs it; sharing from Files will use it. FormPortal asks only to read your profile, and keeps the sign-in in this computer's keychain.
+- `formportal-cli account`, `sign-in` and `sign-out`; the MCP server's read-only `account` tool.
+- On Linux, building FormPortal needs the D-Bus headers (`libdbus-1-dev`).
+- A failed Windows login item now says so, instead of mentioning the record of installed apps.
+
 ## v0.46.1 · 2026-10-24
 
 - Notices, the self-update status and the Versions dialog follow the chosen language; only error text from the engine itself stays English.
