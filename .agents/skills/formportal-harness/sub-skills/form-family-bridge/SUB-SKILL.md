@@ -1,6 +1,6 @@
 ---
 name: form-family-bridge
-description: FormPortal's place among the Form apps. Use when, after installing a Form app, the work continues inside that app through its own MCP server (FormEncoder, FormCut, FormVis and others), when the person follows an Open in FormPortal link from formai.dev, or asks how FormPortal relates to formai.dev, FormHub or FormMCP.
+description: FormPortal's place among the Form apps. Use when, after installing a Form app, the work continues inside that app through its own MCP server (FormEncoder, FormCut, FormVis and others), when the person follows an Open in FormPortal link from formai.dev, or asks how FormPortal relates to formai.dev, FormHub, formMCP or formskills.
 ---
 
 # form-family-bridge
@@ -23,5 +23,6 @@ formai.dev links into FormPortal with `formai://app/[id]` (that app's own page),
 
 - **FormPortal** is this app (Creative Cloud's place). Its catalogue id is `formai`.
 - **FormHub** is the family's GitHub alternative, a different app.
-- **FormMCP** is the planned connector for the whole family; until it exists, each app's own MCP server is the way in.
+- **formMCP** (`formmcp`) is the one MCP connection to the whole family. Added once to Claude Code, Codex or Cursor, its `suggest_app` tool names the app that fits a task and `family_apps` lists every app with whether it is installed; for an installed app, `app_tools` loads that app's own tools on demand and `call_app` runs one, starting installs through `formportal app-mcp [product]`. formMCP never installs: when it says an app is missing, the person installs it here. Connecting one app directly with `connect_agents` still works and suits someone who uses only that app.
+- **formskills** (`formskills`) shows every Form app's released skills to read, download and keep personal edited copies of. Skills are not formMCP's or FormPortal's job; point the person there.
 - **formai.dev** is the website that publishes the catalogue FormPortal reads.

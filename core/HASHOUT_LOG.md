@@ -2,8 +2,24 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.45.0
-Last updated: 2026-10-24 · form-app.json format_version 2, catalogue agents fields
+Current build version: v0.45.1
+Last updated: 2026-10-24 · Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.45.1 · family registration {#family-v1}
+
+### agents.rs · Claude Code: user scope only
+- refers-to: core/src/agents.rs :: client_state (Client::Claude)
+- kind: fix
+- logged: v0.45.1 · 2026-10-24
+
+`claude mcp get <name>` also finds a project's `.mcp.json`, so FormPortal started inside a project that names the app's server (as formMCP's and FormPortal's own checkouts do for their servers) reported Claude Code "connected" with nothing at user scope, and Disconnect then removed nothing. The check now runs in the home folder and counts an entry only when the output says `Scope: User`, which is the scope `connect` writes; a project entry is left out of the state and never touched. The same fix as formMCP 0.4.0's. Checked with the real `claude` command in a scratch home and a stand-in install of formvis with a launcher: inside a project whose `.mcp.json` names `formvis`, not connected; after `connect`, connected (Scope: User); after `disconnect`, not connected, the project file unchanged.
+
+### catalog/products.json · formMCP and formskills by their registry names
+- refers-to: catalog/products.json :: formmcp, formskills · design/tokens.css :: [data-product="formskills"]
+- kind: decision
+- logged: v0.45.1 · 2026-10-24
+
+The owner's names (family plan, Q5): `formmcp`, display name formMCP, `ai.nodemode.formmcp`, `nodemode-ai/formMCP`; `formskills` (was `formskill`, FormSkill), `ai.nodemode.formskills`, `nodemode-ai/formskills`, with the summaries formcompiler's registry carries. Both stay `in-development` in the `next` group until their first release. The product hue moves with the id. FormTray already used these ids and identifiers; FormRanker changes in its 0.6.5.
 
 ## v0.45.0 · form-app.json format_version 2 {#app-v2}
 
