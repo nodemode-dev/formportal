@@ -7,6 +7,13 @@ Last updated: 2026-10-24 · the font is decided before the first frame; open at 
 
 ## v0.46.1 · parity close-out, the language rows {#languages-2}
 
+### Run-time text through the string table
+- refers-to: src/main.ts :: every setNotice, setSelf and thrown catalogue error · src/extensions/files :: the Versions dialog title, (latest), Go back to this · src/extensions/notices :: Dismiss · src/extensions/settings and launch :: the could-not-save notice · src/i18n/es.json :: 51 new entries · index.html :: data-lang-note
+- kind: decision
+- logged: v0.46.1 · 2026-10-24
+
+Parity rows #6 and #66 were Partial for two reasons: the Spanish is an unreviewed draft, and notices and run-time text were still English. Every notice, the self-update status and the catalogue error now go through `t()` with a `{name}` template, and `es.json` has a Spanish template for every key the interface asks for (66 keys, 51 added, placeholders checked to match). Plurals that differed in English are two keys (`1 update is waiting`, `{n} updates are waiting`; one font or several). A value that comes from data (an app's name, a file name, a version, a font style) is a placeholder, never translated. What remains English is error text produced by the engine (`e.message` from the core), which the note in Preferences now says in so many words. Rows #6 and #66 stay Partial until a speaker reviews the draft. Checked in the preview at 4x CPU: installing FormCut shows "FormCut 2.6.2 está instalada." with "Cerrar" in Spanish and the English text in English, the self-update check reads its Spanish line, CLS 0, no page error.
+
 ### The font is decided before the app is shown
 - refers-to: public/prepaint.js :: the readystatechange handler (started, inter, show) · src/styles/main.css :: html[data-font="fallback"]
 - kind: fix

@@ -1,4 +1,5 @@
 import type { NoticeCategory } from "../../engine/types.ts";
+import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 
 const KEEP = 30;
@@ -45,8 +46,8 @@ export const notices: Extension = {
       const close = document.createElement("button");
       close.type = "button";
       close.className = "toast-close";
-      close.setAttribute("aria-label", "Dismiss");
-      close.textContent = "Dismiss";
+      close.setAttribute("aria-label", t("Dismiss"));
+      close.textContent = t("Dismiss");
       close.addEventListener("click", () => item.remove());
       item.append(body, close);
       const showing = toasts.firstElementChild as HTMLElement | null;

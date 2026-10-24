@@ -1,4 +1,4 @@
-import { language, pageFor } from "../../i18n/index.ts";
+import { language, pageFor, t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 
 const OPEN_KEY = "formportal-open";
@@ -25,7 +25,7 @@ export const launch: Extension = {
           if (next === "last") localStorage.setItem(OPEN_KEY, "last");
           else localStorage.removeItem(OPEN_KEY);
         } catch {
-          engine.setNotice("This choice could not be saved on this computer.");
+          engine.setNotice(t("This choice could not be saved on this computer."));
           return;
         }
         for (const o of opens) o.setAttribute("aria-pressed", String(o === b));

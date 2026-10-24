@@ -20,6 +20,7 @@ import { learn } from "./extensions/learn/index.ts";
 import { assistant } from "./extensions/assistant/index.ts";
 import { goToLanguage, launch } from "./extensions/launch/index.ts";
 import { repair } from "./extensions/repair/index.ts";
+import { t } from "./i18n/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
@@ -60,7 +61,7 @@ engine.command("catalog.load", () =>
       root.setAttribute("data-offline", "");
       root.setAttribute("data-loaded", "");
       const why = e instanceof Error ? e.message : String(e);
-      throw new Error(`FormPortal could not read the catalogue, so installs and updates wait until it can. Installed apps still open. (${why})`);
+      throw new Error(t("FormPortal could not read the catalogue, so installs and updates wait until it can. Installed apps still open. ({why})", { why }));
     }
     root.removeAttribute("data-offline");
     engine.setCatalog(catalog, bridge.source);
@@ -83,10 +84,10 @@ engine.command("catalog.load", () =>
     }).length;
     const self = engine.view("formai", "stable");
     const parts = [
-      ok.length ? `Updated ${ok.join(", ")}.` : "",
-      failed.length ? `Could not update ${failed.join("; ")}.` : "",
-      waiting ? `${waiting} ${waiting === 1 ? "update is" : "updates are"} waiting in Updates.` : "",
-      self.version && versionNewer(self.version, pkg.version) ? `FormPortal ${self.version} is available at formai.dev/download.` : "",
+      ok.length ? t("Updated {list}.", { list: ok.join(", ") }) : "",
+      failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : "",
+      waiting ? (waiting === 1 ? t("1 update is waiting in Updates.") : t("{n} updates are waiting in Updates.", { n: waiting })) : "",
+      self.version && versionNewer(self.version, pkg.version) ? t("FormPortal {version} is available at formai.dev/download.", { version: self.version }) : "",
     ].filter(Boolean);
     if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates");
   }),
@@ -114,19 +115,19 @@ engine.command("app.install", (arg) =>
     const open = await bridge.stillOpen(product, channel);
     const installed = engine.installs.get(engine.key(product, channel))?.version ?? version ?? "";
     const notes = open.length
-      ? [`An earlier copy of ${label} is still open (process ${open.join(", ")}). It keeps running untouched, and ${installed} opens next time.`]
+      ? [t("An earlier copy of {app} is still open (process {pids}). It keeps running untouched, and {version} opens next time.", { app: label, pids: open.join(", "), version: installed })]
       : [];
     if (version) {
       const held = engine.automatic(product, channel);
       engine.setPrefs(await bridge.preferences());
       if (held && !engine.automatic(product, channel)) {
-        notes.push(`${label} ${version} is installed. Automatic updates for it are off so it stays; turn them back on under More.`);
+        notes.push(t("{app} {version} is installed. Automatic updates for it are off so it stays; turn them back on under More.", { app: label, version }));
       }
     }
-    if (!notes.length) notes.push(`${label}${channel === "stable" ? "" : ` ${channel}`} ${installed} is installed.`);
+    if (!notes.length) notes.push(t("{app} {version} is installed.", { app: `${label}${channel === "stable" ? "" : ` ${channel}`}`, version: installed }));
     const view = await bridge.appAgents(product, channel).catch(() => null);
     if (view?.surface && !view.clients.some((c) => c.state === "connected")) {
-      notes.push(`It has its own MCP server: connect it to Claude Code, Codex and Cursor from its page.`);
+      notes.push(t("It has its own MCP server: connect it to Claude Code, Codex and Cursor from its page."));
     }
     engine.setNotice(notes.join(" "), "info", "installs");
   }, "installs"),
@@ -148,7 +149,7 @@ engine.command("app.later", (arg) =>
     engine.setLater(await bridge.updateLater(product, channel, on));
     const to = engine.view(product, channel).version ?? "";
     engine.setNotice(
-      on ? `${engine.name(product)} updates to ${to} when you close it. FormPortal checks every few minutes while it is open, and when it next opens.` : `${engine.name(product)} is no longer waiting to update later.`,
+      on ? t("{app} updates to {version} when you close it. FormPortal checks every few minutes while it is open, and when it next opens.", { app: engine.name(product), version: to }) : t("{app} is no longer waiting to update later.", { app: engine.name(product) }),
       "info",
       "updates",
     );
@@ -164,7 +165,7 @@ engine.command("later.check", () =>
     engine.setLater(await bridge.laterList());
     const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.to}`);
     const failed = done.filter((d) => d.error).map((d) => `${engine.name(d.product)}: ${d.error}`);
-    if (ok.length || failed.length) engine.setNotice([ok.length ? `Updated ${ok.join(", ")} now that it is closed.` : "", failed.length ? `Could not update ${failed.join("; ")}.` : ""].filter(Boolean).join(" "), failed.length ? "fault" : "info", "updates");
+    if (ok.length || failed.length) engine.setNotice([ok.length ? t("Updated {list} now that it is closed.", { list: ok.join(", ") }) : "", failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : ""].filter(Boolean).join(" "), failed.length ? "fault" : "info", "updates");
   }, "updates"),
 );
 
@@ -185,7 +186,7 @@ engine.command("repair.run", (arg) =>
     if (fix) {
       await refresh();
       const mb = Math.round(report.freed / 1_000_000);
-      engine.setNotice(`Repaired ${report.fixed} of ${report.findings.length}${mb ? `; ${mb} MB freed` : ""}.`, report.fixed === report.findings.length ? "info" : "fault", "system");
+      engine.setNotice(mb ? t("Repaired {fixed} of {total}; {mb} MB freed.", { fixed: report.fixed, total: report.findings.length, mb }) : t("Repaired {fixed} of {total}.", { fixed: report.fixed, total: report.findings.length }), report.fixed === report.findings.length ? "info" : "fault", "system");
     }
   }),
 );
@@ -196,7 +197,7 @@ engine.command("web.ask", (arg) =>
     await refresh();
     if (![...engine.installs.values()].some((r) => r.product === plan.product)) {
       void engine.dispatch("route.go", `app-${plan.product}`);
-      engine.setNotice(`A web page wants ${engine.name(plan.product)} to open ${plan.name}, but ${engine.name(plan.product)} is not installed. Install it here, then open the link again.`, "fault", "library");
+      engine.setNotice(t("A web page wants {app} to open {file}, but {app} is not installed. Install it here, then open the link again.", { app: engine.name(plan.product), file: plan.name }), "fault", "library");
       return;
     }
     engine.emit("webfile", { plan });
@@ -208,7 +209,7 @@ engine.command("web.fetch", (arg) =>
     const plan = arg as { url: string; name: string; product: string };
     const done = await bridge.webFetch(plan.url);
     engine.setNotice(
-      done.opened_with ? `${plan.name} is saved in ${done.saved.replace(/[\\/][^\\/]*$/, "")} and opening in ${engine.name(done.opened_with)}.` : `${plan.name} is saved in ${done.saved.replace(/[\\/][^\\/]*$/, "")}.`,
+      done.opened_with ? t("{file} is saved in {folder} and opening in {app}.", { file: plan.name, folder: done.saved.replace(/[\\/][^\\/]*$/, ""), app: engine.name(done.opened_with) }) : t("{file} is saved in {folder}.", { file: plan.name, folder: done.saved.replace(/[\\/][^\\/]*$/, "") }),
       "info",
       "library",
     );
@@ -272,8 +273,8 @@ engine.command("ext.install", (arg) =>
     } finally {
       await extRefresh();
     }
-    const label = done.source === "sideload" ? " It was installed from a file, not the catalogue." : "";
-    engine.setNotice(`${done.name} ${done.version} is installed; ${engine.name(done.product)} uses it the next time it starts.${label}`, "info", "installs");
+    const label = done.source === "sideload" ? ` ${t("It was installed from a file, not the catalogue.")}` : "";
+    engine.setNotice(`${t("{name} {version} is installed; {app} uses it the next time it starts.", { name: done.name, version: done.version, app: engine.name(done.product) })}${label}`, "info", "installs");
   }, "installs"),
 );
 
@@ -297,19 +298,19 @@ engine.command("ext.enable", (arg) =>
 );
 
 engine.command("self.check", async () => {
-  engine.setSelf("Checking...", false);
+  engine.setSelf(t("Checking..."), false);
   try {
     const s = await bridge.selfUpdateCheck();
-    if (!s.configured) engine.setSelf("This build has no update key yet; new versions come from formai.dev/download.", false);
-    else if (s.available) engine.setSelf(`FormPortal ${s.available} is available.`, true);
-    else engine.setSelf("FormPortal is up to date.", false);
+    if (!s.configured) engine.setSelf(t("This build has no update key yet; new versions come from formai.dev/download."), false);
+    else if (s.available) engine.setSelf(t("FormPortal {version} is available.", { version: s.available }), true);
+    else engine.setSelf(t("FormPortal is up to date."), false);
   } catch (e) {
     engine.setSelf(e instanceof Error ? e.message : String(e), false);
   }
 });
 
 engine.command("self.install", async () => {
-  engine.setSelf("Downloading and checking the signature...", false);
+  engine.setSelf(t("Downloading and checking the signature..."), false);
   try {
     await bridge.selfUpdateInstall();
   } catch (e) {
@@ -334,7 +335,7 @@ engine.command("folder.add", (arg) =>
     const chosen = path ?? (await bridge.folderPick());
     if (!chosen) return;
     await bridge.folderAdd(chosen, true, Boolean(create));
-    engine.setNotice(`FormPortal now lists the Form projects in ${chosen} and keeps their versions.`, "info", "library");
+    engine.setNotice(t("FormPortal now lists the Form projects in {folder} and keeps their versions.", { folder: chosen }), "info", "library");
     await engine.dispatch("files.scan");
   }, "library"),
 );
@@ -342,7 +343,7 @@ engine.command("folder.add", (arg) =>
 engine.command("folder.remove", (arg) =>
   guard(async () => {
     await bridge.folderRemove(String(arg));
-    engine.setNotice(`FormPortal no longer lists ${String(arg)}. Its files are untouched.`, "info", "library");
+    engine.setNotice(t("FormPortal no longer lists {folder}. Its files are untouched.", { folder: String(arg) }), "info", "library");
     await engine.dispatch("files.scan");
   }, "library"),
 );
@@ -352,11 +353,11 @@ engine.command("file.open", (arg) =>
     const { path, product: owner } = arg as { path: string; product?: string };
     const name = path.split(/[\\/]/).pop();
     if (owner && ![...engine.installs.values()].some((r) => r.product === owner)) {
-      engine.setNotice(`${engine.name(owner)} is not installed, so ${name} cannot open yet. Install ${engine.name(owner)} from Apps.`, "fault", "library");
+      engine.setNotice(t("{app} is not installed, so {file} cannot open yet. Install {app} from Apps.", { app: engine.name(owner), file: name ?? "" }), "fault", "library");
       return;
     }
     const product = await bridge.fileOpen(path);
-    engine.setNotice(`Opening ${name} in ${engine.name(product)}.`, "info", "library");
+    engine.setNotice(t("Opening {file} in {app}.", { file: name ?? "", app: engine.name(product) }), "info", "library");
   }, "library"),
 );
 
@@ -366,9 +367,9 @@ engine.command("file.versions", (arg) =>
     const list = await bridge.fileVersions(path, action, version);
     engine.emit("versions", { path, list });
     const name = path.split(/[\\/]/).pop();
-    if (action === "save") engine.setNotice(`A version of ${name} is kept.`, "info", "library");
+    if (action === "save") engine.setNotice(t("A version of {file} is kept.", { file: name ?? "" }), "info", "library");
     if (action === "revert") {
-      engine.setNotice(`${name} is back to the version you chose; the one before is kept too.`, "info", "library");
+      engine.setNotice(t("{file} is back to the version you chose; the one before is kept too.", { file: name ?? "" }), "info", "library");
       await engine.dispatch("files.scan");
     }
   }, "library"),
@@ -414,12 +415,12 @@ engine.command("media.save", (arg) =>
     if (use) {
       const where = done?.copied_to ?? "";
       engine.setNotice(
-        done?.opened_with ? `${title} is copied to ${where} and opening in ${engine.name(done.opened_with)}.` : `${title} is copied to ${where}. Its app is not installed, so it did not open.`,
+        done?.opened_with ? t("{title} is copied to {folder} and opening in {app}.", { title, folder: where, app: engine.name(done.opened_with) }) : t("{title} is copied to {folder}. Its app is not installed, so it did not open.", { title, folder: where }),
         "info",
         "library",
       );
     } else {
-      engine.setNotice(`${title} is saved in your Library with its credit line.`, "info", "library");
+      engine.setNotice(t("{title} is saved in your Library with its credit line.", { title }), "info", "library");
     }
   }, "library"),
 );
@@ -432,7 +433,7 @@ engine.command("media.remove", (arg) =>
     } finally {
       await engine.dispatch("media.load");
     }
-    engine.setNotice(`${title} is removed from your Library.`, "info", "library");
+    engine.setNotice(t("{title} is removed from your Library.", { title }), "info", "library");
   }, "library"),
 );
 
@@ -451,7 +452,7 @@ engine.command("font.install", (arg) =>
       await engine.dispatch("fonts.load");
     }
     const family = engine.lastFonts?.index?.families.find((f) => f.id === id)?.family ?? id;
-    engine.setNotice(`${family}${style ? ` ${style}` : ""} is installed for you. Apps see it after they restart.`, "info", "library");
+    engine.setNotice(t("{font} is installed for you. Apps see it after they restart.", { font: `${family}${style ? ` ${style}` : ""}` }), "info", "library");
   }, "library"),
 );
 
@@ -463,7 +464,7 @@ engine.command("font.update", (arg) =>
     } finally {
       await engine.dispatch("fonts.load");
     }
-    engine.setNotice(`${family} is updated (${styles.join(", ")}). Apps see the new version after they restart.`, "info", "updates");
+    engine.setNotice(t("{font} is updated ({styles}). Apps see the new version after they restart.", { font: family, styles: styles.join(", ") }), "info", "updates");
   }, "updates"),
 );
 
@@ -473,7 +474,7 @@ engine.on("fonts", ({ view }) => {
   const key = names.join("|");
   if (!names.length || key === fontNotice) return;
   fontNotice = key;
-  engine.setNotice(`${names.length === 1 ? "A newer version of the font" : "Newer versions of the fonts"} ${names.join(", ")} ${names.length === 1 ? "is" : "are"} in the font library. Update ${names.length === 1 ? "it" : "them"} in Fonts.`, "info", "updates");
+  engine.setNotice(names.length === 1 ? t("A newer version of the font {fonts} is in the font library. Update it in Fonts.", { fonts: names[0] }) : t("Newer versions of the fonts {fonts} are in the font library. Update them in Fonts.", { fonts: names.join(", ") }), "info", "updates");
 });
 
 engine.command("font.remove", (arg) =>
@@ -484,7 +485,7 @@ engine.command("font.remove", (arg) =>
     } finally {
       await engine.dispatch("fonts.load");
     }
-    engine.setNotice(`${label ?? family} is removed.`, "info", "library");
+    engine.setNotice(t("{font} is removed.", { font: label ?? family }), "info", "library");
   }, "library"),
 );
 
@@ -503,7 +504,7 @@ engine.command("font.add", (arg) =>
     } finally {
       await engine.dispatch("fonts.load");
     }
-    engine.setNotice(`${path.split(/[\\/]/).pop()} is added for you. Apps see it after they restart.`, "info", "library");
+    engine.setNotice(t("{font} is added for you. Apps see it after they restart.", { font: path.split(/[\\/]/).pop() ?? path }), "info", "library");
   }, "library"),
 );
 
@@ -529,8 +530,8 @@ engine.command("agents.connect", (arg) =>
       const done = clients.filter((c) => c.state === "connected").map((c) => c.label);
       engine.setNotice(
         disconnect
-          ? `${engine.name(product)} was taken out of Claude Code, Codex and Cursor.`
-          : `${engine.name(product)} is connected to ${done.join(", ") || "no client"}. Restart the client, or reload its MCP servers, to see its tools.`,
+          ? t("{app} was taken out of Claude Code, Codex and Cursor.", { app: engine.name(product) })
+          : t("{app} is connected to {clients}. Restart the client, or reload its MCP servers, to see its tools.", { app: engine.name(product), clients: done.join(", ") || t("no client") }),
         "info",
         "agents",
       );
@@ -555,8 +556,8 @@ engine.command("learn.mark", (arg) =>
       await engine.dispatch("learn.load");
     }
     const view = engine.lastLearn?.tutorials.find((t) => t.id === id);
-    if (reset) engine.setNotice(`${title} starts again from the first step.`, "info", "learn");
-    else if (view?.finished && done !== false) engine.setNotice(`You finished ${title}.`, "info", "learn");
+    if (reset) engine.setNotice(t("{title} starts again from the first step.", { title }), "info", "learn");
+    else if (view?.finished && done !== false) engine.setNotice(t("You finished {title}.", { title }), "info", "learn");
   }, "learn"),
 );
 

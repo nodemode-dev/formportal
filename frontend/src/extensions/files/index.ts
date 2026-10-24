@@ -1,4 +1,5 @@
 import type { FileVersion, FolderView, ProjectFile } from "../../engine/types.ts";
+import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 
 const size = (bytes: number) =>
@@ -153,7 +154,7 @@ export const files: Extension = {
       fresh?.toggleAttribute("data-on", false);
       const title = document.querySelector<HTMLElement>("[data-versions-title]");
       const name = path.split(/[\\/]/).pop() ?? path;
-      if (title) title.textContent = `Versions of ${name}`;
+      if (title) title.textContent = t("Versions of {file}", { file: name });
       const where = document.querySelector<HTMLElement>("[data-versions-path]");
       if (where) where.textContent = path;
       versionList.replaceChildren(
@@ -162,14 +163,14 @@ export const files: Extension = {
           li.className = "version";
           const text = document.createElement("div");
           text.innerHTML = '<span class="row-name-text"></span><p class="row-sub"></p>';
-          (text.firstElementChild as HTMLElement).textContent = `${when(v.at)}${i === 0 ? " (latest)" : ""}`;
+          (text.firstElementChild as HTMLElement).textContent = `${when(v.at)}${i === 0 ? ` ${t("(latest)")}` : ""}`;
           (text.lastElementChild as HTMLElement).textContent = `${size(v.size)} · ${v.reason}`;
           li.append(text);
           if (i > 0) {
             const back = document.createElement("button");
             back.type = "button";
             back.className = "btn";
-            back.textContent = "Go back to this";
+            back.textContent = t("Go back to this");
             back.addEventListener("click", () => void engine.dispatch("file.versions", { path, action: "revert", version: v.id }));
             li.append(back);
           }

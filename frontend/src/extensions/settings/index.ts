@@ -1,4 +1,5 @@
 import type { Os, Source } from "../../engine/types.ts";
+import { t } from "../../i18n/index.ts";
 import { CATALOG_KEY, UNSIGNED_KEY } from "../../bridge/tauri.ts";
 import type { Extension } from "../registry.ts";
 
@@ -42,7 +43,7 @@ export const settings: Extension = {
         if (value) localStorage.setItem(key, value);
         else localStorage.removeItem(key);
       } catch {
-        engine.setNotice("This choice could not be saved on this computer.");
+        engine.setNotice(t("This choice could not be saved on this computer."));
       }
     };
     try {
