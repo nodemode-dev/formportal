@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.45.1 · 2026-10-24
+
+- Claude Code counts as connected only when the app is in your user settings; opening FormPortal inside a project whose `.mcp.json` names the app no longer reads as connected.
+- formMCP and formskills are listed under their own names (`formmcp`, `formskills`, identifiers `ai.nodemode.*`); formskills replaces the planned FormSkill.
+- The agent skill explains formMCP (one connection to every Form app, installs through FormPortal) and formskills (the apps' released skills).
+
 ## v0.45.0 · 2026-10-24
 
 - Reads an app's `form-app.json` in format 2, which formcompiler now writes into every release: whether the app has an MCP server, and its skills. Format 1 files still work. `app-agents` shows the file as read, and an app is only offered to Claude Code, Codex and Cursor when its install names a server FormPortal can start.
