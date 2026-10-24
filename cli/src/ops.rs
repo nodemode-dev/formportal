@@ -627,6 +627,7 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     set("only_when_closed", &mut prefs.only_when_closed);
     set("notices", &mut prefs.notices);
     set("keep_previous", &mut prefs.keep_previous);
+    set("open_at_login", &mut prefs.open_at_login);
     if let Some(map) = args.get("per_app").and_then(Value::as_object) {
         for (id, v) in map {
             match v.as_bool() {

@@ -19,7 +19,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   extension-enable --product P --id ID --enabled true|false
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
-  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...]
+  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...]
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]

@@ -31,6 +31,8 @@ pub struct Preferences {
     pub quiet: Vec<String>,
     #[serde(default)]
     pub language: Option<String>,
+    #[serde(default)]
+    pub open_at_login: bool,
 }
 
 pub const LANGUAGES: [&str; 2] = ["en", "es"];
@@ -46,7 +48,7 @@ impl Preferences {
 
 impl Default for Preferences {
     fn default() -> Self {
-        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None }
+        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None, open_at_login: false }
     }
 }
 

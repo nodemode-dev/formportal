@@ -258,6 +258,7 @@ export interface Preferences {
   keep_previous: boolean;
   quiet: NoticeCategory[];
   language: string | null;
+  open_at_login: boolean;
 }
 
 export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";

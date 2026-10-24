@@ -2,8 +2,17 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.45.1
-Last updated: 2026-10-24 · Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.46.0
+Last updated: 2026-10-24 · the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.46.0 · the login item {#login}
+
+### login.rs · sync and location
+- refers-to: core/src/login.rs :: sync, location, entry · core/src/prefs.rs :: Preferences.open_at_login
+- kind: decision
+- logged: v0.46.0 · 2026-10-24
+
+Parity row #68. `open_at_login` (default false, absent in older files reads false) says whether the window opens at login. `sync(on, program)` makes the system agree, with no new dependency: Linux writes `$XDG_CONFIG_HOME/autostart/formportal.desktop` (the XDG autostart folder; `Exec` quoted, with backslash and double quote escaped), macOS a LaunchAgent `~/Library/LaunchAgents/dev.formai.portal.login.plist` with `RunAtLoad` (the label follows the app identifier `dev.formai.portal`), Windows the per-user `HKCU\...\CurrentVersion\Run` value `FormPortal` through `reg`, started with CREATE_NO_WINDOW (0x08000000) so no console flashes. Off removes it, and removing what is not there is not an error. Files are written to a `.tmp` beside them and renamed, and rewritten only when the text differs. The core does not decide the program path: the shell passes it, because only the window knows its own path (an AppImage runs from a temporary mount, so `APPIMAGE` wins). Checked on Linux through a scratch harness: on writes the file, on again leaves it, off removes it, off again succeeds. macOS and Windows not run.
 
 ## v0.45.1 · family registration {#family-v1}
 

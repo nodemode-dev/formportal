@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.44.6
-Last updated: 2026-10-24 · by nodemode.ai in Preferences, About
+Current build version: v0.46.0
+Last updated: 2026-10-24 · open at login; release dates in Other versions
+
+## v0.46.0 · parity close-out {#parity-close}
+
+### Open FormPortal when I log in
+- refers-to: index.html :: data-pref="open_at_login", the In the background note · src/extensions/settings :: prefBoxes · src/engine/types.ts :: Preferences.open_at_login · src/engine/index.ts :: DEFAULT_PREFS
+- kind: decision
+- logged: v0.46.0 · 2026-10-24
+
+Parity row #68 (launch settings). The owner chose an off-by-default switch that opens the window only. It is one more `data-pref` checkbox, so the existing settings wiring saves it and patches its checked state; the shell writes or removes the login item (`src-tauri/HASHOUT_LOG.md` v0.46.0). The In the background note now says a login item exists only when this is on. Both strings are in `es.json`. Checked in the preview build at 4x CPU and a slow network: General shows the switch, clicking it saves (checked after the round trip), layout shift 0 in English; the Spanish page's one first-load shift of 0.000048 is inherited from v0.45.1 (same value on the untouched build, five loads), see BUILD_NOTES.
+
+### Other versions shows each release's date
+- refers-to: src/extensions/apps :: patch, label (the data-versions picker)
+- kind: decision
+- logged: v0.46.0 · 2026-10-24
+
+Parity row #19. formcompiler 0.4.2 keeps the newest release of every earlier major line in the catalogue's history, so the picker can hold releases years apart; each option reads `version · date` from the release's `published` field, and the installed one keeps "(installed)", now translated. The options are still replaced only when that joined label list changes, inside a closed menu, so nothing on the page moves. Checked on the fixture: formcut lists 2.6.2 · 2026-10-04, 2.6.1 · 2026-09-28, 2.6.0 · 2026-09-20.
 
 ## v0.44.6 · by nodemode.ai in About {#credit}
 

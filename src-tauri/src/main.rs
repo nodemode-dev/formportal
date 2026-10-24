@@ -579,7 +579,14 @@ fn preferences() -> Result<Preferences, String> {
 
 #[tauri::command]
 fn set_preferences(preferences: Preferences) -> Result<(), String> {
-    hub().set_preferences(&preferences).map_err(text)
+    hub().set_preferences(&preferences).map_err(text)?;
+    sync_login()
+}
+
+fn sync_login() -> Result<(), String> {
+    let on = hub().preferences().map_err(text)?.open_at_login;
+    let program = std::env::var_os("APPIMAGE").map(std::path::PathBuf::from).or_else(|| std::env::current_exe().ok()).ok_or("no program path")?;
+    formportal_core::login::sync(on, &program).map_err(text)
 }
 
 const SCHEME: &str = "formai://";
@@ -651,6 +658,7 @@ fn main() {
                 tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?.build()?;
             }
             watch_saves(app.handle().clone());
+            let _ = sync_login();
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |event| route(&handle, event.urls().iter().map(|url| url.to_string())));
             Ok(())

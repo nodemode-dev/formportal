@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.44.0
-Last updated: 2026-10-12 · the save watcher; file_preview
+Current build version: v0.46.0
+Last updated: 2026-10-24 · the login item; the save watcher; file_preview
+
+## v0.46.0 · the login item {#login}
+
+### sync_login
+- refers-to: src/main.rs :: sync_login, set_preferences, setup (after watch_saves)
+- kind: decision
+- logged: v0.46.0 · 2026-10-24
+
+The window owns its login item because it is what opens at login. `set_preferences` saves, then `sync_login` reads the saved preferences (so an organisation policy has had its say) and calls `formportal_core::login::sync` with the program path: `APPIMAGE` when set (the AppImage's own file, not its temporary mount), else `current_exe`. Setup calls it once at every start, so a preference changed from the command line or MCP takes effect at the next start, and a FormPortal that was updated or moved points the item at its new path. A failure at start is ignored; one from Preferences reaches the window as the command's error. Checked: `cargo check -p formportal --locked` with no warnings.
 
 ## v0.44.0 · the save watcher {#saves}
 

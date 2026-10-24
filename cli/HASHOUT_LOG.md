@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.45.0
-Last updated: 2026-10-24 · app-agents returns the manifest
+Current build version: v0.46.0
+Last updated: 2026-10-24 · preferences open_at_login; app-agents returns the manifest
+
+## v0.46.0 · preferences open_at_login {#login}
+
+### ops.rs · preferences
+- refers-to: src/ops.rs :: preferences · src/mcp.rs :: preferences description and schema · src/main.rs :: usage
+- kind: decision
+- logged: v0.46.0 · 2026-10-24
+
+`open_at_login` is set like the other switches (`--open-at-login true|false`, or the MCP field). The command line cannot write the login item itself, because it does not know where the window program is; the tool description says the window applies it when it next starts and that nothing runs in the background. Run `./formportal agents sync` after this change so `references/tools.md` follows.
 
 ## v0.45.0 · app-agents returns the manifest {#app-v2}
 
