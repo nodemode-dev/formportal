@@ -5,9 +5,9 @@ cd "$(dirname "$0")"
 missing=0
 command -v node >/dev/null || { echo "Node 20.19 or newer is required: https://nodejs.org"; missing=1; }
 command -v cargo >/dev/null || { echo "Rust is required: https://rustup.rs"; missing=1; }
-if [ "$(uname -s)" = "Linux" ] && command -v pkg-config >/dev/null && ! pkg-config --exists webkit2gtk-4.1; then
-  echo "The window needs WebKitGTK 4.1 and its build packages. On Debian or Ubuntu:"
-  echo "  sudo apt-get install libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config build-essential"
+if [ "$(uname -s)" = "Linux" ] && command -v pkg-config >/dev/null && ! { pkg-config --exists webkit2gtk-4.1 && pkg-config --exists dbus-1; }; then
+  echo "The window needs WebKitGTK 4.1, the D-Bus headers (for the keychain) and their build packages. On Debian or Ubuntu:"
+  echo "  sudo apt-get install libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev libdbus-1-dev pkg-config build-essential"
   missing=1
 fi
 [ "$missing" = "0" ] || exit 1

@@ -37,7 +37,7 @@ FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcomp
 
 ### Requirements
 
-Node 20.19 or newer, Rust stable, git. On Linux the window needs WebKitGTK 4.1 (`libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config build-essential`).
+Node 20.19 or newer, Rust stable, git. On Linux the window needs WebKitGTK 4.1 and the D-Bus headers for the keychain (`libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev libdbus-1-dev pkg-config build-essential`).
 
 ### macOS & Linux
 
