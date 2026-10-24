@@ -28,6 +28,14 @@
         "licence": { "type": "string" },
         "project_extensions": { "type": "array", "items": { "type": "string", "pattern": "^\\.[a-z0-9]+$" } },
         "state": { "enum": ["prelaunch", "public", "live"] },
+        "agents": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mcp": { "type": "boolean" },
+            "skills": { "type": "boolean" }
+          }
+        },
         "channels": {
           "type": "object",
           "additionalProperties": false,
@@ -49,7 +57,26 @@
         "notes": { "type": "string", "format": "uri" },
         "commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
         "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } },
-        "history": { "type": "array", "maxItems": 10, "items": { "$ref": "#/$defs/release" } }
+        "history": { "type": "array", "maxItems": 10, "items": { "$ref": "#/$defs/release" } },
+        "agents": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "manifest": { "$ref": "#/$defs/agentAsset" },
+            "skills": { "$ref": "#/$defs/agentAsset" }
+          }
+        }
+      }
+    },
+    "agentAsset": {
+      "type": "object",
+      "required": ["file", "url", "bytes", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
       }
     },
     "artifact": {

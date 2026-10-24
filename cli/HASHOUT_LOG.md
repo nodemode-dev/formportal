@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.44.0
-Last updated: 2026-10-12 · watch
+Current build version: v0.45.0
+Last updated: 2026-10-24 · app-agents returns the manifest
+
+## v0.45.0 · app-agents returns the manifest {#app-v2}
+
+### ops.rs · app_agents
+- refers-to: src/ops.rs :: app_agents · src/mcp.rs :: app_agents description
+- kind: decision
+- logged: v0.45.0 · 2026-10-24
+
+`app_agents` adds `manifest` (the install's `form-app.json` as read: path, format_version, id, version, mcp, skills) and a note for each case: a launcher FormPortal can start, a server the install cannot start yet (v2 with `available` and no command), no server declared, no file. The tool description says so; `./formportal agents sync` regenerated `references/tools.md` and the `.agents` mirror (only the `app_agents` row changed).
 
 ## v0.44.0 · watch {#saves}
 

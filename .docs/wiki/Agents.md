@@ -33,4 +33,27 @@ A Form app that has its own MCP server says so in a `form-app.json` file shipped
 - never replaces a server of the same name it did not add, backs up `~/.codex/config.toml` and `~/.cursor/mcp.json` before changing them, and uses `claude mcp add --scope user` for Claude Code;
 - carries `FORMPORTAL_ROOT` into the entry when it is set.
 
+### format_version 2
+
+formcompiler (0.4.0 and later) attaches a `form-app.json` with `format_version` 2 and a `<app>-skills-v<version>.zip` to every release it builds, from the registry's `agents` block, and the catalogue carries both per release (`agents.manifest`, `agents.skills`: file, url, bytes, sha256) and per product (`agents`: `mcp`, `skills`). Version 2 adds what the app offers agents beside its launcher:
+
+```json
+{
+  "format": "form-app",
+  "format_version": 2,
+  "id": "formvis",
+  "app": "formvis",
+  "name": "FormVis",
+  "version": "1.97.2",
+  "commit": "055d4564a4b51379dfa851a1426987e8622c5ba3",
+  "agents": {
+    "mcp": { "available": true },
+    "skills": { "file": "formvis-skills-v1.97.2.zip", "bytes": 173571, "sha256": "774287...", "root": ".claude/skills",
+                "skills": [{ "folder": "formvis-harness", "name": "formvis-harness", "description": "...", "files": 21 }] }
+  }
+}
+```
+
+FormPortal reads both versions. In version 2, `agents.mcp.available` says the app has an MCP server and `command` and `args` are optional: without a command there is nothing for `app-mcp` to start, so the install is not offered to the clients, and `app-agents` says the app has a server but no launcher in its install yet. A version 1 file still needs `agents.mcp.command`; a version above 2 is refused with a message to update FormPortal. `app-agents` returns the file as read under `manifest` (format_version, id, version, mcp, skills). FormPortal does not download or install skills; formskills reads them from the catalogue.
+
 `./formportal cli connect [product]`, `disconnect [product]` and `app-agents [product]` do the same from a terminal. The window's own program answers `app-mcp` too, without opening a window, so installed copies of FormPortal can serve the apps with no command line installed.

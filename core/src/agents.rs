@@ -10,25 +10,94 @@ use crate::{Channel, Portal};
 
 pub const APP_FILE: &str = "form-app.json";
 pub const APP_FORMAT: &str = "form-app";
+pub const APP_FORMAT_VERSION: u32 = 2;
 
 #[derive(Debug, Clone, Deserialize)]
 struct AppFile {
     format: String,
+    #[serde(default = "first_format_version")]
+    format_version: u32,
+    #[serde(default)]
+    id: Option<String>,
+    #[serde(default)]
+    version: Option<String>,
     #[serde(default)]
     agents: Option<AppAgents>,
+}
+
+fn first_format_version() -> u32 {
+    1
 }
 
 #[derive(Debug, Clone, Deserialize)]
 struct AppAgents {
     #[serde(default)]
     mcp: Option<AppMcp>,
+    #[serde(default)]
+    skills: Option<AppSkills>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 struct AppMcp {
+    #[serde(default)]
+    available: Option<bool>,
+    #[serde(default)]
     command: String,
     #[serde(default)]
     args: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AppSkills {
+    pub file: String,
+    pub bytes: u64,
+    pub sha256: String,
+    #[serde(default)]
+    pub root: String,
+    #[serde(default)]
+    pub skills: Vec<AppSkill>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AppSkill {
+    pub folder: String,
+    pub name: String,
+    #[serde(default)]
+    pub description: String,
+    #[serde(default)]
+    pub files: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct AppManifest {
+    pub file: PathBuf,
+    pub format_version: u32,
+    pub id: Option<String>,
+    pub version: Option<String>,
+    pub mcp: bool,
+    pub skills: Option<AppSkills>,
+}
+
+fn parse_app(file: &Path, text: &str) -> Result<AppFile> {
+    let app: AppFile = serde_json::from_str(text).map_err(|e| CoreError::Invalid(format!("{} is not valid ({e})", file.display())))?;
+    if app.format != APP_FORMAT {
+        return Err(CoreError::Invalid(format!("{} is not a Form app file (format {:?})", file.display(), app.format)));
+    }
+    if app.format_version == 0 || app.format_version > APP_FORMAT_VERSION {
+        return Err(CoreError::Invalid(format!("{} is format_version {}, which this FormPortal does not read (it reads 1 and {APP_FORMAT_VERSION}); update FormPortal", file.display(), app.format_version)));
+    }
+    if app.format_version == 1 {
+        if let Some(mcp) = app.agents.as_ref().and_then(|a| a.mcp.as_ref()) {
+            if mcp.command.trim().is_empty() {
+                return Err(CoreError::Invalid(format!("{} is not valid (format_version 1 needs agents.mcp.command)", file.display())));
+            }
+        }
+    }
+    Ok(app)
+}
+
+fn mcp_available(app: &AppFile) -> bool {
+    app.agents.as_ref().and_then(|a| a.mcp.as_ref()).map(|m| m.available.unwrap_or(!m.command.trim().is_empty())).unwrap_or(false)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -184,19 +253,37 @@ fn search(dir: &Path, depth: u32) -> Option<PathBuf> {
 }
 
 impl Portal {
-    pub fn agent_surface(&self, product: &str, channel: Channel) -> Result<Option<Surface>> {
+    fn app_file(&self, product: &str, channel: Channel) -> Result<Option<(PathBuf, AppFile, PathBuf)>> {
         let state = self.state()?;
         let Some(install) = state.get(product, channel) else { return Ok(None) };
         let Some(file) = search(&install.current.path, 4) else { return Ok(None) };
         let text = fs::read_to_string(&file)?;
-        let app: AppFile = serde_json::from_str(&text).map_err(|e| CoreError::Invalid(format!("{} is not valid ({e})", file.display())))?;
-        if app.format != APP_FORMAT {
-            return Err(CoreError::Invalid(format!("{} is not a Form app file (format {:?})", file.display(), app.format)));
-        }
+        let app = parse_app(&file, &text)?;
+        Ok(Some((file, app, install.current.path.clone())))
+    }
+
+    pub fn agent_manifest(&self, product: &str, channel: Channel) -> Result<Option<AppManifest>> {
+        let Some((file, app, _)) = self.app_file(product, channel)? else { return Ok(None) };
+        let mcp = mcp_available(&app);
+        Ok(Some(AppManifest {
+            file,
+            format_version: app.format_version,
+            id: app.id,
+            version: app.version,
+            mcp,
+            skills: app.agents.and_then(|a| a.skills),
+        }))
+    }
+
+    pub fn agent_surface(&self, product: &str, channel: Channel) -> Result<Option<Surface>> {
+        let Some((file, app, root)) = self.app_file(product, channel)? else { return Ok(None) };
         let Some(mcp) = app.agents.and_then(|a| a.mcp) else { return Ok(None) };
-        let base = file.parent().unwrap_or(&install.current.path).to_path_buf();
+        if mcp.command.trim().is_empty() {
+            return Ok(None);
+        }
+        let base = file.parent().unwrap_or(&root).to_path_buf();
         let command = base.join(&mcp.command);
-        let inside = command.canonicalize().ok().zip(install.current.path.canonicalize().ok()).map(|(c, root)| c.starts_with(root)).unwrap_or(false);
+        let inside = command.canonicalize().ok().zip(root.canonicalize().ok()).map(|(c, r)| c.starts_with(r)).unwrap_or(false);
         if !inside || mcp.command.contains("..") {
             return Err(CoreError::Invalid(format!("{} names an MCP command outside the app's own folder", file.display())));
         }

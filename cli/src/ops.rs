@@ -417,13 +417,21 @@ pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
     let surface = ctx.portal.agent_surface(&id, ch)?;
+    let manifest = ctx.portal.agent_manifest(&id, ch)?;
+    let note = match (&surface, &manifest) {
+        (Some(_), _) => "connect_agents adds it to the clients; FormPortal starts the installed version each time, so updates need no change.",
+        (None, Some(m)) if m.mcp => "The app has an MCP server, but its install names no launcher FormPortal can start yet (form-app.json has no agents.mcp.command).",
+        (None, Some(_)) => "This install's form-app.json declares no MCP server.",
+        (None, None) => "No form-app.json found in this install: the app ships none yet, or it is not installed.",
+    };
     Ok(json!({
         "product": id,
         "channel": formportal_core::portal::channel_name(ch),
         "server_name": formportal_core::agents::server_name(&id, ch),
         "mcp_server": surface,
+        "manifest": manifest,
         "clients": ctx.portal.agent_clients(&id, ch),
-        "note": if surface.is_some() { "connect_agents adds it to the clients; FormPortal starts the installed version each time, so updates need no change." } else { "No MCP server found in this install: the app ships none yet, or it is not installed. An app declares one in form-app.json." }
+        "note": note
     }))
 }
 

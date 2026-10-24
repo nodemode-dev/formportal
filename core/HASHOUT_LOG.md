@@ -2,8 +2,24 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.44.0
-Last updated: 2026-10-12 · a version on each save; previews
+Current build version: v0.45.0
+Last updated: 2026-10-24 · form-app.json format_version 2, catalogue agents fields
+
+## v0.45.0 · form-app.json format_version 2 {#app-v2}
+
+### agents.rs · parse_app reads 1 and 2
+- refers-to: src/agents.rs :: AppFile, parse_app, mcp_available, Portal::app_file, agent_manifest, agent_surface
+- kind: decision
+- logged: v0.45.0 · 2026-10-24
+
+formcompiler 0.4.0 writes `form-app.json` with `format_version` 2 into every release (family plan, Phase 2). A missing `format_version` means 1, so every file written before still reads. In 2, `agents.mcp` carries `available` and the launcher (`command`, `args`) is optional, because no app's bundle has a stdio launcher yet; `agent_surface` returns none for an empty command, so nothing is offered to the clients that could not start. Version 1 keeps its rule that `agents.mcp` names a command (the serde default would otherwise let an empty one through), and a version above 2 is refused with "update FormPortal" rather than half-read. `agents.skills` is kept as written (file, bytes, sha256, root, each skill's folder, name, description and file count) and returned by `agent_manifest`; FormPortal never downloads or installs skills (family plan non-goal). Checked with the CLI against a stand-in formvis install served from loopback through formcompiler's own `catalog.py`: v2 read, v1 with a command gives a surface, v1 without one and a version 3 are refused.
+
+### lib.rs · agents on Product and Release
+- refers-to: src/lib.rs :: ProductAgents, ReleaseAgents, AgentAsset
+- kind: decision
+- logged: v0.45.0 · 2026-10-24
+
+The catalogue stays `format_version` 1: the new fields are optional additions, and serde here does not refuse unknown fields, so a FormPortal older than 0.45.0 reads a catalogue that has them and ignores them. Both are `Option` with `skip_serializing_if`, so a catalogue without them serialises as before. `catalog/schema/apps.schema.json` gains `agents` on a product and a release, and `agentAsset` (https url, sha256), validated against a catalogue built by formcompiler's `catalog.py` and against `catalog/fixtures/apps.json`.
 
 ## v0.44.0 · a version on each save; previews {#saves}
 

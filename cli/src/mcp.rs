@@ -147,7 +147,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": props(json!({ "id": { "type": "string" }, "step": { "type": "integer", "minimum": 1 }, "done": { "type": "boolean" }, "reset": { "type": "boolean" }, "learn_source": { "type": "string" } })), "required": ["id"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "app_agents", "title": "An app's MCP server",
-          "description": "Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed.",
+          "description": "Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. manifest is the install's form-app.json as read (format_version 1 or 2): whether the app has an MCP server and, for format_version 2, its skills archive and each skill's name and description.",
           "inputSchema": only_target(true),
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "connect_agents", "title": "Connect an app to Claude Code, Codex and Cursor",

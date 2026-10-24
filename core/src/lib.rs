@@ -133,6 +133,32 @@ pub struct Release {
     pub artifacts: Vec<Artifact>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub history: Vec<Release>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agents: Option<ReleaseAgents>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AgentAsset {
+    pub file: String,
+    pub url: String,
+    pub bytes: u64,
+    pub sha256: String,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ReleaseAgents {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub manifest: Option<AgentAsset>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub skills: Option<AgentAsset>,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProductAgents {
+    #[serde(default)]
+    pub mcp: bool,
+    #[serde(default)]
+    pub skills: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -156,6 +182,8 @@ pub struct Product {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub project_extensions: Vec<String>,
     pub state: ProductState,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agents: Option<ProductAgents>,
     pub channels: BTreeMap<Channel, Release>,
 }
 
