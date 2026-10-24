@@ -78,11 +78,12 @@ export const apps: Extension = {
       field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
       const all = release ? [release, ...(release.history ?? [])].filter((r) => r.artifacts.some((a) => a.platform === engine.state.platform.os)) : [];
-      const list = all.map((r) => `${r.version}${r.version === record?.version ? " (installed)" : ""}`).join("|");
+      const label = (r: (typeof all)[number]) => `${r.version} · ${r.published.slice(0, 10)}${r.version === record?.version ? ` ${t("(installed)")}` : ""}`;
+      const list = all.map(label).join("|");
       if (picker && picker.dataset.list !== list) {
         picker.dataset.list = list;
         const wanted = picker.value;
-        picker.replaceChildren(...all.map((r) => new Option(r.version === record?.version ? `${r.version} (installed)` : r.version, r.version)));
+        picker.replaceChildren(...all.map((r) => new Option(label(r), r.version)));
         if (all.some((r) => r.version === wanted)) picker.value = wanted;
       }
       row.toggleAttribute("data-history", all.length > 1);
