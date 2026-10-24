@@ -75,7 +75,7 @@ pub fn sync(on: bool, program: &Path) -> Result<()> {
     }
     let status = command.creation_flags(0x0800_0000).output()?;
     if on && !status.status.success() {
-        return Err(crate::error::CoreError::State(String::from_utf8_lossy(&status.stderr).trim().to_string()));
+        return Err(crate::error::CoreError::Invalid(format!("the login item could not be added: {}", String::from_utf8_lossy(&status.stderr).trim())));
     }
     Ok(())
 }
