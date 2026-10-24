@@ -21,4 +21,6 @@ How it works, so the first frame is already in the chosen language:
 
 Preferences, General, When FormPortal opens: Home (the default) or Where I left off. The second remembers the last screen (an app's page counts as Apps) and opens on it. `public/prepaint.js` reads `formportal-open` and `formportal-last` from the window's storage before anything is drawn and sets `data-launch`; the stylesheet shows that screen and its sidebar entry; the router then takes over without anything moving. A `formai://` link still wins.
 
-There is still no login item: FormPortal runs only while it is open.
+## Opening at login
+
+Preferences, General, Open FormPortal when I log in (off by default, from v0.46.0). On, the window adds a login item that opens it and nothing else: `~/.config/autostart/formportal.desktop` on Linux (or under `$XDG_CONFIG_HOME`), `~/Library/LaunchAgents/dev.formai.portal.login.plist` on macOS, and the `FormPortal` value under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` on Windows. Off removes it. The command line and MCP can set `open_at_login` too; the window applies it the next time it starts, and every start points the item at the program's current path. FormPortal still runs only while it is open.
