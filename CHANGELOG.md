@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.48.0 · 2026-10-25
+
+- Files, Share: share a folder as a private repository in your own GitHub account and invite people by their GitHub username; run it again to send what changed.
+- Files, Shared with you: accept a library someone shared with you; it arrives in Shared inside your projects folder, and Get the latest brings what changed.
+- Files, Public link: give a file a link anyone can open (kept in formportal-public in your account) and remove it again.
+- Preferences, Account: Allow sharing, when you signed in with profile access only.
+- Command line: `shares`, `share`, `share-send`, `share-accept`, `share-pull`, `publish`, `unpublish`; MCP tools for each.
+
 ## v0.47.0 · 2026-10-24
 
 - Preferences, Account: sign in to your own GitHub account, optionally, with a code you enter on github.com. Nothing in FormPortal needs it; sharing from Files will use it. FormPortal asks only to read your profile, and keeps the sign-in in this computer's keychain.
