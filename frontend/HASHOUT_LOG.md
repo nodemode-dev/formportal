@@ -5,6 +5,17 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.51.0
 Last updated: 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
 
+## v0.53.1 · vite 8.3.5, zero npm audit findings {#vite-audit}
+
+### Vite 8.3.5 clears the dev server's launch-editor advisories
+- refers-to: package.json :: devDependencies `vite`, package-lock.json
+- kind: decision
+- logged: v0.53.1 · 2026-10-25
+
+Family rule from `FAMILY_DEV_PLAN.md` v0.4.x Phase 2b (formai_dev sidecar): every frontend installs with zero `npm audit` findings. Vite 8.3.2 carries a `launch-editor` with two command-injection advisories in the dev server (ledger FB-004); 8.3.5 clears them. The pin stays exact. Dev dependency only, nothing in the shipped bundle changed.
+
+Verified: `npm install` then `npm audit` reports 0 vulnerabilities; `npm run typecheck` passes; `vite build` to an outDir outside the repo succeeds; the dev server starts on 3250 printing only the Local address (no Network address) and answers 200. The window was not opened.
+
 ## v0.51.0 · Included, Support the maker, the portfolio {#included}
 
 Parity rows 58, 33 and 54, closed the family's way: free, no account, no server.
