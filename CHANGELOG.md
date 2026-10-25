@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.49.0 · 2026-10-25
+
+- Every app is shown with its own icon, in every list, card, app page and in Files; no more two letters on a coloured square.
+- The app list is the family formcompiler builds: FormPDF, FormTxt, FormCel, FormRef, FormSculpt, Format and FormTray join; FormSim, FormUI, FormApp and FormHub leave. formMCP, formskills and FormTray sit under a new heading, Family tools.
+
 ## v0.48.0 · 2026-10-25
 
 - Files, Share: share a folder as a private repository in your own GitHub account and invite people by their GitHub username; run it again to send what changed.

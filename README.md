@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.48.0-eef0f4" alt="version v0.48.0" />
+  <img src="https://img.shields.io/badge/version-v0.49.0-eef0f4" alt="version v0.49.0" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
