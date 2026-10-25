@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod agents;
 pub mod assistant;
+pub mod deploy;
 pub mod download;
 pub mod error;
 pub mod files;

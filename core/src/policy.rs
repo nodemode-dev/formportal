@@ -71,6 +71,10 @@ fn read(path: &Path) -> Result<Option<Policy>> {
     Ok(Some(policy))
 }
 
+pub fn check(path: &Path) -> Result<Policy> {
+    read(path)?.ok_or_else(|| CoreError::Policy(format!("there is no policy file at {}", path.display())))
+}
+
 pub fn load() -> Result<Option<Managed>> {
     let system = system_path();
     if let Some(policy) = read(&system)? {
