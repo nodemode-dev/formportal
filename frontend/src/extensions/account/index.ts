@@ -34,12 +34,15 @@ export const account: Extension = {
       if (!status.configured) return state("unset");
       if (!status.account) return state("off");
       write(login, status.account.login);
-      write(scopes, status.account.scopes.includes("repo") ? t("Access granted: your profile and your repositories.") : t("Access granted: your profile only."));
+      const repo = status.account.scopes.includes("repo");
+      write(scopes, repo ? t("Access granted: your profile and your repositories.") : t("Access granted: your profile only."));
+      if (box.dataset.scope !== (repo ? "repo" : "profile")) box.dataset.scope = repo ? "repo" : "profile";
       state("on");
     });
 
     document.querySelector("[data-prefs-tab='account']")?.addEventListener("click", () => void engine.dispatch("account.check"));
     box.querySelector("[data-account-in]")?.addEventListener("click", () => void engine.dispatch("account.start", false));
+    box.querySelector("[data-account-share]")?.addEventListener("click", () => void engine.dispatch("account.start", true));
     box.querySelector("[data-account-cancel]")?.addEventListener("click", () => void engine.dispatch("account.cancel"));
     box.querySelector("[data-account-out]")?.addEventListener("click", () => void engine.dispatch("account.signOut"));
     box.querySelector("[data-account-open]")?.addEventListener("click", () => {

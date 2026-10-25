@@ -174,6 +174,19 @@
                 <ul class="list" data-storage-list></ul>
               </section>
 
+              <section class="block" data-shared-block hidden>
+                <header class="block-head"><h2 class="block-title">Shared with you</h2><span class="block-note">Libraries others share from their GitHub accounts</span></header>
+                <ul class="list" data-shared-list></ul>
+              </section>
+
+              <template id="shared-row">
+                <li class="row folder">
+                  <span class="mark" aria-hidden="true"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10.5v5M9.5 13H14.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                  <div class="row-main"><span class="row-name-text" data-field="name"></span><p class="row-sub" data-field="sub"></p></div>
+                  <p class="row-state"></p>
+                  <div class="acts acts-files"><button class="btn btn-primary shared-accept" type="button" data-shared-accept>Accept</button><button class="btn shared-pull" type="button" data-shared-pull>Get the latest</button></div>
+                </li>
+              </template>
               <template id="file-row">
                 <li class="row file">
                   <span class="tile" aria-hidden="true" data-field="short"></span>
@@ -182,6 +195,7 @@
                   <div class="acts acts-files">
                     <button class="btn btn-primary" type="button" data-file-act="open">Open</button>
                     <button class="btn" type="button" data-file-act="versions">Versions</button>
+                    <button class="btn" type="button" data-file-act="link">Public link</button>
                   </div>
                 </li>
               </template>
@@ -190,7 +204,7 @@
                   <span class="mark" aria-hidden="true"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
                   <div class="row-main"><span class="row-name-text mono" data-field="path"></span><p class="row-sub" data-field="meta"></p></div>
                   <p class="row-state"><span class="state-text" data-field="history"></span></p>
-                  <div class="acts acts-files"><button class="btn" type="button" data-folder-remove>Stop listing</button></div>
+                  <div class="acts acts-files"><button class="btn" type="button" data-folder-share>Share</button><button class="btn" type="button" data-folder-remove>Stop listing</button></div>
                 </li>
               </template>
             </div>
@@ -438,6 +452,7 @@
                 <button class="btn btn-primary account-in" type="button" data-account-in>Sign in with GitHub</button>
                 <button class="btn account-open" type="button" data-account-open>Open github.com</button>
                 <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
+                <button class="btn btn-primary account-share" type="button" data-account-share>Allow sharing</button>
                 <button class="btn account-out" type="button" data-account-out>Sign out</button>
               </div>
             </div>
@@ -475,6 +490,22 @@
       </div>
     </dialog>
 
+    <dialog class="prefs versions share" data-share-dialog data-mode="folder" aria-labelledby="h-share">
+      <div class="versions-frame">
+        <header class="versions-head"><h2 id="h-share" class="prefs-title"><span class="share-say" data-for="folder">Share this folder</span><span class="share-say" data-for="file">Public link</span></h2><p class="fine mono" data-share-path></p></header>
+        <p class="fine share-say" data-for="folder">FormPortal makes a private repository in your own GitHub account, sends the folder's files to it, and invites the people you name. They see it under Files, Shared with you. Run it again to send what changed.</p>
+        <p class="fine share-say" data-for="file">FormPortal puts the file in the public repository formportal-public in your GitHub account. Anyone with the link can open it, until you remove it.</p>
+        <label class="field-row share-say" data-for="folder"><span>Invite (GitHub usernames, separated by commas)</span><input type="text" class="field" data-share-invite autocomplete="off" spellcheck="false" placeholder="riley, sam" /></label>
+        <p class="share-status" data-share-status aria-live="polite"></p>
+        <p class="share-link mono"><a class="link" href="#" data-share-url data-web></a></p>
+        <footer class="agent-acts">
+          <button class="btn btn-primary share-say" data-for="folder" type="button" data-share-go>Share</button>
+          <button class="btn btn-primary share-say" data-for="file" type="button" data-share-publish>Make a public link</button>
+          <button class="btn share-say" data-for="file" type="button" data-share-unpublish>Remove the link</button>
+          <button class="btn" type="button" data-share-close>Close</button>
+        </footer>
+      </div>
+    </dialog>
     <dialog class="prefs versions" data-font-rights aria-labelledby="h-font-rights">
       <div class="versions-frame">
         <h2 id="h-font-rights" class="prefs-title">Add your own font</h2>

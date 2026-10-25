@@ -22,6 +22,7 @@ pub mod portal;
 pub mod prefs;
 pub mod process;
 pub mod repair;
+pub mod share;
 pub mod signature;
 pub mod state;
 pub mod web;

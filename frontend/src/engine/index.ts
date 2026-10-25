@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode } from "./types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode, SharesView } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -25,6 +25,8 @@ export interface EngineEvents {
   fonts: { view: FontsView };
   media: { view: MediaView };
   account: { status: GithubStatus | null; code: DeviceCode | null; busy: boolean; error: string | null };
+  shares: { view: SharesView };
+  shareResult: { busy: boolean; text: string; url: string };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false };

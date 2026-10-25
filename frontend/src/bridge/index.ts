@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll } from "../engine/types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -27,6 +27,12 @@ export interface Bridge {
   githubStart(share: boolean): Promise<DeviceCode>;
   githubPoll(deviceCode: string, interval: number): Promise<GithubPoll>;
   githubSignOut(): Promise<void>;
+  shares(): Promise<SharesView>;
+  shareFolder(folder: string, invite: string[]): Promise<SyncReport>;
+  shareSend(folder: string): Promise<SyncReport>;
+  shareAccept(id: number): Promise<SyncReport>;
+  sharePull(repo: string): Promise<SyncReport>;
+  publishFile(file: string, remove: boolean): Promise<PublishedFile>;
   filesScan(query?: string): Promise<FilesScan>;
   folderPick(): Promise<string | null>;
   folderAdd(path: string, keepVersions: boolean, create: boolean): Promise<void>;

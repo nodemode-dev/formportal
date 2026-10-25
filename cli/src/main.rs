@@ -48,6 +48,12 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   account                        whether you are signed in to GitHub, and as whom (optional; nothing needs it to install)
   sign-in [--share true]         sign in to GitHub with a code you enter on github.com; --share also asks for repository access
   sign-out                       forget the GitHub sign-in (removes it from the system keychain)
+  shares                         your shared libraries, libraries shared with you, invitations and public links
+  share FOLDER [--invite a,b]    share a Files folder as a private repository in your GitHub account, sending its files and inviting people
+  share-send FOLDER              send a shared folder's changed files again
+  share-accept ID                accept an invitation to a library and download it into Shared in your projects folder
+  share-pull OWNER/REPO          download the latest of a library shared with you
+  publish FILE | unpublish FILE  give a file a public link (in formportal-public in your account), or remove it
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
   disconnect <product> [--channel C] [--clients ...]               take it out again
@@ -87,6 +93,16 @@ fn args_to_json(rest: &[String]) -> Value {
         i += 1;
     }
     Value::Object(map)
+}
+
+fn positional(args: &Value, key: &str) -> Value {
+    let mut a = args.clone();
+    if let Some(o) = a.as_object_mut() {
+        if let Some(p) = o.remove("product") {
+            o.entry(key.to_string()).or_insert(p);
+        }
+    }
+    a
 }
 
 fn main() -> ExitCode {
@@ -151,6 +167,13 @@ fn main() -> ExitCode {
             eprintln!("Open {} and enter the code {} (it expires in {} minutes).", code.verification_uri, code.user_code, code.expires_in / 60);
         }),
         "sign-out" => ops::sign_out(),
+        "shares" => ops::shares(&ctx),
+        "share" => ops::share(&ctx, &positional(&args, "folder")),
+        "share-send" => ops::share_send(&ctx, &positional(&args, "folder")),
+        "share-accept" => ops::share_accept(&ctx, &positional(&args, "id")),
+        "share-pull" => ops::share_pull(&ctx, &positional(&args, "repo")),
+        "publish" => ops::publish(&ctx, &positional(&args, "file")),
+        "unpublish" => ops::unpublish(&ctx, &positional(&args, "file")),
         "files" => ops::files(&ctx, &args),
         "folders" => ops::folders(&ctx, &args),
         "folder-add" => {

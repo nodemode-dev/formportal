@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.47.0
-Last updated: 2026-10-24 · Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.48.0
+Last updated: 2026-10-25 · Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.48.0 · sharing in Files {#share}
+
+### The share dialog, the two row buttons, Shared with you
+- refers-to: index.html :: data-share-dialog (data-mode folder or file), data-folder-share in #folder-row, data-file-act="link" in #file-row, data-shared-block and #shared-row · src/extensions/share · src/styles/main.css :: .share, .field-row, .share-status, .share-link, .row[data-kind], .row.file and .row.folder --acts-w · src/main.ts :: shares.load, share.folder, share.send, share.accept, share.pull, share.publish, report, shareWork · src/bridge (fixture: `?github` and `?shared`, an in-memory share, publish and invitation) · src/engine :: shares and shareResult events, the share types · src/i18n/es.json
+- kind: decision
+- logged: v0.48.0 · 2026-10-25
+
+One modal dialog serves a folder's Share and a file's Public link; `data-mode` picks which lines and buttons show, so opening it moves nothing on the page, and its status line (3 lines tall) and link line (one line, ellipsis) keep their height while text changes. The two new row buttons are found by delegation on the document, so the Files extension's keyed rows are untouched. Shared with you sits below Storage, so when it appears nothing above it moves; its rows are keyed by invitation id or repository and an accepted invitation's row is swapped for the library's in the same frame. Adding a third button to file rows pushed the buttons over the date: file rows now have a 21rem action column (19rem under 1100 px) and folder rows 16rem under 1100 px, measured in English and Spanish at 1280, 1100 and 1000 px with the state text clear of the buttons. The shared row template has an empty state cell so its buttons sit in the action column like every other row. Checked in the preview at 4x CPU and a slow network, English and Spanish: sign in, Files, Share with two invitees (status and link fill in, dialog height unchanged), Public link, make and remove it (dialog height unchanged, Remove disabled when there is no link), Accept an invitation (no layout shift, the row becomes Get the latest, a notice); no layout shift without input, no page error. The folder row's own counts ("4 projects", "Keeps versions") are still English in Spanish; that predates this version.
+
+### Allow sharing in Preferences, Account
+- refers-to: index.html :: data-account-share · src/extensions/account :: data-scope · src/styles/main.css :: .account[data-account="on"][data-scope="profile"] .account-share
+- kind: decision
+- logged: v0.48.0 · 2026-10-25
+
+Signed in with profile access only, the Account panel offers Allow sharing beside Sign out; it runs the same device flow with `repo` added, and the new token replaces the old one in the keychain. `data-scope` (profile or repo) is set from the granted scopes. Sharing's refusal without repository access names this button. Checked in Spanish at 4x CPU: signed out, signed in (profile, Allow sharing shown), the code, signed in (repo, only Sign out); the panel stays 130 px; no layout shift.
 
 ## v0.47.0 · Preferences, Account {#account}
 

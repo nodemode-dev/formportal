@@ -26,6 +26,11 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
 | `account` | no | Whether the person has signed in to GitHub in FormPortal (optional: installing and updating never need it), as whom, and which access they granted (scopes). configured false means this FormPortal has no GitHub app set up. Signing in and out is the person's own step in FormPortal's Preferences or with formportal-cli sign-in; this tool never starts it. |
+| `shares` | no | The person's Files folders shared through their own GitHub account (each a private repository named formportal-library-...), libraries others shared with them (and invitations waiting), and files given a public link. Needs a GitHub sign-in for invitations; the rest is read from this computer. |
+| `share` | yes | Shares one of the person's Files folders as a private repository in their own GitHub account, sends its files (unchanged files are skipped, files over 100 MB are listed as skipped) and invites the GitHub users named. Again on a shared folder, it sends what changed. Puts their files on GitHub and invites people: confirm first. |
+| `share_accept` | yes | Accepts an invitation from the shares tool and downloads that library into Shared in the person's projects folder, which Files then lists. Confirm first. |
+| `share_pull` | yes, destructive | Downloads what changed in a library shared with the person (owner/repo from the shares tool) into its folder; files the person changed locally are replaced by the shared version. |
+| `publish` | yes | Gives a file a public link that anyone can open, by storing it in the public repository formportal-public in the person's GitHub account; with unpublish true, removes it. Makes the file public: confirm first. |
 | `policy` | no | Whether an organisation manages FormPortal on this computer, and what its policy fixes: the catalogue address and extra catalogue keys, whether unsigned catalogues are refused, update settings that cannot be changed (locked), which apps and channels may be installed, and whether extensions and sideloaded packages are allowed. Read it before suggesting a change a policy would refuse. The policy is a system file (/etc/formportal/policy.json, /Library/Application Support/FormPortal/policy.json or %ProgramData%\FormPortal\policy.json) set by the organisation; FORMPORTAL_POLICY is read only for testing when no system file exists. |
 | `files` | yes | The person's Form project files (by each app's project extensions, e.g. .fc for FormCut) in the folders they gave FormPortal, newest first, with the app that opens each, size, date and how many earlier versions FormPortal keeps; plus each folder's file count and size. query filters by name or app. Reading also keeps a version of any file that changed since the last one, in folders where versions are on. Local only: nothing leaves the computer. |
 | `folders` | yes | Lists the folders FormPortal looks in; with action add and a path (the suggested folder if none), adds one (create true makes it), keep_versions on by default; with action remove, stops listing one without touching its files. Changing them is the person's choice: confirm first. |
@@ -135,6 +140,28 @@ No parameters.
 ### account
 
 No parameters.
+
+### shares
+
+No parameters.
+
+### share
+
+- `folder`: string. A folder from the files tool, full path.
+- `invite` (optional): array. GitHub logins to invite.
+
+### share_accept
+
+- `id`: integer. 
+
+### share_pull
+
+- `repo`: string. 
+
+### publish
+
+- `file`: string. 
+- `unpublish` (optional): boolean. 
 
 ### policy
 

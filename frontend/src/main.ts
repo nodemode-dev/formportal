@@ -1,6 +1,6 @@
 import { pickBridge } from "./bridge/index.ts";
 import { Engine, versionNewer } from "./engine/index.ts";
-import type { Channel, NoticeCategory, Preferences } from "./engine/types.ts";
+import type { Channel, NoticeCategory, Preferences, SyncReport } from "./engine/types.ts";
 import pkg from "../package.json";
 import registry from "../../catalog/products.json";
 import { apps } from "./extensions/apps/index.ts";
@@ -22,13 +22,14 @@ import { goToLanguage, launch } from "./extensions/launch/index.ts";
 import { repair } from "./extensions/repair/index.ts";
 import { t } from "./i18n/index.ts";
 import { account } from "./extensions/account/index.ts";
+import { share } from "./extensions/share/index.ts";
 
 const engine = new Engine();
 const bridge = pickBridge();
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account].forEach(register);
+[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -595,6 +596,67 @@ engine.command("account.signOut", async () => {
     accountFail(e);
   }
 });
+
+const sharesLoad = async () => engine.emit("shares", { view: await bridge.shares() });
+const report = (r: SyncReport) =>
+  [
+    r.sent ? t("{n} files sent.", { n: r.sent }) : "",
+    r.received ? t("{n} files received.", { n: r.received }) : "",
+    r.unchanged && !r.sent && !r.received ? t("Nothing changed.") : "",
+    r.skipped.length ? t("Skipped (over 100 MB or outside the folder): {list}.", { list: r.skipped.join(", ") }) : "",
+    r.invited.length ? t("Invited: {list}. They accept in FormPortal, under Files, Shared with you.", { list: r.invited.join(", ") }) : "",
+  ].filter(Boolean).join(" ");
+const shareWork = (work: () => Promise<{ text: string; url: string }>) =>
+  guard(async () => {
+    engine.emit("shareResult", { busy: true, text: t("Working with GitHub..."), url: "" });
+    try {
+      const done = await work();
+      engine.emit("shareResult", { busy: false, ...done });
+    } catch (e) {
+      engine.emit("shareResult", { busy: false, text: e instanceof Error ? e.message : String(e), url: "" });
+      throw e;
+    } finally {
+      await sharesLoad().catch(() => undefined);
+    }
+  }, "library");
+
+engine.command("shares.load", () => guard(sharesLoad, "library"));
+engine.command("share.folder", (arg) =>
+  shareWork(async () => {
+    const { folder, invite } = arg as { folder: string; invite: string[] };
+    const r = await bridge.shareFolder(folder, invite);
+    return { text: `${t("Shared as a private repository in your GitHub account.")} ${report(r)}`, url: r.url };
+  }),
+);
+engine.command("share.send", (arg) =>
+  shareWork(async () => {
+    const r = await bridge.shareSend(String(arg));
+    return { text: report(r), url: r.url };
+  }),
+);
+engine.command("share.accept", (arg) =>
+  shareWork(async () => {
+    const r = await bridge.shareAccept(Number(arg));
+    engine.setNotice(t("{repo} is in {folder}. {report}", { repo: r.repo, folder: r.folder, report: report(r) }), "info", "library");
+    void engine.dispatch("files.scan");
+    return { text: "", url: r.url };
+  }),
+);
+engine.command("share.pull", (arg) =>
+  shareWork(async () => {
+    const r = await bridge.sharePull(String(arg));
+    engine.setNotice(t("{repo}: {report}", { repo: r.repo, report: report(r) }), "info", "library");
+    void engine.dispatch("files.scan");
+    return { text: "", url: r.url };
+  }),
+);
+engine.command("share.publish", (arg) =>
+  shareWork(async () => {
+    const { file, remove } = arg as { file: string; remove: boolean };
+    const p = await bridge.publishFile(file, remove);
+    return remove ? { text: t("The public link is removed."), url: "" } : { text: t("Anyone with this link can open the file:"), url: p.url };
+  }),
+);
 
 engine.command("learn.load", () =>
   guard(async () => {

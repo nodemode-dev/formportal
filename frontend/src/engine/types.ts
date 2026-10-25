@@ -223,6 +223,44 @@ export interface DeviceCode {
 
 export type GithubPoll = { state: "waiting"; interval: number } | { state: "signed-in"; account: GithubAccount };
 
+export interface SharedFolder {
+  folder: string;
+  repo: string;
+  url: string;
+  invited: string[];
+}
+
+export interface JoinedLibrary {
+  repo: string;
+  folder: string;
+}
+
+export interface PublishedFile {
+  file: string;
+  repo: string;
+  path: string;
+  sha: string;
+  url: string;
+}
+
+export interface SharesView {
+  shared: SharedFolder[];
+  joined: JoinedLibrary[];
+  published: PublishedFile[];
+  invitations: { id: number; repo: string; from: string }[];
+}
+
+export interface SyncReport {
+  repo: string;
+  url: string;
+  folder: string;
+  sent: number;
+  received: number;
+  unchanged: number;
+  skipped: string[];
+  invited: string[];
+}
+
 export interface PolicyView {
   managed_by: string | null;
   system: boolean;

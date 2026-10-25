@@ -2,7 +2,7 @@ import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount } from "../engine/types.ts";
+import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -76,6 +76,7 @@ const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutori
 const progress = new Map<string, Set<number>>();
 const later = new Set<string>();
 const github: { account: GithubAccount | null; polls: number; share: boolean } = { account: null, polls: 0, share: false };
+const shares: SharesView = { shared: [], joined: [], published: [], invitations: [{ id: 7, repo: "riley/formportal-library-launch-film", from: "riley" }] };
 const repairFindings: RepairFinding[] = params.has("repair")
   ? [
       { kind: "broken", product: "formcut", channel: "stable", path: "/home/you/.local/share/formportal/apps/formcut/stable/2.6.2", bytes: 0, problem: "formcut 2.6.2 has nothing FormPortal can open in its folder", fix: "install the same version again from the catalogue, checking its SHA-256", fixed: false, error: null },
@@ -367,6 +368,39 @@ export const fixtureBridge: Bridge = {
   },
   githubSignOut: async () => {
     github.account = null;
+  },
+  shares: async () => ({ ...shares, invitations: github.account && params.has("shared") ? shares.invitations : [] }),
+  shareFolder: async (folder, invite) => {
+    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    const repo = `${github.account.login}/formportal-library-${folder.split(/[\\/]/).pop()?.toLowerCase().replace(/[^a-z0-9]+/g, "-") ?? "library"}`;
+    const url = `https://github.com/${repo}`;
+    const row = shares.shared.find((s) => s.folder === folder) ?? { folder, repo, url, invited: [] as string[] };
+    row.invited = Array.from(new Set([...row.invited, ...invite]));
+    if (!shares.shared.includes(row)) shares.shared.push(row);
+    return { repo, url, folder, sent: 3, received: 0, unchanged: 0, skipped: [], invited: invite };
+  },
+  shareSend: async (folder) => ({ repo: shares.shared.find((s) => s.folder === folder)?.repo ?? "", url: "", folder, sent: 0, received: 0, unchanged: 3, skipped: [], invited: [] }),
+  shareAccept: async (id) => {
+    const i = shares.invitations.find((x) => x.id === id);
+    if (!i) throw new Error("there is no invitation to that library");
+    shares.invitations = shares.invitations.filter((x) => x !== i);
+    const folder = `/home/you/Documents/Form/Shared/${i.repo.split("/")[1].replace("formportal-library-", "")} from ${i.from}`;
+    shares.joined.push({ repo: i.repo, folder });
+    return { repo: i.repo, url: `https://github.com/${i.repo}`, folder, sent: 0, received: 4, unchanged: 0, skipped: [], invited: [] };
+  },
+  sharePull: async (repo) => ({ repo, url: `https://github.com/${repo}`, folder: shares.joined.find((j) => j.repo === repo)?.folder ?? "", sent: 0, received: 1, unchanged: 3, skipped: [], invited: [] }),
+  publishFile: async (file, remove) => {
+    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    const found = shares.published.find((p) => p.file === file);
+    if (remove) {
+      if (!found) throw new Error(`${file} has no public link`);
+      shares.published = shares.published.filter((p) => p !== found);
+      return found;
+    }
+    const name = file.split(/[\\/]/).pop() ?? "file";
+    const made = found ?? { file, repo: `${github.account.login}/formportal-public`, path: `0a1b2c3d4e5f/${name}`, sha: "0a1b2c3d4e5f", url: `https://github.com/${github.account.login}/formportal-public/blob/main/0a1b2c3d4e5f/${encodeURIComponent(name)}` };
+    if (!found) shares.published.push(made);
+    return made;
   },
   policy: async () =>
     new URLSearchParams(window.location.search).get("policy") === "locked"

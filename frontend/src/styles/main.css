@@ -1646,6 +1646,10 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   gap: var(--sp-2);
 }
 
+.row.file {
+  --acts-w: 21rem;
+}
+
 .folder .mark {
   color: var(--ink-soft);
 }
@@ -2317,6 +2321,37 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   visibility: visible;
 }
 
+.share:not([data-mode="folder"]) [data-for="folder"],
+.share:not([data-mode="file"]) [data-for="file"] {
+  display: none;
+}
+
+.field-row {
+  display: grid;
+  gap: var(--sp-1);
+  margin-block: var(--sp-3);
+  font-size: var(--fs-s);
+}
+
+.share-status {
+  min-block-size: 3em;
+  line-height: 1.5;
+  font-size: var(--fs-s);
+}
+
+.share-link {
+  block-size: 1.5em;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row[data-kind="invite"] .shared-pull,
+.row[data-kind="joined"] .shared-accept {
+  display: none;
+}
+
 .account-acts {
   display: flex;
   gap: var(--sp-2);
@@ -2331,7 +2366,8 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
 .account[data-account="error"] .account-in,
 .account[data-account="code"] .account-open,
 .account[data-account="code"] .account-cancel,
-.account[data-account="on"] .account-out {
+.account[data-account="on"] .account-out,
+.account[data-account="on"][data-scope="profile"] .account-share {
   display: inline-flex;
 }
 
@@ -2380,6 +2416,14 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   :root {
     --state-w: 8rem;
     --acts-w: 13rem;
+  }
+
+  .row.file {
+    --acts-w: 19rem;
+  }
+
+  .row.folder {
+    --acts-w: 16rem;
   }
 
   .ap-body {

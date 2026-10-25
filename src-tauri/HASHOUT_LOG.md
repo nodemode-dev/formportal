@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.47.0
-Last updated: 2026-10-24 · the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.48.0
+Last updated: 2026-10-25 · the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.48.0 · the sharing commands {#share}
+
+### shares_view, share_folder, share_send, share_accept, share_pull, publish_file
+- refers-to: src/main.rs :: the six commands and the invoke_handler list
+- kind: decision
+- logged: v0.48.0 · 2026-10-25
+
+Thin surfaces over `formportal_core::share` on `spawn_blocking`, since each waits on GitHub. `publish_file` takes `remove` so one command publishes and unpublishes, as the dialog has one place for both. Checked: `cargo check -p formportal`, no warnings. Not run in the window under Tauri.
 
 ## v0.47.0 · the GitHub sign-in commands {#github}
 

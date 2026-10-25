@@ -590,6 +590,46 @@ pub fn sign_in(args: &Value, announce: &mut dyn FnMut(&formportal_core::github::
     }
 }
 
+fn need_path(args: &Value, key: &str) -> Result<std::path::PathBuf, CoreError> {
+    text(args, key).map(std::path::PathBuf::from).ok_or_else(|| CoreError::Invalid(format!("{key} is required")))
+}
+
+pub fn shares(ctx: &Ctx) -> Result<Value, CoreError> {
+    Ok(serde_json::to_value(ctx.portal.shares()?).unwrap_or_default())
+}
+
+pub fn share(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let folder = need_path(args, "folder")?;
+    let invite: Vec<String> = match args.get("invite") {
+        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(str::to_string).collect(),
+        Some(Value::String(s)) => s.split(',').map(str::to_string).collect(),
+        _ => Vec::new(),
+    };
+    Ok(serde_json::to_value(ctx.portal.share_folder(&folder, &invite)?).unwrap_or_default())
+}
+
+pub fn share_send(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    Ok(serde_json::to_value(ctx.portal.share_send(&need_path(args, "folder")?)?).unwrap_or_default())
+}
+
+pub fn share_accept(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let id = args.get("id").and_then(|v| v.as_u64().or_else(|| v.as_str().and_then(|s| s.parse().ok()))).ok_or_else(|| CoreError::Invalid("id is required".to_string()))?;
+    Ok(serde_json::to_value(ctx.portal.share_accept(id)?).unwrap_or_default())
+}
+
+pub fn share_pull(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    let repo = text(args, "repo").ok_or_else(|| CoreError::Invalid("repo is required".to_string()))?;
+    Ok(serde_json::to_value(ctx.portal.share_pull(&repo)?).unwrap_or_default())
+}
+
+pub fn publish(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    Ok(serde_json::to_value(ctx.portal.publish(&need_path(args, "file")?)?).unwrap_or_default())
+}
+
+pub fn unpublish(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
+    Ok(serde_json::to_value(ctx.portal.unpublish(&need_path(args, "file")?)?).unwrap_or_default())
+}
+
 pub fn sign_out() -> Result<Value, CoreError> {
     formportal_core::github::sign_out()?;
     Ok(json!({ "signed_in": false }))

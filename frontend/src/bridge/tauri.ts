@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll } from "../engine/types.ts";
+import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -123,6 +123,12 @@ export const tauriBridge: Bridge = {
   githubSignOut: async () => {
     await tauri().core.invoke<null>("github_sign_out");
   },
+  shares: () => tauri().core.invoke<SharesView>("shares_view"),
+  shareFolder: (folder, invite) => tauri().core.invoke<SyncReport>("share_folder", { folder, invite }),
+  shareSend: (folder) => tauri().core.invoke<SyncReport>("share_send", { folder }),
+  shareAccept: (id) => tauri().core.invoke<SyncReport>("share_accept", { id }),
+  sharePull: (repo) => tauri().core.invoke<SyncReport>("share_pull", { repo }),
+  publishFile: (file, remove) => tauri().core.invoke<PublishedFile>("publish_file", { file, remove }),
   filesScan: (query) => tauri().core.invoke<FilesScan>("files_scan", { query: query ?? null }),
   folderPick: () => tauri().core.invoke<string | null>("folder_pick"),
   folderAdd: async (path, keepVersions, create) => {

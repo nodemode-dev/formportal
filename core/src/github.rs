@@ -147,6 +147,60 @@ fn whoami(token: &str) -> Result<Account> {
     Ok(Account { login, name: v.get("name").and_then(Value::as_str).map(str::to_string), scopes })
 }
 
+pub struct Signed {
+    token: String,
+    pub account: Account,
+}
+
+pub fn signed_in(scope: Option<&str>) -> Result<Signed> {
+    let token = token()?.ok_or_else(|| CoreError::Account("you are not signed in; sign in from Preferences, Account first".to_string()))?;
+    let account = whoami(&token)?;
+    if let Some(scope) = scope {
+        if !account.scopes.iter().any(|s| s == scope) {
+            return Err(CoreError::Account("sharing needs access to your repositories; choose Allow sharing in Preferences, Account (or formportal-cli sign-in --share true)".to_string()));
+        }
+    }
+    Ok(Signed { token, account })
+}
+
+impl Signed {
+    pub fn call(&self, method: &str, path: &str, body: Option<&Value>) -> Result<(u16, Value)> {
+        let url = format!("{}{path}", api());
+        check_url(&url)?;
+        let request = ureq::request(method, &url).set("Accept", "application/vnd.github+json").set("Authorization", &format!("Bearer {}", self.token));
+        let result = match body {
+            Some(b) => request.set("Content-Type", "application/json").send_string(&b.to_string()),
+            None => request.call(),
+        };
+        let response = match result {
+            Ok(r) => r,
+            Err(ureq::Error::Status(_, r)) => r,
+            Err(e) => return Err(CoreError::Account(format!("GitHub could not be reached ({e})"))),
+        };
+        let status = response.status();
+        let text = response.into_string().map_err(|e| CoreError::Account(format!("GitHub's answer could not be read ({e})")))?;
+        let value = if text.trim().is_empty() { Value::Null } else { serde_json::from_str(&text).unwrap_or(Value::String(text)) };
+        Ok((status, value))
+    }
+
+    pub fn raw(&self, path: &str, limit: u64) -> Result<Vec<u8>> {
+        use std::io::Read;
+        let url = format!("{}{path}", api());
+        check_url(&url)?;
+        let response = ureq::get(&url)
+            .set("Accept", "application/vnd.github.raw+json")
+            .set("Authorization", &format!("Bearer {}", self.token))
+            .call()
+            .map_err(|e| CoreError::Account(format!("a shared file could not be downloaded ({e})")))?;
+        let mut bytes = Vec::new();
+        response.into_reader().take(limit + 1).read_to_end(&mut bytes)?;
+        if bytes.len() as u64 > limit {
+            return Err(CoreError::Account("a shared file is larger than FormPortal downloads".to_string()));
+        }
+        Ok(bytes)
+    }
+}
+
 fn entry() -> Result<keyring::Entry> {
     keyring::Entry::new(KEYCHAIN_SERVICE, KEYCHAIN_USER).map_err(keychain)
 }

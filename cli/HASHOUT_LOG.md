@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.47.0
-Last updated: 2026-10-24 · account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.48.0
+Last updated: 2026-10-25 · shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.48.0 · sharing {#share}
+
+### ops.rs · shares, share, share_send, share_accept, share_pull, publish, unpublish · main.rs · positional · mcp.rs · five tools
+- refers-to: src/ops.rs :: need_path and the seven functions · src/main.rs :: positional, the seven commands and their usage lines · src/mcp.rs :: shares (read-only), share, share_accept, share_pull, publish (with unpublish true)
+- kind: decision
+- logged: v0.48.0 · 2026-10-25
+
+The command line takes the folder, invitation id, owner/repo or file as its first word (`positional` moves it from the generic `product` slot to the key the operation reads), and `--invite a,b`. The MCP server mirrors them, because a capability the window has and the server lacks is a bug in this repo: `shares` is read-only; `share`, `share_accept` and `publish` say to confirm first, since they put files on GitHub, invite people or make a file public; `share_pull` is marked destructive because it replaces local copies with the shared version. `share-send` has no tool of its own: `share` on a shared folder sends what changed.
 
 ## v0.47.0 · the GitHub sign-in {#github}
 

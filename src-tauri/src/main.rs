@@ -605,6 +605,41 @@ async fn github_sign_out() -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(|| formportal_core::github::sign_out().map_err(text)).await.map_err(text)?
 }
 
+#[tauri::command]
+async fn shares_view() -> Result<formportal_core::share::SharesView, String> {
+    tauri::async_runtime::spawn_blocking(|| hub().shares().map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn share_folder(folder: String, invite: Vec<String>) -> Result<formportal_core::share::SyncReport, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().share_folder(std::path::Path::new(&folder), &invite).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn share_send(folder: String) -> Result<formportal_core::share::SyncReport, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().share_send(std::path::Path::new(&folder)).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn share_accept(id: u64) -> Result<formportal_core::share::SyncReport, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().share_accept(id).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn share_pull(repo: String) -> Result<formportal_core::share::SyncReport, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().share_pull(&repo).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn publish_file(file: String, remove: bool) -> Result<formportal_core::share::Published, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = std::path::Path::new(&file);
+        if remove { hub().unpublish(path) } else { hub().publish(path) }.map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
 fn sync_login() -> Result<(), String> {
     let on = hub().preferences().map_err(text)?.open_at_login;
     let program = std::env::var_os("APPIMAGE").map(std::path::PathBuf::from).or_else(|| std::env::current_exe().ok()).ok_or("no program path")?;
@@ -687,7 +722,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")
