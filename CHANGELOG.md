@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.52.1 · 2026-10-25
+
+- The MCP tools `shares` and `extensions` describe the portfolio address and support links, and FormPortal's agent skills know `org-package`, FormRanker, the Included tab and the engine's policy, deploy and sharing files.
+
 ## v0.52.0 · 2026-10-25
 
 - `org-package` makes one folder for a managed rollout: FormPortal's msi, dmg, deb, rpm or AppImage, the organisation's policy, their SHA-256 sums and an install script that puts the policy in place before FormPortal's first start.
