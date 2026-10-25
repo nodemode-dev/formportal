@@ -14,6 +14,8 @@ pub struct InstalledVersion {
     pub path: PathBuf,
     pub sha256: String,
     pub installed_at: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub files: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

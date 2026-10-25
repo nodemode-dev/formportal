@@ -420,7 +420,7 @@ pub fn app_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let manifest = ctx.portal.agent_manifest(&id, ch)?;
     let note = match (&surface, &manifest) {
         (Some(_), _) => "connect_agents adds it to the clients; FormPortal starts the installed version each time, so updates need no change.",
-        (None, Some(m)) if m.mcp => "The app has an MCP server, but its install names no launcher FormPortal can start yet (form-app.json has no agents.mcp.command).",
+        (None, Some(m)) if m.mcp => "The app has an MCP server, but its install names no launcher FormPortal can start yet (form-app.json has no agents.mcp.binary or command).",
         (None, Some(_)) => "This install's form-app.json declares no MCP server.",
         (None, None) => "No form-app.json found in this install: the app ships none yet, or it is not installed.",
     };
@@ -481,7 +481,7 @@ pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> R
             (version, artifact)
         }
     };
-    let done = ctx.portal.install(&id, ch, version, artifact, progress)?;
+    let done = ctx.portal.install_from(&catalog, &id, ch, version, artifact, progress)?;
     let held = text(args, "version").is_some() && ctx.portal.hold_if_older(&catalog, &id, ch, &done.current.version)?;
     let opens = ctx.portal.launch_target(&id, ch).ok();
     let still_open: Vec<u32> = ctx.portal.running(&id, ch).iter().filter(|r| !r.path.starts_with(&done.current.path)).map(|r| r.pid).collect();
@@ -514,7 +514,7 @@ pub fn update(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Re
             };
             let view = catalog.view(&id, ch, platform);
             let artifact = view.artifact.ok_or_else(|| fail(format!("{id} has no file for this computer")))?;
-            let done = ctx.portal.install(&id, ch, &u.to, artifact, progress)?;
+            let done = ctx.portal.install_from(&catalog, &id, ch, &u.to, artifact, progress)?;
             Ok(json!({ "updated": [{ "product": id, "channel": formportal_core::portal::channel_name(ch), "from": u.from, "to": done.current.version, "error": null }] }))
         }
         None => {

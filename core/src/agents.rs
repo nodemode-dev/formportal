@@ -13,7 +13,7 @@ pub const APP_FORMAT: &str = "form-app";
 pub const APP_FORMAT_VERSION: u32 = 2;
 
 #[derive(Debug, Clone, Deserialize)]
-struct AppFile {
+pub(crate) struct AppFile {
     format: String,
     #[serde(default = "first_format_version")]
     format_version: u32,
@@ -43,6 +43,8 @@ struct AppMcp {
     available: Option<bool>,
     #[serde(default)]
     command: String,
+    #[serde(default)]
+    binary: String,
     #[serde(default)]
     args: Vec<String>,
 }
@@ -78,7 +80,7 @@ pub struct AppManifest {
     pub skills: Option<AppSkills>,
 }
 
-fn parse_app(file: &Path, text: &str) -> Result<AppFile> {
+pub(crate) fn parse_app(file: &Path, text: &str) -> Result<AppFile> {
     let app: AppFile = serde_json::from_str(text).map_err(|e| CoreError::Invalid(format!("{} is not valid ({e})", file.display())))?;
     if app.format != APP_FORMAT {
         return Err(CoreError::Invalid(format!("{} is not a Form app file (format {:?})", file.display(), app.format)));
@@ -86,18 +88,147 @@ fn parse_app(file: &Path, text: &str) -> Result<AppFile> {
     if app.format_version == 0 || app.format_version > APP_FORMAT_VERSION {
         return Err(CoreError::Invalid(format!("{} is format_version {}, which this FormPortal does not read (it reads 1 and {APP_FORMAT_VERSION}); update FormPortal", file.display(), app.format_version)));
     }
-    if app.format_version == 1 {
-        if let Some(mcp) = app.agents.as_ref().and_then(|a| a.mcp.as_ref()) {
-            if mcp.command.trim().is_empty() {
-                return Err(CoreError::Invalid(format!("{} is not valid (format_version 1 needs agents.mcp.command)", file.display())));
-            }
+    if let Some(mcp) = app.agents.as_ref().and_then(|a| a.mcp.as_ref()) {
+        if app.format_version == 1 && mcp.command.trim().is_empty() {
+            return Err(CoreError::Invalid(format!("{} is not valid (format_version 1 needs agents.mcp.command)", file.display())));
+        }
+        let b = mcp.binary.as_str();
+        if !b.is_empty() && (b.len() > 128 || b.contains(['/', '\\']) || b.starts_with('.') || b.chars().any(|c| c.is_control())) {
+            return Err(CoreError::Invalid(format!("{} names the binary {b:?}, which is not a plain file name", file.display())));
         }
     }
     Ok(app)
 }
 
+impl AppFile {
+    pub(crate) fn id(&self) -> Option<&str> {
+        self.id.as_deref()
+    }
+
+    pub(crate) fn version(&self) -> Option<&str> {
+        self.version.as_deref()
+    }
+}
+
 fn mcp_available(app: &AppFile) -> bool {
-    app.agents.as_ref().and_then(|a| a.mcp.as_ref()).map(|m| m.available.unwrap_or(!m.command.trim().is_empty())).unwrap_or(false)
+    app.agents.as_ref().and_then(|a| a.mcp.as_ref()).map(|m| m.available.unwrap_or(!m.command.trim().is_empty() || !m.binary.trim().is_empty())).unwrap_or(false)
+}
+
+pub const FILES_FORMAT: &str = "formportal-files";
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FilesRecord {
+    pub format: String,
+    pub format_version: u32,
+    pub product: String,
+    pub channel: String,
+    pub version: String,
+    pub files: std::collections::BTreeMap<String, String>,
+}
+
+fn digest(path: &Path) -> Result<String> {
+    use sha2::{Digest, Sha256};
+    let mut file = fs::File::open(path)?;
+    let mut hasher = Sha256::new();
+    let mut buffer = vec![0u8; 1 << 16];
+    loop {
+        let n = std::io::Read::read(&mut file, &mut buffer)?;
+        if n == 0 {
+            break;
+        }
+        hasher.update(&buffer[..n]);
+    }
+    Ok(hasher.finalize().iter().map(|b| format!("{b:02x}")).collect())
+}
+
+pub fn install_files(root: &Path) -> Result<std::collections::BTreeMap<String, String>> {
+    let mut out = std::collections::BTreeMap::new();
+    let mut stack = vec![root.to_path_buf()];
+    while let Some(dir) = stack.pop() {
+        for entry in fs::read_dir(&dir)?.flatten() {
+            let path = entry.path();
+            let rel = path.strip_prefix(root).map(|p| p.to_string_lossy().replace('\\', "/")).unwrap_or_default();
+            let kind = entry.file_type()?;
+            if kind.is_symlink() {
+                out.insert(rel, format!("link:{}", fs::read_link(&path).map(|t| t.to_string_lossy().into_owned()).unwrap_or_default()));
+            } else if kind.is_dir() {
+                stack.push(path);
+            } else {
+                out.insert(rel, digest(&path)?);
+            }
+        }
+    }
+    Ok(out)
+}
+
+pub(crate) fn files_record_path(base: &Path, version: &str) -> PathBuf {
+    base.join(format!("{version}.files.json"))
+}
+
+pub(crate) fn write_files_record(install: &Path, record: &Path, product: &str, channel: Channel, version: &str) -> Result<()> {
+    let body = FilesRecord { format: FILES_FORMAT.into(), format_version: 1, product: product.into(), channel: channel_name(channel).into(), version: version.into(), files: install_files(install)? };
+    let text = serde_json::to_string_pretty(&body).map_err(|e| CoreError::State(e.to_string()))? + "\n";
+    let part = record.with_extension("json.part");
+    fs::write(&part, text)?;
+    fs::rename(&part, record)?;
+    Ok(())
+}
+
+pub(crate) fn fetch_app_file(asset: &crate::AgentAsset, product: &str, version: &str) -> Result<Vec<u8>> {
+    use sha2::{Digest, Sha256};
+    let body = crate::download::fetch_bytes(&asset.url)?;
+    let found: String = Sha256::digest(&body).iter().map(|b| format!("{b:02x}")).collect();
+    if !found.eq_ignore_ascii_case(&asset.sha256) {
+        return Err(CoreError::Hash { file: asset.file.clone(), expected: asset.sha256.clone(), found });
+    }
+    let text = String::from_utf8(body.clone()).map_err(|_| CoreError::Invalid(format!("{} is not text", asset.file)))?;
+    let app = parse_app(Path::new(&asset.file), &text)?;
+    if app.id().is_some_and(|id| id != product) || app.version().is_some_and(|v| v != version) {
+        return Err(CoreError::Invalid(format!("{} describes {} {}, not {product} {version}", asset.file, app.id().unwrap_or("?"), app.version().unwrap_or("?"))));
+    }
+    Ok(body)
+}
+
+fn resolve_binary(root: &Path, name: &str) -> Option<PathBuf> {
+    let exe = format!("{name}.exe");
+    let mut found: Vec<(u8, PathBuf)> = Vec::new();
+    let mut stack = vec![(root.to_path_buf(), 0u32)];
+    while let Some((dir, depth)) = stack.pop() {
+        let Ok(entries) = fs::read_dir(&dir) else { continue };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let Ok(kind) = entry.file_type() else { continue };
+            if kind.is_dir() {
+                if depth < 6 {
+                    stack.push((path, depth + 1));
+                }
+                continue;
+            }
+            let file = entry.file_name().to_string_lossy().into_owned();
+            let parent = path.parent().map(|p| p.to_string_lossy().replace('\\', "/")).unwrap_or_default();
+            let rank = if file == name && parent.ends_with("Contents/MacOS") {
+                0
+            } else if file == name && parent.ends_with("usr/bin") {
+                1
+            } else if file.eq_ignore_ascii_case(&exe) {
+                2
+            } else if file == name {
+                3
+            } else if depth == 0 && file.to_ascii_lowercase().ends_with(".appimage") {
+                4
+            } else {
+                continue;
+            };
+            found.push((rank, path));
+        }
+    }
+    found.sort();
+    let best = found.first()?.clone();
+    if best.0 == 4 && found.iter().filter(|(r, _)| *r == 4).count() > 1 {
+        return None;
+    }
+    let inside = best.1.canonicalize().ok().zip(root.canonicalize().ok()).is_some_and(|(c, r)| c.starts_with(r));
+    inside.then_some(best.1)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -239,7 +370,7 @@ fn toml_section(text: &str, name: &str) -> Option<(usize, usize)> {
     start.map(|s| (s, text.len()))
 }
 
-fn search(dir: &Path, depth: u32) -> Option<PathBuf> {
+pub(crate) fn search(dir: &Path, depth: u32) -> Option<PathBuf> {
     let direct = dir.join(APP_FILE);
     if direct.is_file() {
         return Some(direct);
@@ -278,6 +409,10 @@ impl Portal {
     pub fn agent_surface(&self, product: &str, channel: Channel) -> Result<Option<Surface>> {
         let Some((file, app, root)) = self.app_file(product, channel)? else { return Ok(None) };
         let Some(mcp) = app.agents.and_then(|a| a.mcp) else { return Ok(None) };
+        if !mcp.binary.trim().is_empty() {
+            let command = resolve_binary(&root, mcp.binary.trim()).ok_or_else(|| CoreError::Invalid(format!("{} names the program {:?}, which FormPortal could not find in {} (or found more than one AppImage)", file.display(), mcp.binary, root.display())))?;
+            return Ok(Some(Surface { file, command, args: mcp.args }));
+        }
         if mcp.command.trim().is_empty() {
             return Ok(None);
         }

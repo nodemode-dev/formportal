@@ -6,12 +6,12 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
-use crate::{installers, process};
+use crate::{agents, installers, process};
 use crate::signature::{trusted_keys, verify};
 use crate::policy::{self, Managed};
 use crate::prefs::Preferences;
 use crate::state::{Install, InstalledVersion, State};
-use crate::{version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform};
+use crate::{version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform, ReleaseAgents};
 use serde::Serialize;
 
 pub struct Portal {
@@ -246,6 +246,15 @@ impl Portal {
     }
 
     pub fn install(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
+        self.install_with(product, channel, version, artifact, None, progress)
+    }
+
+    pub fn install_from(&self, catalog: &Catalog, product: &str, channel: Channel, version: &str, artifact: &Artifact, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
+        let agents = catalog.release_of(product, channel, version).and_then(|r| r.agents.clone());
+        self.install_with(product, channel, version, artifact, agents.as_ref(), progress)
+    }
+
+    pub fn install_with(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, agents: Option<&ReleaseAgents>, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
         if let Some(managed) = self.policy()? {
             managed.policy.allows(product, channel)?;
         }
@@ -271,6 +280,17 @@ impl Portal {
             let _ = fs::remove_dir_all(&staging);
             return Err(e);
         }
+        if let Some(asset) = agents.and_then(|a| a.manifest.as_ref()) {
+            if agents::search(&staging, 4).is_none() {
+                match agents::fetch_app_file(asset, product, version) {
+                    Ok(body) => fs::write(staging.join(agents::APP_FILE), body)?,
+                    Err(e) => {
+                        let _ = fs::remove_dir_all(&staging);
+                        return Err(e);
+                    }
+                }
+            }
+        }
         if target.exists() {
             let open = process::under(&target);
             if !open.is_empty() {
@@ -280,7 +300,9 @@ impl Portal {
             fs::remove_dir_all(&target)?;
         }
         fs::rename(&staging, &target)?;
-        let fresh = InstalledVersion { version: version.to_string(), path: target, sha256: artifact.sha256.clone(), installed_at: now() };
+        let record = agents::files_record_path(&base, version);
+        let files = agents::write_files_record(&target, &record, product, channel, version).ok().map(|()| record);
+        let fresh = InstalledVersion { version: version.to_string(), path: target, sha256: artifact.sha256.clone(), installed_at: now(), files };
         let mut state = self.state()?;
         let install = match state.position(product, channel) {
             Some(index) => {
@@ -318,6 +340,15 @@ impl Portal {
             let path = entry.path();
             if path.is_dir() && !keep.contains(&path.as_path()) && process::under(&path).is_empty() {
                 let _ = fs::remove_dir_all(&path);
+            }
+        }
+        let Ok(entries) = fs::read_dir(base) else { return };
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if let Some(version) = name.strip_suffix(".files.json") {
+                if !base.join(version).is_dir() {
+                    let _ = fs::remove_file(entry.path());
+                }
             }
         }
     }
@@ -403,7 +434,7 @@ impl Portal {
             let Some(artifact) = view.artifact else { continue };
             let product = update.product.clone();
             let channel = update.channel;
-            let result = self.install(&product, channel, &update.to, artifact, &mut |have, total| progress(&product, channel, have, total));
+            let result = self.install_from(catalog, &product, channel, &update.to, artifact, &mut |have, total| progress(&product, channel, have, total));
             if result.is_ok() && update.later {
                 let _ = self.set_later(&product, channel, false);
             }

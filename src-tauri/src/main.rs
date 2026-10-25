@@ -61,7 +61,7 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
             }
         };
         let mut last = u64::MAX;
-        let done = hub.install(&product, channel, version, artifact, &mut |have, total| {
+        let done = hub.install_from(&catalog, &product, channel, version, artifact, &mut |have, total| {
             let step = if total > 0 { have * 100 / total } else { 0 };
             if step != last {
                 last = step;

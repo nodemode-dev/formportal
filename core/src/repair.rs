@@ -120,7 +120,10 @@ impl Portal {
                                 .filter(|a| a.sha256 == record.current.sha256)
                                 .cloned();
                             match artifact {
-                                Some(artifact) => self.install(&product, channel, &record.current.version, &artifact, &mut |have, total| progress(&product, channel, have, total)).map(|_| ()),
+                                Some(artifact) => {
+                                    let agents = catalog.and_then(|c| c.release_of(&product, channel, &record.current.version)).and_then(|r| r.agents.clone());
+                                    self.install_with(&product, channel, &record.current.version, &artifact, agents.as_ref(), &mut |have, total| progress(&product, channel, have, total)).map(|_| ())
+                                }
                                 None => {
                                     let mut s = self.state()?;
                                     if let Some(i) = s.position(&product, channel) {
