@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.50.0 · 2026-10-25
+
+- Each app's page says whether its releases carry agent skills, with a link to read them in formskills.
+- Each app's Use with your AI tools section points to formMCP, one connection to every Form app at once.
+
 ## v0.49.0 · 2026-10-25
 
 - Every app is shown with its own icon, in every list, card, app page and in Files; no more two letters on a coloured square.
