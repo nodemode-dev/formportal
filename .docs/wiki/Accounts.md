@@ -13,7 +13,7 @@ From the command line: `./formportal cli sign-in` prints the address and the cod
 | When | Scope | Why |
 | --- | --- | --- |
 | Signing in | `read:user` | to show who is signed in |
-| The first share (from v0.48.0) | `repo` added | to make a private repository in your account and invite people to it; GitHub offers OAuth apps no narrower scope for private repositories |
+| Sharing and public links (from v0.48.0; sign in again with sharing allowed) | `repo` added | to make a private repository in your account and invite people to it; GitHub offers OAuth apps no narrower scope for private repositories |
 
 `sign-in --share true` asks for both at once.
 
