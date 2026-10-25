@@ -2,8 +2,12 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.51.0
-Last updated: 2026-10-25 · `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.52.0
+Last updated: 2026-10-25 · `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.52.0 · org-package {#org-package}
+
+- `org-package --policy FILE --installer FILE --to DIR` calls `deploy::package` and returns the package (folder, platform, installer, how to run it, files, who manages it) and a `next` line. Like `mirror`, it is for an organisation's administrator, so it is a command and not an MCP tool; it needs no catalogue and no network.
 
 ## v0.48.0 · sharing {#share}
 

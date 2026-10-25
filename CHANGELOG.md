@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.52.0 · 2026-10-25
+
+- `org-package` makes one folder for a managed rollout: FormPortal's msi, dmg, deb, rpm or AppImage, the organisation's policy, their SHA-256 sums and an install script that puts the policy in place before FormPortal's first start.
+- The Organisations page now says which installers need an administrator: the msi installs for every user, the NSIS setup for one person.
+
 ## v0.51.0 · 2026-10-25
 
 - Included, in the sidebar after Learn: what the free plan covers, every app and tool with its licence, and the fonts, stock, extensions and tutorials that come with it. Nothing is sold, so there are no offers.

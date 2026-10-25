@@ -2,8 +2,16 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.51.0
-Last updated: 2026-10-25 · the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.52.0
+Last updated: 2026-10-25 · the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.52.0 · the managed package {#deploy}
+
+Parity rows 61 and 62: one package an organisation's own deployment tool runs, holding FormPortal and the policy together.
+
+- deploy.rs `package(policy, installer, out)`: copies FormPortal's own installer and the policy file into `out` (which must be new or empty), writes `SHA256SUMS` (the `sha256sum -c` format, which `shasum -a 256 -c` and the PowerShell loop also read), the install script for the installer's kind and a `README.txt`. The script refuses to run unless root or administrator, stops if a sum no longer matches, copies the policy to `policy::system_path()`'s place for that platform first, so the first start is already managed, then installs silently: deb with `dpkg -i` (then `apt-get install -f` for missing dependencies), rpm with `rpm -U --replacepkgs`, the AppImage into `/opt/formportal` with a `/usr/local/bin/formportal` link, the dmg mounted read-only and `FormPortal.app` copied into Applications with `ditto` (only after checking the image holds it), the msi with `msiexec /i /qn /norestart` (3010, restart needed, counts as success), from `install.ps1` behind `install.cmd`.
+- Refused: the NSIS setup, since Tauri's NSIS default (`installMode` currentUser, which FormPortal does not change) installs for the one account that runs it, while the msi is `InstallScope="perMachine"` (both read in Tauri's own sources, `tauri-utils` config.rs and the bundler's main.wxs); anything not deb, rpm, AppImage, dmg or msi; an installer name with anything but letters, digits, dots, dashes, underscores and plus (the script names it inside single quotes) or starting with a dash; a missing or invalid policy.
+- policy.rs `check(path)`: the same reading FormPortal does at start (`read`), with a missing file an error rather than "no policy".
 
 ## v0.51.0 · the portfolio page, extension support links {#portfolio}
 

@@ -60,4 +60,16 @@ Make the key pair with formai_dev's `python -m app.signing`, or any Ed25519 tool
 
 ## Installing FormPortal silently
 
-FormPortal installs per user and needs no administrator. For a managed rollout: Windows `msiexec /i FormPortal_[version]_x64_en-US.msi /qn`, or the NSIS setup with `/S`; macOS, copy `FormPortal.app` from the dmg; Linux, the deb or the AppImage. These are the installers' standard switches; they have not yet been run on a managed Windows or macOS computer.
+A person can install FormPortal for themselves with no administrator: the NSIS setup on Windows, the dmg on macOS, the AppImage on Linux. For a managed rollout: Windows `msiexec /i FormPortal_[version]_x64_en-US.msi /qn` (the msi installs for every user, in Program Files, so it needs an administrator; the NSIS setup with `/S` installs only for the account that runs it); macOS, copy `FormPortal.app` from the dmg into Applications; Linux, the deb or the rpm. These are the installers' standard switches.
+
+## One package for a managed rollout
+
+`formportal-cli org-package` makes one folder your deployment tool can push and run:
+
+```
+./formportal cli org-package --policy policy.json --installer FormPortal_0.51.0_x64_en-US.msi --to formportal-managed
+```
+
+It checks the policy the way FormPortal will read it, then writes the installer, `policy.json`, `SHA256SUMS`, a `README.txt` and the install script for that platform: `install.cmd` and `install.ps1` for the msi, `install.sh` for the dmg, deb, rpm or AppImage. Run as administrator or root, the script stops if any file no longer matches its sum, puts the policy at the system path (above) before FormPortal is installed, so its first start is already managed, then installs FormPortal silently: `msiexec /qn` on Windows, `FormPortal.app` into Applications on macOS, `dpkg` or `rpm` on Linux, or the AppImage in `/opt/formportal`.
+
+The NSIS setup is refused, since it installs for one person. Installer names may hold only letters, digits, dots, dashes and underscores, because the script names the file. The Linux deb package was run end to end; the Windows and macOS scripts have not yet been run on a managed computer.
