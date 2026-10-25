@@ -650,6 +650,15 @@ pub fn policy(ctx: &Ctx) -> Result<Value, CoreError> {
     })
 }
 
+pub fn org_package(args: &Value) -> Result<Value, CoreError> {
+    let policy = text(args, "policy").ok_or_else(|| fail("give --policy, the organisation's policy file"))?;
+    let installer = text(args, "installer").ok_or_else(|| fail("give --installer, FormPortal's own msi, dmg, deb, rpm or AppImage"))?;
+    let out = text(args, "to").ok_or_else(|| fail("give --to, a new folder for the package"))?;
+    let package = formportal_core::deploy::package(std::path::Path::new(&policy), std::path::Path::new(&installer), std::path::Path::new(&out))?;
+    let next = format!("Deploy {} with your own tools and run {} on each computer.", package.dir.display(), package.run);
+    Ok(json!({ "package": package, "next": next }))
+}
+
 pub fn mirror(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
     let out = text(args, "to").ok_or_else(|| fail("give --to, the folder the mirror is written into"))?;
     let base_url = text(args, "base_url").ok_or_else(|| fail("give --base-url, the address the folder will be served at, such as https://apps.example.internal/formportal"))?;
