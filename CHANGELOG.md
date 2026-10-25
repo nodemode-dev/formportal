@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.50.1 · 2026-10-25
+
+- FormRanker, the family's parity, testing and feedback app, is listed in Family tools.
+
 ## v0.50.0 · 2026-10-25
 
 - Each app's page says whether its releases carry agent skills, with a link to read them in formskills.
