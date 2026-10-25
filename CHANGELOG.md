@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.1 · 2026-10-25
+
+- The interface's development server moves to vite 8.3.5, which clears two command-injection advisories in its `launch-editor`. A development dependency only: nothing in the app changed.
+
 ## v0.53.0 · 2026-10-25
 
 - Installed apps can be reached by agents: when a release's bundle carries no `form-app.json`, FormPortal writes the release's own (from the catalogue, checked) into the install, so `app-mcp`, `app-agents` and Connect work for every app that declares an MCP server.
