@@ -12,6 +12,9 @@ description: Changes to formportal-core, FormPortal's Rust engine. Use for catal
 - `download.rs`: https or loopback only; streams with progress; `sha256_file`.
 - `signature.rs`: Ed25519 over the catalogue bytes; `TRUSTED_KEYS` is empty until formai.dev's public key is published, `FORMAI_CATALOG_PUBKEY` adds keys.
 - `state.rs`: `installed.json`; `error.rs`: one readable sentence per failure.
+- `policy.rs`: the organisation's policy at the system path (or `FORMPORTAL_POLICY` for testing), what it allows and locks; `check` reads a file as FormPortal will. `mirror.rs`: the catalogue and its files copied for an internal server. `deploy.rs`: `package`, FormPortal's installer with the policy, sums and an install script in one folder (`org-package`).
+- `share.rs`: sharing through the person's GitHub account (private libraries, invitations, public links in `formportal-public`) and `write_portfolio`, that repository's README listing every public file. `github.rs`: sign-in and the API calls.
+- `extensions.rs`: the extension index and installed packages; an entry's `support` link is kept only when it is https.
 
 ## Rules
 

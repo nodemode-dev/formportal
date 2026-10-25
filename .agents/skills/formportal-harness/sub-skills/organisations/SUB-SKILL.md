@@ -1,6 +1,6 @@
 ---
 name: organisations
-description: FormPortal on computers an organisation manages. Use when an install, preference change or extension is refused by a policy, the person asks who manages FormPortal or why a setting is locked, or an administrator wants to lock the catalogue, force update settings, limit which apps or channels install, turn extensions off, deploy FormPortal silently, or mirror the catalogue and its files to an internal server with formportal cli mirror.
+description: FormPortal on computers an organisation manages. Use when an install, preference change or extension is refused by a policy, the person asks who manages FormPortal or why a setting is locked, or an administrator wants to lock the catalogue, force update settings, limit which apps or channels install, turn extensions off, deploy FormPortal silently or build one managed package with formportal cli org-package, or mirror the catalogue and its files to an internal server with formportal cli mirror.
 ---
 
 # organisations
@@ -57,4 +57,10 @@ Without a key the mirror is unsigned and computers refuse it unless the develope
 
 ## Silent deployment
 
-FormPortal itself installs per user from its own installers: `msiexec /i FormPortal.msi /qn` or the NSIS setup with `/S` on Windows, the `.app` from the dmg copied into place on macOS, the deb or AppImage on Linux. Drop the policy file in its system path with the same tooling. None of this has been run on a managed Windows or macOS computer yet; say so if asked.
+For an administrator, `org-package` makes one folder to deploy:
+
+```
+./formportal cli org-package --policy policy.json --installer FormPortal_[version]_x64_en-US.msi --to formportal-managed
+```
+
+It refuses a policy FormPortal would refuse, then writes the installer, `policy.json`, `SHA256SUMS`, `README.txt` and the script: `install.cmd` with `install.ps1` for the msi, `install.sh` for the dmg, deb, rpm or AppImage. Run as administrator or root, the script stops if a file changed, puts the policy at the system path first, then installs silently. On Windows only the msi is taken: it installs for every user, while the NSIS setup installs only for the account that runs it, so the command refuses it. The Linux deb package has been run end to end; the Windows and macOS scripts have not yet been run on a managed computer, so say so if asked.
