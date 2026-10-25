@@ -1,6 +1,6 @@
 [package]
 name = "formportal"
-version = "0.50.1"
+version = "0.51.0"
 description = "FormPortal, the Form family's app portal: a Tauri shell over formportal-core"
 authors = ["nodemode-ai"]
 license = "GPL-3.0-only"

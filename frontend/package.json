@@ -1,7 +1,7 @@
 {
   "name": "formportal",
   "private": true,
-  "version": "0.50.1",
+  "version": "0.51.0",
   "description": "FormPortal's interface: the Form family's app portal",
   "license": "GPL-3.0-only",
   "type": "module",
