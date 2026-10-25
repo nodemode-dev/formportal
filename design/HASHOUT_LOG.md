@@ -29,6 +29,13 @@ design/
 
 ## tokens.css {#tokens}
 
+### tokens.css · FormRanker's hue
+- refers-to: tokens.css :: [data-product="formranker"]
+- kind: decision
+- logged: FormPortal v0.50.1 · 2026-10-25
+
+FormRanker joins formcompiler's registry (formcompiler 0.4.4) as the desktop app from FormRanker 0.7.0, so it joins FormPortal's catalogue in Family tools; its hue is the orange of FormRanker's own badge, #f97316. Its icon was already in `frontend/public/apps/formranker.webp` from v0.49.0. formai_dev's copy should take the same line.
+
 ### tokens.css · hues for the seven apps added to the catalogue
 - refers-to: tokens.css :: [data-product="formpdf"], formtxt, formcel, formref, formsculpt, format, formtray
 - kind: decision
