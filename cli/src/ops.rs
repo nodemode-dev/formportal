@@ -749,7 +749,7 @@ pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
                     let have = installed.iter().find(|e| e.product == p.product && e.id == p.id);
                     json!({ "id": p.id, "name": p.name, "product": p.product, "kind": p.kind, "author": p.author, "description": p.description, "version": p.version,
                             "licence": p.licence, "native": p.native, "permissions": p.permissions, "signed": p.signature.is_some(), "minimum_app": p.minimum_app,
-                            "installed": have.map(|h| &h.version), "enabled": have.map(|h| h.enabled),
+                            "support": p.support, "installed": have.map(|h| &h.version), "enabled": have.map(|h| h.enabled),
                             "update": have.map(|h| formportal_core::version_newer(&p.version, &h.version)).unwrap_or(false) })
                 })
                 .collect()

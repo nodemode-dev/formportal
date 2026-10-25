@@ -49,6 +49,8 @@ pub struct Entry {
     pub permissions: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub signature: Option<PackageSignature>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub support: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -114,9 +116,14 @@ struct Installed {
 }
 
 fn parse_index(text: &str) -> Result<ExtensionIndex> {
-    let index: ExtensionIndex = serde_json::from_str(text).map_err(|e| CoreError::Invalid(format!("the extension index is not valid: {e}")))?;
+    let mut index: ExtensionIndex = serde_json::from_str(text).map_err(|e| CoreError::Invalid(format!("the extension index is not valid: {e}")))?;
     if index.format != INDEX_FORMAT || index.format_version != 1 {
         return Err(CoreError::Invalid(format!("this is not a formai extension index (format {:?} {})", index.format, index.format_version)));
+    }
+    for package in &mut index.packages {
+        if package.support.as_deref().is_some_and(|s| !s.starts_with("https://")) {
+            package.support = None;
+        }
     }
     Ok(index)
 }

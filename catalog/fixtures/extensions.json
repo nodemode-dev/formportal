@@ -28,7 +28,8 @@
       "native": false,
       "permissions": [
         "document"
-      ]
+      ],
+      "support": "https://github.com/sponsors/nodemode-ai"
     },
     {
       "id": "contact-sheet",
