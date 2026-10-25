@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from "vite";
 import { fileURLToPath, URL } from "node:url";
 import { resolve } from "node:path";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { loadJson, renderMarkers, type Facts, type IconSet } from "../design/markers.ts";
 import { translateHtml, type Table } from "./src/i18n/translate.ts";
 
@@ -30,6 +30,7 @@ const GROUPS: [string, string][] = [
   ["adobe", "Instead of Adobe"],
   ["other", "More apps"],
   ["next", "On the way"],
+  ["tools", "Family tools"],
 ];
 const ORDER = GROUPS.map(([id]) => id);
 const APPS = loadJson<{ products: App[] }>(resolve(CATALOG, "products.json"))
@@ -42,7 +43,11 @@ const STATUS: Record<string, string> = { available: "Available", "in-progress": 
 const esc = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const short = (p: App) => esc(p.name.replace(/^Form\.?/, "").slice(0, 2));
 const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""));
-const tile = (p: App, size = "") => `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
+const icon = (p: App) => existsSync(resolve(ROOT, "public/apps", `${p.id}.webp`));
+const tile = (p: App, size = "") =>
+  icon(p)
+    ? `<span class="tile tile-icon${size ? ` tile-${size}` : ""}" aria-hidden="true"><img src="/apps/${esc(p.id)}.webp" alt="" width="176" height="176" decoding="async" /></span>`
+    : `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
 const words = (p: App) => STATUS[p.status ?? "available"];
 const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.kind}`.toLowerCase());
 const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-ai/") ? p.repository.replace(/\/$/, "") : null);

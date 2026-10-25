@@ -708,6 +708,21 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   line-height: 1;
 }
 
+.tile-icon {
+  background: none;
+  overflow: hidden;
+}
+
+.tile-icon > img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.tile[data-has-shot] > img {
+  visibility: hidden;
+}
+
 .tile-s {
   --tile: 24px;
 }

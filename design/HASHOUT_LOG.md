@@ -29,6 +29,13 @@ design/
 
 ## tokens.css {#tokens}
 
+### tokens.css · hues for the seven apps added to the catalogue
+- refers-to: tokens.css :: [data-product="formpdf"], formtxt, formcel, formref, formsculpt, format, formtray
+- kind: decision
+- logged: FormPortal v0.49.0 · 2026-10-25
+
+FormPortal 0.49.0 follows formcompiler's registry, so these seven products appear in its lists; each gets a `--hue` like the others (it colours accents; the tiles themselves are now the apps' own icons). The hues for formhub, formsim, formui and formapp stay, unused, so formai_dev's copy and this one differ only by additions. formai_dev's copy should take the same lines.
+
 ### tokens.css · one file for both sides
 - refers-to: tokens.css :: the whole file
 - kind: rationale

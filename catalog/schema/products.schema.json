@@ -20,7 +20,7 @@
           "name": { "type": "string", "minLength": 1 },
           "kind": { "type": "string", "pattern": "^[a-z][a-z-]{1,23}$" },
           "status": { "enum": ["available", "in-progress", "in-development"] },
-          "group": { "enum": ["adobe", "other", "next"] },
+          "group": { "enum": ["adobe", "other", "next", "tools"] },
           "alt_of": { "type": "string", "maxLength": 60 },
           "note": { "type": "string", "maxLength": 80 },
           "summary": { "type": "string", "minLength": 1 },

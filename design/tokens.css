@@ -164,6 +164,13 @@
 [data-product="formui"] { --hue: color-mix(in oklab, #f2a3ff calc(100% - var(--hue-depth)), #000); }
 [data-product="formmcp"] { --hue: color-mix(in oklab, #9fe7ff calc(100% - var(--hue-depth)), #000); }
 [data-product="formskills"] { --hue: color-mix(in oklab, #ffc069 calc(100% - var(--hue-depth)), #000); }
+[data-product="formpdf"] { --hue: color-mix(in oklab, #ff5f6d calc(100% - var(--hue-depth)), #000); }
+[data-product="formtxt"] { --hue: color-mix(in oklab, #7aa2ff calc(100% - var(--hue-depth)), #000); }
+[data-product="formcel"] { --hue: color-mix(in oklab, #4fd18b calc(100% - var(--hue-depth)), #000); }
+[data-product="formref"] { --hue: color-mix(in oklab, #ffb347 calc(100% - var(--hue-depth)), #000); }
+[data-product="formsculpt"] { --hue: color-mix(in oklab, #c9a0ff calc(100% - var(--hue-depth)), #000); }
+[data-product="format"] { --hue: color-mix(in oklab, #f0883e calc(100% - var(--hue-depth)), #000); }
+[data-product="formtray"] { --hue: color-mix(in oklab, #a0aec0 calc(100% - var(--hue-depth)), #000); }
 
 [data-product="formcut"] {
   --hue: var(--hue-cut);

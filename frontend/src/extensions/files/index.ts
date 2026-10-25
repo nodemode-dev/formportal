@@ -10,6 +10,27 @@ const when = (seconds: number) => {
   return date.toLocaleString([], { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 };
 
+const appIcon = (tile: HTMLElement, product: string, name: string) => {
+  if (tile.dataset.icon === product) return;
+  tile.dataset.icon = product;
+  const img = tile.querySelector("img") ?? document.createElement("img");
+  img.alt = "";
+  img.width = 176;
+  img.height = 176;
+  img.decoding = "async";
+  img.onerror = () => {
+    img.remove();
+    tile.classList.remove("tile-icon");
+    tile.textContent = name.replace(/^Form\.?/, "").slice(0, 2);
+  };
+  img.src = `/apps/${product}.webp`;
+  if (!img.isConnected) {
+    tile.textContent = "";
+    tile.classList.add("tile-icon");
+    tile.append(img);
+  }
+};
+
 const set = (root: HTMLElement, field: string, text: string) => {
   const node = root.querySelector<HTMLElement>(`[data-field='${field}']`);
   if (node && node.textContent !== text) node.textContent = text;
@@ -49,8 +70,8 @@ export const files: Extension = {
         mountedFiles.set(file.path, row);
       }
       if (row.dataset.product !== file.product) row.dataset.product = file.product;
-      set(row, "short", engine.name(file.product).replace(/^Form\.?/, "").slice(0, 2));
       const tile = row.querySelector<HTMLElement>("[data-field='short']");
+      if (tile) appIcon(tile, file.product, engine.name(file.product));
       const shot = file.preview ? `${file.preview}@${file.modified}` : "";
       if (tile && tile.dataset.shot !== shot) {
         tile.dataset.shot = shot;

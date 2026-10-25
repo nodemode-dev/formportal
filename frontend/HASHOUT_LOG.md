@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.48.0
-Last updated: 2026-10-25 · Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.49.0
+Last updated: 2026-10-25 · every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.49.0 · the apps' own icons, the registry's app list {#icons}
+
+### Every app tile is the app's icon
+- refers-to: public/apps/[id].webp · vite.config.ts :: icon, tile · src/styles/main.css :: .tile-icon, .tile-icon > img, .tile[data-has-shot] > img · src/extensions/files :: appIcon
+- kind: decision
+- logged: v0.49.0 · 2026-10-25
+
+The owner's rule (CLAUDE.md: Form apps are shown with their own icons, never two-letter tiles) and the owner's icon set of 2026-10-25 (`form-icons.zip`, 1024 px macOS masters with a transparent margin and shadow). Each master was cropped to its visible box (alpha above 8), centred on a square and saved as a 176 px WebP with alpha (twice the largest tile, 88 px), named by catalogue id: `form-md` is formmd, `formDAM` formdam, `formMCP` formmcp, `formdeck` formslide, `formportal` formai, `formpth` formpath, `formsculptor` formsculpt; about 5 KB each, 24 files including formranker for later. `formcompiler` and `formpromo` are not catalogue apps and were not added. The generator ran from the session's scratch folder, not the repo (the masters are 11 MB). The build's `tile()` writes an `img` with its size given inside the tile, whose box is fixed by `--tile`, so the image arriving moves nothing; an app with no file keeps its letters. Files sets the same image on its rows at run time (`appIcon`, once per product), falls back to letters if the file fails to load, and hides the icon under a project's own preview. Checked: every tile in the built English and Spanish pages is an image (174 in English; only the fonts list's "Aa" is text, and it is a font, not an app), no image request fails, Files rows show their apps' icons, layout shift 0 on four English and three Spanish cold loads at 4x CPU and a slow network, no page error.
+
+### The app list follows formcompiler's registry
+- refers-to: vite.config.ts :: GROUPS (tools, Family tools) · ../catalog/products.json · ../catalog/schema/products.schema.json :: group enum
+- kind: decision
+- logged: v0.49.0 · 2026-10-25
+
+The owner's Q5 (family plan v0.3.x): `products.json` holds the 23 apps formcompiler builds, so every tile has an icon. A fourth group, Family tools, lists formMCP, formskills and FormTray.
 
 ## v0.48.0 · sharing in Files {#share}
 
