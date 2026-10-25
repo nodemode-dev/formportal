@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.48.0
-Last updated: 2026-10-25 · the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.53.0
+Last updated: 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.53.0 · install passes the release {#q9}
+
+### main.rs · install
+- refers-to: src/main.rs :: install
+- kind: decision
+- logged: v0.53.0 · 2026-10-25
+
+The window's install calls `install_from` with the catalogue it read, like the command line, so an app installed from the window gets the release's `form-app.json` and its files record too. Nothing on screen changed.
 
 ## v0.48.0 · the sharing commands {#share}
 

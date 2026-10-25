@@ -2,8 +2,33 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.52.0
-Last updated: 2026-10-25 · the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.53.0
+Last updated: 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.53.0 · installs agents can reach {#q9}
+
+Family plan Q9 (a). Built first as v0.46.0 on v0.45.1 (the `v0.46.0-mcp` branch, commits f535e67, 5a7ad02, c99c44a) while the main line went on to v0.52.1, and carried onto v0.52.1 by hand, region by region. The regions it touches (portal.rs install and sweep, apply_updates, agents.rs from AppFile to agent_surface, state.rs InstalledVersion, repair.rs fix, cli ops install, update and app_agents, the window's install) were unchanged on the main line since v0.45.1, so nothing had to be reconciled in code; only the version, the changelog and the logs. The main line's own v0.46.0 (the login item) keeps its number; this work is v0.53.0.
+
+### portal.rs, agents.rs · the release's form-app.json in the install
+- refers-to: core/src/portal.rs :: install, install_from, install_with · core/src/agents.rs :: fetch_app_file, search, parse_app, AppFile::id, AppFile::version · core/src/repair.rs :: fix (missing, broken) · cli/src/ops.rs :: install, update · src-tauri/src/main.rs :: install
+- kind: decision
+- logged: v0.53.0 · 2026-10-25
+
+The apps' bundles carry no `form-app.json`, so `app-mcp` could start nothing an install held. formcompiler already attaches the release's `form-app.json` as an asset, and the catalogue lists it under `agents.manifest`; `install_with` fetches it after unpacking (only when `search` finds none in the bundle, four folders deep), checks its SHA-256 against the catalogue and its `id` and `version` against what is being installed, and writes it at the install's top before the rename. A mismatch removes the staging folder and stops the install, as a bad download does. `install` keeps its signature (core/examples/install.rs still uses it) and passes no release; `install_from` looks the release up in the catalogue, and every caller (install, update one, apply updates, repair, the window) uses it.
+
+### agents.rs · agents.mcp.binary
+- refers-to: core/src/agents.rs :: AppMcp.binary, resolve_binary, agent_surface, mcp_available, parse_app
+- kind: decision
+- logged: v0.53.0 · 2026-10-25
+
+A path relative to `form-app.json` cannot be one value for every package: the program sits in `X.app/Contents/MacOS/x` from a dmg or zip, `usr/bin/x` from a deb or rpm, `x.exe` on Windows, and an AppImage is the program itself. So version 2 may name the program, and FormPortal finds it: macOS bundle, `usr/bin`, `.exe`, a file of that name, then the single AppImage at the top. The name is refused unless it is a plain file name, and the program found must resolve inside the install. Two AppImages, or no match, is "not found" rather than a guess.
+
+### agents.rs, state.rs · every file's digest
+- refers-to: core/src/agents.rs :: FilesRecord, FILES_FORMAT, install_files, files_record_path, write_files_record · core/src/state.rs :: InstalledVersion.files · core/src/portal.rs :: install_with, sweep
+- kind: decision
+- logged: v0.53.0 · 2026-10-25
+
+FormPortal recorded only the downloaded archive's SHA-256. After the rename it now writes `<version>.files.json` beside the version folder (outside it) with each file's SHA-256 and each symlink's target, and records the path as `files` in `installed.json` (absent on older records, which still read). Writing the record never fails an install. `sweep` removes a record whose version folder is gone; `uninstall` removes the channel folder with its records. formMCP 0.7.1 reads it.
 
 ## v0.52.0 · the managed package {#deploy}
 

@@ -54,6 +54,31 @@ formcompiler (0.4.0 and later) attaches a `form-app.json` with `format_version` 
 }
 ```
 
-FormPortal reads both versions. In version 2, `agents.mcp.available` says the app has an MCP server and `command` and `args` are optional: without a command there is nothing for `app-mcp` to start, so the install is not offered to the clients, and `app-agents` says the app has a server but no launcher in its install yet. A version 1 file still needs `agents.mcp.command`; a version above 2 is refused with a message to update FormPortal. `app-agents` returns the file as read under `manifest` (format_version, id, version, mcp, skills). FormPortal does not download or install skills; formskills reads them from the catalogue.
+FormPortal reads both versions. In version 2, `agents.mcp.available` says the app has an MCP server and `command` and `args` are optional: without a command or binary there is nothing for `app-mcp` to start, so the install is not offered to the clients, and `app-agents` says the app has a server but no launcher in its install yet. A version 1 file still needs `agents.mcp.command`; a version above 2 is refused with a message to update FormPortal. `app-agents` returns the file as read under `manifest` (format_version, id, version, mcp, skills). FormPortal does not download or install skills; formskills reads them from the catalogue.
+
+### The release's form-app.json in every install (v0.53.0)
+
+An app's bundle usually carries no `form-app.json`. From v0.53.0, when the catalogue lists the release's `agents.manifest` and the unpacked bundle has none (searched four folders deep), FormPortal downloads it, checks its SHA-256 against the catalogue, checks that its `id` and `version` are the ones being installed, and writes it at the top of the install folder. Any mismatch stops the install with the reason, like a bad download. A `form-app.json` the bundle already carries is kept as it is.
+
+### The MCP program by name (v0.53.0)
+
+A path inside an install differs by package: a macOS `.app`, `usr/bin` from a deb or rpm, a Windows `.exe`, an AppImage. Instead of `command`, version 2 may name the program:
+
+```json
+"agents": { "mcp": { "available": true, "binary": "formvis", "args": ["mcp"] } }
+```
+
+FormPortal looks for it in the install (six folders deep) in this order: `Contents/MacOS/<binary>`, `usr/bin/<binary>`, `<binary>.exe`, a file named `<binary>`, and last the one AppImage at the top of the install (an AppImage passes its arguments to the program inside). The name must be a plain file name; the program found must be inside the install. When nothing matches, or there is more than one AppImage, `app-agents` says so and nothing is started. `command` still works as before. formcompiler 0.4.2 writes `binary` from the registry's `mcp_launch` (set for formvis, FormPortal and formMCP).
+
+### Every file's digest (v0.53.0)
+
+After each install FormPortal writes `<version>.files.json` beside the version's folder (`apps/<product>/<channel>/`), outside the install itself, and records its path in `installed.json` as `files`:
+
+```json
+{ "format": "formportal-files", "format_version": 1, "product": "formvis", "channel": "stable", "version": "1.97.2",
+  "files": { "usr/bin/formvis": "<sha256>", "form-app.json": "<sha256>", "lib/libx.so": "link:libx.so.1" } }
+```
+
+Paths use `/`; a symlink is recorded by its target. The record is removed with the version's folder. formMCP 0.7.1 compares an install with it before starting the app's server.
 
 `./formportal cli connect [product]`, `disconnect [product]` and `app-agents [product]` do the same from a terminal. The window's own program answers `app-mcp` too, without opening a window, so installed copies of FormPortal can serve the apps with no command line installed.

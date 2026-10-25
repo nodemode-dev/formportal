@@ -7,7 +7,7 @@ description: FormPortal's place among the Form apps. Use when, after installing 
 
 ## FormPortal installs, the apps do the work
 
-FormPortal's tools stop at install, open, update, rollback and remove. The work inside an app goes through that app's own agent surface. An app that ships an MCP server declares it in a `form-app.json` inside its release (`{"format": "form-app", "agents": {"mcp": {"command": "bin/...", "args": [...]}}}`); `installs` marks such an install with `mcp_server: true`. After installing one:
+FormPortal's tools stop at install, open, update, rollback and remove. The work inside an app goes through that app's own agent surface. An app that ships an MCP server declares it in a `form-app.json` inside its release (`{"format": "form-app", "agents": {"mcp": {"command": "bin/...", "args": [...]}}}`, or `"binary": "<program name>"` instead of `command`, which FormPortal finds in the install), and FormPortal writes the release's `form-app.json` into the install when the bundle carries none; `installs` marks such an install with `mcp_server: true`. After installing one:
 
 1. `app_agents {product}`: the server name (the product id, `-beta` for a beta) and, for Claude Code, Codex and Cursor, `connected`, `not-connected`, `taken` (another server already uses that name; FormPortal leaves it alone) or `no-client`.
 2. With the person's go-ahead, `connect_agents {product}` (or with `clients` to pick). Each entry starts `formportal app-mcp [product]`, which runs whichever version is installed, so later updates and rollbacks need nothing more. Config files are backed up before they change.

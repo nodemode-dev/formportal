@@ -2,8 +2,12 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.52.1
-Last updated: 2026-10-25 · the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.53.0
+Last updated: 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.53.0 · install and update pass the release {#q9}
+
+- `install` and `update` call `install_from` with the catalogue they already loaded, so the release's `form-app.json` reaches the install. `app_agents`' note for a server with no launcher names `agents.mcp.binary` as well as `command`; a binary that cannot be found comes back as the command's error. Carried from the v0.46.0-mcp branch; these regions were unchanged on the main line.
 
 ## v0.52.0 · org-package {#org-package}
 

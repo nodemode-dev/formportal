@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.0 · 2026-10-25
+
+- Installed apps can be reached by agents: when a release's bundle carries no `form-app.json`, FormPortal writes the release's own (from the catalogue, checked) into the install, so `app-mcp`, `app-agents` and Connect work for every app that declares an MCP server.
+- `form-app.json` can name the app's program (`agents.mcp.binary`) instead of a path; FormPortal finds it whether the install is a macOS app, a deb or rpm, a Windows program or an AppImage.
+- Every install now has a record of each file's SHA-256 beside it (`<version>.files.json`, listed in `installed.json`), removed with the version; formMCP 0.7.1 checks an app against it before starting it.
+
 ## v0.52.1 · 2026-10-25
 
 - The MCP tools `shares` and `extensions` describe the portfolio address and support links, and FormPortal's agent skills know `org-package`, FormRanker, the Included tab and the engine's policy, deploy and sharing files.

@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.52.1-eef0f4" alt="version v0.52.1" />
+  <img src="https://img.shields.io/badge/version-v0.53.0-eef0f4" alt="version v0.53.0" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
@@ -20,7 +20,7 @@ FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcomp
 ## Highlights
 
 - **One engine, three surfaces.** `core/` does catalogue, verify, install, rollback, remove and launch with no window in it; `src-tauri/` (the window) and `cli/` (commands and MCP) are thin layers over it, so an agent and a person see the same installs
-- **Trust you can check.** An Ed25519-signed catalogue, a SHA-256 per file refused before unpacking on mismatch, https or this computer only. No flag skips the hash
+- **Trust you can check.** An Ed25519-signed catalogue, a SHA-256 per file refused before unpacking on mismatch, https or this computer only, and after each install a record of every installed file's SHA-256 that formMCP checks before starting the app. No flag skips the hash
 - **Rollback, betas side by side.** Every update keeps the version it replaced; each channel (stable, beta, nightly) is its own install
 - **Nothing resident.** No account, no tray process, and no login item unless you turn on Open FormPortal when I log in. FormPortal checks when it is open and stops when you close it
 - **Agent ready.** `./formportal mcp` serves `status`, `apps`, `app_info`, `installs`, `install`, `versions`, `updates`, `update`, `preferences`, `extensions`, `extension_install`, `extension_remove`, `extension_enable`, `policy`, `app_agents`, `connect_agents`, `files`, `folders`, `open_file`, `file_versions`, `storage`, `fonts`, `font_install`, `font_remove`, `media`, `media_save`, `media_remove`, `learn`, `learn_progress`, `repair`, `open`, `rollback`, `remove`; `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are wired, and the `formportal-harness` skill teaches the workflow. A Form app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates; FormPortal reads an app's `form-app.json` in format 1 or 2 (2 adds the app's skills) and the catalogue's per-release skills archive and digest (see `.docs/wiki/Agents.md`)
