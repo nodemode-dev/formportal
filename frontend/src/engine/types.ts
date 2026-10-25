@@ -38,6 +38,7 @@ export interface Product {
   licence: string;
   project_extensions?: string[];
   state: ProductState;
+  agents?: { mcp: boolean; skills: boolean };
   channels: Partial<Record<Channel, Release>>;
 }
 

@@ -24,6 +24,7 @@
       "identifier": "app.formcut.desktop",
       "repository": "https://github.com/nodemode-ai/formcut",
       "licence": "GPL-3.0-only",
+      "agents": { "mcp": true, "skills": true },
       "project_extensions": [
         ".fc"
       ],

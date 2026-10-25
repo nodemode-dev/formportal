@@ -1505,6 +1505,23 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   color: var(--ink-faint);
 }
 
+.facts-skills > * {
+  display: none;
+}
+
+.facts-skills[data-has="yes"] > .skills-yes,
+.facts-skills[data-has="no"] > .skills-no {
+  display: inline;
+}
+
+.facts-skills > .skills-no {
+  color: var(--ink-faint);
+}
+
+.ap-via {
+  margin-block-start: var(--sp-3);
+}
+
 .facts-notes,
 .facts-hash {
   overflow-wrap: anywhere;

@@ -2,8 +2,24 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.49.0
-Last updated: 2026-10-25 · every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.50.0
+Last updated: 2026-10-25 · Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.50.0 · formMCP and formskills on every app page {#family-tools}
+
+### Agent skills, a fact on each app page
+- refers-to: vite.config.ts :: the facts list (dd.facts-skills data-skills, .skills-yes, .skills-no) · src/extensions/apps :: patch (data-has) · src/engine/types.ts :: Product.agents · src/styles/main.css :: .facts-skills · ../catalog/fixtures/apps.json :: formcut agents
+- kind: decision
+- logged: v0.50.0 · 2026-10-25
+
+The family plan's Phase 2: each app page says whether the app's releases carry agent skills, from the catalogue's `agents.skills` (formcompiler writes it), and Read them in formskills goes to formskills' page. The row is in the facts list from the first paint and only `data-has` (yes, no, or unset before the catalogue arrives) picks which of the two prepared texts shows, so nothing moves. The fixture's formcut now carries `agents: { mcp: true, skills: true }` (valid against `apps.schema.json`) so both states can be seen in the browser mode. Checked at 4x CPU and a slow network in English and Spanish: formcut reads Read them in formskills, formvis None published, layout shift 0, no page error.
+
+### formMCP in every Agents section
+- refers-to: vite.config.ts :: the agents section (p.ap-via), except on formMCP's own page
+- kind: decision
+- logged: v0.50.0 · 2026-10-25
+
+Each app's Use with your AI tools section keeps its own Connect, and adds that formMCP is one connection to the whole family and loads an app's tools only when needed, with a link to formMCP's page, where formMCP's own Agents section connects it like any app with an MCP server. It is static text inside a section that shows and hides as a whole.
 
 ## v0.49.0 · the apps' own icons, the registry's app list {#icons}
 

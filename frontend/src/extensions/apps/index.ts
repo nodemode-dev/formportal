@@ -95,6 +95,9 @@ export const apps: Extension = {
       field("sha256", view.artifact?.sha256 ?? "");
       field("project", info?.project_extensions?.join(", ") ?? "");
       field("licence", info?.licence ?? "");
+      const skills = row.querySelector<HTMLElement>("[data-skills]");
+      const has = info ? (info.agents?.skills ? "yes" : "no") : "";
+      if (skills && (skills.dataset.has ?? "") !== has) skills.dataset.has = has;
       row.toggleAttribute("data-release", Boolean(view.artifact));
       const waiting = document.querySelectorAll(".list-updates .row[data-install='update']").length;
       document.documentElement.setAttribute("data-updates", String(waiting));

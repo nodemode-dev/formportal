@@ -341,7 +341,13 @@
     "Invite (GitHub usernames, separated by commas)": "Invitar (nombres de usuario de GitHub, separados por comas)",
     "Make a public link": "Crear un enlace público",
     "Remove the link": "Quitar el enlace",
-    "Allow sharing": "Permitir compartir"
+    "Allow sharing": "Permitir compartir",
+    "Agent skills": "Habilidades para agentes",
+    "Read them in formskills": "Léelas en formskills",
+    "None published": "Ninguna publicada",
+    "Or connect every Form app at once:": "O conecta todas las apps Form a la vez:",
+    "is one connection to the whole family, and loads an app's tools only when they are needed.": "es una sola conexión con toda la familia, y carga las herramientas de una app solo cuando hacen falta.",
+    "Family tools": "Herramientas de la familia"
   },
   "patterns": [
     ["Instead of {x}", "En lugar de {x}"],
