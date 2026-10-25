@@ -1934,6 +1934,41 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   display: none;
 }
 
+/* Included */
+
+.inc-terms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-3);
+  margin-block-start: var(--sp-2);
+}
+
+.ext-support {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-3);
+  margin-block-start: var(--sp-3);
+  padding-inline: var(--sp-2);
+}
+
+.ext-support[hidden] {
+  display: none;
+}
+
+.ext-support .link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.inc-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+}
+
 .learn-kinds {
   justify-self: start;
 }
@@ -2369,6 +2404,11 @@ html[data-launch="learn"] .nav-item[data-route-to="learn"] {
   min-block-size: 3em;
   line-height: 1.5;
   font-size: var(--fs-s);
+}
+
+.share-folio-on[hidden] {
+  display: inline;
+  visibility: hidden;
 }
 
 .share-link {

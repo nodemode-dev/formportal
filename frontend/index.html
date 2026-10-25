@@ -32,6 +32,7 @@
           <li><button class="nav-item" type="button" data-route-to="stock"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 16.5l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="15.5" cy="9.5" r="1.5" fill="currentColor"/></svg><span class="nav-label">Stock &amp; templates</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="extensions">%icon:extensions:ic-m%<span class="nav-label">Extensions</span></button></li>
           <li><button class="nav-item" type="button" data-route-to="learn">%icon:book:ic-m%<span class="nav-label">Learn</span></button></li>
+          <li><button class="nav-item" type="button" data-route-to="included">%icon:tag:ic-m%<span class="nav-label">Included</span></button></li>
         </ul>
       </nav>
 
@@ -332,6 +333,7 @@
                           <div><dt>Needs</dt><dd data-field="needs"></dd></div>
                           <div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div>
                         </dl>
+                        <p class="ext-support" data-ext-support hidden><a class="link" href="https://github.com/nodemode-ai" data-web>%icon:heart:ic-s%<span>Support the maker</span></a><span class="fine">Free to use either way.</span></p>
                       </div>
                     </details>
                   </div>
@@ -361,6 +363,34 @@
                 <h2 class="block-title">The apps</h2>
                 <ul class="learn-list">
                   <!-- @portal:learn -->
+                </ul>
+              </section>
+            </div>
+          </section>
+
+          <section class="pane" data-pane="included" data-title="Included" aria-label="Included">
+            <div class="page">
+              <p class="lede">What comes with FormPortal. There is one plan, it is free, and there is nothing to buy.</p>
+              <section class="block">
+                <h2 class="block-title">Your plan</h2>
+                <dl class="facts inc-plan">
+                  <div><dt>Plan</dt><dd>Free, for everyone, with no end date</dd></div>
+                  <div><dt>Apps</dt><dd>Every Form app and family tool, stable and beta</dd></div>
+                  <div><dt>Updates</dt><dd>Every update and every earlier version, as soon as it is released</dd></div>
+                  <div><dt>Account</dt><dd>None needed; signing in with GitHub only adds sharing</dd></div>
+                  <div><dt>Licence</dt><dd>Open source (GPL-3.0): the apps are yours to use for any work</dd></div>
+                  <div><dt>Offers</dt><dd>None: nothing is sold, so there is nothing to discount</dd></div>
+                </dl>
+              </section>
+              <section class="block">
+                <h2 class="block-title">Also included</h2>
+                <p class="links inc-more"><button class="link-btn" type="button" data-route-to="fonts">Fonts</button><button class="link-btn" type="button" data-route-to="stock">Stock &amp; templates</button><button class="link-btn" type="button" data-route-to="extensions">Extensions</button><button class="link-btn" type="button" data-route-to="learn">Tutorials</button></p>
+                <p class="fine">All free and openly licensed; each item shows its own licence and credit.</p>
+              </section>
+              <section class="block">
+                <h2 class="block-title">Apps and tools in your plan</h2>
+                <ul class="learn-list">
+                  <!-- @portal:included -->
                 </ul>
               </section>
             </div>
@@ -498,6 +528,7 @@
         <label class="field-row share-say" data-for="folder"><span>Invite (GitHub usernames, separated by commas)</span><input type="text" class="field" data-share-invite autocomplete="off" spellcheck="false" placeholder="riley, sam" /></label>
         <p class="share-status" data-share-status aria-live="polite"></p>
         <p class="share-link mono"><a class="link" href="#" data-share-url data-web></a></p>
+        <p class="share-link share-say share-folio" data-for="file"><span class="share-folio-on" data-share-folio hidden>Your portfolio of public files: <a class="link" href="#" data-share-folio-url data-web></a></span></p>
         <footer class="agent-acts">
           <button class="btn btn-primary share-say" data-for="folder" type="button" data-share-go>Share</button>
           <button class="btn btn-primary share-say" data-for="file" type="button" data-share-publish>Make a public link</button>

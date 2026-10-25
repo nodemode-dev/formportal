@@ -38,6 +38,13 @@ function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExt
   set("licence", entry?.licence ?? "");
   set("needs", entry?.minimum_app ? `${app} ${entry.minimum_app} or newer` : `any ${app}`);
   set("sha256", have?.sha256 || entry?.sha256 || "");
+  const support = row.querySelector<HTMLElement>("[data-ext-support]");
+  const supportLink = support?.querySelector<HTMLAnchorElement>("a");
+  const supportUrl = entry?.support?.startsWith("https://") ? entry.support : "";
+  if (support && supportLink) {
+    if (supportUrl && supportLink.getAttribute("href") !== supportUrl) supportLink.setAttribute("href", supportUrl);
+    if (support.hidden !== !supportUrl) support.hidden = !supportUrl;
+  }
   set(
     "trust",
     have?.source === "sideload"

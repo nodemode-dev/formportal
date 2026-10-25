@@ -26,6 +26,14 @@ export const share: Extension = {
       if (link.getAttribute("href") !== (url || "#")) link.setAttribute("href", url || "#");
       write(link, url);
     };
+    const folio = dialog.querySelector<HTMLElement>("[data-share-folio]");
+    const folioLink = dialog.querySelector<HTMLAnchorElement>("[data-share-folio-url]");
+    const showFolio = () => {
+      const url = last.portfolio ?? "";
+      if (folioLink && folioLink.getAttribute("href") !== (url || "#")) folioLink.setAttribute("href", url || "#");
+      write(folioLink, url);
+      if (folio && folio.hidden !== !url) folio.hidden = !url;
+    };
     const open = (mode: "folder" | "file", path: string) => {
       target = path;
       if (dialog.dataset.mode !== mode) dialog.dataset.mode = mode;
@@ -34,6 +42,7 @@ export const share: Extension = {
       const published = last.published.find((p) => p.file === path);
       write(status, mode === "folder" && shared ? t("Shared with: {list}", { list: shared.invited.join(", ") || t("nobody invited yet") }) : mode === "file" && published ? t("Anyone with this link can open the file:") : "");
       showLink(mode === "folder" ? shared?.url ?? "" : published?.url ?? "");
+      showFolio();
       const go = dialog.querySelector<HTMLButtonElement>("[data-share-go]");
       write(go, shared ? t("Send changes and invite") : t("Share"));
       const unpublish = dialog.querySelector<HTMLButtonElement>("[data-share-unpublish]");
@@ -67,6 +76,7 @@ export const share: Extension = {
     const rows = new Map<string, HTMLElement>();
     engine.on("shares", ({ view }) => {
       last = view;
+      showFolio();
       const unpublish = dialog.querySelector<HTMLButtonElement>("[data-share-unpublish]");
       const has = view.published.some((p) => p.file === target);
       if (unpublish && dialog.dataset.mode === "file" && unpublish.disabled !== !has) unpublish.disabled = !has;

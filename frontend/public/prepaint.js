@@ -31,7 +31,7 @@
   }
   try {
     var last = localStorage.getItem("formportal-last");
-    var places = ["apps", "updates", "beta", "files", "fonts", "stock", "extensions", "learn"];
+    var places = ["apps", "updates", "beta", "files", "fonts", "stock", "extensions", "learn", "included"];
     if (localStorage.getItem("formportal-open") === "last" && places.indexOf(last) >= 0 && !/[?&]link=/.test(location.search)) d.setAttribute("data-launch", last);
   } catch (e) {}
 })();

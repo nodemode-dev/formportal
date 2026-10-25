@@ -73,6 +73,7 @@ export interface ExtensionEntry {
   native: boolean;
   permissions: string[];
   signature?: ExtensionSignature;
+  support?: string;
 }
 
 export interface SelfUpdate {
@@ -249,6 +250,7 @@ export interface SharesView {
   joined: JoinedLibrary[];
   published: PublishedFile[];
   invitations: { id: number; repo: string; from: string }[];
+  portfolio?: string | null;
 }
 
 export interface SyncReport {

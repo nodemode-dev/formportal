@@ -24,6 +24,7 @@ interface App {
   status?: string;
   repository?: string;
   group?: string;
+  licence?: string;
 }
 
 const GROUPS: [string, string][] = [
@@ -117,8 +118,12 @@ function renderPortal(html: string): string {
     (p) => `<li class="learn" data-product="${p.id}">${tile(p)}<div class="learn-text"><h3 class="learn-name">${esc(p.name)}</h3><p class="links">${help(p)}</p></div></li>`,
   );
 
+  const included = APPS.map(
+    (p) => `<li class="learn" data-product="${p.id}">${tile(p)}<div class="learn-text"><h3 class="learn-name"><button class="link-btn" type="button" data-route-to="app-${p.id}">${esc(p.name)}</button></h3><p class="fine">${line(p) || esc(p.summary)}</p><p class="fine inc-terms"><span class="chip">Free</span><span>${esc(p.licence ?? "GPL-3.0-only")}</span><span>${words(p)}</span></p></div></li>`,
+  );
+
   const parts: Record<string, string[]> = {
-    all, updates, beta, mine, family, whatsnew, pages, autolist, learn,
+    all, updates, beta, mine, family, whatsnew, pages, autolist, learn, included,
     count: [String(APPS.length)],
     released: [String(RELEASED.length)],
   };
