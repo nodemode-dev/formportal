@@ -47,7 +47,7 @@ fn base(env: &str, default: &str) -> String {
     std::env::var(env).ok().map(|v| v.trim_end_matches('/').to_string()).filter(|v| !v.is_empty()).unwrap_or_else(|| default.to_string())
 }
 
-fn web() -> String {
+pub(crate) fn web() -> String {
     base(WEB_ENV, "https://github.com")
 }
 

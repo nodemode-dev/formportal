@@ -63,6 +63,8 @@ pub struct SharesView {
     pub joined: Vec<Joined>,
     pub published: Vec<Published>,
     pub invitations: Vec<Invitation>,
+    #[serde(default)]
+    pub portfolio: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -195,6 +197,40 @@ fn put_file(s: &Signed, repo: &str, branch: &str, rel: &str, bytes: &[u8], previ
     Ok(v)
 }
 
+const IMAGES: [&str; 6] = ["png", "jpg", "jpeg", "webp", "gif", "svg"];
+
+fn portfolio_text(published: &[&Published]) -> String {
+    let mut items: Vec<&&Published> = published.iter().collect();
+    items.sort_by(|a, b| a.path.rsplit('/').next().cmp(&b.path.rsplit('/').next()).then(a.path.cmp(&b.path)));
+    let mut out = String::from("# Portfolio\n\nWork published from FormPortal. Each file opens on its own page, where it can be viewed or downloaded.\n");
+    if items.is_empty() {
+        out.push_str("\nNothing is published right now.\n");
+    }
+    for p in items {
+        let name = p.path.rsplit('/').next().unwrap_or(&p.path).replace('[', "\\[").replace(']', "\\]");
+        let target = encode(&p.path);
+        let image = p.path.rsplit_once('.').map(|(_, ext)| IMAGES.contains(&ext.to_ascii_lowercase().as_str())).unwrap_or(false);
+        if image {
+            out.push_str(&format!("\n## [{name}]({target})\n\n![{name}]({target})\n"));
+        } else {
+            out.push_str(&format!("\n## [{name}]({target})\n"));
+        }
+    }
+    out
+}
+
+fn write_portfolio(s: &Signed, repo: &str, branch: &str, published: &[Published]) -> Result<()> {
+    let mine: Vec<&Published> = published.iter().filter(|p| p.repo == repo).collect();
+    let bytes = portfolio_text(&mine).into_bytes();
+    let sha = blob_sha(&bytes);
+    let remote = remote_tree(s, repo, branch)?;
+    if remote.get("README.md") != Some(&sha) {
+        put_file(s, repo, branch, "README.md", &bytes, remote.get("README.md").map(String::as_str))
+            .map_err(|e| CoreError::Account(format!("the link is ready, but the portfolio page was not updated: {e}")))?;
+    }
+    Ok(())
+}
+
 fn send(s: &Signed, repo: &str, branch: &str, folder: &Path, report: &mut SyncReport) -> Result<()> {
     let remote = remote_tree(s, repo, branch)?;
     for (rel, path) in local_files(folder)? {
@@ -252,7 +288,8 @@ impl Portal {
                 }
             }
         }
-        Ok(SharesView { shared: state.shared, joined: state.joined, published: state.published, invitations })
+        let portfolio = state.published.first().map(|p| format!("{}/{}", crate::github::web(), p.repo));
+        Ok(SharesView { shared: state.shared, joined: state.joined, published: state.published, invitations, portfolio })
     }
 
     pub fn share_folder(&self, folder: &Path, invite: &[String]) -> Result<SyncReport> {
@@ -377,6 +414,7 @@ impl Portal {
         state.published.retain(|p| p.file != published.file);
         state.published.push(published.clone());
         self.share_save(&state)?;
+        write_portfolio(&s, &published.repo, &branch, &state.published)?;
         Ok(published)
     }
 
@@ -391,6 +429,8 @@ impl Portal {
         }
         state.published.remove(at);
         self.share_save(&state)?;
+        let (_, branch, _) = ensure_repo(&s, PUBLIC_REPO, false, "Files published from FormPortal")?;
+        write_portfolio(&s, &gone.repo, &branch, &state.published)?;
         Ok(gone)
     }
 }
