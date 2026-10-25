@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.51.0 · 2026-10-25
+
+- Included, in the sidebar after Learn: what the free plan covers, every app and tool with its licence, and the fonts, stock, extensions and tutorials that come with it. Nothing is sold, so there are no offers.
+- An extension can carry a link to support its maker, shown in its details; the extension stays free either way.
+- Your public links now make a portfolio: the front page of `formportal-public` lists every public file, with pictures shown, and the Public link dialog shows its address.
+
 ## v0.50.1 · 2026-10-25
 
 - FormRanker, the family's parity, testing and feedback app, is listed in Family tools.

@@ -28,6 +28,8 @@ An extension is a `.formpkg` file: a zip with `manifest.json` at its root, check
 
 An app uses its extensions from its next start: close and reopen the app. Turning an extension off in Extensions keeps it installed but unused; Remove deletes it.
 
+Some extensions show Support the maker in their details: it opens the maker's own page (sponsoring, a tip jar) in your browser. FormPortal takes no payment, and the extension works the same whether you use it or not. Makers add it with the `support` field (an https address) in the extensions index.
+
 ## Still stuck
 
 Preferences, About, Check and repair finds leftovers from interrupted installs. Then use Report a problem or Ask the community from Learn.

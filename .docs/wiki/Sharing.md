@@ -18,6 +18,10 @@ Command line: `./formportal cli shares`, `share-accept ID`, `share-pull OWNER/RE
 
 A file's Public link puts it in one public repository in your account, `formportal-public`, and gives you a github.com link anyone can open. Remove the link deletes it there. Command line: `publish FILE` and `unpublish FILE`.
 
+## Your portfolio
+
+The front page of `formportal-public` is your portfolio: FormPortal rewrites its `README.md` whenever you add or remove a public link, with each file's name linking to its own page and pictures shown inline. The Public link dialog shows its address, and so does `shares` on the command line (`portfolio`).
+
 ## What is kept where
 
 `shares.json` in FormPortal's folder remembers what you shared, what was shared with you, and your public links. GitHub keeps the files and their history, so a removed link or file can still be in the repository's history; delete the repository on github.com to remove everything.

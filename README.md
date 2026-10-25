@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.50.1-eef0f4" alt="version v0.50.1" />
+  <img src="https://img.shields.io/badge/version-v0.51.0-eef0f4" alt="version v0.51.0" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
@@ -27,6 +27,7 @@ FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcomp
 - **A calm layout, without the marketing.** A two-level sidebar (Home, Apps with Updates and Beta, Extensions, Learn), search, a notifications bell and Preferences in the top bar, Home built around the apps you have, Apps as a list with one action each and a More menu, and Preferences as a dialog with a switch per app
 - **Files on your own disk.** Pick folders; FormPortal lists your Form projects, opens each in the right app, keeps a version each time you save while it is open (up to 20 to go back to), shows previews the apps write, and shows what it uses on disk. No cloud
 - **Fonts without an account.** Open-licensed families from a signed index, or your own TTF and OTF files, installed for you alone with no administrator
+- **Everything included, nothing to buy.** Included lists what the free plan covers (every app, every update, no account, no offers) with each app's licence; an extension can carry a link to support its maker, and your public links gather on a portfolio page in your own GitHub account
 - **Learn, and ask your own agent.** Step-by-step tutorials with progress kept on your computer, suggestions on Home worked out locally, notifications filed by kind, and Ask your agent: Claude Code or Codex answers questions about your apps through FormPortal's reading-only server
 - **Repair, later, and links from the web.** Check and repair finds and fixes broken installs and leftovers (silently from the command line too); an update can wait until you close the app; a web page can hand a Form project file to the right app, after you say yes
 - **Your language, your starting screen.** English and a Spanish draft, chosen before the window opens so the first frame is already in that language; open on Home or where you left off

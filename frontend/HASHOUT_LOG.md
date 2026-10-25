@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.50.0
-Last updated: 2026-10-25 · Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.51.0
+Last updated: 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.51.0 · Included, Support the maker, the portfolio {#included}
+
+Parity rows 58, 33 and 54, closed the family's way: free, no account, no server.
+
+- Included (index.html pane `included`, nav after Learn with the tag icon; `vite.config.ts` part `included`): the plan (free, every app, every update, no account, open source, no offers because nothing is sold), links to Fonts, Stock & templates, Extensions and Tutorials, and every app and tool from `products.json` with Free, its licence and its state. Built into the page, so it is complete in the first frame; `prepaint.js` lists `included` among the places "Where I left off" can reopen. Throttled check (4x CPU, slow network) opening on it in English and Spanish: CLS 0 in all six runs.
+- Support the maker (index.html `#ext-row` details panel `[data-ext-support]`, `extensions/library` fill): shown when the catalogue entry carries `support`, an https address the engine already filtered; it opens in the browser like every `data-web` link, and says the extension stays free. It lives in the closed details panel, so showing it moves nothing.
+- The portfolio line (index.html share dialog `[data-share-folio]`, `extensions/share` showFolio): the address of the person's portfolio page from `SharesView.portfolio`, in a line that keeps its height when empty (`visibility: hidden`), so the dialog does not grow when the first public link is made.
+- Spanish entries for every new string in `i18n/es.json`.
 
 ## v0.50.0 · formMCP and formskills on every app page {#family-tools}
 

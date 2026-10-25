@@ -2,8 +2,13 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.48.0
-Last updated: 2026-10-25 · sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.51.0
+Last updated: 2026-10-25 · the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.51.0 · the portfolio page, extension support links {#portfolio}
+
+- share.rs `write_portfolio`, `portfolio_text`: after every `publish` and `unpublish`, `README.md` at the root of `formportal-public` is rewritten from the person's public links in that repository: a heading per file linking to its own page, and the image itself for png, jpg, webp, gif and svg. GitHub shows that README as the repository's front page, which is the portfolio (parity row 54); there is no feed of other people's work. It is written only when its blob sha changes. If the link is made but the page cannot be written, the error says so; publishing again retries. `SharesView.portfolio` is `<github web>/<login>/formportal-public` while anything is published (`github::web` is now `pub(crate)` for it). Checked against the stand-in GitHub: two files, then one removed, then none ("Nothing is published right now"); names with brackets and spaces are escaped.
+- extensions.rs `Entry.support` (parity row 33): an optional address where people can pay or sponsor the maker. `parse_index` drops any that is not https, since the window opens it in the browser. The extension stays free; FormPortal handles no payment. `catalog/schema/extensions.schema.json` gains the field; the fixture's warm-dust carries one.
 
 ## v0.48.0 · sharing through the person's GitHub account {#share}
 

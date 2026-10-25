@@ -2,8 +2,8 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.48.0
-Last updated: 2026-10-25 · shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.51.0
+Last updated: 2026-10-25 · `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
 ## v0.48.0 · sharing {#share}
 
