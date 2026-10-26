@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.2 · 2026-10-26
+
+- Release builds keep their symbols (`strip = false`), because macOS builds fail when the release profile strips the binary. Nothing in the app changed.
+
 ## v0.53.1 · 2026-10-25
 
 - The interface's development server moves to vite 8.3.5, which clears two command-injection advisories in its `launch-editor`. A development dependency only: nothing in the app changed.
