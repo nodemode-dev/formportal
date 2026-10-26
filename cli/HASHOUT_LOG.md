@@ -2,8 +2,16 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.0
-Last updated: 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.53.3
+Last updated: 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.53.3 · a closed output pipe ends the command quietly {#fb021}
+
+- refers-to: cli/src/main.rs :: emit, main (watch, help, the result)
+- kind: fix
+- logged: v0.53.3 · 2026-10-26
+
+Ledger FB-021: `println!` panics with "failed printing to stdout: Broken pipe" when the reader has gone (`formportal-cli apps | head -1`), so the process exited 101 although the action had finished, and a script or agent piping the JSON saw a crash. Rust ignores SIGPIPE, so the write returns an error instead of killing the process; `emit` writes and flushes the locked stdout and, on any error, exits 0, the way a Unix tool ends when nobody is reading. 0 and not 141 because the work was done and the person or script closed the reader on purpose. The action has already run before anything is printed, so exiting at that point loses nothing. stderr is left as it is: progress and errors go there and a closed stderr is not this bug. `mcp` is not touched, since its stdout is the protocol and a closed peer ends the server through its own read loop. Tested in `cli/tests/closed_pipe.rs` with the read end closed before the program starts, which reproduces it every time (before: exit 101 and the panic on stderr; after: exit 0, stderr empty).
 
 ## v0.53.0 · install and update pass the release {#q9}
 

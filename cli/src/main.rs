@@ -108,6 +108,13 @@ fn positional(args: &Value, key: &str) -> Value {
     a
 }
 
+fn emit(text: &str) {
+    let mut out = std::io::stdout().lock();
+    if writeln!(out, "{text}").and_then(|()| out.flush()).is_err() {
+        std::process::exit(0);
+    }
+}
+
 fn main() -> ExitCode {
     let all: Vec<String> = std::env::args().skip(1).collect();
     let Some(cmd) = all.first().cloned() else {
@@ -222,10 +229,7 @@ fn main() -> ExitCode {
         }
         "media-remove" => ops::media_remove(&ctx, &args),
         "repair" => ops::repair(&ctx, &args, &mut progress),
-        "watch" => ops::watch(&ctx, &args, &mut |line| {
-            println!("{line}");
-            let _ = std::io::stdout().flush();
-        }),
+        "watch" => ops::watch(&ctx, &args, &mut |line| emit(&line.to_string())),
         "later" => {
             let mut a = args.clone();
             if let Some(o) = a.as_object_mut() {
@@ -260,7 +264,7 @@ fn main() -> ExitCode {
         "mirror" => ops::mirror(&ctx, &args, &mut progress),
         "org-package" => ops::org_package(&args),
         "help" | "--help" | "-h" => {
-            println!("{USAGE}");
+            emit(USAGE);
             return ExitCode::SUCCESS;
         }
         other => {
@@ -273,7 +277,7 @@ fn main() -> ExitCode {
     }
     match out {
         Ok(v) => {
-            println!("{}", serde_json::to_string_pretty(&v).unwrap_or_default());
+            emit(&serde_json::to_string_pretty(&v).unwrap_or_default());
             ExitCode::SUCCESS
         }
         Err(e) => {
