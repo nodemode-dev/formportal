@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.3 · 2026-10-26
+
+- The command line no longer reports a crash when the program reading its output stops early (`formportal-cli apps | head -1`): it ends quietly with success, since the action had already finished.
+- A test suite now checks the catalogue's signature, the downloaded file's SHA-256, installing, updating, rolling back and removing, the organisation's policy and the closed output pipe, and runs on every change.
+
 ## v0.53.2 · 2026-10-26
 
 - Release builds keep their symbols (`strip = false`), because macOS builds fail when the release profile strips the binary. Nothing in the app changed.
