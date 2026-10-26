@@ -2,8 +2,16 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.0
-Last updated: 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.53.3
+Last updated: 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.53.3 · the test suite {#tests}
+
+- refers-to: core/tests/support/mod.rs, core/tests/catalogue_trust.rs, core/tests/install_lifecycle.rs, core/tests/family_contract.rs
+- kind: decision
+- logged: v0.53.3 · 2026-10-26
+
+`FAMILY_TEST_PLAN.md` P1 for formportal, and the family layers F4 and F9 (`family_contract.rs` is the formai_dev sidecar's template, unchanged; its version sites are this repo's). Nothing reaches the network: `support::Server` is a one-thread HTTP server on 127.0.0.1 that serves bytes put into it and counts hits (loopback http is what `check_url` allows besides https), the catalogue keys are made from fixed seeds in the test (`signing_key`), and every archive is a zip built in memory, its `bin/` entries marked 0755 because the Linux launch target is the first executable file. The catalogue key (`FORMAI_CATALOG_PUBKEY`) and the policy path (`FORMPORTAL_POLICY`) are process environment, so the tests that set or rely on them take `env_lock()`; the system policy path (`/etc/formportal/policy.json`) must be absent where they run, as it is on CI. Every portal works in a `Scratch` folder under the system temp folder that removes itself, never the person's data folder. Each test checks what a person or a script would see: the files left on disk listed exactly, the record in `installed.json`, the error kind, and the hit count on the server (a refused app is refused before anything is downloaded). Proven on a copy of the tree: skipping the SHA-256 check, accepting any signature, ignoring the policy's app list, not keeping the previous version, not checking the catalogue's signature and dropping the policy check before the download each fail the suite. Not tested here (FAMILY_TEST_PLAN P2): deep links, the MCP tools against the command line.
 
 ## v0.53.0 · installs agents can reach {#q9}
 
