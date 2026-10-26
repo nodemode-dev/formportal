@@ -13,6 +13,7 @@ FormPortal, the Form family's app portal: it installs, opens, updates, rolls bac
 - `catalog/` and `design/` are copies of formai_dev's contract and tokens; change them there first.
 - `assets/` holds repository art (the README capture), not app runtime assets; the interface's own files are in `frontend/public/`.
 - Planning documents (DEV_PLAN, BUILD_NOTES, the root HASHOUT_LOG, the parity research) ship in the planning sidecar zip, not in this tree.
+- Tests live in `tests/` folders and run in CI; write only tests this plan or its successor names. The plan is `FAMILY_TEST_PLAN.md` in the formai_dev sidecar; `cargo test --locked -p formportal-core -p formportal-cli` runs them.
 
 ## Skills
 
