@@ -3,5 +3,5 @@ members = ["core", "cli", "src-tauri"]
 resolver = "2"
 
 [profile.release]
-strip = true
+strip = false
 lto = true
