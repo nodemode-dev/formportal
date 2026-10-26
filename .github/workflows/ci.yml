@@ -23,6 +23,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm audit
       - run: npm run typecheck
       - run: npm run build
 
@@ -35,6 +36,16 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev pkg-config
       - name: The engine and the command line compile
         run: cargo check --locked -p formportal-core -p formportal-cli
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: D-Bus headers for the keychain
+        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev pkg-config
+      - name: Engine, command line and family layers
+        run: cargo test --locked -p formportal-core -p formportal-cli
 
   scripts:
     runs-on: ubuntu-latest
