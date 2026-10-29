@@ -22,7 +22,7 @@ interface RawProgress {
 
 export const CATALOG_KEY = "formportal-catalog-url";
 export const UNSIGNED_KEY = "formportal-allow-unsigned";
-export const DEFAULT_CATALOG = "https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json";
+export const DEFAULT_CATALOG = "https://dl.formai.studio/catalog/apps.json";
 
 const tauri = (): TauriGlobal => (window as unknown as { __TAURI__: TauriGlobal }).__TAURI__;
 

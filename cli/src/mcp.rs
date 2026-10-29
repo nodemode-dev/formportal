@@ -11,7 +11,7 @@ const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and 
 
 fn props(extra: Value) -> Value {
     let mut base = json!({
-        "source": { "type": "string", "description": "Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json." },
+        "source": { "type": "string", "description": "Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json." },
         "allow_unsigned": { "type": "boolean", "description": "Accept a catalogue without a signature. Only for local development catalogues." }
     });
     if let (Some(b), Some(e)) = (base.as_object_mut(), extra.as_object()) {
