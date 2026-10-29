@@ -61,13 +61,13 @@ No parameters.
 ### apps
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### app_info
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### installs
 
@@ -78,7 +78,7 @@ No parameters.
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `version` (optional): string. An earlier version from the versions tool. Omit for the newest.
 
 ### versions
@@ -86,12 +86,12 @@ No parameters.
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### updates
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### update
 
@@ -100,7 +100,7 @@ No parameters.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `later` (optional): boolean. Put this app's update off until it is closed (true), or cancel that (false).
 - `product` (optional): string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### preferences
 
@@ -116,7 +116,7 @@ No parameters.
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `extensions_source` (optional): string. Extension index address or file.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### extension_install
 
@@ -124,7 +124,7 @@ No parameters.
 - `extensions_source` (optional): string. 
 - `id` (optional): string. 
 - `path` (optional): string. Absolute path of a .formpkg file.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### extension_remove
 
@@ -198,7 +198,7 @@ No parameters.
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `fonts_source` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### font_install
 
@@ -207,7 +207,7 @@ No parameters.
 - `id` (optional): string. 
 - `path` (optional): string. 
 - `rights_confirmed` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `style` (optional): string. 
 
 ### font_remove
@@ -221,7 +221,7 @@ No parameters.
 - `kind` (optional): image|video|audio|template. 
 - `media_source` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### media_save
 
@@ -229,7 +229,7 @@ No parameters.
 - `folder` (optional): string. 
 - `id`: string. 
 - `media_source` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `use` (optional): boolean. 
 
 ### media_remove
@@ -240,7 +240,7 @@ No parameters.
 
 - `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `fix` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### learn
 
@@ -248,7 +248,7 @@ No parameters.
 - `learn_source` (optional): string. 
 - `product` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### learn_progress
 
@@ -257,7 +257,7 @@ No parameters.
 - `id`: string. 
 - `learn_source` (optional): string. 
 - `reset` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://github.com/nodemode-ai/formcompiler/releases/download/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `step` (optional): integer. 
 
 ### app_agents
