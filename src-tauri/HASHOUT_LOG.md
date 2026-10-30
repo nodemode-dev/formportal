@@ -14,6 +14,13 @@ Last updated: 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · in
 
 The Windows build made `nsis,msi`, but `package_release.py` packs only `bundle/nsis/*.exe` (the zip and the updater bundle), so the msi cost a WiX pass on every release run and was never shipped. The script now builds `%FORMPORTAL_BUNDLES%`, which is `nsis` when unset. An organisation that wants the per-machine msi for `org-package` sets `FORMPORTAL_BUNDLES=nsis,msi` and builds it from this repository (the Organisations wiki page says so).
 
+### setup/build_* · the Tauri CLI pinned
+- refers-to: setup/build_macos_app, setup/build_linux_app, setup/build_windows_app.bat
+- kind: decision
+- logged: v0.53.4 · 2026-10-30
+
+The three scripts ran `npx --yes @tauri-apps/cli@2`, so each release run took whatever 2.x was newest that day. They now run `@tauri-apps/cli@2.12.3`, the same CLI on every runner and every rerun. The frontend's package.json and lock carry no `@tauri-apps/cli` to match, so the version is the family's pin (the `tauri` crate in Cargo.lock is 2.12.1, the same minor). Move it by hand with the crate.
+
 ## v0.53.0 · install passes the release {#q9}
 
 ### main.rs · install

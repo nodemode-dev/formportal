@@ -5,5 +5,5 @@ cd "$(dirname "$0")/.."
 command -v cargo >/dev/null || { echo "Rust is required: https://rustup.rs"; exit 1; }
 ( cd frontend && npm ci && npm run build )
 cd src-tauri
-npx --yes @tauri-apps/cli@2 build --bundles app,dmg "$@"
+npx --yes @tauri-apps/cli@2.12.3 build --bundles app,dmg "$@"
 echo "Built into $(cd .. && pwd)/target/release/bundle"
