@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.4 · 2026-10-30
+
+- The Windows release builds only the NSIS setup, the installer it ships; `FORMPORTAL_BUNDLES=nsis,msi` still builds the msi for a managed rollout. Nothing in the app changed.
+- The build scripts use Tauri CLI 2.12.3 on every run instead of the newest 2.x of the day.
+- Line endings are fixed for Windows checkouts: CRLF for .bat, .cmd and .ps1 scripts, LF for everything else.
+
 ## v0.53.3 · 2026-10-26
 
 - The command line no longer reports a crash when the program reading its output stops early (`formportal-cli apps | head -1`): it ends quietly with success, since the action had already finished.
