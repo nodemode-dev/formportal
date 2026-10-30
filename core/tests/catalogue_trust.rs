@@ -132,3 +132,25 @@ fn a_catalogue_over_plain_http_elsewhere_is_refused() {
     let root = Scratch::new("plain-http");
     assert!(matches!(Portal::new(root.path()).catalog("http://example.com/apps.json", true), Err(CoreError::Url(_))));
 }
+
+#[test]
+fn a_local_catalogue_file_is_checked_like_a_downloaded_one() {
+    let _env = env_lock();
+    let key = signing_key(13);
+    std::env::set_var(KEY_ENV, public_key(&key));
+    std::env::remove_var(POLICY_ENV);
+    let scratch = Scratch::new("local-file");
+    let file = scratch.path().join("apps.json");
+    std::fs::write(&file, body()).unwrap();
+    let path = file.to_string_lossy().into_owned();
+    let portal = Portal::new(scratch.path().join("root"));
+    assert!(matches!(portal.catalog(&path, false), Err(CoreError::Signature(_))), "an unsigned local catalogue is refused");
+    portal.catalog(&path, true).unwrap();
+    let mut tampered = body();
+    tampered[5] ^= 0x01;
+    std::fs::write(scratch.path().join("apps.json.sig"), sign(&key, &body())).unwrap();
+    portal.catalog(&path, false).unwrap();
+    std::fs::write(&file, tampered).unwrap();
+    assert!(matches!(portal.catalog(&path, false), Err(CoreError::Signature(_))), "a tampered local catalogue is refused");
+    std::env::remove_var(KEY_ENV);
+}

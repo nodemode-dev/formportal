@@ -38,3 +38,14 @@ pub fn verify(body: &[u8], signature: &str, keys: &[String]) -> Result<()> {
     }
     Err(CoreError::Signature("its signature does not match a key this build trusts".to_string()))
 }
+
+pub fn read_local(path: &str, keys: &[String], allow_unsigned: bool) -> Result<Vec<u8>> {
+    let body = std::fs::read(path)?;
+    match std::fs::read_to_string(format!("{path}.sig")) {
+        Ok(signature) => verify(&body, signature.trim(), keys)?,
+        Err(e) if e.kind() != std::io::ErrorKind::NotFound => return Err(CoreError::Io(e)),
+        Err(_) if allow_unsigned => {}
+        Err(_) => return Err(CoreError::Signature("it is not signed".to_string())),
+    }
+    Ok(body)
+}

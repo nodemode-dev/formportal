@@ -11,8 +11,7 @@ const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and 
 
 fn props(extra: Value) -> Value {
     let mut base = json!({
-        "source": { "type": "string", "description": "Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json." },
-        "allow_unsigned": { "type": "boolean", "description": "Accept a catalogue without a signature. Only for local development catalogues." }
+        "source": { "type": "string", "description": "Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json." }
     });
     if let (Some(b), Some(e)) = (base.as_object_mut(), extra.as_object()) {
         for (k, v) in e {
@@ -75,7 +74,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": props(json!({ "extensions_source": { "type": "string", "description": "Extension index address or file." } })) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "extension_install", "title": "Install an extension",
-          "description": "Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for.",
+          "description": "Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless the person set FORMPORTAL_ALLOW_UNSIGNED for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for.",
           "inputSchema": { "type": "object", "properties": props(json!({ "id": { "type": "string" }, "path": { "type": "string", "description": "Absolute path of a .formpkg file." }, "extensions_source": { "type": "string" } })) },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true } },
         { "name": "extension_remove", "title": "Remove an extension",
@@ -197,7 +196,16 @@ fn tools() -> Value {
     ])
 }
 
+fn without_unsigned(args: &Value) -> Value {
+    let mut args = args.clone();
+    if let Some(map) = args.as_object_mut() {
+        map.remove("allow_unsigned");
+    }
+    args
+}
+
 fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
+    let args = &without_unsigned(args);
     let out = match name {
         "status" => ops::status(ctx),
         "apps" => ops::apps(ctx, args),

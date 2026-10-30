@@ -55,7 +55,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 
 - **Never guess an id.** Product ids come from `apps` (lowercase: `formcut`, `formvis`, `formencoder`, `formmd`). FormPortal itself is `formai` in the catalogue.
 - **The catalogue decides.** If `apps` says `unreleased` or `no-release`, there is nothing to install; say so and name the app's status from the registry ("in progress"), do not look for a download elsewhere.
-- **Never weaken a check to make an install work.** Do not set `allow_unsigned` against formai.dev. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
+- **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for formai.dev's catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
 - **Ask before changing the computer**, every time, for `install`, `rollback`, `remove`.
 - **Leave the person's work alone.** FormPortal's tools touch only its own install folder; never delete an app's documents or settings by hand.
 

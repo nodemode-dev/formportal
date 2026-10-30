@@ -7,11 +7,11 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::{agents, installers, process};
-use crate::signature::{trusted_keys, verify};
+use crate::signature::{read_local, trusted_keys, verify};
 use crate::policy::{self, Managed};
 use crate::prefs::Preferences;
 use crate::state::{Install, InstalledVersion, State};
-use crate::{version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform, ReleaseAgents};
+use crate::{plain_name, version_newer, Artifact, ArtifactKind, Availability, Catalog, Channel, Platform, ReleaseAgents};
 use serde::Serialize;
 
 pub struct Portal {
@@ -56,14 +56,96 @@ pub fn channel_name(channel: Channel) -> &'static str {
     }
 }
 
+fn link_stays_inside(relative: &Path, target: &str) -> bool {
+    use std::path::Component;
+    let target = Path::new(target);
+    if target.is_absolute() {
+        return false;
+    }
+    let mut depth: usize = 0;
+    let parent = relative.parent().map(Path::components).into_iter().flatten();
+    for part in parent.chain(target.components()) {
+        match part {
+            Component::Normal(_) => depth += 1,
+            Component::CurDir => {}
+            Component::ParentDir if depth > 0 => depth -= 1,
+            _ => return false,
+        }
+    }
+    true
+}
+
+fn through_a_link(into: &Path, relative: &Path) -> bool {
+    let mut path = into.to_path_buf();
+    relative.components().any(|part| {
+        path.push(part);
+        fs::symlink_metadata(&path).map(|m| m.file_type().is_symlink()).unwrap_or(false)
+    })
+}
+
+fn resolves_inside(into: &Path, relative: &Path) -> bool {
+    use std::path::Component;
+    fn parts(path: &Path) -> Option<Vec<Option<std::ffi::OsString>>> {
+        path.components()
+            .filter(|c| *c != Component::CurDir)
+            .map(|c| match c {
+                Component::Normal(name) => Some(Some(name.to_os_string())),
+                Component::ParentDir => Some(None),
+                _ => None,
+            })
+            .rev()
+            .collect()
+    }
+    let Some(mut pending) = parts(relative) else { return false };
+    let mut here = into.to_path_buf();
+    let mut depth = 0usize;
+    let mut hops = 0;
+    while let Some(part) = pending.pop() {
+        let Some(name) = part else {
+            if depth == 0 {
+                return false;
+            }
+            here.pop();
+            depth -= 1;
+            continue;
+        };
+        here.push(&name);
+        let Ok(target) = fs::read_link(&here) else {
+            depth += 1;
+            continue;
+        };
+        here.pop();
+        hops += 1;
+        match parts(&target) {
+            Some(more) if hops <= 40 && !target.is_absolute() => pending.extend(more),
+            _ => return false,
+        }
+    }
+    true
+}
+
+fn links_stay_inside(into: &Path, links: &[PathBuf]) -> Result<()> {
+    for link in links {
+        let relative = link.strip_prefix(into).unwrap_or(link);
+        if !resolves_inside(into, relative) {
+            return Err(CoreError::Archive(format!("a link in it does not resolve inside the folder: {}", relative.display())));
+        }
+    }
+    Ok(())
+}
+
 fn unzip(file: &Path, into: &Path) -> Result<()> {
     let mut archive = zip::ZipArchive::new(File::open(file)?).map_err(|e| CoreError::Archive(e.to_string()))?;
+    let mut links = Vec::new();
     for index in 0..archive.len() {
         let mut entry = archive.by_index(index).map_err(|e| CoreError::Archive(e.to_string()))?;
         let Some(relative) = entry.enclosed_name() else {
             return Err(CoreError::Archive(format!("a path in it leaves the folder: {}", entry.name())));
         };
-        let out = into.join(relative);
+        if through_a_link(into, &relative) {
+            return Err(CoreError::Archive(format!("a path in it goes through a link: {}", entry.name())));
+        }
+        let out = into.join(&relative);
         if entry.is_dir() {
             fs::create_dir_all(&out)?;
             continue;
@@ -74,11 +156,12 @@ fn unzip(file: &Path, into: &Path) -> Result<()> {
         if entry.is_symlink() {
             let mut target = String::new();
             entry.read_to_string(&mut target)?;
-            if Path::new(&target).is_absolute() {
+            if !link_stays_inside(&relative, &target) {
                 return Err(CoreError::Archive(format!("a link in it points outside the folder: {target}")));
             }
             #[cfg(unix)]
             std::os::unix::fs::symlink(&target, &out)?;
+            links.push(out);
             continue;
         }
         let mut writer = File::create(&out)?;
@@ -89,6 +172,8 @@ fn unzip(file: &Path, into: &Path) -> Result<()> {
             fs::set_permissions(&out, fs::Permissions::from_mode(mode))?;
         }
     }
+    #[cfg(unix)]
+    links_stay_inside(into, &links)?;
     Ok(())
 }
 
@@ -212,6 +297,11 @@ impl Portal {
 
     pub fn catalog(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
         let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
+        if !(url.starts_with("http://") || url.starts_with("https://")) {
+            let body = read_local(&url, &keys, allow_unsigned)?;
+            let text = String::from_utf8(body).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
+            return Ok(Catalog::from_json(&text)?);
+        }
         let dir = self.root.join("catalog");
         let kept = dir.join("apps.json");
         let kept_signature = dir.join("apps.json.sig");
@@ -257,6 +347,9 @@ impl Portal {
     pub fn install_with(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, agents: Option<&ReleaseAgents>, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
         if let Some(managed) = self.policy()? {
             managed.policy.allows(product, channel)?;
+        }
+        if !plain_name(product) || !plain_name(version) {
+            return Err(CoreError::Invalid(format!("{product:?} {version:?} is not a plain product and version name")));
         }
         let file = download(artifact, &self.root.join("downloads"), progress)?;
         let base = self.root.join("apps").join(product).join(channel_name(channel));
@@ -359,8 +452,15 @@ impl Portal {
 
     pub fn hold_if_older(&self, catalog: &Catalog, product: &str, channel: Channel, installed: &str) -> Result<bool> {
         let newest = catalog.product(product).and_then(|p| p.channels.get(&channel)).map(|r| r.version.as_str());
+        if !newest.map(|n| version_newer(n, installed)).unwrap_or(false) {
+            return Ok(false);
+        }
+        self.hold(product, channel)
+    }
+
+    fn hold(&self, product: &str, channel: Channel) -> Result<bool> {
         let forced = self.policy()?.map(|m| m.policy.auto_update.is_some()).unwrap_or(false);
-        if forced || !newest.map(|n| version_newer(n, installed)).unwrap_or(false) || !self.preferences()?.automatic(product, channel) {
+        if forced || !self.preferences()?.automatic(product, channel) {
             return Ok(false);
         }
         let mut prefs = Preferences::load(&self.root)?;
@@ -451,9 +551,14 @@ impl Portal {
         if !previous.path.exists() {
             return Err(CoreError::NotInstalled(format!("{product} {}", previous.version)));
         }
+        let older = version_newer(&existing.current.version, &previous.version);
         let swapped = Install { product: existing.product, channel, current: previous, previous: Some(existing.current) };
         state.installs[index] = swapped.clone();
         state.save(&self.root)?;
+        if older {
+            self.hold(product, channel)?;
+            self.set_later(product, channel, false)?;
+        }
         Ok(swapped)
     }
 

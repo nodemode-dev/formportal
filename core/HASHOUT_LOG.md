@@ -5,6 +5,43 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.53.3
 Last updated: 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
 
+## unreleased · install trust hardening {#trust-hardening}
+
+### extensions.rs, portal.rs, lib.rs · plain_name for every folder name from outside
+- refers-to: core/src/lib.rs :: plain_name · core/src/extensions.rs :: read_manifest · core/src/portal.rs :: install_with
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+`place_package` joins the manifest's `version` to the extension's folder and removes whatever is there before the rename. `read_manifest` checked `id` and `product` but not `version`, so a `.formpkg` whose version was `../../../../Documents` removed that folder, and the window installs a double-clicked package without asking. `plain_name` (letters, digits, `.`, `-`, `+`, `_`, not starting with a dot) is now required of the manifest's version, id and product (id and product also without a dot, as before; the old check let `C:` through, which on Windows makes `Path::join` leave the folder), and of the product and version `install_with` joins for an app, where they come from the catalogue. Tests: extension_trust.rs (a climbing version removes nothing outside), install_lifecycle.rs (a version that is not a plain name installs nothing).
+
+### portal.rs · links in a zip stay inside the folder
+- refers-to: core/src/portal.rs :: unzip, link_stays_inside, through_a_link, links_stay_inside
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+`unzip` refused only absolute link targets, so a link `out -> ../../..` followed by an entry `out/file` wrote anywhere the person can write (a login item in ~/Library/LaunchAgents, say). Three rules now: a link's target, read from the link's own folder, never climbs above the top (`link_stays_inside`); no entry is written through an existing link, including one the archive made earlier (`through_a_link`), which also stops a chain such as `here -> .` then `up -> here/..`; and after unpacking every link is followed by hand, link by link inside the folder, and must never climb above its top (`resolves_inside`, at most 40 hops), so a chain such as `d1/d2/l1 -> ..` then `l2 -> d1/d2/l1/../../x` is refused. A link to something missing is followed as far as it goes and allowed, because shipped frameworks often keep `Headers -> Versions/Current/Headers` with the headers stripped; `canonicalize` was tried first and refused those. Links that stay inside, such as `Versions/Current -> A`, still install. Tests: install_lifecycle.rs, the zip link tests.
+
+### portal.rs, signature.rs · a catalogue or index from a file is checked like one from an address
+- refers-to: core/src/signature.rs :: read_local · core/src/portal.rs :: catalog · core/src/extensions.rs :: extension_index · core/src/fonts.rs :: font_index · core/src/media.rs :: media_index · core/src/learn.rs :: learn_index
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+A file path skipped the signature: `install --source ./apps.json`, and the MCP tools with `source` set to a file an agent was talked into writing, installed anything the file named. `read_local` reads the file and `<file>.sig` beside it and applies the same rule as an address: a signature is always verified, a missing one is refused unless `allow_unsigned`. `Portal::catalog` now takes a file path itself (before, a path failed the URL check and fell back to the kept copy) and does not keep a catalogue read from a file. Tests: catalogue_trust.rs and extension_trust.rs, the local file tests.
+
+### portal.rs · a rollback holds the automatic update that would undo it
+- refers-to: core/src/portal.rs :: rollback, hold, hold_if_older
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+A rollback swapped the record and nothing else, so the next automatic update (the window runs `apply_updates` when it opens) put the newer version straight back. Installing an older version by number already turned automatic updates off for the app (`hold_if_older`); `rollback` now does the same through the shared `hold` when the version it goes back to is older, unless the organisation's policy forces automatic updates, and clears "update later" for the app, because `apply_updates` installs a later update even when automatic updates are off. The hold is per product, as `hold_if_older`'s always was, so rolling back a beta also stops the stable channel's automatic updates. Rolling forward again leaves the hold alone: the person turns automatic updates back on. Test: install_lifecycle.rs, a_rollback_holds_the_automatic_update_that_would_undo_it.
+
+### lib.rs · prerelease order follows semver
+- refers-to: core/src/lib.rs :: version_newer, prerelease_newer
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+Prerelease tags were compared as text, so `beta.10` was older than `beta.9` and a beta install stopped updating at the tenth beta. `prerelease_newer` compares the dot-separated parts left to right, numbers by value and below words, and a longer list wins when the shorter is its prefix (semver 2.0 section 11). Numbers are compared as digit strings (length, then text), so one too long for u64 still orders. Build metadata after `+` is ignored, as semver says; before, `1.0.1+b` read as 1.0.0. Test: version_order.rs.
+
 ## v0.53.3 · the test suite {#tests}
 
 - refers-to: core/tests/support/mod.rs, core/tests/catalogue_trust.rs, core/tests/install_lifecycle.rs, core/tests/family_contract.rs
@@ -512,7 +549,7 @@ The catalogue's signature is a detached ed25519 signature over the exact bytes t
 
 `Hub::catalog(url, allow_unsigned)` is the one way a catalogue enters from an address: fetch the bytes, fetch the signature, verify, parse, and only then keep both in `<root>/catalog/`. If the site cannot be reached, the kept copy is read instead and verified the same way, so a copy changed on disk is refused like any other. The rules, each run for this version: signed and a trusted key verifies it, accepted; signed and no trusted key verifies it, refused; signed and no key is trusted at all, refused, even with `allow_unsigned` (that flag forgives a missing signature, never a failed one); not signed, refused unless `allow_unsigned`; unreachable with nothing kept, the connection error. `fetch_bytes` reads at most 16 MB.
 
-A catalogue read from a file path (the example's `--catalog <file>`) is not checked: a file on the user's own disk is the user's own.
+A catalogue read from a file path (the example's `--catalog <file>`) is not checked: a file on the user's own disk is the user's own. Superseded for `Portal::catalog` and the indexes, see [install trust hardening](#trust-hardening); the example still reads its file unchecked.
 
 ## src/state.rs {#state}
 

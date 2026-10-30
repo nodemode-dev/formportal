@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::{download, fetch_bytes, sha256_file};
 use crate::error::{CoreError, Result};
-use crate::signature::verify;
+use crate::signature::{read_local, verify};
 use crate::{Arch, Artifact, ArtifactKind, Os, Portal};
 
 pub const INDEX_FORMAT: &str = "formai-extensions";
@@ -137,8 +137,11 @@ fn read_manifest(package: &Path) -> Result<Manifest> {
     if manifest.format != PACKAGE_FORMAT || manifest.format_version != 1 {
         return Err(CoreError::Archive(format!("its manifest is not a formai package (format {:?})", manifest.format)));
     }
-    if manifest.id.is_empty() || manifest.id.contains(['/', '\\', '.']) || manifest.product.is_empty() || manifest.product.contains(['/', '\\', '.']) {
+    if !crate::plain_name(&manifest.id) || manifest.id.contains('.') || !crate::plain_name(&manifest.product) || manifest.product.contains('.') {
         return Err(CoreError::Archive("its manifest names an id or product that is not a plain name".to_string()));
+    }
+    if !crate::plain_name(&manifest.version) {
+        return Err(CoreError::Archive(format!("its manifest names a version, {:?}, that is not a plain name", manifest.version)));
     }
     Ok(manifest)
 }
@@ -198,7 +201,7 @@ impl Portal {
         let url = locked.as_deref().unwrap_or(url);
         let (_, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
         if !(url.starts_with("http://") || url.starts_with("https://")) {
-            return parse_index(&fs::read_to_string(url)?);
+            return parse_index(&String::from_utf8_lossy(&read_local(url, &keys, allow_unsigned)?));
         }
         let dir = self.root().join("catalog");
         let kept = dir.join("extensions.json");
