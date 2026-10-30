@@ -60,7 +60,7 @@ Make the key pair with formai_dev's `python -m app.signing`, or any Ed25519 tool
 
 ## Installing FormPortal silently
 
-A person can install FormPortal for themselves with no administrator: the NSIS setup on Windows, the dmg on macOS, the AppImage on Linux. For a managed rollout: Windows `msiexec /i FormPortal_[version]_x64_en-US.msi /qn` (the msi installs for every user, in Program Files, so it needs an administrator; the NSIS setup with `/S` installs only for the account that runs it); macOS, copy `FormPortal.app` from the dmg into Applications; Linux, the deb or the rpm. These are the installers' standard switches.
+A person can install FormPortal for themselves with no administrator: the NSIS setup on Windows, the dmg on macOS, the AppImage on Linux. For a managed rollout: Windows `msiexec /i FormPortal_[version]_x64_en-US.msi /qn` (the msi installs for every user, in Program Files, so it needs an administrator; the NSIS setup with `/S` installs only for the account that runs it); macOS, copy `FormPortal.app` from the dmg into Applications; Linux, the deb or the rpm. These are the installers' standard switches. The release ships the NSIS setup only; build the msi from this repository on Windows with `set FORMPORTAL_BUNDLES=nsis,msi` before `setup\build_windows_app.bat`.
 
 ## One package for a managed rollout
 

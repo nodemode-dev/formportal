@@ -3,7 +3,16 @@
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
 Current build version: v0.53.0
-Last updated: 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Last updated: 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.53.4 · the build scripts for formcompiler {#fc-build}
+
+### setup/build_windows_app.bat · NSIS only
+- refers-to: setup/build_windows_app.bat; setup/package_release.py :: windows bundle glob, UPDATER
+- kind: decision
+- logged: v0.53.4 · 2026-10-30
+
+The Windows build made `nsis,msi`, but `package_release.py` packs only `bundle/nsis/*.exe` (the zip and the updater bundle), so the msi cost a WiX pass on every release run and was never shipped. The script now builds `%FORMPORTAL_BUNDLES%`, which is `nsis` when unset. An organisation that wants the per-machine msi for `org-package` sets `FORMPORTAL_BUNDLES=nsis,msi` and builds it from this repository (the Organisations wiki page says so).
 
 ## v0.53.0 · install passes the release {#q9}
 

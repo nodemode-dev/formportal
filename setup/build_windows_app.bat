@@ -10,5 +10,6 @@ cd frontend
 call npm ci || exit /b 1
 call npm run build || exit /b 1
 cd ..\src-tauri
-call npx --yes @tauri-apps/cli@2 build --bundles nsis,msi %* || exit /b 1
+if not defined FORMPORTAL_BUNDLES set "FORMPORTAL_BUNDLES=nsis"
+call npx --yes @tauri-apps/cli@2 build --bundles %FORMPORTAL_BUNDLES% %* || exit /b 1
 echo Built into %~dp0..\target\release\bundle
