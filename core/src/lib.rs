@@ -35,6 +35,7 @@ pub use prefs::Preferences;
 pub fn version_newer(candidate: &str, current: &str) -> bool {
     fn split(v: &str) -> (Vec<u64>, Option<&str>) {
         let v = v.trim().trim_start_matches('v');
+        let v = v.split_once('+').map_or(v, |(v, _)| v);
         let (core, pre) = match v.split_once('-') {
             Some((c, p)) => (c, Some(p)),
             None => (v, None),
@@ -52,9 +53,38 @@ pub fn version_newer(candidate: &str, current: &str) -> bool {
     }
     match (ap, bp) {
         (None, Some(_)) => true,
-        (Some(x), Some(y)) => x > y,
+        (Some(x), Some(y)) => prerelease_newer(x, y),
         _ => false,
     }
+}
+
+fn prerelease_newer(candidate: &str, current: &str) -> bool {
+    use std::cmp::Ordering;
+    fn numeric(part: &str) -> bool {
+        !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit())
+    }
+    let mut a = candidate.split('.');
+    let mut b = current.split('.');
+    loop {
+        let order = match (a.next(), b.next()) {
+            (None, None) => return false,
+            (Some(_), None) => return true,
+            (None, Some(_)) => return false,
+            (Some(x), Some(y)) => match (numeric(x), numeric(y)) {
+                (true, true) => x.trim_start_matches('0').len().cmp(&y.trim_start_matches('0').len()).then_with(|| x.trim_start_matches('0').cmp(y.trim_start_matches('0'))),
+                (true, false) => Ordering::Less,
+                (false, true) => Ordering::Greater,
+                (false, false) => x.cmp(y),
+            },
+        };
+        if order != Ordering::Equal {
+            return order == Ordering::Greater;
+        }
+    }
+}
+
+pub fn plain_name(name: &str) -> bool {
+    !name.is_empty() && !name.starts_with('.') && name.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '+' | '_'))
 }
 pub use state::{Install, InstalledVersion, State};
 

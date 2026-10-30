@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::{check_url, download, fetch_bytes};
 use crate::error::{CoreError, Result};
-use crate::signature::verify;
+use crate::signature::{read_local, verify};
 use crate::{Arch, Artifact, ArtifactKind, Os, Portal};
 
 pub const MEDIA_FORMAT: &str = "formai-media";
@@ -121,7 +121,10 @@ impl Portal {
             }
             body
         } else {
-            fs::read(url)?
+            read_local(url, &keys, allow_unsigned).map_err(|e| match e {
+                CoreError::Signature(why) => CoreError::Invalid(format!("the media index was refused: {why}")),
+                other => other,
+            })?
         };
         let index: MediaIndex = serde_json::from_slice(&body).map_err(|e| CoreError::Invalid(format!("the media index is not valid: {e}")))?;
         if index.format != MEDIA_FORMAT {

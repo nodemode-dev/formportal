@@ -5,6 +5,14 @@ Living log for `formportal-cli`, FormPortal's command line and MCP server. Sourc
 Current build version: v0.53.3
 Last updated: 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
+## unreleased · an agent cannot turn the signature check off {#unsigned}
+
+- refers-to: cli/src/mcp.rs :: without_unsigned, call, props · cli/src/ops.rs :: load
+- kind: fix
+- logged: unreleased · 2026-10-29
+
+Every catalogue tool took an `allow_unsigned` argument, so an agent (or text an agent read) could accept an unsigned catalogue on its own. `call` now removes the argument before any operation runs, and the schema no longer offers it; the person's `FORMPORTAL_ALLOW_UNSIGNED` and the command line's `--allow-unsigned` still work. `load` hands a file path to `Portal::catalog`, which checks its `.sig`, instead of parsing it unchecked. `agents sync` regenerated tools.md. Test: cli/tests/closed_pipe.rs, an_agent_cannot_turn_off_the_catalogue_signature_check.
+
 ## v0.53.3 · a closed output pipe ends the command quietly {#fb021}
 
 - refers-to: cli/src/main.rs :: emit, main (watch, help, the result)

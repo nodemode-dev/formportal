@@ -22,7 +22,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `update` | yes | With product (and channel), installs that app's newer version; with later true instead, puts it off until the app is closed (installed the next time FormPortal checks, whatever the automatic setting), and later false cancels that. Without product, installs every waiting update; with automatic_only, only those the person's preferences allow or put off (skipping open apps when only_when_closed is on, and always for put-off ones). An open app keeps running and the new version opens next time. Changes the person's computer: confirm first. |
 | `preferences` | yes | Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting), open_at_login (default off: open the FormPortal window when the person logs in; the window writes or removes its login item when it next starts, and runs nothing in the background). Changing them is the person's choice: confirm first. |
 | `extensions` | no | The open extension index (effects, looks, templates, presets, plugins for the Form apps) with each package's author, kind, permissions, whether it runs native code and is signed, its install state, and support, an https page where people can pay or sponsor its maker if it has one (the extension is free either way); plus every installed extension, including sideloaded ones (source sideload). The index is read from extensions_source, FORMPORTAL_EXTENSIONS, or extensions.json beside the catalogue. |
-| `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless allow_unsigned is set for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
+| `extension_install` | yes | Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless the person set FORMPORTAL_ALLOW_UNSIGNED for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for. |
 | `extension_remove` | yes, destructive | Removes an installed extension and its files. Confirm first. |
 | `extension_enable` | yes | Turns an installed extension on or off without removing it; the app sees the change the next time it starts. |
 | `account` | no | Whether the person has signed in to GitHub in FormPortal (optional: installing and updating never need it), as whom, and which access they granted (scopes). configured false means this FormPortal has no GitHub app set up. Signing in and out is the person's own step in FormPortal's Preferences or with formportal-cli sign-in; this tool never starts it. |
@@ -60,14 +60,12 @@ No parameters.
 
 ### apps
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### app_info
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### installs
 
@@ -75,32 +73,28 @@ No parameters.
 
 ### install
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `version` (optional): string. An earlier version from the versions tool. Omit for the newest.
 
 ### versions
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `product`: string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### updates
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### update
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `automatic_only` (optional): boolean. Only the updates the preferences allow or that were put off.
 - `channel` (optional): stable|beta|nightly. Defaults to stable. A beta installs beside the stable build.
 - `later` (optional): boolean. Put this app's update off until it is closed (true), or cancel that (false).
 - `product` (optional): string. Product id from apps, e.g. formcut, formvis, formencoder.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### preferences
 
@@ -114,17 +108,15 @@ No parameters.
 
 ### extensions
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `extensions_source` (optional): string. Extension index address or file.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### extension_install
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `extensions_source` (optional): string. 
 - `id` (optional): string. 
 - `path` (optional): string. Absolute path of a .formpkg file.
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### extension_remove
 
@@ -195,19 +187,17 @@ No parameters.
 
 ### fonts
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `fonts_source` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### font_install
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `fonts_source` (optional): string. 
 - `id` (optional): string. 
 - `path` (optional): string. 
 - `rights_confirmed` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `style` (optional): string. 
 
 ### font_remove
@@ -217,19 +207,17 @@ No parameters.
 
 ### media
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `kind` (optional): image|video|audio|template. 
 - `media_source` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### media_save
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `folder` (optional): string. 
 - `id`: string. 
 - `media_source` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `use` (optional): boolean. 
 
 ### media_remove
@@ -238,26 +226,23 @@ No parameters.
 
 ### repair
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `fix` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### learn
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `learn_source` (optional): string. 
 - `product` (optional): string. 
 - `query` (optional): string. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 
 ### learn_progress
 
-- `allow_unsigned` (optional): boolean. Accept a catalogue without a signature. Only for local development catalogues.
 - `done` (optional): boolean. 
 - `id`: string. 
 - `learn_source` (optional): string. 
 - `reset` (optional): boolean. 
-- `source` (optional): string. Catalogue address (https) or a local catalogue file. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+- `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
 - `step` (optional): integer. 
 
 ### app_agents

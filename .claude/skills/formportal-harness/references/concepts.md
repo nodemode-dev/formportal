@@ -22,7 +22,7 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 
 ## Trust
 
-- The catalogue must carry a detached Ed25519 signature (`apps.json.sig`) made with a key FormPortal trusts. Without one it is refused with "it is not signed". `allow_unsigned` (or `FORMPORTAL_ALLOW_UNSIGNED=1`) accepts an unsigned catalogue; it exists for local development catalogues only.
+- The catalogue must carry a detached Ed25519 signature (`apps.json.sig`) made with a key FormPortal trusts. Without one it is refused with "it is not signed". A catalogue given as a file path is checked the same way, against `apps.json.sig` beside it. `FORMPORTAL_ALLOW_UNSIGNED=1`, set by the person, or `--allow-unsigned` on the command line accepts an unsigned catalogue; it exists for local development catalogues only, and the MCP tools ignore an `allow_unsigned` argument.
 - Every artifact is hashed after download and refused unless its SHA-256 equals the catalogue's. Nothing is unpacked before that.
 - Only https addresses are fetched, plus http on this computer (127.0.0.1, localhost).
 - When the network fails, the last good catalogue is used and says so.
@@ -31,7 +31,7 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 
 | Message starts with | Meaning | Do |
 | --- | --- | --- |
-| the catalogue was refused: it is not signed | no signature next to the catalogue | wrong source, or a development catalogue; ask before using `allow_unsigned` |
+| the catalogue was refused: it is not signed | no signature next to the catalogue | wrong source, or a development catalogue; only the person can accept it, with `FORMPORTAL_ALLOW_UNSIGNED=1` |
 | the catalogue was refused: this build trusts no catalogue key yet | `core/catalog_keys.txt` was empty when this build was made and `FORMAI_CATALOG_PUBKEY` is not set (`status` shows `trusted_keys`) | tell the person; the fix is formai.dev's public key added to that file and FormPortal rebuilt, or the key in `FORMAI_CATALOG_PUBKEY` |
 | the catalogue was refused | the signature does not verify | stop; report it |
 | [file] does not match the catalogue: expected SHA-256 | the download differs from the release | stop; report it; do not retry from elsewhere |

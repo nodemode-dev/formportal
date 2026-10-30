@@ -1,4 +1,3 @@
-use std::fs;
 
 use formportal_core::{Availability, Catalog, Channel, CoreError, Platform, Portal, CORE_VERSION};
 use serde_json::{json, Map, Value};
@@ -49,11 +48,7 @@ fn load(ctx: &Ctx, args: &Value) -> Result<(Catalog, String), CoreError> {
     let source = text(args, "source").unwrap_or_else(|| ctx.source.clone());
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
     let (source, _, _) = ctx.portal.source(&source, allow)?;
-    let catalog = if source.starts_with("http://") || source.starts_with("https://") {
-        ctx.portal.catalog(&source, allow)?
-    } else {
-        Catalog::from_json(&fs::read_to_string(&source)?)?
-    };
+    let catalog = ctx.portal.catalog(&source, allow)?;
     Ok((catalog, source))
 }
 

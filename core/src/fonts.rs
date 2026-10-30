@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::{download, fetch_bytes, sha256_file};
 use crate::error::{CoreError, Result};
-use crate::signature::verify;
+use crate::signature::{read_local, verify};
 use crate::{Arch, Artifact, ArtifactKind, Os, Portal};
 
 pub const FONT_FORMAT: &str = "formai-fonts";
@@ -179,7 +179,10 @@ impl Portal {
             }
             body
         } else {
-            fs::read(url)?
+            read_local(url, &keys, allow_unsigned).map_err(|e| match e {
+                CoreError::Signature(why) => CoreError::Invalid(format!("the font index was refused: {why}")),
+                other => other,
+            })?
         };
         let index: FontIndex = serde_json::from_slice(&body).map_err(|e| CoreError::Invalid(format!("the font index is not valid: {e}")))?;
         if index.format != FONT_FORMAT {

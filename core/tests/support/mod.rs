@@ -144,3 +144,15 @@ pub fn tree(root: &Path) -> Vec<String> {
     out.sort();
     out
 }
+
+pub fn zip_with_links(files: &[(&str, &[u8])], links: &[(&str, &str)]) -> Vec<u8> {
+    let mut writer = zip::ZipWriter::new(Cursor::new(Vec::new()));
+    for (name, target) in links {
+        writer.add_symlink(*name, *target, zip::write::SimpleFileOptions::default()).unwrap();
+    }
+    for (name, body) in files {
+        writer.start_file(*name, zip::write::SimpleFileOptions::default()).unwrap();
+        writer.write_all(body).unwrap();
+    }
+    writer.finish().unwrap().into_inner()
+}

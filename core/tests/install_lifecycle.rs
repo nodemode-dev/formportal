@@ -171,3 +171,105 @@ fn a_broken_policy_file_stops_every_install() {
         });
     }
 }
+
+fn zip_release(server: &Server, name: &str, body: Vec<u8>) -> Artifact {
+    let url = server.put(&format!("/{name}"), body.clone());
+    Artifact { platform: Os::Linux, arch: Arch::X86_64, kind: ArtifactKind::Zip, file: name.into(), url, bytes: body.len() as u64, sha256: sha256(&body), minimum_os: String::new(), signature: None }
+}
+
+#[test]
+fn a_zip_link_that_climbs_out_of_its_folder_is_refused() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("link-escape");
+    let outside = Scratch::new("link-escape-outside");
+    let climb = "../".repeat(32);
+    let target = format!("{climb}{}", outside.path().strip_prefix("/").unwrap_or(outside.path()).display());
+    let artifact = zip_release(&server, "links.zip", zip_with_links(&[("out/planted.txt", b"planted")], &[("out", &target)]));
+    let refused = Portal::new(root.path()).install(APP, Channel::Stable, "1.0.0", &artifact, &mut quiet());
+    assert!(matches!(refused, Err(CoreError::Archive(_))), "{refused:?}");
+    assert!(!outside.path().join("planted.txt").exists(), "nothing is written through the link");
+    assert!(Portal::new(root.path()).state().unwrap().installs.is_empty());
+}
+
+#[test]
+fn a_zip_link_chain_that_climbs_out_is_refused() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("link-chain");
+    let artifact = zip_release(&server, "chain.zip", zip_with_links(&[("up/planted.txt", b"planted")], &[("here", "."), ("up", "here/..")]));
+    let refused = Portal::new(root.path()).install(APP, Channel::Stable, "1.0.0", &artifact, &mut quiet());
+    assert!(matches!(refused, Err(CoreError::Archive(_))), "{refused:?}");
+    assert!(!root.path().join("apps/demo/stable/planted.txt").exists(), "nothing is written above the version folder");
+}
+
+#[test]
+fn a_zip_link_inside_its_folder_still_installs() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("link-inside");
+    let artifact = zip_release(&server, "inside.zip", zip_with_links(&[("Versions/A/lib.txt", b"lib")], &[("Versions/Current", "A"), ("lib.txt", "Versions/Current/lib.txt")]));
+    Portal::new(root.path()).install(APP, Channel::Stable, "1.0.0", &artifact, &mut quiet()).unwrap();
+    #[cfg(unix)]
+    assert_eq!(std::fs::read_to_string(root.path().join("apps/demo/stable/1.0.0/lib.txt")).unwrap(), "lib");
+}
+
+#[test]
+fn a_rollback_holds_the_automatic_update_that_would_undo_it() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("rollback-hold");
+    let portal = Portal::new(root.path());
+    portal.install(APP, Channel::Stable, "1.0.0", &release(&server, "1.0.0"), &mut quiet()).unwrap();
+    portal.install(APP, Channel::Stable, "1.1.0", &release(&server, "1.1.0"), &mut quiet()).unwrap();
+    assert!(portal.preferences().unwrap().automatic(APP, Channel::Stable));
+    portal.rollback(APP, Channel::Stable).unwrap();
+    assert!(!portal.preferences().unwrap().automatic(APP, Channel::Stable), "automatic updates for the app stop after a rollback");
+    portal.rollback(APP, Channel::Stable).unwrap();
+    assert!(!portal.preferences().unwrap().automatic(APP, Channel::Stable), "rolling forward again leaves the person's hold alone");
+}
+
+#[test]
+fn a_version_that_is_not_a_plain_name_installs_nothing() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("bad-version");
+    let artifact = release(&server, "1.0.0");
+    for version in ["../../escape", "..", "", "1.0/../..", "a\\b"] {
+        let refused = Portal::new(root.path()).install(APP, Channel::Stable, version, &artifact, &mut quiet());
+        assert!(matches!(refused, Err(CoreError::Invalid(_))), "{version:?}: {refused:?}");
+    }
+    assert!(!root.path().join("apps").exists());
+}
+
+#[test]
+fn a_rollback_also_clears_update_later() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("rollback-later");
+    let portal = Portal::new(root.path());
+    portal.install(APP, Channel::Stable, "1.0.0", &release(&server, "1.0.0"), &mut quiet()).unwrap();
+    portal.install(APP, Channel::Stable, "1.1.0", &release(&server, "1.1.0"), &mut quiet()).unwrap();
+    portal.set_later(APP, Channel::Stable, true).unwrap();
+    portal.rollback(APP, Channel::Stable).unwrap();
+    assert!(!portal.is_later(APP, Channel::Stable), "a waiting update would undo the rollback");
+}
+
+#[test]
+fn a_dangling_link_inside_its_folder_still_installs() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("link-dangling");
+    let artifact = zip_release(&server, "dangling.zip", zip_with_links(&[("Foo.framework/Versions/A/Foo", b"lib")], &[("Foo.framework/Versions/Current", "A"), ("Foo.framework/Headers", "Versions/Current/Headers")]));
+    Portal::new(root.path()).install(APP, Channel::Stable, "1.0.0", &artifact, &mut quiet()).unwrap();
+}
+
+#[test]
+fn a_link_that_climbs_through_another_link_is_refused() {
+    let _env = no_policy();
+    let server = Server::start();
+    let root = Scratch::new("link-through");
+    let artifact = zip_release(&server, "through.zip", zip_with_links(&[], &[("d1/d2/l1", ".."), ("l2", "d1/d2/l1/../../1.0.0.tmp/secret")]));
+    let refused = Portal::new(root.path()).install(APP, Channel::Stable, "1.0.0", &artifact, &mut quiet());
+    assert!(matches!(refused, Err(CoreError::Archive(_))), "{refused:?}");
+}

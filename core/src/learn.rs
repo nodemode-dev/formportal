@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::fetch_bytes;
 use crate::error::{CoreError, Result};
-use crate::signature::verify;
+use crate::signature::{read_local, verify};
 use crate::Portal;
 
 pub const LEARN_FORMAT: &str = "formai-learn";
@@ -72,7 +72,10 @@ impl Portal {
             }
             body
         } else {
-            fs::read(url)?
+            read_local(url, &keys, allow_unsigned).map_err(|e| match e {
+                CoreError::Signature(why) => CoreError::Invalid(format!("the tutorial index was refused: {why}")),
+                other => other,
+            })?
         };
         let index: LearnIndex = serde_json::from_slice(&body).map_err(|e| CoreError::Invalid(format!("the tutorial index is not valid: {e}")))?;
         if index.format != LEARN_FORMAT {
