@@ -1,3 +1,4 @@
 # Catalogue public keys FormPortal trusts: one base64 Ed25519 public key per line, compiled in.
 # The key pair comes from formai_dev: cd site/backend && python -m app.signing prints FORMAI_CATALOG_KEY
 # (the private seed, which goes only into the site's environment) and the public key, which goes on a line below.
+P3Cgp37EmB2jOBtTWRNFtO8xMq8hsb+Ii3U5+UrYNtY=

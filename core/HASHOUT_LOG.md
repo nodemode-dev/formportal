@@ -5,6 +5,15 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.53.5
 Last updated: 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
 
+## v0.53.5 · the production catalogue key {#catalog-key}
+
+### catalog_keys.txt · trusted
+- refers-to: core/catalog_keys.txt · core/src/signature.rs :: compiled_keys, trusted_keys, verify · core/tests/catalogue_trust.rs
+- kind: decision
+- logged: v0.53.5 · 2026-11-02
+
+formcompiler's production catalogue key pair now exists (`scripts/catalog.py keygen`; the private seed is the formcompiler secret `FORMCOMPILER_CATALOG_KEY`, which signs `catalog/apps.json` in the download store). Its public half, `P3Cgp37EmB2jOBtTWRNFtO8xMq8hsb+Ii3U5+UrYNtY=`, is the one key line in `catalog_keys.txt`, the same line as formMCP's and formskills', so the published catalogue verifies; before, every catalogue was refused with "this build trusts no catalogue key yet" unless `FORMAI_CATALOG_PUBKEY` or an organisation's policy keys added one, and both still can. The file's comment still names formai_dev's signing script, from before formcompiler took the catalogue over; the key itself comes from formcompiler. `catalogue_trust.rs` checks that `compiled_keys()` holds it and that it is a valid Ed25519 point, that the compiled-in list plus a test key verifies the test key's signature, and that the compiled-in keys alone refuse it. The private half is never used.
+
 ## v0.53.5 · the links FormPortal opens {#links}
 
 ### links.rs · may_open

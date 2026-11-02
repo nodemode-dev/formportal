@@ -67,6 +67,26 @@ fn the_compiled_in_keys_are_well_formed() {
     }
 }
 
+const PRODUCTION: &str = "P3Cgp37EmB2jOBtTWRNFtO8xMq8hsb+Ii3U5+UrYNtY=";
+
+#[test]
+fn the_production_catalogue_key_is_compiled_in() {
+    assert!(formportal_core::signature::compiled_keys().iter().any(|k| k == PRODUCTION));
+    let raw = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, PRODUCTION).unwrap();
+    ed25519_dalek::VerifyingKey::from_bytes(&<[u8; 32]>::try_from(raw.as_slice()).unwrap()).expect("a valid Ed25519 public key");
+}
+
+#[test]
+fn the_compiled_in_keys_verify_beside_a_test_key_and_refuse_a_stranger() {
+    let key = signing_key(7);
+    let body = body();
+    let signature = sign(&key, &body);
+    let mut trusted = formportal_core::signature::compiled_keys();
+    trusted.push(public_key(&key));
+    verify(&body, &signature, &trusted).unwrap();
+    assert!(matches!(verify(&body, &signature, &formportal_core::signature::compiled_keys()), Err(CoreError::Signature(_))));
+}
+
 #[test]
 fn the_portal_loads_a_signed_catalogue_and_refuses_a_tampered_one() {
     let _env = env_lock();
