@@ -369,12 +369,10 @@ fn still_open(product: String, channel: Channel) -> Vec<u32> {
     hub.running(&product, channel).into_iter().filter(|r| current.as_ref().map(|c| !r.path.starts_with(c)).unwrap_or(true)).map(|r| r.pid).collect()
 }
 
-const WEB: [&str; 3] = ["https://github.com/nodemode-dev/", "https://formai.dev/", "https://docs.formai.dev/"];
-
 #[tauri::command]
 fn open_web(url: String) -> Result<(), String> {
-    if !WEB.iter().any(|allowed| url.starts_with(allowed)) || url.chars().any(|c| c.is_whitespace() || c == '"') {
-        return Err("FormPortal opens only formai.dev and the Form family's repositories".to_string());
+    if !formportal_core::links::may_open(&url) {
+        return Err("FormPortal opens only formai.dev, formai.studio's download page, GitHub sign-in, the Form family's repositories and your shared libraries".to_string());
     }
     #[cfg(target_os = "macos")]
     let mut command = std::process::Command::new("open");

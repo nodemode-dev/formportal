@@ -6,6 +6,7 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 
 - FormPortal's own updates are read from the public download store, `https://dl.formai.studio/formportal/updates/latest.json`, and point at the release files there, instead of formcompiler's private release page.
 - Links to the Form repositories (Guide, What changed, Report a problem, the app pages and the catalogue) point at the `nodemode-dev` organisation, and FormPortal opens those addresses.
+- FormPortal opens every link it shows: "Every release" on an app page (formai.studio's download page), GitHub's sign-in page, your shared libraries and published files, your portfolio, and a maker's GitHub Sponsors page. Before, the desktop app refused them. Only https addresses on that list open.
 
 ## v0.53.4 · 2026-10-30
 

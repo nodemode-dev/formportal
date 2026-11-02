@@ -7,12 +7,19 @@ Last updated: 2026-11-02 · updates from the public download store; 2026-10-30 �
 
 ## v0.53.5 · updates from the public download store {#store}
 
+### main.rs · open_web asks the engine which links it may open
+- refers-to: src/main.rs :: open_web · ../core/src/links.rs :: may_open
+- kind: fix
+- logged: v0.53.5 · 2026-11-02
+
+`open_web` checked a three-entry `WEB` list (the family's GitHub organisation, formai.dev, docs.formai.dev), which refused links the interface itself shows: every app page's "Every release" (`https://formai.studio/download/`), the sign-in page GitHub's device flow names (`https://github.com/login/device`), the share dialog's library and published-file links and the portfolio link (the person's own `formportal-library-*` and `formportal-public` repositories), and a maker's GitHub Sponsors page. The list moved to `formportal_core::links` so a test can reach it (the shell is not tested in CI), and `open_web` calls `may_open`. See core's log for the rules.
+
 ### tauri.conf.json, setup/package_release.py · dl.formai.studio
-- refers-to: tauri.conf.json :: plugins.updater.endpoints · setup/package_release.py :: STORE, finish · src/main.rs :: WEB · cli/tests/store_addresses.rs
+- refers-to: tauri.conf.json :: plugins.updater.endpoints · setup/package_release.py :: STORE, finish · cli/tests/store_addresses.rs
 - kind: decision
 - logged: v0.53.5 · 2026-11-02
 
-The updater read `latest.json` from the rolling `formportal-updates` release on formcompiler's GitHub page, and `package_release.py --finish` wrote download addresses on the `formportal-v<version>` release there. formcompiler is private, so neither ever served an installed copy. formcompiler's feed copies every release's files to its download store at `<base>/<app>/<version>/<file>` and the stable feed to `<base>/<app>/updates/latest.json` (formcompiler `docs/REGISTRY.md`, `updater.tauri`; `docs/GO_PUBLIC.md` section 4). The endpoint is now `https://dl.formai.studio/formportal/updates/latest.json`, and `RELEASES` became `STORE = https://dl.formai.studio/formportal`, so each platform URL is `<STORE>/<version>/formportal-<version>-<os>-<arch>-update.<ext>`, the file the feed copies beside the zips. formcompiler's `feed.py public` rewrite only touches GitHub release URLs, so it leaves these as they are; with `FORMCOMPILER_PUBLIC_BASE` set its `tauri_config.py` writes the same endpoint at build time. `REPOSITORY` (the notes link and `manifest.json`) and `WEB`, the addresses `open_web` allows, follow the repositories to `github.com/nodemode-dev/`. `store_addresses.rs` pins the endpoint, `STORE` and the URL shape.
+The updater read `latest.json` from the rolling `formportal-updates` release on formcompiler's GitHub page, and `package_release.py --finish` wrote download addresses on the `formportal-v<version>` release there. formcompiler is private, so neither ever served an installed copy. formcompiler's feed copies every release's files to its download store at `<base>/<app>/<version>/<file>` and the stable feed to `<base>/<app>/updates/latest.json` (formcompiler `docs/REGISTRY.md`, `updater.tauri`; `docs/GO_PUBLIC.md` section 4). The endpoint is now `https://dl.formai.studio/formportal/updates/latest.json`, and `RELEASES` became `STORE = https://dl.formai.studio/formportal`, so each platform URL is `<STORE>/<version>/formportal-<version>-<os>-<arch>-update.<ext>`, the file the feed copies beside the zips. formcompiler's `feed.py public` rewrite only touches GitHub release URLs, so it leaves these as they are; with `FORMCOMPILER_PUBLIC_BASE` set its `tauri_config.py` writes the same endpoint at build time. `REPOSITORY` (the notes link and `manifest.json`) follows the repository to `github.com/nodemode-dev/`. `store_addresses.rs` pins the endpoint, `STORE` and the URL shape.
 
 ## v0.53.4 · the build scripts for formcompiler {#fc-build}
 
