@@ -66,7 +66,7 @@ const params = new URLSearchParams(window.location.search);
 const sampleTutorial = {
   id: "formcut-first-cut", product: "formcut", title: "Make your first cut", summary: "A sample of an app's tutorial from the tutorial index: import a clip, trim it and export.", minutes: 5, level: "beginner",
   steps: [
-    { title: "Import a clip", body: "Sample step from the browser preview.", route: null, url: "https://github.com/nodemode-ai/formcut#readme" },
+    { title: "Import a clip", body: "Sample step from the browser preview.", route: null, url: "https://github.com/nodemode-dev/formcut#readme" },
     { title: "Trim it", body: "Sample step from the browser preview.", route: null, url: null },
     { title: "Export", body: "Sample step from the browser preview.", route: null, url: null },
   ],

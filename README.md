@@ -3,7 +3,7 @@
 <p align="center"><b>One place to install, open, update and roll back every Form app: no account, no background process, GPL-3.0.</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v0.53.4-eef0f4" alt="version v0.53.4" />
+  <img src="https://img.shields.io/badge/version-v0.53.5-eef0f4" alt="version v0.53.5" />
   <img src="https://img.shields.io/badge/Rust-stable-B7410E" alt="Rust stable" />
   <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 20.19+" />
@@ -13,7 +13,7 @@
 
 <p align="center"><img src="assets/formportal_linux.png" alt="FormPortal on Linux" width="760" /></p>
 
-FormPortal reads the signed family catalogue formcompiler (`nodemode-ai/formcompiler`, where every Form app is released) publishes and offers this computer the right build of every Form app: FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormPDF, FormTxt, FormCel, FormRef, FormSculpt, Format and the apps on the way, plus the family tools formMCP, formskills and FormTray. It checks each download's SHA-256 before unpacking, installs per user with no administrator (zip, AppImage, deb, rpm, dmg, msi or NSIS), keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build. The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family too.
+FormPortal reads the signed family catalogue formcompiler (`nodemode-dev/formcompiler`, where every Form app is released) publishes and offers this computer the right build of every Form app: FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, Form.md, FormDAM, FormSlide, FormPDF, FormTxt, FormCel, FormRef, FormSculpt, Format and the apps on the way, plus the family tools formMCP, formskills and FormTray. It checks each download's SHA-256 before unpacking, installs per user with no administrator (zip, AppImage, deb, rpm, dmg, msi or NSIS), keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build. The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family too.
 
 **Stack:** Rust (`formportal-core`, `formportal-cli`) · Tauri 2 shell · vanilla TypeScript + Vite interface · **Scale:** 33 MCP tools, 20 apps from one registry, one shared tokens file, zero runtime dependencies in the interface
 

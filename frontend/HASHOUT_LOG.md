@@ -2,8 +2,16 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.51.0
-Last updated: 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.53.5
+Last updated: 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.53.5 · repository links in nodemode-dev {#nodemode-dev}
+
+- refers-to: index.html :: help links · vite.config.ts :: repo · src/bridge/fixture.ts · ../catalog/products.json · ../catalog/fixtures/apps.json, extensions.json
+- kind: decision
+- logged: v0.53.5 · 2026-11-02
+
+The Form repositories moved from `nodemode-ai` to `nodemode-dev`. The Guide, What changed, Report a problem and Ask the community links, the app pages' repository links (`repo` in `vite.config.ts` now matches `https://github.com/nodemode-dev/`, the organisation formcompiler's registry writes into the catalogue) and the browser preview's fixtures say so; the shell's `WEB` list allows the new prefix. `catalog/products.json` and the fixtures are copies of formai_dev's contract, so formai_dev's copy should take the same change; the fixture's formai_dev entry keeps its old address, since that repository did not move.
 
 ## v0.53.1 · vite 8.3.5, zero npm audit findings {#vite-audit}
 

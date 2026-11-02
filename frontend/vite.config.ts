@@ -51,7 +51,7 @@ const tile = (p: App, size = "") =>
     : `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
 const words = (p: App) => STATUS[p.status ?? "available"];
 const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.kind}`.toLowerCase());
-const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-ai/") ? p.repository.replace(/\/$/, "") : null);
+const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-dev/") ? p.repository.replace(/\/$/, "") : null);
 const web = (href: string, text: string) => `<a class="link" href="${esc(href)}" data-web>${text}</a>`;
 const help = (p: App) => {
   const r = repo(p);

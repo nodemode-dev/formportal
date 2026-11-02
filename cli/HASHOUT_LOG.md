@@ -2,8 +2,16 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.3
-Last updated: 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.53.5
+Last updated: 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.53.5 · the default catalogue pinned to the download store {#store}
+
+- refers-to: cli/src/ops.rs :: DEFAULT_SOURCE · frontend/src/bridge/tauri.ts :: DEFAULT_CATALOG · cli/tests/store_addresses.rs
+- kind: decision
+- logged: v0.53.5 · 2026-11-02
+
+`DEFAULT_SOURCE` was already `https://dl.formai.studio/catalog/apps.json`, the address formcompiler's feed copies the signed catalogue to, with `apps.json.sig` beside it (`<source>.sig`). formMCP and formskills read formcompiler's private release page until their own fixes; nothing here pinned FormPortal's address. `store_addresses.rs` now checks the default, its signature address, and that the window's `DEFAULT_CATALOG` is the same string. `FORMPORTAL_CATALOG` and the window's catalogue setting still override it.
 
 ## unreleased · an agent cannot turn the signature check off {#unsigned}
 
