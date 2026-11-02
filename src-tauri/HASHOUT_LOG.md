@@ -2,8 +2,17 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.4
-Last updated: 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.53.5
+Last updated: 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.53.5 · updates from the public download store {#store}
+
+### tauri.conf.json, setup/package_release.py · dl.formai.studio
+- refers-to: tauri.conf.json :: plugins.updater.endpoints · setup/package_release.py :: STORE, finish · src/main.rs :: WEB · cli/tests/store_addresses.rs
+- kind: decision
+- logged: v0.53.5 · 2026-11-02
+
+The updater read `latest.json` from the rolling `formportal-updates` release on formcompiler's GitHub page, and `package_release.py --finish` wrote download addresses on the `formportal-v<version>` release there. formcompiler is private, so neither ever served an installed copy. formcompiler's feed copies every release's files to its download store at `<base>/<app>/<version>/<file>` and the stable feed to `<base>/<app>/updates/latest.json` (formcompiler `docs/REGISTRY.md`, `updater.tauri`; `docs/GO_PUBLIC.md` section 4). The endpoint is now `https://dl.formai.studio/formportal/updates/latest.json`, and `RELEASES` became `STORE = https://dl.formai.studio/formportal`, so each platform URL is `<STORE>/<version>/formportal-<version>-<os>-<arch>-update.<ext>`, the file the feed copies beside the zips. formcompiler's `feed.py public` rewrite only touches GitHub release URLs, so it leaves these as they are; with `FORMCOMPILER_PUBLIC_BASE` set its `tauri_config.py` writes the same endpoint at build time. `REPOSITORY` (the notes link and `manifest.json`) and `WEB`, the addresses `open_web` allows, follow the repositories to `github.com/nodemode-dev/`. `store_addresses.rs` pins the endpoint, `STORE` and the URL shape.
 
 ## v0.53.4 · the build scripts for formcompiler {#fc-build}
 

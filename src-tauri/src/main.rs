@@ -369,7 +369,7 @@ fn still_open(product: String, channel: Channel) -> Vec<u32> {
     hub.running(&product, channel).into_iter().filter(|r| current.as_ref().map(|c| !r.path.starts_with(c)).unwrap_or(true)).map(|r| r.pid).collect()
 }
 
-const WEB: [&str; 3] = ["https://github.com/nodemode-ai/", "https://formai.dev/", "https://docs.formai.dev/"];
+const WEB: [&str; 3] = ["https://github.com/nodemode-dev/", "https://formai.dev/", "https://docs.formai.dev/"];
 
 #[tauri::command]
 fn open_web(url: String) -> Result<(), String> {

@@ -5,7 +5,7 @@ description: Drive FormPortal, the Form family's app portal (a Creative Cloud de
 
 # formportal harness
 
-FormPortal installs and looks after the Form family's desktop apps on this computer. It reads a signed catalogue that formcompiler (`nodemode-ai/formcompiler`) publishes, offers this computer the release that fits its system and processor, verifies every download's SHA-256 against the catalogue before unpacking it, installs per user with no administrator, keeps the version it replaced so one step back is always possible, and keeps a beta beside the stable build. No account, no background process.
+FormPortal installs and looks after the Form family's desktop apps on this computer. It reads a signed catalogue that formcompiler (`nodemode-dev/formcompiler`) publishes, offers this computer the release that fits its system and processor, verifies every download's SHA-256 against the catalogue before unpacking it, installs per user with no administrator, keeps the version it replaced so one step back is always possible, and keeps a beta beside the stable build. No account, no background process.
 
 Its MCP server, named `formportal`, is the same engine as the window (`formportal-core`), so what an agent installs is what the person sees in FormPortal, and the reverse.
 

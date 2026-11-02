@@ -21,7 +21,7 @@
       "author": "formcut",
       "description": "A warm grade with a little dust and a soft vignette.",
       "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/nodemode-ai/formcut/main/.docs/registry/packages/warm-dust.zip",
+      "url": "https://raw.githubusercontent.com/nodemode-dev/formcut/main/.docs/registry/packages/warm-dust.zip",
       "sha256": "36f7b34850f4921d7315b3b4c759815ac0472669354074946539660118573e28",
       "licence": "GPL-3.0-only",
       "minimum_app": "2.6.0",

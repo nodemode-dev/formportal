@@ -7,4 +7,4 @@ FormPortal is the Form family's app portal: one window that installs, opens, upd
 - [Agents](Agents)
 - [Releasing](Releasing)
 
-FormPortal reads the catalogue formcompiler (`nodemode-ai/formcompiler`) publishes beside every Form app's releases. The apps themselves live in their own repositories and stay downloadable on their own; FormPortal is never required to run one.
+FormPortal reads the catalogue formcompiler (`nodemode-dev/formcompiler`) publishes beside every Form app's releases. The apps themselves live in their own repositories and stay downloadable on their own; FormPortal is never required to run one.

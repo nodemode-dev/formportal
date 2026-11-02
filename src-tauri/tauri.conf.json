@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "FormPortal",
-  "version": "0.53.4",
+  "version": "0.53.5",
   "identifier": "dev.formai.portal",
   "build": {
     "frontendDist": "../frontend/dist",
@@ -28,7 +28,7 @@
   "plugins": {
     "updater": {
       "pubkey": "",
-      "endpoints": ["https://github.com/nodemode-ai/formcompiler/releases/download/formportal-updates/latest.json"]
+      "endpoints": ["https://dl.formai.studio/formportal/updates/latest.json"]
     },
     "deep-link": {
       "desktop": {

@@ -1,6 +1,6 @@
 # formportal
 
-FormPortal, the Form family's app portal: it installs, opens, updates, rolls back and removes the Form apps from the signed catalogue formcompiler (`nodemode-ai/formcompiler`) publishes. Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
+FormPortal, the Form family's app portal: it installs, opens, updates, rolls back and removes the Form apps from the signed catalogue formcompiler (`nodemode-dev/formcompiler`) publishes. Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
 
 ## Two kinds of work
 

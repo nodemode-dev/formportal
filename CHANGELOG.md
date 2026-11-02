@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.53.5 · 2026-11-02
+
+- FormPortal's own updates are read from the public download store, `https://dl.formai.studio/formportal/updates/latest.json`, and point at the release files there, instead of formcompiler's private release page.
+- Links to the Form repositories (Guide, What changed, Report a problem, the app pages and the catalogue) point at the `nodemode-dev` organisation, and FormPortal opens those addresses.
+
 ## v0.53.4 · 2026-10-30
 
 - The Windows release builds only the NSIS setup, the installer it ships; `FORMPORTAL_BUNDLES=nsis,msi` still builds the msi for a managed rollout. Nothing in the app changed.
