@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.54.1 · 2026-11-03
+
+- The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only): the bundle sets `publisher`, `copyright`, `license` and `licenseFile`, so the macOS About panel, the Windows file properties and installer, and the Linux packages say the same. No change to the app itself.
+
 ## v0.54.0 · 2026-11-03
 
 - Every page scrolls again. The main column grew to the height of its content instead of the window, so the window clipped it and nothing could scroll.
