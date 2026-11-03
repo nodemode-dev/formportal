@@ -98,7 +98,7 @@ def finish(out: Path) -> dict:
             asset["bytes"], asset["sha256"] = shipped.stat().st_size, sha256(shipped)
     for notice, name in (("LICENSE", "LICENSE.txt"), ("LICENSES.md", "LICENSES.md")):
         shutil.copyfile(HUB / notice, out / name)
-    commit =subprocess.run(["git", "rev-parse", "HEAD"], cwd=HUB, capture_output=True, text=True).stdout.strip()
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=HUB, capture_output=True, text=True).stdout.strip()
     manifest = {
         "name": "formportal",
         "version": version(),

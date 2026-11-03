@@ -5,7 +5,7 @@
 3. formcompiler (`nodemode-dev/formcompiler`) picks the branch up on its next hourly watch run, or at once when its watch is run by hand. Once CI has passed on that commit, it builds macOS (Apple silicon and Intel), Linux (AppImage, deb, rpm on x86_64 and arm64) and Windows (NSIS on x64 and arm64), copies the installers as `formportal-[version]-[system]-[arch].[dmg|AppImage|deb|rpm]` and `formportal-[version]-windows-[arch]-setup.exe` with `manifest.json` and `SHA256SUMS` through `setup/package_release.py`, and drafts release `formportal-v[version]` on its own release page.
 4. Review the draft and publish it there. formcompiler's signed family catalogue, the one FormPortal reads by default, then lists it with the sizes and hashes from its `manifest.json`.
 
-macOS builds are ad hoc signed and not notarised, so the first start goes through Privacy and Security, Open Anyway. Windows builds are not code signed yet.
+macOS disk images are signed and notarised once formcompiler's Apple identity is set; until then they are ad hoc signed and the first start goes through Privacy and Security, Open Anyway. Windows builds are not code signed yet.
 
 ## Targets
 
