@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.54.1 · 2026-11-03
+
+- The app icon is the Form family's unified icon on the desktop and in the browser tab. The repo now has a CODEOWNERS file. Nothing else in the app changed.
+
 ## v0.54.0 · 2026-11-03
 
 - Every page scrolls again. The main column grew to the height of its content instead of the window, so the window clipped it and nothing could scroll.
