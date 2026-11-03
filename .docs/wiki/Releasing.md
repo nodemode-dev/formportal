@@ -2,7 +2,7 @@
 
 1. Bump every version site in one commit (see `.docs/BRANCHING.md`).
 2. Push a branch `compile_v[version]` cut from that commit (`git push origin HEAD:compile_v0.44.3`). CI runs the checks on it; FormPortal builds nothing in this repository.
-3. formcompiler (`nodemode-dev/formcompiler`) picks the branch up on its next 8-hourly watch run, or at once when its watch is run by hand. Once CI has passed on that commit, it builds macOS (Apple silicon), Linux (AppImage, deb) and Windows (NSIS), packs `formportal-[version]-[system]-[arch].zip` files with `manifest.json` and `SHA256SUMS` through `setup/package_release.py`, and drafts release `formportal-v[version]` on its own release page.
+3. formcompiler (`nodemode-dev/formcompiler`) picks the branch up on its next hourly watch run, or at once when its watch is run by hand. Once CI has passed on that commit, it builds macOS (Apple silicon and Intel), Linux (AppImage, deb, rpm on x86_64 and arm64) and Windows (NSIS on x64 and arm64), copies the installers as `formportal-[version]-[system]-[arch].[dmg|AppImage|deb|rpm]` and `formportal-[version]-windows-[arch]-setup.exe` with `manifest.json` and `SHA256SUMS` through `setup/package_release.py`, and drafts release `formportal-v[version]` on its own release page.
 4. Review the draft and publish it there. formcompiler's signed family catalogue, the one FormPortal reads by default, then lists it with the sizes and hashes from its `manifest.json`.
 
 macOS builds are ad hoc signed and not notarised, so the first start goes through Privacy and Security, Open Anyway. Windows builds are not code signed yet.
