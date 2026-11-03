@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.54.0 · 2026-11-03
+
+- Every page scrolls again. The main column grew to the height of its content instead of the window, so the window clipped it and nothing could scroll.
+- The release ships the installers as they are, with no zip around them: `formportal-[version]-macos-[arch].dmg`, `formportal-[version]-windows-[arch]-setup.exe`, and `.AppImage`, `.deb` and the new `.rpm` for Linux. The licence texts sit beside them as `LICENSE.txt` and `LICENSES.md`.
+- On Linux and Windows the installer is also the update file, so the separate `-update.AppImage` and `-update.exe` copies are gone. macOS keeps `-update.app.tar.gz`.
+
 ## v0.53.5 · 2026-11-02
 
 - FormPortal's own updates are read from the public download store, `https://dl.formai.studio/formportal/updates/latest.json`, and point at the release files there, instead of formcompiler's private release page.

@@ -136,6 +136,7 @@ button {
   block-size: 100%;
   display: grid;
   grid-template-columns: var(--side-w) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .side {
@@ -233,6 +234,7 @@ button {
 
 .main {
   min-inline-size: 0;
+  min-block-size: 0;
   display: grid;
   grid-template-rows: var(--top-h) minmax(0, 1fr);
 }

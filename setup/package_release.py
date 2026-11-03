@@ -5,7 +5,6 @@ import platform as host
 import shutil
 import subprocess
 import sys
-import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -34,42 +33,38 @@ def floor(system: str) -> str:
     return f"{name} {release}".strip() or "Linux"
 
 
-def members(system: str, bundle: Path) -> list[tuple[Path, str]]:
-    if system == "linux":
-        found = sorted(bundle.glob("appimage/*.AppImage"))
-        return [(found[0], "FormPortal.AppImage")] if found else [(p, p.name) for p in sorted(bundle.glob("deb/*.deb"))]
-    if system == "windows":
-        return [(p, p.name) for p in sorted(bundle.glob("nsis/*.exe"))]
-    return []
+INSTALLERS = {
+    "macos": [("dmg", "dmg/*.dmg", ".dmg")],
+    "linux": [("appimage", "appimage/*.AppImage", ".AppImage"), ("deb", "deb/*.deb", ".deb"), ("rpm", "rpm/*.rpm", ".rpm")],
+    "windows": [("nsis", "nsis/*-setup.exe", "-setup.exe")],
+}
 
 
-def pack(system: str, arch: str, bundle: Path, out: Path) -> dict:
+def installers(system: str, arch: str, bundle: Path) -> list[tuple[Path, str, str]]:
+    found = []
+    for kind, pattern, suffix in INSTALLERS[system]:
+        matches = sorted(bundle.glob(pattern))
+        if matches:
+            found.append((matches[0], f"formportal-{version()}-{system}-{arch}{suffix}", kind))
+    return found
+
+
+def pack(system: str, arch: str, bundle: Path, out: Path) -> list[dict]:
     out.mkdir(parents=True, exist_ok=True)
-    name = f"formportal-{version()}-{system}-{arch}.zip"
-    target = out / name
-    target.unlink(missing_ok=True)
-    if system == "macos":
-        apps = sorted(bundle.glob("macos/*.app"))
-        if not apps:
-            sys.exit(f"no .app under {bundle / 'macos'}")
-        subprocess.run(["ditto", "-c", "-k", "--keepParent", str(apps[0]), str(target)], check=True)
-    else:
-        files = members(system, bundle)
-        if not files:
-            sys.exit(f"nothing to pack for {system} under {bundle}")
-        with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:
-            for path, arcname in files:
-                info = zipfile.ZipInfo.from_file(path, arcname)
-                info.compress_type = zipfile.ZIP_DEFLATED
-                with path.open("rb") as source, archive.open(info, "w") as sink:
-                    shutil.copyfileobj(source, sink)
-    with zipfile.ZipFile(target, "a", zipfile.ZIP_DEFLATED) as archive:
-        for notice in ("LICENSE", "LICENSES.md"):
-            archive.write(HUB / notice, notice)
-    entry = {"platform": system, "arch": arch, "file": name, "bytes": target.stat().st_size, "sha256": sha256(target), "minimum_os": floor(system)}
-    (out / f"manifest-{system}-{arch}.json").write_text(json.dumps(entry, indent=2) + "\n", encoding="utf-8")
-    updater(system, arch, bundle, out)
-    return entry
+    files = installers(system, arch, bundle)
+    if not files:
+        sys.exit(f"no installer for {system} under {bundle}")
+    entries, shipped = [], {}
+    for source, name, kind in files:
+        target = out / name
+        target.unlink(missing_ok=True)
+        shutil.copyfile(source, target)
+        shipped[source.resolve()] = name
+        entry = {"platform": system, "arch": arch, "kind": kind, "file": name, "bytes": target.stat().st_size, "sha256": sha256(target), "minimum_os": floor(system)}
+        (out / f"manifest-{system}-{arch}-{kind}.json").write_text(json.dumps(entry, indent=2) + "\n", encoding="utf-8")
+        entries.append(entry)
+    updater(system, arch, bundle, out, shipped)
+    return entries
 
 
 UPDATER = {"macos": ("macos", "*.app.tar.gz"), "linux": ("appimage", "*.AppImage"), "windows": ("nsis", "*.exe")}
@@ -77,15 +72,17 @@ TARGET = {"macos": "darwin", "linux": "linux", "windows": "windows"}
 ARCH = {"arm64": "aarch64", "x86_64": "x86_64"}
 
 
-def updater(system: str, arch: str, bundle: Path, out: Path) -> None:
+def updater(system: str, arch: str, bundle: Path, out: Path, shipped: dict[Path, str]) -> None:
     folder, pattern = UPDATER[system]
     for found in sorted((bundle / folder).glob(pattern)):
         signature = found.with_name(found.name + ".sig")
         if not signature.is_file():
             continue
-        suffix = ".app.tar.gz" if found.name.endswith(".app.tar.gz") else found.suffix
-        name = f"formportal-{version()}-{system}-{arch}-update{suffix}"
-        shutil.copyfile(found, out / name)
+        name = shipped.get(found.resolve())
+        if not name:
+            suffix = ".app.tar.gz" if found.name.endswith(".app.tar.gz") else found.suffix
+            name = f"formportal-{version()}-{system}-{arch}-update{suffix}"
+            shutil.copyfile(found, out / name)
         part = {"key": f"{TARGET[system]}-{ARCH[arch]}", "file": name, "signature": signature.read_text(encoding="utf-8").strip()}
         (out / f"updater-{system}-{arch}.json").write_text(json.dumps(part, indent=2) + "\n", encoding="utf-8")
         return
@@ -95,6 +92,12 @@ def finish(out: Path) -> dict:
     assets = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(out.glob("manifest-*.json"))]
     if not assets:
         sys.exit(f"no manifest-*.json under {out}")
+    for asset in assets:
+        shipped = out / asset["file"]
+        if shipped.is_file():
+            asset["bytes"], asset["sha256"] = shipped.stat().st_size, sha256(shipped)
+    for notice, name in (("LICENSE", "LICENSE.txt"), ("LICENSES.md", "LICENSES.md")):
+        shutil.copyfile(HUB / notice, out / name)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=HUB, capture_output=True, text=True).stdout.strip()
     manifest = {
         "name": "formportal",
@@ -121,7 +124,7 @@ def finish(out: Path) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Pack a built FormPortal bundle as a release zip, or finish a release from packed parts.")
+    parser = argparse.ArgumentParser(description="Copy a built FormPortal bundle's installers into the release folder, or finish a release from the copied parts.")
     parser.add_argument("--platform", choices=["macos", "windows", "linux"])
     parser.add_argument("--arch", choices=["arm64", "x86_64"])
     parser.add_argument("--bundle-dir", default=str(HUB / "target" / "release" / "bundle"))

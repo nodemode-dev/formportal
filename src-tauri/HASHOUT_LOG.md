@@ -2,8 +2,23 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.54.0
+Last updated: 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.54.0 · the release ships the installers {#installers}
+
+### setup/package_release.py · installers, not zips
+- refers-to: setup/package_release.py :: INSTALLERS, installers, pack, updater, finish · setup/build_linux_app
+- kind: decision
+- logged: v0.54.0 · 2026-11-03
+
+The owner asked for the native installers as they are: a macOS download was a zip of the `.app` (made with `ditto`), and Windows and Linux were zips around the NSIS setup or the AppImage. `pack` now copies each installer the build made into the release folder under one naming scheme, `formportal-<version>-<os>-<arch><suffix>`: `.dmg` on macOS, `-setup.exe` (NSIS) on Windows, `.AppImage`, `.deb` and `.rpm` on Linux (`build_linux_app` adds `rpm`; Tauri writes it without rpmbuild, as formtray's releases on the same runners show). Each installer gets its own manifest part, `manifest-<os>-<arch>-<kind>.json`, with a new `kind` field; the old `FormPortal.AppImage` inner name and the LICENSE and LICENSES.md copies inside every zip are gone, and `--finish` writes `LICENSE.txt` and `LICENSES.md` once beside the files. formcompiler's `catalog.py classify` already reads every one of these names (dmg, nsis, appimage, deb, rpm, with the arch token), so the catalogue lists the installers with no change there.
+
+On Linux and Windows the updater bundle is the installer itself (the AppImage and the NSIS setup, each with its `.sig`), so `updater` now points latest.json at the shipped installer instead of copying the same bytes again as `-update.AppImage` and `-update.exe` (about 80 MB less per Linux platform, and no second AppImage for the catalogue to mistake for an installer). macOS keeps its separate `-update.app.tar.gz`. `STORE` and the URL f-string are unchanged, as `cli/tests/store_addresses.rs` requires.
+
+`finish` recomputes each asset's size and SHA-256 from the file in `--out` when it is there. formcompiler notarizes and staples the macOS disk image after the post-build step that copies it, and stapling changes its bytes, so the hash taken at copy time would not match the published file. It runs in formcompiler's assemble job over the staged files, which are the published ones.
+
+Not done: a Flatpak (needs its own manifest and builder). If formcompiler ever signs a Windows setup after the build (only when Tauri did not sign it during the build), the updater `.sig` no longer matches; the same was true of the old `-update.exe` copy.
 
 ## v0.53.5 · updates from the public download store {#store}
 
