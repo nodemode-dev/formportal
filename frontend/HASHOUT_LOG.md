@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.54.0
+Last updated: 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.54.0 · the stage scrolls again {#stage-scroll}
+
+### src/styles/main.css · `.main` may shrink, `.shell` has one bounded row
+- refers-to: src/styles/main.css :: `.shell`, `.main`, `.stage`
+- kind: fix
+- logged: v0.54.0 · 2026-11-03
+
+Nothing in the window scrolled. `.main` became a grid in v0.35.0 (`grid-template-rows: var(--top-h) minmax(0, 1fr)`), and as a grid item of `.shell` it kept the default `min-block-size: auto`, which for a grid container is its content's height: the top bar plus every pane in `.stage`. `.main` grew past the window (2134 px in a 700 px window, measured in Chromium on the built interface), `.stage` grew with it, so `overflow-y: auto` never had anything to scroll, and `body { overflow: hidden }` clipped the rest. `.main` now sets `min-block-size: 0`, and `.shell` names its single row `minmax(0, 1fr)` instead of leaving it an implicit auto track, so both columns are bounded by the window whatever the engine does with intrinsic grid sizes. Measured after the change at 700 px and 420 px, with the CPU throttled 4x and a slow network, across a hard reload: `.main` equals the window from the first sample, `.stage` is the window less the top bar, a wheel scrolls `.stage`, and the document itself still does not scroll. WebKit was not available here; the rule is the same in every engine, but the desktop window was not opened.
 
 ## v0.53.5 · repository links in nodemode-dev {#nodemode-dev}
 
