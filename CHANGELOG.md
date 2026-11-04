@@ -4,7 +4,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 
 ## v0.54.1 · 2026-11-03
 
-- The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only): the bundle sets `publisher`, `copyright`, `license` and `licenseFile`, so the macOS About panel, the Windows file properties and installer, and the Linux packages say the same. No change to the app itself.
+- The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only): the bundle sets `publisher`, `copyright`, `license` and `licenseFile`, so the macOS About panel, the Windows file properties and installer, and the Linux packages say the same.
+- The built-in app list names FormSlide's real identifier (`ai.nodemode.formdeck`) and its repository (`nodemode-dev/formdeck`); it named a `formslide` repository that does not exist.
 
 ## v0.54.0 · 2026-11-03
 
