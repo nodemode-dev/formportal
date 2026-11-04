@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.54.2 · 2026-11-04
+
+- The README is rewritten in the Form family layout, with screenshots of the app library, Home and Files. Nothing in the app changed.
+
 ## v0.54.1 · 2026-11-03
 
 - The app icon is the Form family's unified icon on the desktop and in the browser tab. The repo now has a CODEOWNERS file. Nothing else in the app changed.
