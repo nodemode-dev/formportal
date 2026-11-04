@@ -5,6 +5,15 @@ Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-cor
 Current build version: v0.53.5
 Last updated: 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
 
+## v0.54.1 · FormSlide's identifier and repository {#formslide}
+
+### catalog/products.json · formslide
+- refers-to: catalog/products.json :: formslide.identifier, formslide.repository
+- kind: decision
+- logged: v0.54.1 · 2026-11-04
+
+The launch sweep (2026-11-04): the compiled-in entry for FormSlide named `dev.formai.formslide` and `https://github.com/nodemode-dev/formslide`, a repository that does not exist. The app is formdeck: its bundle identifier is `ai.nodemode.formdeck` (its `tauri.conf.json`, formcompiler's `apps/formdeck.json` and the live catalogue agree) and its source is `nodemode-dev/formdeck`, so the offline app list and the readme, issues and discussions links now name those. The id stays `formslide`, the catalogue's id. Other entries whose identifier differs from formcompiler's registry (formmd, formdam, formdesign, formlit, formpath, formsurface, formvfx, formweb) are left for their own releases; installs read the live catalogue, which takes identifiers from the registry.
+
 ## v0.53.5 · the production catalogue key {#catalog-key}
 
 ### catalog_keys.txt · trusted
