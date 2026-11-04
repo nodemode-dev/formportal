@@ -1,6 +1,6 @@
 [package]
 name = "formportal-cli"
-version = "0.54.0"
+version = "0.54.1"
 description = "FormPortal's command line and MCP server: the same core as the window, for terminals and agents"
 authors = ["nodemode-ai"]
 license = "GPL-3.0-only"
