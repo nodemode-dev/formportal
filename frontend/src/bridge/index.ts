@@ -6,6 +6,7 @@ export interface Bridge {
   source: Source;
   platform(): Promise<Platform>;
   catalog(): Promise<Catalog>;
+  catalogKept(): Promise<Catalog | null>;
   extensions(): Promise<ExtensionsView>;
   installExtension(target: { id?: string; path?: string }): Promise<InstalledExtension>;
   removeExtension(product: string, id: string): Promise<void>;

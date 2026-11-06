@@ -1,5 +1,7 @@
 import type { MediaItem, SavedMedia } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
+import { t } from "../../i18n/index.ts";
+import { storeNote } from "../storenote.ts";
 
 const KIND: Record<string, string> = { image: "Image", video: "Video", audio: "Audio", template: "Template" };
 
@@ -72,6 +74,7 @@ export const stock: Extension = {
     };
 
     engine.on("media", ({ view }) => {
+      storeNote(pane, view.store, t("Photos and templates"));
       const items = view.index?.items ?? [];
       items.forEach((item, i) => card(item, view.credits[i] ?? ""));
       const saved = new Set(view.saved.map((s) => s.id));

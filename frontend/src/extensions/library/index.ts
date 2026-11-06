@@ -2,6 +2,7 @@ import { versionNewer } from "../../engine/index.ts";
 import { t } from "../../i18n/index.ts";
 import type { ExtensionEntry, InstalledExtension } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
+import { storeNote } from "../storenote.ts";
 
 const PERMISSIONS: Record<string, string> = {
   document: "the open document",
@@ -116,6 +117,10 @@ export const library: Extension = {
         row.remove();
         mounted.delete(key);
       }
-      if (empty) empty.hidden = keys.size > 0;
+      if (empty && empty.hidden !== keys.size > 0) empty.hidden = keys.size > 0;
+      storeNote(document.querySelector<HTMLElement>("[data-pane='extensions']"), engine.state.extensionsStore, t("Extensions"));
+    });
+    engine.on("route", ({ route }) => {
+      if (route === "extensions") void engine.dispatch("ext.load");
     });  },
 };

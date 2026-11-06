@@ -73,6 +73,7 @@ fn agent() -> &'static ureq::Agent {
             .timeout_connect(Duration::from_secs(5))
             .timeout_read(Duration::from_secs(15))
             .timeout(Duration::from_secs(30))
+            .max_idle_connections_per_host(16)
             .redirects(0)
             .user_agent("FormPortal")
             .build()
@@ -283,14 +284,14 @@ fn assemble(product: &Product, path: &str, manifest: &[u8], modified: Option<Str
     }
     let previous = product.channels.get(&Channel::Stable);
     let minimum = |os: Os| previous.and_then(|r| r.artifacts.iter().find(|a| a.platform == os)).map(|a| a.minimum_os.clone()).unwrap_or_default();
+    let wanted: Vec<(&String, &String, String)> = sums.iter().filter(|(file, _)| !classify(file).is_empty()).map(|(file, digest)| (file, digest, download(file))).collect();
+    let sizes: Vec<u64> = std::thread::scope(|scope| {
+        let handles: Vec<_> = wanted.iter().map(|(_, _, url)| scope.spawn(move || size_of(url))).collect();
+        handles.into_iter().map(|h| h.join().unwrap_or(0)).collect()
+    });
     let mut artifacts = Vec::new();
-    for (file, digest) in &sums {
+    for ((file, digest, url), bytes) in wanted.into_iter().zip(sizes) {
         let found = classify(file);
-        if found.is_empty() {
-            continue;
-        }
-        let url = download(file);
-        let bytes = size_of(&url);
         for (os, arch, kind) in found {
             artifacts.push(Artifact { platform: os, arch, kind, file: file.clone(), url: url.clone(), bytes, sha256: digest.clone(), minimum_os: minimum(os), signature: None });
         }
@@ -404,10 +405,15 @@ pub fn discover(root: &Path, catalog: &mut Catalog) -> Vec<String> {
     let yanks: BTreeSet<(String, String)> = if kept.yanks_checked > 0 && at.saturating_sub(kept.yanks_checked) < RECHECK {
         kept.yanks.iter().cloned().collect()
     } else {
-        let Some(fresh) = yanked(&catalog.origin) else { return Vec::new() };
-        kept.yanks = fresh.iter().cloned().collect();
-        kept.yanks_checked = at;
-        fresh
+        match yanked(&catalog.origin) {
+            Some(fresh) => {
+                kept.yanks = fresh.iter().cloned().collect();
+                kept.yanks_checked = at;
+                fresh
+            }
+            None if kept.yanks_checked > 0 => kept.yanks.iter().cloned().collect(),
+            None => return Vec::new(),
+        }
     };
     let wanted: Vec<(usize, String)> = catalog.products.iter().enumerate().filter_map(|(i, p)| repo_path(&p.repository).map(|path| (i, path))).collect();
     let results: Vec<(usize, String, Seen)> = std::thread::scope(|scope| {
@@ -435,6 +441,21 @@ pub fn discover(root: &Path, catalog: &mut Catalog) -> Vec<String> {
     kept.format = RELEASES_FORMAT.to_string();
     save(root, &kept);
     newer
+}
+
+pub fn apply_kept(root: &Path, catalog: &mut Catalog) {
+    let kept = load(root);
+    let yanks: BTreeSet<(String, String)> = kept.yanks.iter().cloned().collect();
+    for product in catalog.products.iter_mut() {
+        let Some(path) = repo_path(&product.repository) else { continue };
+        let Some(seen) = kept.repos.get(&path.to_ascii_lowercase()) else { continue };
+        if !sound(&path, seen, &yanks) {
+            continue;
+        }
+        if let Some(release) = seen.release.clone() {
+            merge(product, release);
+        }
+    }
 }
 
 fn off(value: &str) -> bool {

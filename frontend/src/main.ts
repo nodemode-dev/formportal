@@ -30,7 +30,7 @@ import { side } from "./extensions/side/index.ts";
 import { home } from "./extensions/home/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 
-const revealLate = window.setTimeout(revealApp, 2400);
+const revealLate = window.setTimeout(revealApp, 900);
 
 const engine = new Engine();
 const bridge = pickBridge();
@@ -60,11 +60,20 @@ async function guard(work: () => Promise<void>, category: NoticeCategory = "syst
 engine.command("catalog.load", () =>
   guard(async () => {
     const root = document.documentElement;
-    engine.setPlatform(await bridge.platform());
-    engine.setPolicy(await bridge.policy());
-    await refresh();
-    engine.setPrefs(await bridge.preferences());
-    engine.setLater(await bridge.laterList());
+    const [platform, policy, , prefs, later] = await Promise.all([bridge.platform(), bridge.policy(), refresh(), bridge.preferences(), bridge.laterList()]);
+    engine.setPlatform(platform);
+    engine.setPolicy(policy);
+    engine.setPrefs(prefs);
+    engine.setLater(later);
+    const kept = await bridge.catalogKept();
+    if (kept) {
+      engine.setCatalog(kept, bridge.source);
+      root.setAttribute("data-loaded", "");
+    }
+    void engine.dispatch("ext.load");
+    void engine.dispatch("files.scan");
+    void engine.dispatch("learn.load");
+    void engine.dispatch("fonts.load");
     let catalog;
     try {
       catalog = await bridge.catalog();
@@ -76,12 +85,7 @@ engine.command("catalog.load", () =>
     }
     root.removeAttribute("data-offline");
     engine.setCatalog(catalog, bridge.source);
-    const extensions = await bridge.extensions();
-    engine.setExtensions(extensions.index, extensions.installed);
     root.setAttribute("data-loaded", "");
-    void engine.dispatch("files.scan");
-    void engine.dispatch("learn.load");
-    void engine.dispatch("fonts.load");
     const done = await bridge.autoUpdate((product, channel, fraction) => engine.setProgress(product, channel, fraction));
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
@@ -273,8 +277,10 @@ engine.command("link.open", (arg) => {
 
 const extRefresh = async () => {
   const view = await bridge.extensions();
-  engine.setExtensions(view.index, view.installed);
+  engine.setExtensions(view.index, view.installed, view.index_error, view.store ?? null);
 };
+
+engine.command("ext.load", () => guard(extRefresh));
 
 engine.command("ext.install", (arg) =>
   guard(async () => {
@@ -406,7 +412,7 @@ engine.command("file.preview", async (arg) => {
 engine.command("media.thumb", async (arg) => {
   const { url, into } = arg as { url: string; into: HTMLElement | null };
   try {
-    const src = await bridge.mediaThumb(url);
+    const src = url.startsWith("/") && !url.startsWith("//") ? url : await bridge.mediaThumb(url);
     if (into) into.style.backgroundImage = `url("${src}")`;
     into?.toggleAttribute("data-has-shot", true);
   } catch {

@@ -1,0 +1,316 @@
+{
+  "format": "formai-fonts",
+  "format_version": 1,
+  "generated": "2026-11-06",
+  "families": [
+    {
+      "id": "inter",
+      "family": "Inter",
+      "foundry": "Rasmus Andersson",
+      "licence": "OFL-1.1",
+      "category": "sans-serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/inter",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Inter-Variable.ttf",
+          "url": "bundled:fonts/inter/Inter-Variable.ttf",
+          "bytes": 876576,
+          "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+        },
+        {
+          "style": "Variable Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "Inter-VariableItalic.ttf",
+          "url": "bundled:fonts/inter/Inter-VariableItalic.ttf",
+          "bytes": 906596,
+          "sha256": "acd98e64795781b2058f07b18475e0ecee2a0fe2b42a49e2f9e37d0d6bf66ce6"
+        }
+      ]
+    },
+    {
+      "id": "manrope",
+      "family": "Manrope",
+      "foundry": "Mikhail Sharanda",
+      "licence": "OFL-1.1",
+      "category": "sans-serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/manrope",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Manrope-Variable.ttf",
+          "url": "bundled:fonts/manrope/Manrope-Variable.ttf",
+          "bytes": 164700,
+          "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+        }
+      ]
+    },
+    {
+      "id": "dm-sans",
+      "family": "DM Sans",
+      "foundry": "Colophon Foundry",
+      "licence": "OFL-1.1",
+      "category": "sans-serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/dmsans",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "DMSans-Variable.ttf",
+          "url": "bundled:fonts/dm-sans/DMSans-Variable.ttf",
+          "bytes": 240164,
+          "sha256": "8cd08d97e89c24d0aa92edd2f0f4c8ee6195eee9b7c9f154865a58b02f0c1c0d"
+        },
+        {
+          "style": "Variable Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "DMSans-VariableItalic.ttf",
+          "url": "bundled:fonts/dm-sans/DMSans-VariableItalic.ttf",
+          "bytes": 285040,
+          "sha256": "22259c0cc8237221b80f44c76ba8d36e6bce3cda72779f5b2773643d499720ae"
+        }
+      ]
+    },
+    {
+      "id": "space-grotesk",
+      "family": "Space Grotesk",
+      "foundry": "Florian Karsten",
+      "licence": "OFL-1.1",
+      "category": "sans-serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/spacegrotesk",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "SpaceGrotesk-Variable.ttf",
+          "url": "bundled:fonts/space-grotesk/SpaceGrotesk-Variable.ttf",
+          "bytes": 136676,
+          "sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+        }
+      ]
+    },
+    {
+      "id": "bricolage-grotesque",
+      "family": "Bricolage Grotesque",
+      "foundry": "Mathieu Triay",
+      "licence": "OFL-1.1",
+      "category": "display",
+      "source": "https://github.com/google/fonts/tree/main/ofl/bricolagegrotesque",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "BricolageGrotesque-Variable.ttf",
+          "url": "bundled:fonts/bricolage-grotesque/BricolageGrotesque-Variable.ttf",
+          "bytes": 408496,
+          "sha256": "413e7357809ddd12fd80a96a8a396de0e401638d4acd3cb3e37532f0472ac682"
+        }
+      ]
+    },
+    {
+      "id": "syne",
+      "family": "Syne",
+      "foundry": "Bonjour Monde",
+      "licence": "OFL-1.1",
+      "category": "display",
+      "source": "https://github.com/google/fonts/tree/main/ofl/syne",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Syne-Variable.ttf",
+          "url": "bundled:fonts/syne/Syne-Variable.ttf",
+          "bytes": 146980,
+          "sha256": "ce5ac77142a65cab2248a1a2ebb740b1d4d9c20b52488877d3ff664d1356104a"
+        }
+      ]
+    },
+    {
+      "id": "fraunces",
+      "family": "Fraunces",
+      "foundry": "Undercase Type",
+      "licence": "OFL-1.1",
+      "category": "serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/fraunces",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Fraunces-Variable.ttf",
+          "url": "bundled:fonts/fraunces/Fraunces-Variable.ttf",
+          "bytes": 360440,
+          "sha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb"
+        },
+        {
+          "style": "Variable Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "Fraunces-VariableItalic.ttf",
+          "url": "bundled:fonts/fraunces/Fraunces-VariableItalic.ttf",
+          "bytes": 414904,
+          "sha256": "b24448c43702fac4ee856781d461a0dfba8d8e594b6e8e190234b75fed2c0e01"
+        }
+      ]
+    },
+    {
+      "id": "lora",
+      "family": "Lora",
+      "foundry": "Cyreal",
+      "licence": "OFL-1.1",
+      "category": "serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/lora",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Lora-Variable.ttf",
+          "url": "bundled:fonts/lora/Lora-Variable.ttf",
+          "bytes": 212196,
+          "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7"
+        },
+        {
+          "style": "Variable Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "Lora-VariableItalic.ttf",
+          "url": "bundled:fonts/lora/Lora-VariableItalic.ttf",
+          "bytes": 221232,
+          "sha256": "22d8d8854b53807aa664ca34f2031a9ed57a1d0dea296b8b96cdd3aad937a2b3"
+        }
+      ]
+    },
+    {
+      "id": "instrument-serif",
+      "family": "Instrument Serif",
+      "foundry": "Instrument",
+      "licence": "OFL-1.1",
+      "category": "serif",
+      "source": "https://github.com/google/fonts/tree/main/ofl/instrumentserif",
+      "styles": [
+        {
+          "style": "Regular",
+          "weight": 400,
+          "italic": false,
+          "file": "InstrumentSerif-Regular.ttf",
+          "url": "bundled:fonts/instrument-serif/InstrumentSerif-Regular.ttf",
+          "bytes": 70012,
+          "sha256": "498efd461f6ddfcb7a111bf9a565709d2085d48201d501ead960d93e84ffbb88"
+        },
+        {
+          "style": "Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "InstrumentSerif-Italic.ttf",
+          "url": "bundled:fonts/instrument-serif/InstrumentSerif-Italic.ttf",
+          "bytes": 71592,
+          "sha256": "08939b8bdf534afec24ae0ef5e03f948940cd9a8fe08e7fecbad040e62327385"
+        }
+      ]
+    },
+    {
+      "id": "jetbrains-mono",
+      "family": "JetBrains Mono",
+      "foundry": "JetBrains",
+      "licence": "OFL-1.1",
+      "category": "monospace",
+      "source": "https://github.com/google/fonts/tree/main/ofl/jetbrainsmono",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "JetBrainsMono-Variable.ttf",
+          "url": "bundled:fonts/jetbrains-mono/JetBrainsMono-Variable.ttf",
+          "bytes": 187208,
+          "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+        },
+        {
+          "style": "Variable Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "JetBrainsMono-VariableItalic.ttf",
+          "url": "bundled:fonts/jetbrains-mono/JetBrainsMono-VariableItalic.ttf",
+          "bytes": 191556,
+          "sha256": "85ae2a5cd3f56baf1ce1c21a851322c58e3d8fbe8e8ad4a4d090a820dd7fe558"
+        }
+      ]
+    },
+    {
+      "id": "ibm-plex-mono",
+      "family": "IBM Plex Mono",
+      "foundry": "IBM",
+      "licence": "OFL-1.1",
+      "category": "monospace",
+      "source": "https://github.com/google/fonts/tree/main/ofl/ibmplexmono",
+      "styles": [
+        {
+          "style": "Regular",
+          "weight": 400,
+          "italic": false,
+          "file": "IBMPlexMono-Regular.ttf",
+          "url": "bundled:fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf",
+          "bytes": 135580,
+          "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46"
+        },
+        {
+          "style": "Italic",
+          "weight": 400,
+          "italic": true,
+          "file": "IBMPlexMono-Italic.ttf",
+          "url": "bundled:fonts/ibm-plex-mono/IBMPlexMono-Italic.ttf",
+          "bytes": 143920,
+          "sha256": "3362fc791b0652193328b862c1c5f23a789bc7288b1617fa63302f88689a2a34"
+        },
+        {
+          "style": "Bold",
+          "weight": 700,
+          "italic": false,
+          "file": "IBMPlexMono-Bold.ttf",
+          "url": "bundled:fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf",
+          "bytes": 137784,
+          "sha256": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+        },
+        {
+          "style": "Bold Italic",
+          "weight": 700,
+          "italic": true,
+          "file": "IBMPlexMono-BoldItalic.ttf",
+          "url": "bundled:fonts/ibm-plex-mono/IBMPlexMono-BoldItalic.ttf",
+          "bytes": 144512,
+          "sha256": "af4e05a761e98c1adf064c48a6352c9bec1a6ad70982cd2a544149323391f98e"
+        }
+      ]
+    },
+    {
+      "id": "caveat",
+      "family": "Caveat",
+      "foundry": "Impallari Type",
+      "licence": "OFL-1.1",
+      "category": "display",
+      "source": "https://github.com/google/fonts/tree/main/ofl/caveat",
+      "styles": [
+        {
+          "style": "Variable",
+          "weight": 400,
+          "italic": false,
+          "file": "Caveat-Variable.ttf",
+          "url": "bundled:fonts/caveat/Caveat-Variable.ttf",
+          "bytes": 403648,
+          "sha256": "0bdb6b660482d31531b3945849fba5916b3ef8695da7024a9e6b9ee3c4157988"
+        }
+      ]
+    }
+  ]
+}

@@ -48,6 +48,7 @@ export const tauriBridge: Bridge = {
   source: "live",
   platform: () => tauri().core.invoke<Platform>("platform"),
   catalog: () => tauri().core.invoke<Catalog>("catalog", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
+  catalogKept: () => tauri().core.invoke<Catalog>("catalog_kept", { url: catalogUrl(), allowUnsigned: allowUnsigned() }).catch(() => null),
   extensions: () => tauri().core.invoke<ExtensionsView>("extensions", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   installExtension: ({ id, path }) =>
     tauri().core.invoke<InstalledExtension>("extension_install", { id: id ?? null, path: path ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() }),

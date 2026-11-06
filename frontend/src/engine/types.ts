@@ -112,6 +112,8 @@ export interface MediaView {
   index: { items: MediaItem[] } | null;
   credits: string[];
   index_error: string | null;
+  store?: string | null;
+  store_note?: string | null;
   saved: SavedMedia[];
   library: string;
 }
@@ -148,6 +150,8 @@ export interface InstalledFont {
 export interface FontsView {
   index: { families: FontFamilyEntry[] } | null;
   index_error: string | null;
+  store?: string | null;
+  store_note?: string | null;
   installed: InstalledFont[];
   updates?: InstalledFont[];
   folder: string;
@@ -293,6 +297,8 @@ export interface InstalledExtension {
 export interface ExtensionsView {
   index: ExtensionIndex | null;
   index_error: string | null;
+  store?: string | null;
+  store_note?: string | null;
   installed: InstalledExtension[];
 }
 

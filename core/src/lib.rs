@@ -29,6 +29,7 @@ pub mod share;
 pub mod signature;
 pub mod site;
 pub mod state;
+pub mod store;
 pub mod web;
 
 pub use error::CoreError;

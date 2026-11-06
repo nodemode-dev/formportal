@@ -56,6 +56,8 @@ export interface HubState {
   catalog: Catalog | null;
   extensions: ExtensionIndex | null;
   installedExtensions: InstalledExtension[];
+  extensionsError: string | null;
+  extensionsStore: string | null;
   prefs: Preferences;
 }
 
@@ -71,6 +73,8 @@ export class Engine {
     catalog: null,
     extensions: null,
     installedExtensions: [],
+    extensionsError: null,
+    extensionsStore: null,
     prefs: { ...DEFAULT_PREFS },
   };
   private handlers = new Map<keyof EngineEvents, Set<Handler<never>>>();
@@ -123,9 +127,11 @@ export class Engine {
     for (const p of catalog.products) this.emit("product", { id: p.id });
   }
 
-  setExtensions(index: ExtensionIndex | null, installed: InstalledExtension[] = this.state.installedExtensions): void {
+  setExtensions(index: ExtensionIndex | null, installed: InstalledExtension[] = this.state.installedExtensions, error: string | null = this.state.extensionsError, store: string | null = this.state.extensionsStore): void {
     this.state.extensions = index;
     this.state.installedExtensions = installed;
+    this.state.extensionsError = error;
+    this.state.extensionsStore = store;
     this.emit("extensions", { count: (index?.packages.length ?? 0) + installed.length });
   }
 

@@ -3,6 +3,9 @@ import extensions from "../../../catalog/fixtures/extensions.json";
 import registry from "../../../catalog/products.json";
 import schedule from "../../../catalog/schedule.json";
 import learnPortal from "../../../core/data/learn-portal.json";
+import storeFonts from "../../../core/data/store-fonts.json";
+import storeMedia from "../../../core/data/store-media.json";
+import storeExtensions from "../../../core/data/store-extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
@@ -42,33 +45,11 @@ const versionsOf = (path: string, count: number): FileVersion[] => {
   if (!kept.has(path)) kept.set(path, Array.from({ length: count }, (_, i) => ({ id: `${stamp - i * day}-${(i + 1).toString(16).padStart(12, "0")}`, at: stamp - i * day, size: 1000 * (count - i), sha256: "0".repeat(64), reason: i === count - 1 ? "first seen" : "changed since the last version" })));
   return kept.get(path) ?? [];
 };
-const fam = (id: string, family: string, foundry: string, category: string, styles: [string, number][]): FontFamilyEntry => ({
-  id, family, foundry, licence: "OFL-1.1", category,
-  styles: styles.map(([style, weight]) => ({ style, weight, italic: /Italic/.test(style), file: `${id}-${style}.ttf`, url: `https://fonts.example/${id}-${style}.ttf`, bytes: 300_000, sha256: "0".repeat(64) })),
-});
-const fontIndex: FontFamilyEntry[] = [
-  fam("inter", "Inter", "Rasmus Andersson", "sans-serif", [["Regular", 400], ["Italic", 400], ["SemiBold", 600], ["Bold", 700]]),
-  fam("source-serif-4", "Source Serif 4", "Adobe", "serif", [["Regular", 400], ["Bold", 700]]),
-  fam("ibm-plex-mono", "IBM Plex Mono", "IBM", "monospace", [["Regular", 400], ["Medium", 500], ["Bold", 700]]),
-  fam("fira-sans", "Fira Sans", "Mozilla", "sans-serif", [["Regular", 400], ["Bold", 700]]),
-  fam("literata", "Literata", "TypeTogether", "serif", [["Regular", 400], ["Italic", 400]]),
-  fam("space-grotesk", "Space Grotesk", "Florian Karsten", "display", [["Regular", 400], ["Bold", 700]]),
-];
+const fontIndex: FontFamilyEntry[] = (storeFonts as unknown as { families: FontFamilyEntry[] }).families;
 const fontsIn: InstalledFont[] = new URLSearchParams(window.location.search).has("fontupdate")
-  ? ["Regular", "Bold"].map((style) => ({ family: "Inter", style, family_id: "inter", file: `~/.local/share/fonts/FormPortal/FormPortal-inter-${style}.ttf`, sha256: "1".repeat(64), source: "index" as const, licence: "OFL-1.1" }))
+  ? [{ family: "Inter", style: "Variable", family_id: "inter", file: "~/.local/share/fonts/FormPortal/FormPortal-Inter-Variable.ttf", sha256: "1".repeat(64), source: "index" as const, licence: "OFL-1.1" }]
   : [];
-const mediaItem = (id: string, title: string, kind: MediaItem["kind"], licence: string, thumbnail: string | null, product: string | null = null): MediaItem => ({
-  id, title, kind, product, creator: "Sample creator", licence, source_url: `https://media.example/${id}`, file: `${id}${product === "formcut" ? ".fc" : product === "formwav" ? ".fmw" : ".bin"}`, bytes: 2_400_000, thumbnail, tags: [kind],
-});
-const mediaIndex: MediaItem[] = [
-  mediaItem("orange-render", "Orange swirl render", "image", "CC0-1.0", "/media/formvis.webp"),
-  mediaItem("dark-timeline", "Timeline at night", "image", "CC-BY-4.0", "/media/formcut.webp"),
-  mediaItem("wave-session", "Waveform session", "image", "CC-BY-SA-4.0", "/media/formwav.webp"),
-  mediaItem("rain-roof", "Rain on a roof", "audio", "CC0-1.0", null),
-  mediaItem("city-drone", "City from above", "video", "CC-BY-4.0", null),
-  mediaItem("social-cut", "Social cut 9:16", "template", "CC0-1.0", "/media/formcut.webp", "formcut"),
-  mediaItem("podcast-mix", "Podcast mix", "template", "CC0-1.0", "/media/formwav.webp", "formwav"),
-];
+const mediaIndex: MediaItem[] = (storeMedia as unknown as { items: MediaItem[] }).items.map((item) => ({ ...item, product: item.product ?? null, thumbnail: item.thumbnail ?? null }));
 const savedMedia: SavedMedia[] = [];
 const params = new URLSearchParams(window.location.search);
 const sampleTutorial = {
@@ -129,7 +110,8 @@ export const fixtureBridge: Bridge = {
     if (new URLSearchParams(window.location.search).has("offline")) throw new Error("the download did not complete: no network (browser mode, ?offline)");
     return catalog;
   },
-  extensions: async () => ({ index: extensions as unknown as ExtensionIndex, index_error: null, installed: Array.from(extInstalled.values()) }),
+  catalogKept: async () => (new URLSearchParams(window.location.search).has("cold") ? null : catalog),
+  extensions: async () => ({ index: (new URLSearchParams(window.location.search).has("extfixture") ? extensions : storeExtensions) as unknown as ExtensionIndex, index_error: null, store: null, installed: Array.from(extInstalled.values()) }),
   installExtension: async ({ id, path }) => {
     const index = extensions as unknown as ExtensionIndex;
     const entry = id ? index.packages.find((p) => p.id === id) : undefined;
