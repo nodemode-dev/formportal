@@ -36,13 +36,42 @@ pub fn rpm(file: &Path, into: &Path) -> Result<()> {
     run(Command::new("sh").arg("-c").arg(script).arg("sh").arg(&file).current_dir(into), "rpm package", "rpm2cpio and cpio")
 }
 
+fn attach(file: &Path, mount: &Path) -> Result<()> {
+    use std::io::Write;
+    let mut child = Command::new("hdiutil")
+        .args(["attach", "-nobrowse", "-readonly", "-noautoopen", "-noverify", "-mountpoint"])
+        .arg(mount)
+        .arg(file)
+        .env("PAGER", "cat")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                CoreError::Archive("unpacking a disk image needs hdiutil, which this computer does not have".to_string())
+            } else {
+                CoreError::Io(e)
+            }
+        })?;
+    if let Some(mut answer) = child.stdin.take() {
+        let _ = answer.write_all(&b"Y\n".repeat(8));
+    }
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+        return Ok(());
+    }
+    let said = String::from_utf8_lossy(&output.stderr).trim().lines().last().unwrap_or("").to_string();
+    Err(CoreError::Archive(format!("hdiutil could not open the disk image{}", if said.is_empty() { String::new() } else { format!(": {said}") })))
+}
+
 pub fn dmg(file: &Path, into: &Path) -> Result<()> {
     let mount = into.with_extension("mount");
     if mount.exists() {
         let _ = fs::remove_dir_all(&mount);
     }
     fs::create_dir_all(&mount)?;
-    run(Command::new("hdiutil").args(["attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint"]).arg(&mount).arg(file), "disk image", "hdiutil")?;
+    attach(file, &mount)?;
     let copied = (|| -> Result<()> {
         let apps: Vec<PathBuf> = fs::read_dir(&mount)?.flatten().map(|e| e.path()).filter(|p| p.extension().map(|x| x == "app").unwrap_or(false)).collect();
         if apps.is_empty() {

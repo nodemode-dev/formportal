@@ -63,7 +63,7 @@ fn unix_script(kind: Kind, installer: &str, by: &str) -> String {
         _ => (
             "shasum -a 256 -c SHA256SUMS",
             "/Library/Application Support/FormPortal",
-            "MNT=$(mktemp -d)\nhdiutil attach -nobrowse -readonly -quiet -mountpoint \"$MNT\" \"$INSTALLER\"\ntrap 'hdiutil detach -quiet \"$MNT\" || true' EXIT\n[ -d \"$MNT/FormPortal.app\" ] || { echo \"FormPortal.app is not in $INSTALLER; nothing was installed.\" >&2; exit 1; }\nrm -rf /Applications/FormPortal.app\nditto \"$MNT/FormPortal.app\" /Applications/FormPortal.app".to_string(),
+            "MNT=$(mktemp -d)\nyes | PAGER=cat hdiutil attach -nobrowse -readonly -quiet -noverify -mountpoint \"$MNT\" \"$INSTALLER\"\ntrap 'hdiutil detach -quiet \"$MNT\" || true' EXIT\n[ -d \"$MNT/FormPortal.app\" ] || { echo \"FormPortal.app is not in $INSTALLER; nothing was installed.\" >&2; exit 1; }\nrm -rf /Applications/FormPortal.app\nditto \"$MNT/FormPortal.app\" /Applications/FormPortal.app".to_string(),
         ),
     };
     format!(
