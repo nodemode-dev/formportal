@@ -6,4 +6,4 @@
 
 To try FormPortal without the published catalogue (`https://dl.formai.studio/catalog/apps.json`), point it at a local catalogue: run formai_dev's site (`./formai_dev`), then in Settings set the catalogue address to `http://127.0.0.1:8240/catalog/v1/apps.json` and tick Developer.
 
-Where installs go: macOS `~/Library/Application Support/dev.formai.portal`, Windows `%LOCALAPPDATA%\FormPortal`, Linux `~/.local/share/formportal`. `FORMPORTAL_ROOT` moves it.
+Where installs go: macOS `~/Library/Application Support/studio.formai.portal`, Windows `%LOCALAPPDATA%\FormPortal`, Linux `~/.local/share/formportal`. `FORMPORTAL_ROOT` moves it.

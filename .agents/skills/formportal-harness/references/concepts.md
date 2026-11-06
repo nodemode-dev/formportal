@@ -14,7 +14,7 @@ Product ids are lowercase and come from the registry (`apps`): `formcut`, `formv
 
 | System | Folder |
 | --- | --- |
-| macOS | `~/Library/Application Support/dev.formai.portal` |
+| macOS | `~/Library/Application Support/studio.formai.portal` |
 | Windows | `%LOCALAPPDATA%\FormPortal` |
 | Linux | `$XDG_DATA_HOME/formportal` (usually `~/.local/share/formportal`) |
 

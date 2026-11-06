@@ -255,13 +255,43 @@ fn deep_find(dir: &Path, product: &str, depth: u32) -> Option<PathBuf> {
     found.iter().find(|p| stem(p) == product).or_else(|| found.iter().find(|p| stem(p).contains(product))).or_else(|| found.iter().find(|p| p.parent().map(|d| d.ends_with("bin")).unwrap_or(false))).cloned()
 }
 
+#[cfg(unix)]
+fn leave_link(at: &Path, to: &Path) -> io::Result<()> {
+    std::os::unix::fs::symlink(to, at)
+}
+
+#[cfg(not(unix))]
+fn leave_link(_at: &Path, _to: &Path) -> io::Result<()> {
+    Err(io::Error::new(io::ErrorKind::Unsupported, "no links here"))
+}
+
+fn moved_root(old: &Path, new: &Path) -> PathBuf {
+    let old_kind = fs::symlink_metadata(old).map(|m| m.file_type()).ok();
+    let old_is_folder = old_kind.is_some_and(|k| k.is_dir());
+    if old_is_folder && fs::symlink_metadata(new).is_ok_and(|m| m.file_type().is_dir()) {
+        let _ = fs::remove_dir(new);
+    }
+    if fs::symlink_metadata(new).is_ok() {
+        return new.to_path_buf();
+    }
+    if !old_is_folder {
+        return if old_kind.is_some_and(|k| k.is_symlink()) && old.is_dir() { old.to_path_buf() } else { new.to_path_buf() };
+    }
+    if fs::rename(old, new).is_err() {
+        return if fs::symlink_metadata(new).is_ok() { new.to_path_buf() } else { old.to_path_buf() };
+    }
+    let _ = leave_link(old, new);
+    new.to_path_buf()
+}
+
 impl Portal {
     pub fn default_root() -> PathBuf {
         if let Some(root) = std::env::var_os("FORMPORTAL_ROOT") {
             return PathBuf::from(root);
         }
         if cfg!(target_os = "macos") {
-            home().join("Library").join("Application Support").join("dev.formai.portal")
+            let support = home().join("Library").join("Application Support");
+            moved_root(&support.join("dev.formai.portal"), &support.join("studio.formai.portal"))
         } else if cfg!(target_os = "windows") {
             std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(|| home().join("AppData").join("Local")).join("FormPortal")
         } else {

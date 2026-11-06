@@ -23,7 +23,7 @@ export const settings: Extension = {
       if (platform) platform.textContent = `${OS[p.os]}, ${ARCH[p.arch] ?? p.arch}`;
       const folder = field("folder");
       const where: Record<Os, string> = {
-        macos: "~/Library/Application Support/dev.formai.portal",
+        macos: "~/Library/Application Support/studio.formai.portal",
         windows: "%LOCALAPPDATA%\\FormPortal",
         linux: "~/.local/share/formportal",
         other: "",
