@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.55.0 · 2026-11-06
+
+- FormPortal offers the newest release each Form app has published on GitHub when it is newer than the catalogue's, so apps released since the catalogue was last signed can be installed and updated: on 2026-11-06 that is FormPDF 0.57.3, formMCP 0.7.8, formskills 0.7.7, FormSlide 0.30.7, FormVFX 0.52.8, Form.md 0.48.0 and FormTray 0.10.2. The release must name the same repository as the signed catalogue, not be withdrawn in formcompiler's list, and list its files' SHA-256 sums, which every download is checked against before anything is unpacked. The catalogue's release stays in Other versions. An organisation's policy can turn this off with `github_releases: false`, and `FORMPORTAL_RELEASES=off` does too.
+- Apps marked prelaunch in the catalogue can be installed once they have a release (FormTray, formMCP, FormPDF, formskills).
+- When the download store cannot be reached, FormPortal reads formcompiler's signed copy of the catalogue on GitHub before the copy it kept.
+- Reopening FormPortal on Included shows Included at once instead of an empty page until it finished loading.
+- The update notices, the catalogue line in Preferences and the command line's update link name formai.studio instead of formai.dev.
+
 ## v0.54.3 · 2026-11-04
 
 - README in the Form family template (Mackin's #8), merged with main. Nothing in the app changed.
