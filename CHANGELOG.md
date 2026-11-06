@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.58.0 · 2026-11-06
+
+- FormPortal's identifier is now `studio.formai.portal`, on formai.studio's domain. On macOS your installs, settings and sign-in move to `~/Library/Application Support/studio.formai.portal` the first time v0.58.0 starts, and a link is left at the old folder so FormTray and formMCP still find them. Nothing is deleted. The login item is renamed the same way.
+- Apps, On the way, matches formai.studio: the apps coming on a date, then those with a date to come, as numbers only.
+- Supporters can paste the desktop code from formai.studio's thank-you page into Preferences, Account, Supporter, to see the names of the apps on the way. The code stays on your computer; formai.studio is asked only to check it, and Forget removes it.
+- Nothing shows before the window is ready, and a first launch with no connection names no app until FormPortal has heard which apps are released.
+
 ## v0.57.0 · 2026-11-06
 
 - Every Form app's icon is the new v3 icon, in a dark and a light version, and FormPortal shows the one that matches the theme you choose: in Apps, Home, Files, the app pages and FormPortal's own icon in the sidebar.

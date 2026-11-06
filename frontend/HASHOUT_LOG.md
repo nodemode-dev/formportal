@@ -2,8 +2,44 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.57.0
-Last updated: 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.58.0
+Last updated: 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.58.0 · On the way matches formai.studio, the supporter code {#supporter}
+
+### vite.config.ts, live.css, prelive.js, extensions/supporter · Date to come and the names
+- refers-to: vite.config.ts :: MORE_SLOTS, soon, rootState, liveRules · src/styles/live.css :: `.soon-name`, `.supporter-acts`, `.supporter-say` · public/prelive.js · src/extensions/live/index.ts :: apply (cache) · src/extensions/supporter/index.ts :: supporter · src/bridge/{index,tauri,fixture}.ts :: siteUpcoming, supporterCheck · src/engine/types.ts :: UpcomingView, SupporterView · index.html :: `[data-supporter]`
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The owner: the On the way tiles must match formai.studio, which shows every unreleased app (dated by schedule group, then undated) plus supporter codename tiles, as "Form?" to everyone and as names to a supporter. FormPortal keeps its own groups, exact for its own apps (counts from released state, `data-soon-gN`), and adds one more group, "Date to come", for what only the site knows: `undated + supporters` from `GET /api/upcoming` (core/HASHOUT_LOG.md#site). The site's `dated` counts are not used, because FormPortal's released state is truer for its own apps.
+
+Zero flash: the group is rendered at build time with 40 reserved tiles (`MORE_SLOTS`); `html[data-soon-more="k"]` shows the first k by generated `nth-child` rules and `0` hides the group, so the count is one attribute and no node is created or removed. `rootState` writes `data-soon-more="0"` so the first launch shows nothing it cannot know; the live extension keeps `more` in its `formportal.live` cache and `prelive.js` sets the attribute before first paint on every later launch (clamped to 40). The section hides only when both `data-soon-left` and `data-soon-more` are 0. Each dated group carries `data-soon-at` (the schedule's ISO time) so names can find their group. `.soon-name` is now one line with an ellipsis so a long codename cannot change a tile's height.
+
+The supporter extension is the only code that talks to the site: at start it asks `siteUpcoming` (writes `data-soon-more` and the cache) and `supporterCheck(null)` (re-checks a stored code through the core's cache). For a supporter it writes the names into `.soon-name` text: tiles whose `at` equals a group's `data-soon-at` go in that group in order (the first n, as many as are visible), tiles without a date go into Date to come; every other tile keeps its first text ("Form?" or its translation, remembered per node). It writes only text that differs. The names are kept in `formportal.site` in localStorage and written again at setup, before the app is revealed, so a returning supporter never sees "Form?" turn into a name. Forget removes them. A failed check (state unreachable) leaves the tiles as they were.
+
+### index.html · Preferences, Account, Supporter
+- refers-to: index.html :: `[data-supporter]`, `[data-supporter-input]`, `[data-supporter-check]`, `[data-supporter-forget]`, `[data-supporter-say]` · src/i18n/es.json
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+A second group under GitHub in the Account card: a text input, Check, Forget, a status line (role=status, 3em reserved so no message moves anything) and a link to formai.studio/support/. Messages: Not set; Checking; Supporter until <date>. Upcoming Form apps show their names.; That code is not a supporter code.; formai.studio cannot be reached; the last answer is kept. (appended to the supporter line when the answer is a kept one). Check with an empty input re-checks the stored code. A code that is a supporter is cleared from the input once stored (the core keeps it in Preferences, `supporter_code`); a wrong one stays so a typo can be fixed. After each check the extension reloads Preferences into the engine so a later `prefs.set` does not write the old code back. The input uses its own `data-supporter-input`, not `data-setting-input`, so the settings extension does not bind it.
+
+### bridge/fixture.ts · browser preview
+- refers-to: src/bridge/fixture.ts :: SUPPORTER_FIXTURE_CODE, SITE_TILES, siteUpcoming, supporterCheck
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The fixture answers upcoming with undated 9 and supporters 11 and the schedule's own dated counts, and supporterCheck with `supporter: false` unless the code is `d1.0.` + 32 zeros + `.` + 43 `A` (then 90 days and 40 names: the schedule's apps by group, nine undated, eleven codenames).
+
+Checked 2026-11-06 on the built interface in WebKit and Chromium (CPU 4x), fixture bridge: Date to come shows 20 reserved-slot tiles; the wrong code says "That code is not a supporter code."; the fixture code says "Supporter until February 4, 2027. Upcoming Form apps show their names." and the dated groups and Date to come show names (FormDAM, FormPath, FormDesign, ... Codename 11); Forget returns every tile to "Form?" and the status to "Not set"; `document.querySelectorAll('*').length` was 7753 before and after in both engines; no page errors.
+
+### live.css, vite.config.ts · nothing before the reveal, no app before its release
+- refers-to: frontend/src/styles/live.css :: body:not(.app-ready) · frontend/vite.config.ts :: LIVE, LEFT · frontend/src/styles/main.css
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+The Xvfb run showed two things the browser probes did not. Before the reveal, the update notice and its button showed through on Linux, because only the main column was hidden: the rule is now `body:not(.app-ready)` and every descendant, `visibility: hidden !important`, so nothing paints before the reveal and nothing is removed from layout (no reflow at the reveal). And a first launch with no network and no cache named apps from the build machine's own release list (FormVis among them): the build's default live set `LIVE` is now empty, so until the first real answer the page shows only the schedule's numbers, and `LEFT` is the schedule's counts as they are. The unused `.mark-cut`, `.mark-vis` and `.mark-wav` rules are gone. Probes rerun on the built page (webkit and chromium, CPU x4): liveprobe (first launch `live=[]`, hidden route stays on Apps), leakprobe (22 hidden names, none visible on any route or in Preferences), iconprobe, prefsprobe, supporterprobe (names only after a supporter code, gone after Forget, 7753 elements before and after) and scrollprobe2 all pass.
 
 ## v0.57.0 · dark and light icons that follow the theme {#icons}
 

@@ -2,8 +2,24 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.56.0
-Last updated: 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.58.0
+Last updated: 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.58.0 · on_the_way matches formai.studio {#live}
+
+### ops.rs · on_the_way, preferences · mcp.rs · apps, preferences
+- refers-to: cli/src/ops.rs :: on_the_way, apps, preferences · cli/src/mcp.rs :: apps and preferences descriptions · ../core/src/site.rs :: Portal::upcoming, Portal::supporter
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+`on_the_way` keeps FormPortal's own groups and, when formai.studio answered `/api/upcoming`, adds `{"opens": null, "apps": undated + supporters}` for apps whose date is still to come. When the stored supporter code is confirmed (the core's cache, rechecked daily; a network failure keeps the last answer), every group also carries `names`: dated groups take the site's tiles with the same `at`, in order, as many as the group's count; the date-to-come group takes the tiles without a date. Without a supporter there is no `names` key. `preferences` reports `supporter_code` only as true or false, never the code, so an agent cannot read it. `FORMPORTAL_SITE=off` disables the site calls. Run 2026-11-06 against a fake site on loopback (no code: groups 10, 3, 2, 2 and `{"opens": null, "apps": 6}`; with the code: the same plus `names` ["FormAlpha","FormBeta"], ["FormGamma","FormDelta"] and the six undated and codename tiles; a second `apps` made no request; with the site down the last answer was kept). The apps description changed, so `./formportal agents sync` regenerated `references/tools.md` and the mirror; `--check` is in step.
+
+### main.rs · progress
+- refers-to: cli/src/main.rs :: the install progress closure
+- kind: refactor
+- logged: v0.58.0 · 2026-11-06
+
+`checked_div` and `is_multiple_of(10)` in the progress line (clippy); the same steps print. `cargo clippy --workspace --all-targets` now reports nothing.
 
 ## v0.56.0 · only released apps, as on formai.studio {#live}
 
