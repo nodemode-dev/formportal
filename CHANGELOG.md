@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.57.0 · 2026-11-06
+
+- Every Form app's icon is the new v3 icon, in a dark and a light version, and FormPortal shows the one that matches the theme you choose: in Apps, Home, Files, the app pages and FormPortal's own icon in the sidebar.
+- FormPortal's own icon follows your theme too: the starting card, the window and taskbar icon on Windows and Linux, and the Dock icon on macOS while FormPortal runs. The installed app shows the dark icon.
+- Apps that are not released yet stay hidden, icons included, as on formai.studio.
+
 ## v0.56.0 · 2026-11-06
 
 - FormPortal shows only the Form apps that are released, as formai.studio does: an app appears once it has a published release (or you have it installed), and the rest stay unnamed. Under Apps, On the way shows how many apps open next and when, with a link to support the project on formai.studio.

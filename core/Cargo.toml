@@ -1,6 +1,6 @@
 [package]
 name = "formportal-core"
-version = "0.56.0"
+version = "0.57.0"
 description = "FormPortal's core: the catalogue, what it offers a computer, and installing, opening, rolling back and removing apps. No window, no interface."
 authors = ["nodemode-ai"]
 license = "GPL-3.0-only"
