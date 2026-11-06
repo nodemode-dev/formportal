@@ -49,7 +49,30 @@ The Linux AppImage also carries the build machine's WebKitGTK, GTK and GLib (LGP
 
 `cli/` (the `formportal` command and its `mcp` server) adds no crate beyond those core already uses.
 
+## Starter library (Fonts, Stock and templates)
+
+Since v0.60.0 FormPortal ships a starter library in `frontend/public/store/`, built into the app and listed by `core/data/store-fonts.json`, `store-media.json` and `store-extensions.json`. Every file is unmodified from its source except the photographs, which are resized to their published size and stripped of metadata, and the font files, which are renamed only (the fonts themselves are untouched, so no Reserved Font Name is affected).
+
+| Item | Licence | Copyright or author | Source |
+|---|---|---|---|
+| Inter | OFL-1.1 | Copyright 2020 The Inter Project Authors | https://github.com/google/fonts/tree/main/ofl/inter |
+| Manrope | OFL-1.1 | Copyright 2018 The Manrope Project Authors | https://github.com/google/fonts/tree/main/ofl/manrope |
+| DM Sans | OFL-1.1 | Copyright 2014 The DM Sans Project Authors | https://github.com/google/fonts/tree/main/ofl/dmsans |
+| Space Grotesk | OFL-1.1 | Copyright 2020 The Space Grotesk Project Authors | https://github.com/google/fonts/tree/main/ofl/spacegrotesk |
+| Bricolage Grotesque | OFL-1.1 | Copyright 2022 The Bricolage Grotesque Project Authors | https://github.com/google/fonts/tree/main/ofl/bricolagegrotesque |
+| Syne | OFL-1.1 | Copyright 2017 The Syne Project Authors | https://github.com/google/fonts/tree/main/ofl/syne |
+| Fraunces | OFL-1.1 | Copyright 2018 The Fraunces Project Authors | https://github.com/google/fonts/tree/main/ofl/fraunces |
+| Lora | OFL-1.1 | Copyright 2011 The Lora Project Authors, Reserved Font Name "Lora" | https://github.com/google/fonts/tree/main/ofl/lora |
+| Instrument Serif | OFL-1.1 | Copyright 2022 The Instrument Serif Project Authors | https://github.com/google/fonts/tree/main/ofl/instrumentserif |
+| JetBrains Mono | OFL-1.1 | Copyright 2020 The JetBrains Mono Project Authors | https://github.com/google/fonts/tree/main/ofl/jetbrainsmono |
+| IBM Plex Mono | OFL-1.1 | Copyright 2017 IBM Corp., Reserved Font Name "Plex" | https://github.com/google/fonts/tree/main/ofl/ibmplexmono |
+| Caveat | OFL-1.1 | Copyright 2014 The Caveat Project Authors | https://github.com/google/fonts/tree/main/ofl/caveat |
+| Eight photographs (portrait in a headwrap, coffee at a market, alpine valley, sunset storm cloud, bicycle in snow, peppers, Trajan's Market, tea with lemon) | CC0-1.0 | Wilfredor, DimiTalen, Jebulon, Nayan j Nath on Wikimedia Commons | each item's `source_url` in `core/data/store-media.json` |
+| FormCut gentle warm colour LUT | Apache-2.0 | Copyright 2026 NodeAgentc, Inc. | https://github.com/nodemode-dev/formcut/blob/1e9b4f3bb664b7b0fae0ab9d209d9e2d8a3852e9/examples/gentle-warm.cube |
+
+Fonts came from google/fonts at commit 86aced91de05cd4f96a06838124cca45be337b2b; each family's full OFL text is beside its files. CC0 covers copyright only: two photographs show identifiable people and no model release is known, so they are offered for editorial and creative use and the credit line travels with them. Items the formai.studio store adds at run time carry their own licences in the signed store index; FormPortal refuses any licence outside the allow lists in `core/src/fonts.rs` and `core/src/media.rs`.
+
 ## Rules
 
 - Permissive licences (MIT, Apache-2.0, BSD, ISC, zlib) anywhere. MPL-2.0 only with its files unedited. LGPL only as a separable binary. Nothing GPL in anything distributed. Nothing AGPL anywhere.
-- FormPortal ships no media tools and no models. The apps it installs carry their own ledgers.
+- FormPortal ships no media tools and no models. The apps it installs carry their own ledgers. The only content it ships is the starter library above.

@@ -35,9 +35,35 @@ fn platform() -> Platform {
     Platform::current()
 }
 
+static FETCHED: std::sync::Mutex<Option<(std::time::Instant, String, bool, Catalog)>> = std::sync::Mutex::new(None);
+const FETCHED_FRESH: std::time::Duration = std::time::Duration::from_secs(90);
+
+fn fetch_catalog(hub: &Portal, url: &str, allow_unsigned: bool) -> Result<Catalog, String> {
+    let catalog = hub.catalog(url, allow_unsigned).map_err(text)?;
+    if let Ok(mut slot) = FETCHED.lock() {
+        *slot = Some((std::time::Instant::now(), url.to_string(), allow_unsigned, catalog.clone()));
+    }
+    Ok(catalog)
+}
+
+fn recent_catalog(hub: &Portal, url: &str, allow_unsigned: bool) -> Result<Catalog, String> {
+    let held = FETCHED.lock().ok().and_then(|slot| {
+        slot.as_ref().filter(|(at, u, a, _)| at.elapsed() < FETCHED_FRESH && u == url && *a == allow_unsigned).map(|(_, _, _, c)| c.clone())
+    });
+    match held {
+        Some(catalog) => Ok(catalog),
+        None => fetch_catalog(hub, url, allow_unsigned),
+    }
+}
+
 #[tauri::command]
 async fn catalog(url: String, allow_unsigned: bool) -> Result<Catalog, String> {
-    tauri::async_runtime::spawn_blocking(move || hub().catalog(&url, allow_unsigned).map_err(text)).await.map_err(text)?
+    tauri::async_runtime::spawn_blocking(move || fetch_catalog(&hub(), &url, allow_unsigned).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn catalog_kept(url: String, allow_unsigned: bool) -> Result<Catalog, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().catalog_kept(&url, allow_unsigned).map_err(text)).await.map_err(text)?
 }
 
 #[tauri::command]
@@ -49,7 +75,7 @@ fn installs() -> Result<Vec<Install>, String> {
 async fn install(app: AppHandle, product: String, channel: Channel, url: String, allow_unsigned: bool, version: Option<String>) -> Result<Install, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
+        let catalog = recent_catalog(&hub, &url, allow_unsigned).map_err(text)?;
         let view = catalog.view(&product, channel, Platform::current());
         let asked = version.is_some();
         let (version, artifact) = match version.as_deref() {
@@ -192,15 +218,9 @@ fn sibling(url: &str, name: &str) -> String {
 async fn fonts_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let (index, error) = match hub.font_index(&sibling(&url, "fonts.json"), allow_unsigned) {
-            Ok(i) => (Some(i), None),
-            Err(e) => (None, Some(e.to_string())),
-        };
-        let updates = match &index {
-            Some(i) => hub.font_updates(i).map_err(text)?,
-            None => Vec::new(),
-        };
-        Ok(serde_json::json!({ "index": index, "index_error": error, "installed": hub.fonts_installed().map_err(text)?, "updates": updates, "folder": formportal_core::fonts::font_dir() }))
+        let shelf = hub.font_library(&sibling(&url, "fonts.json"), allow_unsigned);
+        let updates = hub.font_updates(&shelf.index).map_err(text)?;
+        Ok(serde_json::json!({ "index": shelf.index, "index_error": null, "store": shelf.reached, "store_note": shelf.missed, "installed": hub.fonts_installed().map_err(text)?, "updates": updates, "folder": formportal_core::fonts::font_dir() }))
     })
     .await
     .map_err(text)?
@@ -210,7 +230,7 @@ async fn fonts_view(url: String, allow_unsigned: bool) -> Result<serde_json::Val
 async fn font_install(id: String, style: Option<String>, url: String, allow_unsigned: bool) -> Result<Vec<formportal_core::fonts::InstalledFont>, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let index = hub.font_index(&sibling(&url, "fonts.json"), allow_unsigned).map_err(text)?;
+        let index = hub.font_library(&sibling(&url, "fonts.json"), allow_unsigned).index;
         hub.install_font(&index, &id, style.as_deref(), &mut |_, _| {}).map_err(text)
     })
     .await
@@ -241,12 +261,9 @@ fn font_remove(family: String, style: Option<String>) -> Result<usize, String> {
 async fn media_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let (index, error) = match hub.media_index(&sibling(&url, "media.json"), allow_unsigned) {
-            Ok(i) => (Some(i), None),
-            Err(e) => (None, Some(e.to_string())),
-        };
-        let credits: Vec<String> = index.as_ref().map(|i| i.items.iter().map(formportal_core::media::credit_line).collect()).unwrap_or_default();
-        Ok(serde_json::json!({ "index": index, "credits": credits, "index_error": error, "saved": hub.saved_media().map_err(text)?, "library": formportal_core::media::library_dir() }))
+        let shelf = hub.media_library(&sibling(&url, "media.json"), allow_unsigned);
+        let credits: Vec<String> = shelf.index.items.iter().map(formportal_core::media::credit_line).collect();
+        Ok(serde_json::json!({ "index": shelf.index, "credits": credits, "index_error": null, "store": shelf.reached, "store_note": shelf.missed, "saved": hub.saved_media().map_err(text)?, "library": formportal_core::media::library_dir() }))
     })
     .await
     .map_err(text)?
@@ -256,7 +273,7 @@ async fn media_view(url: String, allow_unsigned: bool) -> Result<serde_json::Val
 async fn media_save(id: String, use_template: bool, url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let index = hub.media_index(&sibling(&url, "media.json"), allow_unsigned).map_err(text)?;
+        let index = hub.media_library(&sibling(&url, "media.json"), allow_unsigned).index;
         if use_template {
             let path = hub.use_template(&index, &id, None, &mut |_, _| {}).map_err(text)?;
             let opened = hub.open_file(&path, &exts()).ok().map(|(p, _)| p);
@@ -407,7 +424,7 @@ fn remove(product: String, channel: Channel) -> Result<(), String> {
 async fn updates(url: String, allow_unsigned: bool) -> Result<Vec<Update>, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
+        let catalog = recent_catalog(&hub, &url, allow_unsigned).map_err(text)?;
         hub.updates(&catalog, Platform::current()).map_err(text)
     })
     .await
@@ -418,7 +435,7 @@ async fn updates(url: String, allow_unsigned: bool) -> Result<Vec<Update>, Strin
 async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Result<Vec<UpdateOutcome>, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
+        let catalog = recent_catalog(&hub, &url, allow_unsigned).map_err(text)?;
         let mut last = u64::MAX;
         hub.apply_updates(&catalog, Platform::current(), true, &mut |product, channel, have, total| {
             let step = (have * 100).checked_div(total).unwrap_or(0);
@@ -437,7 +454,7 @@ async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Resul
 async fn repair(url: String, allow_unsigned: bool, fix: bool) -> Result<formportal_core::repair::Report, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let catalog = hub.catalog(&url, allow_unsigned).ok();
+        let catalog = recent_catalog(&hub, &url, allow_unsigned).ok();
         hub.repair(catalog.as_ref(), Platform::current(), fix, &mut |_, _, _, _| {}).map_err(text)
     })
     .await
@@ -481,6 +498,8 @@ async fn web_fetch(url: String) -> Result<serde_json::Value, String> {
 struct ExtensionsView {
     index: Option<ExtensionIndex>,
     index_error: Option<String>,
+    store: Option<String>,
+    store_note: Option<String>,
     installed: Vec<InstalledExtension>,
 }
 
@@ -495,11 +514,8 @@ fn index_url(catalog: &str) -> String {
 async fn extensions(url: String, allow_unsigned: bool) -> Result<ExtensionsView, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let (index, index_error) = match hub.extension_index(&index_url(&url), allow_unsigned) {
-            Ok(i) => (Some(i), None),
-            Err(e) => (None, Some(e.to_string())),
-        };
-        Ok(ExtensionsView { index, index_error, installed: hub.extensions_installed().map_err(text)? })
+        let shelf = hub.extension_library(&index_url(&url), allow_unsigned);
+        Ok(ExtensionsView { index: shelf.index, index_error: None, store: shelf.reached, store_note: shelf.missed, installed: hub.extensions_installed().map_err(text)? })
     })
     .await
     .map_err(text)?
@@ -509,7 +525,7 @@ async fn extensions(url: String, allow_unsigned: bool) -> Result<ExtensionsView,
 async fn extension_install(id: Option<String>, path: Option<String>, url: String, allow_unsigned: bool) -> Result<InstalledExtension, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let index = hub.extension_index(&index_url(&url), allow_unsigned);
+        let index = hub.extension_library(&index_url(&url), allow_unsigned).index.ok_or_else(|| "the extension index could not be read".to_string());
         match (id, path) {
             (_, Some(path)) => hub.install_extension_file(std::path::Path::new(&path), index.as_ref().ok(), allow_unsigned).map_err(text),
             (Some(id), None) => hub.install_extension(&index.map_err(text)?, &id, allow_unsigned, &mut |_, _| {}).map_err(text),
@@ -724,6 +740,8 @@ fn main() {
                     *slot = Some(link);
                 }
             }
+            let assets = app.asset_resolver();
+            formportal_core::store::set_reader(move |path| assets.get(path.to_string()).map(|asset| asset.bytes));
             let page = hub().preferences().map(|p| p.page()).unwrap_or("index.html");
             if let Some(config) = app.config().app.windows.iter().find(|w| w.label == "main") {
                 let mut config = config.clone();
@@ -758,7 +776,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
+            platform, catalog, catalog_kept, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
             extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])

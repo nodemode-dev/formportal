@@ -17,15 +17,28 @@ pub fn check_url(url: &str) -> Result<()> {
     Err(CoreError::Url(url.to_string()))
 }
 
+pub fn agent() -> &'static ureq::Agent {
+    static AGENT: std::sync::OnceLock<ureq::Agent> = std::sync::OnceLock::new();
+    AGENT.get_or_init(|| {
+        ureq::AgentBuilder::new()
+            .timeout_connect(std::time::Duration::from_secs(4))
+            .timeout_read(std::time::Duration::from_secs(10))
+            .timeout(std::time::Duration::from_secs(20))
+            .max_idle_connections_per_host(8)
+            .user_agent("FormPortal")
+            .build()
+    })
+}
+
 pub fn fetch_text(url: &str) -> Result<String> {
     check_url(url)?;
-    let response = ureq::get(url).call().map_err(|e| CoreError::Http(e.to_string()))?;
+    let response = agent().get(url).call().map_err(|e| CoreError::Http(e.to_string()))?;
     response.into_string().map_err(CoreError::Io)
 }
 
 pub fn fetch_bytes(url: &str) -> Result<Vec<u8>> {
     check_url(url)?;
-    let response = ureq::get(url).call().map_err(|e| CoreError::Http(e.to_string()))?;
+    let response = agent().get(url).call().map_err(|e| CoreError::Http(e.to_string()))?;
     let mut body = Vec::new();
     response.into_reader().take(16 * 1024 * 1024).read_to_end(&mut body)?;
     Ok(body)
@@ -46,6 +59,20 @@ pub fn sha256_file(path: &Path) -> Result<String> {
 }
 
 pub fn download(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u64)) -> Result<PathBuf> {
+    if crate::store::is_bundled(&artifact.url) {
+        let bytes = crate::store::read(&artifact.url).ok_or_else(|| CoreError::Unavailable(format!("{} is not in this build's starter library", artifact.file)))?;
+        fs::create_dir_all(dir)?;
+        let name = Path::new(&artifact.file).file_name().ok_or_else(|| CoreError::Url(artifact.file.clone()))?.to_string_lossy().to_string();
+        let done = dir.join(&name);
+        fs::write(&done, &bytes)?;
+        let found = sha256_file(&done)?;
+        if found != artifact.sha256 {
+            let _ = fs::remove_file(&done);
+            return Err(CoreError::Hash { file: name, expected: artifact.sha256.clone(), found });
+        }
+        progress(bytes.len() as u64, bytes.len() as u64);
+        return Ok(done);
+    }
     check_url(&artifact.url)?;
     fs::create_dir_all(dir)?;
     let name = Path::new(&artifact.file).file_name().ok_or_else(|| CoreError::Url(artifact.file.clone()))?.to_string_lossy().to_string();

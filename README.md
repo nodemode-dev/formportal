@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img alt="version 0.59.0" src="https://img.shields.io/badge/version-0.59.0-eef0f4?style=flat-square">
+  <img alt="version 0.60.0" src="https://img.shields.io/badge/version-0.60.0-eef0f4?style=flat-square">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-stable-B7410E?style=flat-square&logo=rust&logoColor=white">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24C8DB?style=flat-square">
   <img alt="macOS, Windows, Linux" src="https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-native-2f7bf5?style=flat-square">
@@ -69,13 +69,13 @@
       <img src="docs/images/formportal-fonts.webp" alt="The Fonts page with open-licensed font families and Install family buttons" width="100%">
       <br><sub>Open-licensed fonts, installed for you alone.</sub>
       <h3>Fonts without an account</h3>
-      Install families from a signed index, or your own TTF and OTF files, with no administrator.
+      Twelve open families ship inside FormPortal, each shown in its own typeface; the formai.studio store adds more. Your own TTF and OTF files install the same way, with no administrator.
     </td>
     <td width="50%" valign="top">
       <img src="docs/images/formportal-stock.webp" alt="The Stock and templates page with openly licensed images and Form app templates" width="100%">
       <br><sub>Stock and templates, each saved with its credit line.</sub>
       <h3>Stock and templates</h3>
-      Openly licensed images, video, audio and Form app templates. A template opens in its app in one step.
+      Public-domain photographs and Form app templates ship inside FormPortal, and the formai.studio store adds more. Each saves with its credit line, and a template opens in its app in one step.
     </td>
   </tr>
 </table>

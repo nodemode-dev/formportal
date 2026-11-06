@@ -4,7 +4,7 @@ FormPortal installs open-licensed fonts for the person using it, and their own f
 
 ## The index
 
-`fonts.json` sits beside the catalogue (in the same folder as `apps.json`, so `https://dl.formai.studio/catalog/fonts.json` once published there, or `FORMPORTAL_FONTS`) with a detached Ed25519 signature `fonts.json.sig`, made with the catalogue's key.
+FormPortal ships a starter library of open fonts and merges the formai.studio store's `fonts.json` over it; where it looks and how the store signs it are in [Store](Store). The same index can also sit beside the catalogue (in the same folder as `apps.json`, or `FORMPORTAL_FONTS`) with a detached Ed25519 signature `fonts.json.sig`, made with the catalogue's key.
 
 ```json
 {

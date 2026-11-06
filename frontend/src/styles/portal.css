@@ -1910,3 +1910,37 @@ html:not([data-installed]) .list-updates {
     transition: none;
   }
 }
+
+.row.font[data-face] .tile-font {
+  font-family: var(--store-face), var(--font-ui);
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.row.font[data-face] [data-field="family"] {
+  font-family: var(--store-face), var(--font-ui);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.store-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: var(--sp-5);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.store-note::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  flex: none;
+}
+
+.store-note[data-store="live"]::before {
+  background: var(--fp-ok);
+}

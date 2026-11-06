@@ -1,6 +1,7 @@
 import type { FontFamilyEntry, InstalledFont } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
+import { storeNote } from "../storenote.ts";
 
 const set = (root: HTMLElement, field: string, text: string) => {
   const node = root.querySelector<HTMLElement>(`[data-field='${field}']`);
@@ -46,6 +47,16 @@ export const fonts: Extension = {
           });
           styles?.append(b);
         }
+        const face = family.styles.find((s) => !s.italic && s.url.startsWith("bundled:")) ?? family.styles.find((s) => s.url.startsWith("bundled:"));
+        if (face && typeof FontFace !== "undefined") {
+          const name = `formportal-store-${family.id}`;
+          const loaded = new FontFace(name, `url("/store/${face.url.slice("bundled:".length)}")`, { weight: "100 900", style: face.italic ? "italic" : "normal" });
+          void loaded.load().then((done) => {
+            document.fonts.add(done);
+            r?.style.setProperty("--store-face", `"${name}"`);
+            r?.toggleAttribute("data-face", true);
+          }, () => undefined);
+        }
         rows.set(family.id, r);
         list.append(r);
       }
@@ -84,6 +95,7 @@ export const fonts: Extension = {
     engine.on("fonts", ({ view }) => {
       installed = view.installed;
       outdated = view.updates ?? [];
+      storeNote(pane, view.store, t("Fonts"));
       for (const f of view.index?.families ?? []) row(f);
       const error = document.querySelector<HTMLElement>("[data-fonts-error]");
       if (error) {

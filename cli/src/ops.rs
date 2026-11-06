@@ -283,10 +283,8 @@ fn fonts_source(ctx: &Ctx, args: &Value) -> String {
 pub fn fonts(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
     let installed = ctx.portal.fonts_installed()?;
-    let (index, error) = match ctx.portal.font_index(&fonts_source(ctx, args), allow) {
-        Ok(i) => (Some(i), None),
-        Err(e) => (None, Some(e.to_string())),
-    };
+    let shelf = ctx.portal.font_library(&fonts_source(ctx, args), allow);
+    let (index, error) = (Some(shelf.index), shelf.missed.map(|why| format!("the store was not reached, so this is the starter library: {why}")));
     let q = text(args, "query").map(|q| q.to_lowercase());
     let families: Vec<Value> = index
         .as_ref()
@@ -312,7 +310,7 @@ pub fn font_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64))
     }
     let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give a family id from fonts, or the path of your own font file"))?;
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
-    let index = ctx.portal.font_index(&fonts_source(ctx, args), allow)?;
+    let index = ctx.portal.font_library(&fonts_source(ctx, args), allow).index;
     let done = ctx.portal.install_font(&index, &id, text(args, "style").as_deref(), progress)?;
     Ok(json!({ "installed": done, "note": "Installed for this user. Apps see new fonts after they restart." }))
 }
@@ -335,10 +333,8 @@ fn media_source(ctx: &Ctx, args: &Value) -> String {
 pub fn media(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
     let saved = ctx.portal.saved_media()?;
-    let (index, error) = match ctx.portal.media_index(&media_source(ctx, args), allow) {
-        Ok(i) => (Some(i), None),
-        Err(e) => (None, Some(e.to_string())),
-    };
+    let shelf = ctx.portal.media_library(&media_source(ctx, args), allow);
+    let (index, error) = (Some(shelf.index), shelf.missed.map(|why| format!("the store was not reached, so this is the starter library: {why}")));
     let words: Vec<String> = text(args, "query").map(|q| q.to_lowercase().split_whitespace().map(str::to_string).collect()).unwrap_or_default();
     let kind = text(args, "kind");
     let items: Vec<Value> = index
@@ -368,7 +364,7 @@ pub fn media(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 pub fn media_save(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
     let id = text(args, "id").or_else(|| text(args, "product")).ok_or_else(|| fail("give an item id from media"))?;
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
-    let index = ctx.portal.media_index(&media_source(ctx, args), allow)?;
+    let index = ctx.portal.media_library(&media_source(ctx, args), allow).index;
     if flag(args, "use").unwrap_or(false) {
         let folder = text(args, "folder").map(std::path::PathBuf::from);
         let path = ctx.portal.use_template(&index, &id, folder.as_deref(), progress)?;
@@ -794,7 +790,10 @@ fn ext_source(ctx: &Ctx, args: &Value) -> String {
 fn ext_index(ctx: &Ctx, args: &Value) -> Result<(formportal_core::extensions::ExtensionIndex, String), CoreError> {
     let source = ext_source(ctx, args);
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
-    Ok((ctx.portal.extension_index(&source, allow)?, source))
+    let shelf = ctx.portal.extension_library(&source, allow);
+    let reached = shelf.reached.unwrap_or(source);
+    let index = shelf.index.ok_or_else(|| CoreError::Unavailable(format!("the extension index could not be read: {}", shelf.missed.unwrap_or_default())))?;
+    Ok((index, reached))
 }
 
 pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {

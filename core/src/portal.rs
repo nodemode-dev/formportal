@@ -326,6 +326,26 @@ impl Portal {
         }
     }
 
+    pub fn catalog_kept(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
+        let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
+        if !(url.starts_with("http://") || url.starts_with("https://")) {
+            return self.catalog(&url, allow_unsigned);
+        }
+        let dir = self.root.join("catalog");
+        let body = fs::read(dir.join("apps.json"))?;
+        match fs::read_to_string(dir.join("apps.json.sig")).ok() {
+            Some(signature) => verify(&body, signature.trim(), &keys)?,
+            None if allow_unsigned => {}
+            None => return Err(CoreError::Signature("it is not signed".to_string())),
+        }
+        let text = String::from_utf8(body).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
+        let mut catalog = Catalog::from_json(&text)?;
+        if self.reads_releases()? {
+            crate::releases::apply_kept(&self.root, &mut catalog);
+        }
+        Ok(catalog)
+    }
+
     pub fn catalog(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
         let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
         if !(url.starts_with("http://") || url.starts_with("https://")) {

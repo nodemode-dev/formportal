@@ -4,7 +4,7 @@ FormPortal offers open-licensed images, video, audio and Form app templates, sav
 
 ## The index
 
-`media.json` sits beside the catalogue (in the same folder as `apps.json`, so `https://dl.formai.studio/catalog/media.json` once published there, or `FORMPORTAL_MEDIA`) with a detached Ed25519 signature `media.json.sig`, made with the catalogue's key. When an organisation locks the catalogue, the media index follows it.
+FormPortal ships a starter library of open photos and templates and merges the formai.studio store's `media.json` over it; where it looks and how the store signs it are in [Store](Store). The same index can also sit beside the catalogue (in the same folder as `apps.json`, or `FORMPORTAL_MEDIA`) with a detached Ed25519 signature `media.json.sig`, made with the catalogue's key. When an organisation locks the catalogue, the media index follows it.
 ```json
 {
   "format": "formai-media",
