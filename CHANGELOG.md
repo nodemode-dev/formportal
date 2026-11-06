@@ -2,6 +2,16 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.60.0 · 2026-11-06
+
+- FormPortal opens straight onto your apps. It shows the catalogue it already has the moment the window appears, then checks formai.studio and GitHub for anything newer in the background, instead of waiting on the network every time it starts.
+- The start-up check is much quicker when it does run: connections are reused, every request gives up after a few seconds instead of hanging, each app's release files are sized at the same time instead of one by one, and the catalogue is fetched once per start instead of twice.
+- The splash screen no longer holds the window back for a fixed 2.6 seconds.
+- Fonts is no longer empty: twelve open fonts ship inside FormPortal (Inter, Manrope, DM Sans, Space Grotesk, Bricolage Grotesque, Syne, Fraunces, Lora, Instrument Serif, JetBrains Mono, IBM Plex Mono and Caveat), each shown in its own typeface, and they install without a download.
+- Stock & templates is no longer empty: eight public-domain photographs and FormCut's warm colour look ship inside FormPortal, each with its credit line.
+- Fonts, Stock & templates and Extensions now connect to the formai.studio store. Whatever the store offers is added to the starter library, and each page says whether the store answered.
+- Extensions explains that no Form app has published one yet, instead of showing a blank page, and checks again each time you open it.
+
 ## v0.59.0 · 2026-11-06
 
 - Installing works on macOS again. Form apps come as disk images with a licence, and FormPortal now accepts it for you instead of the install being cancelled.

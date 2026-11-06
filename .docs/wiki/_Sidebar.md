@@ -9,6 +9,7 @@
 - [Files and Versions](Files-and-Versions)
 - [Fonts](Fonts)
 - [Stock and Templates](Stock-and-Templates)
+- [Store](Store)
 - [Learn and Assistant](Learn-and-Assistant)
 - [Languages and Launch](Languages-and-Launch)
 - [Repair and Handoff](Repair-and-Handoff)
