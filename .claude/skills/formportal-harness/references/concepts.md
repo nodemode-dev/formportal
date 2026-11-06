@@ -25,7 +25,8 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 - The catalogue must carry a detached Ed25519 signature (`apps.json.sig`) made with a key FormPortal trusts. Without one it is refused with "it is not signed". A catalogue given as a file path is checked the same way, against `apps.json.sig` beside it. `FORMPORTAL_ALLOW_UNSIGNED=1`, set by the person, or `--allow-unsigned` on the command line accepts an unsigned catalogue; it exists for local development catalogues only, and the MCP tools ignore an `allow_unsigned` argument.
 - Every artifact is hashed after download and refused unless its SHA-256 equals the catalogue's. Nothing is unpacked before that.
 - Only https addresses are fetched, plus http on this computer (127.0.0.1, localhost).
-- When the network fails, the last good catalogue is used and says so.
+- When the network fails, the last good catalogue is used and says so. When the download store's catalogue cannot be fetched, formcompiler's signed copy on GitHub is tried first.
+- Newer releases come from each app's own GitHub release: for a product whose signed `repository` is on GitHub, FormPortal reads the newest published release's `form-app.json` and `SHA256SUMS.txt`, and offers it when it is newer than the catalogue's, names the same repository, is a plain `x.y.z`, is not in formcompiler's `yanked.json`, and the sums carry the manifest's own digest. Its files are hashed against those sums like any other. `info` shows `"origin": "github"` on such a release, and the catalogue's own release moves to its history. `FORMPORTAL_RELEASES=off` or an organisation's `github_releases: false` turns this off; a policy that names its own catalogue has it off unless it says `true`.
 
 ## Errors, in FormPortal's words
 

@@ -12,7 +12,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 ## The model
 
 - The **registry** is the family: every Form app's id, name, what it replaces, group (Adobe alternatives, other alternatives, on the way) and development status (available, in progress, in development). It is built into FormPortal, so it answers offline.
-- The **catalogue** is what is released: per product, a state (prelaunch, public, live) and per channel a release with a version and artifacts (file, size, SHA-256, minimum OS). It is fetched, signature-checked, and kept for offline use.
+- The **catalogue** is what is released: per product, a state (prelaunch, public, live) and per channel a release with a version and artifacts (file, size, SHA-256, minimum OS). It is fetched, signature-checked, and kept for offline use; a newer release an app has published on its own GitHub repository is offered over the catalogue's (see `references/concepts.md` Trust).
 - A **view** is what this computer is offered for one product and channel: `available` (with version and size), `other-platform`, `no-release` or `unreleased`.
 - An **install** is one product on one channel: the current version (path, SHA-256) and the previous one kept for rollback. Channels are `stable`, `beta`, `nightly`; each is its own install.
 
