@@ -2,8 +2,89 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.55.0
-Last updated: 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.56.0
+Last updated: 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.56.0 · only released apps, as on formai.studio {#live}
+
+### vite.config.ts, src/styles/live.css, public/prelive.js, extensions/live · which apps are shown
+- refers-to: vite.config.ts :: ALIAS, SCHEDULE, LIVE, LEFT, liveRules, portalPlugin.transform, renderPortal (soon, rootState, data-fam-group) · src/styles/live.css · public/prelive.js · src/extensions/live/index.ts :: isLive, liveNow, live · src/extensions/route/index.ts :: route.go · index.html :: `[data-soon]`, head links
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The owner: of the 34 Form apps only 13 are public, on a release schedule, and the others are hidden on formai.studio unless one supports the project; FormPortal must match. Read in formai_dev v0.56.1: the site hides every product that is not live (`gate.py`; live means a published release exists), the schedule only dates countdown tiles, and a supporter's cookie shows the hidden names, never a build; no endpoint tells a desktop client who is a supporter. So FormPortal shows an app when it has a release on stable or beta (the signed catalogue plus each app's GitHub releases) or is installed here, and names no other.
+
+How it stays flash-free: the whole state sits on `<html>`. `data-live` lists the live ids; for each app the build appends `html:not([data-live~="id"]) [data-product="id"] { display: none !important }` to `live.css` (the plugin's `transform` hook, so the rules are a same-origin stylesheet the CSP allows), plus one rule per group heading in the Apps list and on Home whose apps are all hidden. The build writes a default `data-live` (the apps of schedule groups already opened at build time) and `prelive.js`, before first paint, replaces it with the last set seen (`formportal.live` in localStorage, `{live, soon}`). The live extension recomputes on `source`, `install` and `policy`, writes only attributes that changed and the Apps count, and keeps the cache. On the very first launch the default can differ from the truth, so the reveal waits for the catalogue (next entry). `route.go` refuses `app-<id>` for an app that is not live, so a `formai://app/<id>` link to it lands on Apps, as for an unknown id.
+
+On the way: one group per schedule release (`catalog/schedule.json`, copied from formai_dev) with "Opens <date>" or "Due now" (`data-due` once the date has passed and apps are still unreleased) and one unnamed "Form?" tile per unreleased app; `html[data-soon-gN]` holds the count and generated `nth-child` rules show that many tiles, so no element is created or removed; `data-soon-left="0"` hides the section. A Support the Form apps link opens formai.studio's support page.
+
+Checked 2026-11-06 on the built interface in WebKit and Chromium (CPU 4x, script held 1.5 s), with the bundled sample catalogue (FormCut its one release): first launch, the window not yet revealed at 500 ms, then FormCut alone with 18 On the way tiles at reveal; returning launch, the cached set already in place at 500 ms; a click on a hidden app's link stays on Apps; Home and Apps hide the empty Instead of Adobe, On the way and Family tools headings.
+
+After an independent review the same day: the Extensions filter buttons and the formskills and formMCP mentions on every app page carry `data-product`, so they hide with their app; Files rows keep showing a person's own projects whatever app owns them (the rule skips `[data-path]`); Learn hides tutorials of apps not shown; search counts only shown rows for its "no app matches" line; the open-file and web-link notices say "a Form app" instead of an app that is not shown; the Files start text no longer names three apps; with no catalogue the shown set keeps the last one and adds every installed app; the 2.4 s reveal timer starts before any extension is set up, so a failing setup still reveals the window. A walk of every sidebar place and Preferences on the built interface found no visible name of an app that is not shown (22 names checked, sample catalogue).
+
+### main.ts · the reveal waits for the catalogue
+- refers-to: src/main.ts :: revealLate, revealApp · src/bridge/reveal.ts · ../src-tauri/src/reveal.rs
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+formvis reveals after its fonts load or 2.5 s, inside a splash that lasts at least 2.6 s. FormPortal reveals when the catalogue arrives (`source`) or after 2.4 s, whichever is first, so on a first launch the window normally appears with the right apps already; on a slow or offline start it appears at 2.4 s with the default or cached set and corrects in place.
+
+### vite.config.ts · What it does on each app page
+- refers-to: vite.config.ts :: caps, capsBlock · catalog/apps/*.json :: checks, runs_on
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The owner asked for app caps from formai.studio. The site serves no per-app JSON (`/catalog/*` other than `v1/apps.json` answers 404); its pages are built from formai_dev's `catalog/apps/<id>.json`. Those files are copied into `catalog/apps/`, and each app page carries their `checks` (what the app does, as the site states it) and `runs_on`, written at build time.
+
+## v0.56.0 · the family look and Preferences {#family-look}
+
+### design/tokens.css, src/styles/main.css · formvis's vocabulary, FormPortal's names mapped onto it
+- refers-to: ../design/tokens.css :: `--bg-primary` to `--ctl-xl`, `--ground` to `--focus`, `--radius-s`, `--radius-m`, `--radius-l` · src/styles/main.css :: `.btn`, `.btn-primary`, `.seg`, `.seg-item`, `.field`, `.switch`, `.prefs`
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The owner's goal is that FormPortal looks like formvis. The values are formvis v1.99.7's (`frontend/src/styles/tokens.css` and its Studio Dark and Light profiles in `themes.ts`): surfaces `--bg-primary/secondary/tertiary`, lines `--border-color/light/soft`, text `--text-primary/secondary/muted`, `--accent-color` (#f97316) with `-dim` and `-hover`, `--danger-fill/soft`, radii, `--space-1` to `--space-7`, shadows, `--fs-11` to `--fs-14` and `--ctl-*`. FormPortal's 2500 lines keep their own names, which now point at those: `--ground` is `--bg-primary`; `--inset` and `--pane` are `--bg-secondary`; `--float` and `--control` are `--bg-tertiary` (hover and press mix in `--text-primary`, so they work in both profiles); `--edge` is `--border-color` and `--edge-strong` is `--border-light`; `--ink`, `--ink-soft`, `--ink-faint` are the three text tokens; `--focus` is the accent; the radii are 6, 10 and 12. The light profile is formvis's "Light" (the warm #ecebe6 family), not FormPortal's old cool one. Chosen on purpose, and visible: buttons are no longer pills, the primary button, the checked switch and the pressed segment are the accent, and dialogs take formvis's border, radius and window shadow. Not taken: formvis's font stack (FormPortal ships Inter and the prepaint font guard depends on it), formvis's pill-less search field (the search stays a pill), and its theme profiles (FormPortal keeps System, Light and Dark). Per-app `--hue` values are unchanged and still colour the app tiles and app pages; `--accent-color` is for interface chrome only. Three layer tokens were added to the z scale for the Preferences rail, wire and port (`--z-prefs-wire`, `--z-prefs-tab`, `--z-prefs-port`), each on the existing scale (`--z-base`, `--z-raised`, `--z-raised` plus 1); no raw number was written.
+
+### public/prepaint.js, src/extensions/theme · dark is the default, System stays
+- refers-to: public/prepaint.js :: theme part · src/extensions/theme/index.ts :: `read`, `theme.set`
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+Formvis opens dark, so FormPortal does too: with no stored choice the interface is dark whatever the system says. The key stays `formportal-theme`, and no value is orphaned: `light` and `dark` mean what they did, and `system` is now stored (before, System was "no key"). A person who had chosen Match the system has no key, so they now see dark once, until they pick Match the system again; there is no way to tell that person from a new one. The Appearance buttons in the markup start with Dark pressed so the first frame needs no attribute change.
+
+### public/prepaint.js, src/extensions/theme · the shared accent
+- refers-to: public/prepaint.js :: accent part · src/extensions/theme/index.ts :: the `[data-accent]` picker · index.html :: Interface card
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+`prepaint.js` reads `nodemode_ui_settings` (the key formvis's `themes.ts` calls `STORAGE_KEY`) and, when `accentColor` is a #rrggbb colour, sets `--accent-color`, `-dim` (accent and 33) and `-hover` on `documentElement` before the first paint, so an accent chosen in formvis shows in FormPortal at once. FormPortal also gets the control: Interface has an Accent colour picker and a Reset. It writes the same shape as formvis's `saveChoice`: the stored object is merged, `accentColor` is set, and `appearance: 3` (formvis's `APPEARANCE`) is written, because formvis ignores a blob without it and would fall back to its defaults, which would also drop its saved theme. The picker applies on `input` and writes on `change`. Not done: a `storage` listener, so an open window does not follow another app's change until it is reopened (formvis does not either).
+
+### src/styles/main.css · no scrollbars
+- refers-to: src/styles/main.css :: the last rules (`*::-webkit-scrollbar`, `scrollbar-width`)
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The same rules as formvis's `scrollbars.css`: no bar is drawn anywhere, in WebKit and Chromium or in Firefox, with `!important` so no later rule brings one back. Wheel, trackpad, touch and keys still scroll, and `.stage` still scrolls (its `scrollbar-gutter: stable` now reserves nothing). The Preferences pane relies on this too.
+
+### public/prepaint.js, src/styles/main.css, index.html · the macOS title row
+- refers-to: public/prepaint.js :: `has-overlay-titlebar` · src/styles/main.css :: `.has-overlay-titlebar` rules · index.html :: `data-tauri-drag-region` on `.brand`, `.top`, `.top-title`, `.top-tools`
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+`src-tauri/src/traffic_lights.rs` now centres the traffic lights in a 38 px row at the top-left (LEFT 14, ROW 38). `prepaint.js` sets `html.has-overlay-titlebar` only when `"__TAURI_INTERNALS__" in window` and `navigator.userAgent` contains "Mac" (formvis's `wantsOverlayTitleBar` uses `navigator.platform`; the user agent is what the task named). Under the class `--top-h` is 38 px, the sidebar's top row keeps 78 px free at its left (`--traffic-w`, formvis's `--cv-traffic-w`), and the top bar's controls take the compact size (`--ctl-md`, 28 px: icon buttons and the search field). The header elements carry `data-tauri-drag-region`: the sidebar's brand row (its children ignore the pointer under the class so the row itself is the target), the top bar, the page title and the empty tools container; the buttons and the search field do not. Below 860 px the sidebar is 64 px wide, narrower than the lights, so the logo is hidden there on macOS. Measured with `__TAURI_INTERNALS__` and a Macintosh user agent injected in Playwright (Chromium and WebKit): `.top` is 38 px tall with 37 px of content, the search and buttons are 28 px at y 5, the logo starts at x 78. Off macOS nothing changes: no class, 56 px rows.
+
+### index.html, src/extensions/prefs, src/styles/main.css · Preferences in formvis's structure
+- refers-to: index.html :: `<dialog class="prefs cv-prefs-dlg" data-prefs>` · src/extensions/prefs/index.ts · src/styles/main.css :: `.cv-prefs-*` · ../design/icons.json :: `pf-interface`, `pf-user`, `pf-about`, `pf-fold`, `pf-close`
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+Taken from formvis v1.99.7's `SettingsDialog` and `dialogs.css` (the map in `FORMVIS_SETTINGS_MAP.md`): a floating left rail (232 px, 76 px collapsed, tabs 40 px, fold button, state in `formportal.prefsRailCollapsed`), one scrolling pane of foldable cards (head with icon, label and chevron; groups with uppercase accent labels), the SVG wire from the active tab to a port on the dialog's header divider, a scroll spy, click-to-scroll, a footer with a primary Done, Escape and backdrop close. Sizes are the map's: the dialog is min(840px, 100vw - 280px) by min(86vh, 780px), the head 44 px, controls 30 px. Where formvis centres a flex item with `margin-left: 240px`, a `<dialog>` is placed with `inset-inline: 240px 0` and `margin: auto`, which lands on the same pixels (290 px from the left at 1180 px wide).
+
+What stayed FormPortal's: it is still a `<dialog>` opened with `showModal()`, still `prefs.open` with the section as its argument (the section names are `general`, `interface`, `apps`, `catalogue`, `account`, `about`; `main.ts` passes the link's id), and every control and key is where it was (`data-pref`, `data-quiet`, `data-setting`, `data-setting-input`, `data-theme-set`, `data-lang-set`, `data-open-set`, `data-self-*`, `data-repair-*`, `data-account-*`, `data-managed`, `[data-prefs-tab='account']` for the account check), so `extensions/settings`, `theme`, `account`, `notices`, `repair` needed no change. The old General panel is split: General (opening, notifications, background), and a new Interface card (Appearance, the Accent colour, Language), as formvis keeps theme and language under Interface. The About card's heading "FormPortal 0.x" became a Version group with the same text as a line, because the group label is uppercased. `.prefs`, `.prefs-title` and `.versions` and `.ask` are kept for the other dialogs; only the dialog's own classes (`prefs-frame`, `-tabs`, `-tab`, `-body`, `-panel`, `-h`, `-field`, `-close`) were removed and replaced by `.cv-prefs-*`, so nothing else loses a rule. The rail's `overflow: visible` on the dialog is needed because a `<dialog>` is `overflow: auto` by default and would clip it.
+
+No flash: the whole dialog, the rail, the wire (empty `d`) and the port are in `index.html` at build time (inside the same `renderPortal` markers as before, `@portal:autolist` untouched). Opening only calls `showModal()`, marks a section if one was named and queues one animation frame; the wire writes `d` only when it changed and moves the port with `transform` only when its Y changed; folding writes classes, `hidden` and `aria-expanded`. Nothing is created or removed.
+
+Verified (Playwright, Chromium and WebKit, 1180 x 760, the built `dist` served over http): with the CPU throttled 4x (Chromium, `Emulation.setCPUThrottlingRate`), `document.querySelectorAll('*').length` is 7407 before and 7407 after opening, and a MutationObserver counted 0 added or removed nodes on opening and on a second opening. Each of the six rail tabs scrolls the pane (0, 702, 1083, 1498, 1907, 2231 px in Chromium; within 1 px in WebKit), marks its tab and card, and changes the wire path; a fold collapses a card from 403 px to its 44 px head and back; the rail collapses to 76 px, is remembered after a reload and expands again; Done, Escape, the backdrop and the close button all close it; the accent picker applies at once, is stored as `{"accentColor":"#3366ff","appearance":3}` and survives a reload. Screenshots, dark and light, in `/home/claude/wk/shots/`. Not verified: the desktop window was not opened (no Tauri build here), so the real traffic lights, the drag regions and WebKitGTK's own rendering are unchecked; the Spanish page was built but not looked at; keyboard use of the rail (arrow keys) was written but not driven; screen readers were not tried.
 
 ## v0.55.0 · the scroll fix in WebKit, Included on a reopen {#webkit}
 

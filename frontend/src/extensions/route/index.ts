@@ -1,5 +1,6 @@
 import type { Route } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
+import { liveNow } from "../live/index.ts";
 
 export const route: Extension = {
   id: "route",
@@ -13,7 +14,10 @@ export const route: Extension = {
     const label = document.querySelector<HTMLElement>("[data-route-label]");
 
     engine.command("route.go", (arg) => {
-      if (routes.has(arg as Route)) engine.setRoute(arg as Route);
+      const next = arg as Route;
+      if (!routes.has(next)) return;
+      if (next.startsWith("app-") && !liveNow(next.slice(4))) return;
+      engine.setRoute(next);
     });
 
     engine.command("route.launch", () => {

@@ -2,6 +2,7 @@ import type { Tutorial } from "../../engine/types.ts";
 import { t as tr } from "../../i18n/index.ts";
 import registry from "../../../../catalog/products.json";
 import type { Extension } from "../registry.ts";
+import { liveNow } from "../live/index.ts";
 
 const LEVEL: Record<string, string> = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" };
 
@@ -63,6 +64,8 @@ export const learn: Extension = {
         list.append(r);
       }
       const name = t.product === "formportal" ? "FormPortal" : engine.name(t.product);
+      const listed = t.product === "formportal" || t.product === "formai" || liveNow(t.product);
+      if (r.hidden === listed) r.hidden = !listed;
       setText(r.querySelector(".tutorial-app"), name);
       setText(r.querySelector(".tutorial-title"), t.title);
       setText(r.querySelector(".tutorial-sum"), t.summary);

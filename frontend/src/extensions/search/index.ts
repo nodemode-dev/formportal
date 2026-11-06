@@ -1,4 +1,5 @@
 import type { Extension } from "../registry.ts";
+import { liveNow } from "../live/index.ts";
 
 export const search: Extension = {
   id: "search",
@@ -18,11 +19,11 @@ export const search: Extension = {
       for (const row of rows) {
         const hit = words.every((w) => (row.dataset.search ?? "").includes(w));
         if (row.hidden === hit) row.hidden = !hit;
-        if (hit) shown += 1;
+        if (hit && liveNow(row.dataset.product ?? "")) shown += 1;
       }
       for (const head of heads) {
         const group = head.dataset.groupHead;
-        const any = rows.some((r) => r.dataset.group === group && !r.hidden);
+        const any = rows.some((r) => r.dataset.group === group && !r.hidden && liveNow(r.dataset.product ?? ""));
         if (head.hidden === any) head.hidden = !any;
       }
       pane.toggleAttribute("data-searching", words.length > 0);

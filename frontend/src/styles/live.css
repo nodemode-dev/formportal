@@ -1,0 +1,87 @@
+body:not(.app-ready) #app {
+  visibility: hidden;
+}
+
+.soon {
+  margin-block-start: var(--sp-7);
+}
+
+.soon-note {
+  max-inline-size: var(--prose-max);
+  margin-block-end: var(--sp-4);
+}
+
+.soon-list {
+  display: grid;
+  gap: var(--sp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.soon-when {
+  margin-block-end: var(--sp-2);
+  color: var(--ink-soft);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.soon-group:not([data-due]) .soon-due,
+.soon-group[data-due] .soon-date {
+  display: none;
+}
+
+.soon-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.soon-tile {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-2);
+  inline-size: 88px;
+}
+
+.soon-mark {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border: 1px dashed var(--edge-strong);
+  border-radius: 24%;
+  background: var(--pane);
+  color: var(--ink-faint);
+  font-size: var(--fs-l);
+  font-weight: var(--weight-display);
+}
+
+.soon-name {
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+}
+
+.ap-caps {
+  max-inline-size: var(--prose-max);
+  margin-block: 0 var(--sp-6);
+}
+
+.ap-caps .block-title {
+  margin-block-end: var(--sp-3);
+}
+
+.ap-checks {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-3);
+  padding-inline-start: 1.1em;
+  color: var(--ink-soft);
+}
+
+.ap-runs-label {
+  color: var(--ink-faint);
+}

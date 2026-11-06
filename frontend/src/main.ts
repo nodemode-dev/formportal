@@ -23,13 +23,18 @@ import { repair } from "./extensions/repair/index.ts";
 import { t } from "./i18n/index.ts";
 import { account } from "./extensions/account/index.ts";
 import { share } from "./extensions/share/index.ts";
+import { live, liveNow } from "./extensions/live/index.ts";
+import { revealApp } from "./bridge/reveal.ts";
+
+const revealLate = window.setTimeout(revealApp, 2400);
 
 const engine = new Engine();
 const bridge = pickBridge();
+const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app"));
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share].forEach(register);
+[live, route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -199,7 +204,7 @@ engine.command("web.ask", (arg) =>
     await refresh();
     if (![...engine.installs.values()].some((r) => r.product === plan.product)) {
       void engine.dispatch("route.go", `app-${plan.product}`);
-      engine.setNotice(t("A web page wants {app} to open {file}, but {app} is not installed. Install it here, then open the link again.", { app: engine.name(plan.product), file: plan.name }), "fault", "library");
+      engine.setNotice(t("A web page wants {app} to open {file}, but {app} is not installed. Install it here, then open the link again.", { app: shownName(plan.product), file: plan.name }), "fault", "library");
       return;
     }
     engine.emit("webfile", { plan });
@@ -355,7 +360,7 @@ engine.command("file.open", (arg) =>
     const { path, product: owner } = arg as { path: string; product?: string };
     const name = path.split(/[\\/]/).pop();
     if (owner && ![...engine.installs.values()].some((r) => r.product === owner)) {
-      engine.setNotice(t("{app} is not installed, so {file} cannot open yet. Install {app} from Apps.", { app: engine.name(owner), file: name ?? "" }), "fault", "library");
+      engine.setNotice(t("{app} is not installed, so {file} cannot open yet. Install {app} from Apps.", { app: shownName(owner), file: name ?? "" }), "fault", "library");
       return;
     }
     const product = await bridge.fileOpen(path);
@@ -712,5 +717,9 @@ bridge.onPackage((path) => {
 });
 
 void engine.dispatch("route.launch");
+engine.on("source", () => {
+  window.clearTimeout(revealLate);
+  revealApp();
+});
 void engine.dispatch("catalog.load");
 bridge.onLink((link) => void engine.dispatch("link.open", link));
