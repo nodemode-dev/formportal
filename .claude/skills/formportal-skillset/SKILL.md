@@ -20,7 +20,7 @@ Route every change to FormPortal's code through this file. It maps the subsystem
 ## How the pieces depend
 
 ```text
-formai.dev (formai_dev repo) publishes catalog/v1/apps.json + .sig  -- contract: catalog/schema
+formcompiler (via formpipe) publishes dl.formai.studio/catalog/apps.json + .sig  -- contract: catalog/schema from formai_dev
 formportal-core (core/)            no window, no Tauri
   -> src-tauri (Tauri commands: platform, catalog, installs, install, open, rollback, remove, launch_link)
        -> frontend (bridge/tauri.ts) -> engine -> extensions -> DOM

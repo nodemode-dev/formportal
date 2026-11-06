@@ -9,7 +9,7 @@
       "id": "formai",
       "name": "formai",
       "public_key": "FIXTURE-NOT-A-KEY",
-      "url": "https://formai.dev"
+      "url": "https://formai.studio"
     }
   ],
   "packages": [
@@ -39,7 +39,7 @@
       "author": "formai",
       "description": "Lays the open layers out as a grid on a new document.",
       "version": "0.1.0",
-      "url": "https://formai.dev/fixtures/contact-sheet.formpkg",
+      "url": "https://formai.studio/fixtures/contact-sheet.formpkg",
       "sha256": "062df0d0a48a8d98d7c68e40fba7fb87aaed59a44a569e10e45bdee6b410f733",
       "licence": "GPL-3.0-only",
       "native": false,

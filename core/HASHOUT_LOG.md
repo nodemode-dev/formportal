@@ -2,8 +2,24 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.55.0
-Last updated: 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.56.0
+Last updated: 2026-11-06 · v0.56.0 formai.dev removed from the links, the schemas and the fixtures, the support page allowed, formai_dev's schedule and app caps copied into catalog/; 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.56.0 · formai.studio only, the schedule and the app caps {#formai-studio}
+
+### links.rs · PREFIXES
+- refers-to: core/src/links.rs :: PREFIXES · core/tests/open_links.rs
+- kind: fix
+- logged: v0.56.0 · 2026-11-06
+
+The owner, 2026-11-06: formai.dev is another company's product, never owned or built by them, and must be gone from FormPortal entirely; the family's one domain is formai.studio, and formai.tools and formai.design redirect to it. `https://formai.dev/` and `https://docs.formai.dev/` are no longer opened. `https://formai.studio/support/` is, for the Support the Form apps link under On the way (`frontend/HASHOUT_LOG.md#live`); `open_links.rs` reads every `data-web` link in `index.html`, so it covers it. The rest of formai.studio stays refused, as the test requires.
+
+### catalog/ · the schemas, the fixtures, schedule.json, apps/
+- refers-to: catalog/schema/*.schema.json :: $id · catalog/fixtures/apps.json :: origin · catalog/fixtures/extensions.json :: authorities[formai].url, packages[contact-sheet].url · catalog/schedule.json · catalog/apps/*.json
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+formai_dev v0.56.1 (`e81656e`) already names formai.studio in each schema's `$id` and in the fixtures; FormPortal's copies still said formai.dev, so those lines are formai_dev's now. The copies were not replaced whole: they had drifted both ways (FormPortal's schema keeps the catalogue `agents` fields and the extension `support` link that formai_dev's lacks; formai_dev renamed `formai` to `formportal`, which FormPortal's installs and state still use), so only the domain lines changed. `schedule.json` (the release groups: Launch 2026-11-03, Group 1 2026-11-06, Group 2 2026-11-09, Group 3 2026-11-12) and `apps/*.json` (each app's content file: kind, runs on, what it does) are copied unchanged from formai_dev v0.56.1; formai_dev ids map onto FormPortal's as `formportal` to `formai`, `formdeck` to `formslide`, `formskill` to `formskills`, `formbench` to `formranker`. `products.json` is not replaced for the same reason as the schemas; its stale statuses no longer show, because only released apps are listed.
 
 ## v0.55.0 · releases read from each app's GitHub release {#releases}
 

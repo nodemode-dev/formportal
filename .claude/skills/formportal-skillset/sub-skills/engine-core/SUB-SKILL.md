@@ -10,7 +10,7 @@ description: Changes to formportal-core, FormPortal's Rust engine. Use for catal
 - `lib.rs`: `Catalog`, `Product`, `Release`, `Artifact`, `Channel`, `Platform`, `Availability`, `Catalog::view`. Field names follow formai_dev's `catalog/schema/apps.schema.json` (snake_case); a new field is optional with `serde(default)` until every catalogue carries it.
 - `portal.rs`: `Portal` with `default_root` (honours `FORMPORTAL_ROOT`), `catalog` (fetch, verify, keep the last good copy), `install` (download, hash, unpack to a staging folder, swap, keep previous), `rollback`, `uninstall`, `launch_target`, `launch`.
 - `download.rs`: https or loopback only; streams with progress; `sha256_file`.
-- `signature.rs`: Ed25519 over the catalogue bytes; `TRUSTED_KEYS` is empty until formai.dev's public key is published, `FORMAI_CATALOG_PUBKEY` adds keys.
+- `signature.rs`: Ed25519 over the catalogue bytes; the build trusts formcompiler's catalogue key from `core/catalog_keys.txt` (an empty list only happens in a build made without it), `FORMAI_CATALOG_PUBKEY` adds keys.
 - `state.rs`: `installed.json`; `error.rs`: one readable sentence per failure.
 - `policy.rs`: the organisation's policy at the system path (or `FORMPORTAL_POLICY` for testing), what it allows and locks; `check` reads a file as FormPortal will. `mirror.rs`: the catalogue and its files copied for an internal server. `deploy.rs`: `package`, FormPortal's installer with the policy, sums and an install script in one folder (`org-package`).
 - `share.rs`: sharing through the person's GitHub account (private libraries, invitations, public links in `formportal-public`) and `write_portfolio`, that repository's README listing every public file. `github.rs`: sign-in and the API calls.

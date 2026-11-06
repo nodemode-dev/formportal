@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://formai.dev/catalog/v1/schema/products.schema.json",
+  "$id": "https://formai.studio/catalog/v1/schema/products.schema.json",
   "title": "formai product registry",
   "type": "object",
   "required": ["format", "format_version", "products"],

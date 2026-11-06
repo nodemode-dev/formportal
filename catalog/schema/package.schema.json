@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://formai.dev/catalog/v1/schema/package.schema.json",
+  "$id": "https://formai.studio/catalog/v1/schema/package.schema.json",
   "title": "formai package manifest (.formpkg)",
   "type": "object",
   "required": ["format", "format_version", "id", "name", "product", "kind", "version", "author", "licence", "native", "permissions"],

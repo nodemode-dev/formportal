@@ -1,7 +1,7 @@
 # Architecture
 
 ```text
-formai.dev  ->  catalog/v1/apps.json + apps.json.sig   (contract: catalog/schema, owned by formai_dev)
+formcompiler (via formpipe)  ->  dl.formai.studio/catalog/apps.json + apps.json.sig   (contract: catalog/schema, owned by formai_dev)
                      |
               formportal-core (core/)      catalogue, signature, download, SHA-256, install, rollback, remove, launch
                /                \

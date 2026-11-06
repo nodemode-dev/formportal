@@ -61,18 +61,18 @@ fn every_link_the_interface_opens_is_allowed() {
 #[test]
 fn anything_else_is_refused() {
     for url in [
-        "http://formai.dev/",
+        "http://formai.studio/download/",
         "http://github.com/nodemode-dev/formportal",
         "https://formai.studio/",
         "https://formai.studio.example.com/download/",
-        "https://formai.dev.example.com/",
+        "https://formai.studio.example.com/support/",
         "https://github.com/someone/anything",
         "https://github.com/login/device/../../someone/anything",
         "https://github.com/someone/formportal-library-",
         "https://github.com/some_one/formportal-public",
         "https://github.com/nodemode-dev/formportal\" --flag",
-        "https://formai.dev/ x",
-        "https://formai.dev/\\@example.com",
+        "https://formai.studio/download/ x",
+        "https://formai.studio/download/\\@example.com",
         "file:///etc/passwd",
         "javascript:alert(1)",
         "",

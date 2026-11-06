@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://formai.dev/catalog/v1/schema/apps.schema.json",
+  "$id": "https://formai.studio/catalog/v1/schema/apps.schema.json",
   "title": "formai app catalogue",
   "type": "object",
   "required": ["format", "format_version", "generated", "origin", "products"],
