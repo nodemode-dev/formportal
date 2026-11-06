@@ -1,0 +1,381 @@
+{
+  "id": "formpdf",
+  "name": "FormPDF",
+  "version": "0.57.2",
+  "repo": "https://github.com/nodemode-dev/formpdf",
+  "kind": "PDF editor",
+  "title": "PDF editing that stays on your computer",
+  "summary": "FormPDF is a free, open-source PDF editor that runs on your computer, with in-place text editing, redaction, OCR, signing, forms and an agent dock.",
+  "lede": "FormPDF is a PDF editor in the Form family that runs on your computer. It is built so that Claude Code, Codex or Cursor can do PDF work in the open window while you watch, with every agent turn undoable at once.",
+  "replaces": "Adobe Acrobat",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux (browser or Tauri desktop)",
+  "checks": [
+    "Edits the text and pictures a PDF already has, in place and in its own font where possible.",
+    "Finds and redacts so that the content under each box is removed and the rest stays text.",
+    "Makes scanned pages searchable with OCR that runs on this computer.",
+    "Fills forms, signs with a digital ID, and checks every signature in plain sentences."
+  ],
+  "facts": [
+    {
+      "dt": "Opens",
+      "dd": "PDF by picker, drop or path; also creates PDFs from pictures and Word, PowerPoint or Excel files through your LibreOffice"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python 3.12 FastAPI engine on 127.0.0.1:8198, app on http://localhost:5198"
+    },
+    {
+      "dt": "Data",
+      "dd": "Everything stays in ~/Formpdf (override with FORMPDF_DATA_DIR)"
+    },
+    {
+      "dt": "Network",
+      "dd": "Preferences lists every network connection (none leave this computer)"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "edit",
+      "kicker": "Edit",
+      "title": "Edit the text a PDF already has",
+      "text": "Page text and pictures stay editable, with fonts, styles, alignment and lists, crop, rotate, flip and replace. Headers, footers, Bates numbers, page numbers and watermarks are added in the same window.",
+      "shot": "edit"
+    },
+    {
+      "id": "protect",
+      "kicker": "Protect",
+      "title": "Redact, password and clean",
+      "text": "Find and redact removes the content under each box while the rest stays text, and marks from other apps are applied too. Passwords, permissions, metadata and hidden information are handled in the same panel.",
+      "shot": "redact"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "An agent dock with undo for every turn",
+      "text": "Ctrl+J (Cmd+J on a Mac) opens a dock with real terminals, your own Claude Code and a Chat tab. Changes land live in the window, and Edit > Undo agent turn takes back the whole turn.",
+      "shot": "dock"
+    }
+  ],
+  "features": [
+    {
+      "id": "home",
+      "icon": "apps",
+      "title": "Home",
+      "text": "Open, create, merge and scan from one start screen.",
+      "bullets": [
+        "Open a PDF by picker, drop or path, with recent PDFs and forget",
+        "Create a PDF from pictures and Word, PowerPoint or Excel files",
+        "Merge PDFs, and scan from network and connected scanners",
+        "Batch: one action on many PDFs, results in a new folder",
+        "Pick up where you left off, including unsaved changes after a crash"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "view",
+      "icon": "book",
+      "title": "View",
+      "text": "Single, continuous, two-page and cover layouts.",
+      "bullets": [
+        "Reading mode and read aloud",
+        "Find and compare two PDFs",
+        "Document properties",
+        "Mod+K finds any command or tool in your own words"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "comment",
+      "icon": "captions",
+      "title": "Comment",
+      "text": "Mark up a PDF and track replies.",
+      "bullets": [
+        "Highlight, underline, strike through, notes, text boxes, ink, shapes, lines and arrows",
+        "Replies and status, and stamps",
+        "Measure distance, perimeter and area",
+        "Export and import comments as XFDF"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "forms",
+      "icon": "check",
+      "title": "Fill forms and sign",
+      "text": "Fill form fields with the standard AcroForm calculations, formats and range checks running as you type.",
+      "bullets": [
+        "Draw or type a signature",
+        "Sign with a digital ID (certify, lock fields, timestamp)",
+        "Check every signature in plain sentences",
+        "Request signatures in order",
+        "Prepare forms with text, check box, radio, dropdown, list box, date and signature fields"
+      ],
+      "shot": "sign"
+    },
+    {
+      "id": "edit",
+      "icon": "mark",
+      "title": "Edit",
+      "text": "Edit the text a PDF already has in place, in its own font where possible.",
+      "bullets": [
+        "Pictures already on the page moved, cropped and replaced",
+        "Arrange and align",
+        "Headers and footers with Bates numbers",
+        "Crop, page numbers, watermark, links and attached files"
+      ],
+      "shot": "edit"
+    },
+    {
+      "id": "organize",
+      "icon": "layers",
+      "title": "Organize",
+      "text": "Page-level changes to a document.",
+      "bullets": [
+        "Rotate, delete, reorder and insert pages",
+        "Split and merge"
+      ],
+      "shot": "organize"
+    },
+    {
+      "id": "extract",
+      "icon": "export",
+      "title": "Extract",
+      "text": "Pull content out of a PDF.",
+      "bullets": [
+        "Text as .txt or .md",
+        "Pictures",
+        "Tables as CSV or .xlsx"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "protect",
+      "icon": "shield",
+      "title": "Protect",
+      "text": "Passwords, permissions and redaction.",
+      "bullets": [
+        "Passwords and permissions, and remove a password",
+        "Find and redact: the content under each box is removed, the rest stays text",
+        "Marks from other apps applied too",
+        "Metadata and remove hidden information"
+      ],
+      "shot": "redact"
+    },
+    {
+      "id": "convert",
+      "icon": "arrow-right",
+      "title": "Convert",
+      "text": "Move between PDF and other formats.",
+      "bullets": [
+        "OCR that runs on this computer",
+        "Export to PowerPoint (one slide per page, words as real text boxes), Word, Excel, HTML and RTF",
+        "Compress, and pages to pictures"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "accessibility",
+      "icon": "target",
+      "title": "Accessibility",
+      "text": "Check against 32 PDF/UA and WCAG rules with a fix for each repairable one and an HTML report.",
+      "bullets": [
+        "Tag the PDF from its layout",
+        "Edit the reading order on the page",
+        "Alternate text figure by figure"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "print",
+      "icon": "laptop",
+      "title": "Print",
+      "text": "Print layouts and print-ready checks.",
+      "bullets": [
+        "Pages per sheet, booklets and posters with a live sheet preview",
+        "Real grayscale",
+        "PDF/A-2b, 2u and 3b check and convert",
+        "PDF/X-4 with your printer's profile",
+        "Preflight with fixups and a report"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "automation",
+      "icon": "play",
+      "title": "Automation",
+      "text": "Action lists and plug-ins.",
+      "bullets": [
+        "Five built-in action lists, or record your own",
+        "Run on the open PDF or in Batch",
+        "Plug-ins add actions and tool sections, off until you allow them"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "assistant",
+      "icon": "formai",
+      "title": "Assistant",
+      "text": "Ask or summarise with page links and checked quotations; off until you choose.",
+      "bullets": [
+        "Draft a presentation from several files",
+        "Generate a picture onto the page",
+        "Runs through your agent, Anthropic or OpenAI with your key, or a model on your computer"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agents",
+      "text": "An MCP server over HTTP at /mcp or stdio.",
+      "bullets": [
+        "Tools: get_context, open_pdf, pdf (83 actions and any from plug-ins), render_pages, extract, save, undo, answer_question",
+        "Agent dock with terminals, Claude Code and a Chat tab",
+        "Edit > Undo agent turn takes back the whole turn"
+      ],
+      "shot": "dock"
+    }
+  ],
+  "parity": {
+    "against": "Adobe Acrobat",
+    "summary": "Of the 72 Acrobat capabilities traced, FormPDF is full on 66, partial on 5 and has nothing for 1. What is left is narrow: designed AI decks, service-sent signing requests, form JavaScript beyond Acrobat's standard functions, CMYK and flattening for print, a screen reader pass, and hosted share links."
+  },
+  "docs": {
+    "requirements": [
+      "Python 3.12+",
+      "Node 20.19+ or 22.12+",
+      "Rust and the Tauri 2 system packages for the desktop build"
+    ],
+    "install": "./formpdf install",
+    "run": "./formpdf",
+    "desktop": "./build_app",
+    "agents": "./formpdf agents install writes .mcp.json, .codex/config.toml and .cursor/mcp.json; Claude Code alone can use: claude mcp add --transport http formpdf http://127.0.0.1:8198/mcp",
+    "topics": [
+      {
+        "title": "Install and run",
+        "text": "The README gives the commands for macOS, Linux and Windows (formpdf.bat), the one-click installers, and ./formpdf doctor to check Python and Node."
+      },
+      {
+        "title": "Desktop",
+        "text": "./build_app builds the app start to finish; the README lists the Debian and Ubuntu packages Tauri needs and the .app/.dmg, .msi/.exe, .deb/.AppImage outputs."
+      },
+      {
+        "title": "Agents",
+        "text": "The README describes the agent dock (Ctrl+J), the MCP tools, ./formpdf cli, and a sample prompt for Bates numbers and redaction."
+      },
+      {
+        "title": "Data",
+        "text": "Everything stays in ~/Formpdf: Pdf, Media and Exports folders, settings.json, with FORMPDF_DATA_DIR and FORMPDF_PORT to override."
+      },
+      {
+        "title": "Manual",
+        "text": "docs/MANUAL.md is the manual, and docs/PARITY.md has every traced capability row."
+      },
+      {
+        "title": "Known gaps",
+        "text": "The README lists known gaps, including no CMYK conversion, OCR adding about 150 MB to an install, and limits on editing text inside Type 3 fonts."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.57.1",
+      "date": "2026-11-04",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. and the licence",
+        "Added a code of conduct, contributing guide and security policy"
+      ]
+    },
+    {
+      "version": "0.57.0",
+      "date": "2026-10-31",
+      "items": [
+        "The window's scripts keep their types on Windows"
+      ]
+    },
+    {
+      "version": "0.56.9",
+      "date": "2026-10-30",
+      "items": [
+        "A release build fails when text recognition (OCR) is missing",
+        "The backend freeze step hands PyInstaller Windows paths on Windows",
+        "The macOS requirements are pinned to the Linux and Windows versions"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "edit",
+      "what": "A PDF open with a text paragraph being edited in place",
+      "how": "Run ./formpdf, open http://localhost:5198, open any text PDF from Home, then use the Edit tools to click a paragraph."
+    },
+    {
+      "key": "redact",
+      "what": "The find and redact panel with matches previewed as black boxes",
+      "how": "Open a text PDF, go to Protect, choose find and redact, search for a word that appears several times and tick the matches."
+    },
+    {
+      "key": "dock",
+      "what": "The agent dock open at the bottom of the window",
+      "how": "With a PDF open press Ctrl+J (Cmd+J on a Mac) and show the Chat tab."
+    },
+    {
+      "key": "home",
+      "what": "The Home screen with recent PDFs",
+      "how": "Open two or three PDFs, then return to Home."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:pdf"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formpdf/ui-hero-2.webp",
+      "light": "/media/formpdf/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormPDF on the Organize tab with an eight page travel guide: page thumbnails in a grid, the pages rail and the Pages, Split and Merge panel",
+      "size": ""
+    },
+    "dock": {
+      "file": "/media/formpdf/ui-dock-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A quarterly report open in FormPDF with the agent dock at the bottom holding a Claude Code terminal",
+      "size": ""
+    },
+    "organize": {
+      "file": "/media/formpdf/ui-hero-2.webp",
+      "light": "/media/formpdf/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormPDF on the Organize tab with an eight page travel guide: page thumbnails in a grid, the pages rail and the Pages, Split and Merge panel",
+      "size": ""
+    },
+    "redact": {
+      "file": "/media/formpdf/ui-redact-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Protect tab listing four email address matches to redact across two pages",
+      "size": ""
+    },
+    "edit": {
+      "file": "/media/formpdf/ui-edit-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Edit tab with a paragraph selected on a visitor report, showing font, size, alignment and line spacing controls",
+      "size": ""
+    },
+    "sign": {
+      "file": "/media/formpdf/ui-sign-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A typed signature placed on the signature line of a report page, with the Signature panel open",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: CC0 photos from Poly Haven. Hero: a sample travel guide made for the Form family."
+}

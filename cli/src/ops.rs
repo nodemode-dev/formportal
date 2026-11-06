@@ -4,6 +4,33 @@ use serde_json::{json, Map, Value};
 
 pub const DEFAULT_SOURCE: &str = "https://dl.formai.studio/catalog/apps.json";
 const REGISTRY: &str = include_str!("../../catalog/products.json");
+const SCHEDULE: &str = include_str!("../../catalog/schedule.json");
+const ALIAS: [(&str, &str); 4] = [("formportal", "formai"), ("formdeck", "formslide"), ("formskill", "formskills"), ("formbench", "formranker")];
+
+fn released(catalog: &Catalog, id: &str) -> bool {
+    [Channel::Stable, Channel::Beta].iter().any(|ch| matches!(catalog.view(id, *ch, Platform::current()).availability, Availability::Available | Availability::OtherPlatform))
+}
+
+fn on_the_way(shown: &[String]) -> Vec<Value> {
+    let known: Vec<String> = registry().iter().filter_map(|p| p.get("id").and_then(Value::as_str).map(str::to_string)).collect();
+    let doc: Value = serde_json::from_str(SCHEDULE).unwrap_or(Value::Null);
+    let groups = doc.get("releases").and_then(Value::as_array).cloned().unwrap_or_default();
+    groups
+        .iter()
+        .filter_map(|g| {
+            let at = g.get("at").and_then(Value::as_str)?;
+            let left = g
+                .get("apps")
+                .and_then(Value::as_array)?
+                .iter()
+                .filter_map(Value::as_str)
+                .map(|id| ALIAS.iter().find(|(theirs, _)| *theirs == id).map_or(id, |(_, ours)| *ours))
+                .filter(|id| *id != "formai" && known.iter().any(|k| k == id) && !shown.iter().any(|s| s == id))
+                .count();
+            (left > 0).then(|| json!({ "opens": at, "apps": left }))
+        })
+        .collect()
+}
 
 pub struct Ctx {
     pub portal: Portal,
@@ -94,11 +121,16 @@ pub fn apps(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
         Err(e) => (None, json!({ "catalog_error": e.to_string() })),
     };
     let mut rows = Vec::new();
+    let mut shown = Vec::new();
     for entry in registry() {
         let id = entry.get("id").and_then(Value::as_str).unwrap_or_default().to_string();
         if id.is_empty() {
             continue;
         }
+        if !catalog.as_ref().is_some_and(|c| released(c, &id)) && !installs.iter().any(|i| i.product == id) {
+            continue;
+        }
+        shown.push(id.clone());
         let mut row = Map::new();
         for key in ["id", "name", "kind", "summary", "alt_of", "group", "status", "repository"] {
             if let Some(v) = entry.get(key) {
@@ -117,7 +149,8 @@ pub fn apps(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
         row.insert("channels".to_string(), Value::Object(channels));
         rows.push(Value::Object(row));
     }
-    Ok(json!({ "catalog": note, "fixture": catalog.as_ref().map(|c| c.fixture), "apps": rows }))
+    let soon = if catalog.is_some() { on_the_way(&shown) } else { Vec::new() };
+    Ok(json!({ "catalog": note, "fixture": catalog.as_ref().map(|c| c.fixture), "apps": rows, "on_the_way": soon }))
 }
 
 pub fn info(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
@@ -125,8 +158,9 @@ pub fn info(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let (catalog, source) = load(ctx, args)?;
     let entry = registry().into_iter().find(|p| p.get("id").and_then(Value::as_str) == Some(id.as_str()));
     let release = catalog.product(&id).cloned();
-    if entry.is_none() && release.is_none() {
-        return Err(fail(format!("{id}: not in the family registry or the catalogue; apps lists the ids")));
+    let installed = ctx.portal.state()?.installs.iter().any(|i| i.product == id);
+    if (entry.is_none() && release.is_none()) || (!released(&catalog, &id) && !installed) {
+        return Err(fail(format!("{id}: not a released Form app; apps lists the ids")));
     }
     Ok(json!({ "source": source, "registry": entry, "catalog": release }))
 }

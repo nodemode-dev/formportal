@@ -1,0 +1,338 @@
+{
+  "id": "formvis",
+  "name": "FormVis",
+  "version": "1.99.1",
+  "repo": "https://github.com/nodemode-dev/formvis",
+  "kind": "Layered image editor",
+  "title": "layered image compositing with local AI on your own machine",
+  "summary": "FormVis is a layered image editor with selection, painting and retouching tools, 27 blend modes, adjustment layers, layer styles, PSD files, local generation and an MCP server with 134 tools.",
+  "lede": "FormVis is a layered image editor: stack photos and paintings as layers, group them in folders, mask and clip them, blend them, select, paint and export. It saves its own .fvd projects, opens layered PSD and PSB files, and runs in a browser or as a desktop app for macOS, Linux and Windows. Selection, background removal, fill and upscaling run on local models.",
+  "replaces": "Photoshop",
+  "project": ".fvd",
+  "runs_on": "macOS, Linux and Windows, in a browser or as a Tauri 2 desktop app",
+  "checks": [
+    "Composites layers with pass-through folders, 27 blend modes, raster and folder masks, clipping chains and fill layers.",
+    "Edits with selection, painting and retouching tools, adjustment layers, filters, Smart Objects and layer styles.",
+    "Selects, removes backgrounds and fills with local models: SAM 2.1, U2-Net, LaMa and Real-ESRGAN, with models fetched on first use and pinned to checksums.",
+    "Opens and saves .psd and .psb with layers, masks, clipping, blend modes and live adjustment layers."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fvd with a thumbnail inside; also opens .fmv and .formvis from earlier releases and NodeMode canvasor projects"
+    },
+    {
+      "dt": "Stack",
+      "dd": "Vanilla TypeScript 7 and Vite 8, Python and FastAPI, and Tauri 2"
+    },
+    {
+      "dt": "Interface",
+      "dd": "30 languages, English by default"
+    },
+    {
+      "dt": "Commands",
+      "dd": "755 commands in one catalogue, shared by the menus, palette, MCP tools and ./formvis cli"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "layers",
+      "kicker": "Layers",
+      "title": "A layered document model",
+      "text": "Flat bottom-to-top layers with pass-through folders, 27 blend modes, raster and folder masks, clipping chains, fill layers and value-snapshot history of 100 steps.",
+      "shot": "canvas"
+    },
+    {
+      "id": "ai",
+      "kicker": "Local models",
+      "title": "Selection, fill and generation without a cloud",
+      "text": "Object Selection runs SAM 2.1 on ONNX Runtime, background removal uses U2-Net or GrabCut, and Selection-Aware Fill, Generative Fill and Expand work with LaMa on any computer. Krea 2 Turbo and FLUX.2 klein 4B generate images on this computer with no key (Apple silicon; Krea 2 also on an NVIDIA GPU).",
+      "shot": "select"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "Edit by asking",
+      "text": "The MCP server gives Claude Code, Codex and Cursor 134 tools for files, layers, text, selections, filters and the command catalogue, with approvals and an activity feed. Window > Terminal and Window > Claude Code put a shell and Claude Code in the window.",
+      "shot": "agent"
+    }
+  ],
+  "features": [
+    {
+      "id": "document",
+      "icon": "layers",
+      "title": "Layered document model",
+      "text": "Layers, folders, masks and fill layers.",
+      "bullets": [
+        "27 blend modes in the standard order",
+        "Raster masks, folder masks and clipping chains",
+        "Fill layers: Solid Color, Gradient and Pattern",
+        "History of 100 steps and 256 MB"
+      ],
+      "shot": "canvas"
+    },
+    {
+      "id": "tools",
+      "icon": "target",
+      "title": "Selection, paint and type tools",
+      "text": "Selection, painting, retouching and transform tools.",
+      "bullets": [
+        "Marquee, Lasso, Object Selection, Quick Selection and Magic Wand",
+        "Brush, Pencil, Eraser, Mixer Brush and the retouching brushes",
+        "Spot Healing, Healing Brush, Patch and Clone Stamp",
+        "Pen paths that become selections or shape layers"
+      ],
+      "shot": "select"
+    },
+    {
+      "id": "adjust",
+      "icon": "sliders",
+      "title": "Adjustments and filters",
+      "text": "Adjustments as editable adjustment layers above your pixels.",
+      "bullets": [
+        "Levels, Curves, Hue/Saturation, Vibrance, Color Balance, Selective Color",
+        "Color Lookup with 3D LUT .cube files",
+        "Gradient Map, HDR Toning, Shadows/Highlights and Develop"
+      ],
+      "shot": "levels"
+    },
+    {
+      "id": "styles",
+      "icon": "grade",
+      "title": "Layer styles and Smart Objects",
+      "text": "Non-destructive effects that save in the project.",
+      "bullets": [
+        "Drop Shadow, Glows, Stroke, Satin, Bevel and Emboss, and overlays",
+        "Smart Objects keep original pixels with editable filters",
+        "Edit Contents opens the original as its own document"
+      ],
+      "shot": "styles"
+    },
+    {
+      "id": "type",
+      "icon": "captions",
+      "title": "Type and brushes",
+      "text": "Editable text layers and a full brush engine.",
+      "bullets": [
+        "Warp Text's fifteen styles and type along a pen path",
+        "Brush Settings: tip shape, dynamics, scattering, dual brush, wet edges",
+        "Sampled tips and presets from .abr files"
+      ],
+      "shot": "type"
+    },
+    {
+      "id": "files",
+      "icon": "download",
+      "title": "Files and colour",
+      "text": "Many formats in and out, with real colour management.",
+      "bullets": [
+        "PSD and PSB with layers, masks and live adjustments",
+        "Camera RAW import for DNG, CR2, CR3, NEF, ARW and more through LibRaw",
+        "HEIC, TIFF, QOI, Netpbm, TGA and ICO",
+        "8, 16 and 32 bits a channel with OpenEXR, Radiance HDR and DPX",
+        "Profile assignment and conversion for RGB, CMYK, Gray and Lab"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "ai",
+      "icon": "formai",
+      "title": "Local generation and selection",
+      "text": "Models run on this computer.",
+      "bullets": [
+        "Object Selection with SAM 2.1",
+        "Remove Background with U2-Net or OpenCV GrabCut",
+        "Selection-Aware Fill, Generative Fill and Expand with LaMa",
+        "Image > Upscale with Real-ESRGAN"
+      ],
+      "shot": "select"
+    },
+    {
+      "id": "gpu",
+      "icon": "laptop",
+      "title": "Graphics processor",
+      "text": "The canvas draws through WebGPU or WebGL2.",
+      "bullets": [
+        "Metal on macOS, Vulkan on Linux and Direct3D 12 on Windows in the native wgpu renderer",
+        "Falls back to the CPU per document, with the reason in the status bar",
+        "A native Rust renderer, formvis-render, over wgpu"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "automation",
+      "icon": "code",
+      "title": "Actions, plugins and scripts",
+      "text": "Automate repeated work.",
+      "bullets": [
+        "Record Actions and Batch a set of images into one zip",
+        "Sandboxed JavaScript plugins and a Script Console",
+        "Timeline of frames exported as an animated GIF"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agents and the assistant",
+      "text": "MCP tools and an in-app chat.",
+      "bullets": [
+        "134 MCP tools and the formvis-driving skill",
+        "Window > Agent Connect with per-agent policy, approvals and an activity feed",
+        "Window > Assistant edits the open document with Plan first and Undo This Turn",
+        "./formvis agents install sets up all three clients"
+      ],
+      "shot": "agent"
+    },
+    {
+      "id": "workspace",
+      "icon": "grid",
+      "title": "Workspace",
+      "text": "Panels and windows you arrange.",
+      "bullets": [
+        "Window > Arrange: tile, 2-up to 6-up, Match Zoom and Location",
+        "Edit > Toolbar drags tools between groups",
+        "Home with Start, Recent, Projects and Outputs pages"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "languages",
+      "icon": "globe",
+      "title": "Thirty languages",
+      "text": "Chosen in Preferences, or from the system language at first start.",
+      "bullets": [
+        "Switch in place",
+        "Arabic and Hindi are drafts for review",
+        "NodeMode tokens and theme profiles"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Photoshop",
+    "summary": "The baseline is 53 rows, with three platform rows shown but not scored. FormVis was traced in its own code at 1.97.1 and no graded row moved: the four partial rows stay partial. Photon, GIMP, Krita and PhotoCraft are the other columns."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19 or newer",
+      "Python 3.10 or newer",
+      "git",
+      "Rust stable and the Tauri 2 system packages for the desktop build"
+    ],
+    "install": "git clone https://github.com/nodemode-dev/formvis.git\ncd formvis\n./formvis install\nWindows: formvis.bat install",
+    "run": "./formvis boot\nWindows: formvis.bat boot",
+    "desktop": "./build_app",
+    "agents": "An MCP server with 134 tools and the formvis-driving skill; ./formvis agents install sets up Claude Code, Codex and Cursor.",
+    "topics": [
+      {
+        "title": "Ports",
+        "text": "The frontend dev server runs at http://localhost:5190 and the engine at http://127.0.0.1:8190."
+      },
+      {
+        "title": "Local models",
+        "text": "./formvis install includes ONNX Runtime, so SAM 2.1, U2-Net, LaMa and Real-ESRGAN fetch their models on first use; docs/LOCAL.md lists what runs locally."
+      },
+      {
+        "title": "Manual and help",
+        "text": "Help > FormVis Help (F1) opens docs/MANUAL.md with search, and Edit > Search (Ctrl+K) runs any command."
+      },
+      {
+        "title": "Command line",
+        "text": "./formvis cli list, describe and run reach the 755-command catalogue."
+      },
+      {
+        "title": "Status",
+        "text": "The README lists what is not verified yet, including the desktop app and the graphics processor on real hardware."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "1.99.2",
+      "date": "2026-11-04",
+      "items": [
+        "The Linux release packaging works again after the rename to FormVis, and the AppImage now starts",
+        "The portable macOS zip holds FormVis.app",
+        "The About box, the app menu and Help say FormVis and link the project and download page"
+      ]
+    },
+    {
+      "version": "1.99.1",
+      "date": "2026-11-03",
+      "items": [
+        "A rewritten README in the Form family layout, with screenshots",
+        "The unified v3 app icon for the desktop icons, the web favicon and the README",
+        "The compiled app name is FormVis"
+      ]
+    },
+    {
+      "version": "1.99.0",
+      "date": "2026-11-03",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. as the publisher, with the Apache-2.0 licence and a link to the LICENSE file"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "canvas",
+      "what": "The editor with a multi-layer document",
+      "how": "Run ./formvis boot, open http://localhost:5190, open any photo and add an adjustment layer, a text layer and a folder."
+    },
+    {
+      "key": "select",
+      "what": "Object Selection on a photo",
+      "how": "Open a JPEG with a clear subject, choose Object Selection in the toolbar and click the subject; the model downloads on first use."
+    },
+    {
+      "key": "agent",
+      "what": "The Assistant or Claude Code dock beside the canvas",
+      "how": "Choose Window > Assistant, or Window > Claude Code, with a document open."
+    },
+    {
+      "key": "styles",
+      "what": "Layer Style dialog on a text layer",
+      "how": "Add a text layer, then open its layer styles and enable Drop Shadow and Stroke."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:vis"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formvis/ui-hero-2.webp", "light": "/media/formvis/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormVis with a rainy city street at dusk open in the document form-city-fill-&-relight, the Neon Club Look picked in the Relight panel at low intensity, a magenta light at the lower left and a cyan light at the upper right, and the Relight layer with its mask above the photo in the layers panel",
+      "size": ""
+    },
+    "canvas": {
+      "file": "/media/formvis/ui-layer-menu-1.webp",
+      "light": "/media/formvis/ui-layer-menu-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormVis with the Layer menu open overan image: new, fill and adjustment layers, video and film layers, duplicate, copy and delete, quick export, Layer Style, 3D, Smart Objects, Rasterize and Type",
+      "size": ""
+    },
+    "type": {
+      "file": "/media/formvis/ui-type-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Type tool placing editable text on an orange abstract image",
+      "size": ""
+    },
+    "levels": {
+      "file": "/media/formvis/ui-levels-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Levels adjustment layer dialog with a histogram over a meadow photo",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: CC0 photos from Poly Haven."
+}

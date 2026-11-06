@@ -1,0 +1,361 @@
+{
+  "id": "formtxt",
+  "name": "FormTxt",
+  "version": "0.30.6",
+  "repo": "https://github.com/nodemode-dev/formtxt",
+  "kind": "Word processor",
+  "title": "paginated and pageless documents with .docx round trips on your own machine",
+  "summary": "FormTxt is an open, local-first word processor with real pages, a ribbon, .docx and .odt round trips, and Claude Code, Codex or Cursor editing through the same commands.",
+  "lede": "FormTxt is an open, local-first alternative to Microsoft Word and Google Docs. It lays documents out on real pages or pageless, opens and saves .docx and .odt, and lets Claude Code, Codex or Cursor draft and edit live through the same commands a person uses.",
+  "replaces": "Microsoft Word and Google Docs",
+  "project": ".ftxt",
+  "runs_on": "macOS, Windows and Linux, in a browser or as a desktop app built with ./build_app",
+  "checks": [
+    "Lays out real pages with headers, footers, section breaks, tables, pictures and a ruler, or switches to pageless.",
+    "Opens and saves .docx, .dotx, .odt, .rtf, .html and Markdown, exports text, EPUB and tagged PDF, and reads Word 97 .doc.",
+    "Reviews with comments, suggesting mode, compare and combine, named versions and live co-editing.",
+    "Runs every command from a terminal, so an agent can drive the open document."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".ftxt, a zip of document.json and media/"
+    },
+    {
+      "dt": "Editor",
+      "dd": "TypeScript and ProseMirror with its own page layout"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python 3.12 and FastAPI, which owns the .ftxt model, exchange and exports"
+    },
+    {
+      "dt": "Data",
+      "dd": "Stored in ~/FormTxt by default; both servers listen on this computer only"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "pages",
+      "kicker": "Pages",
+      "title": "Real pages, or no pages at all",
+      "text": "Documents lay out on pages with paper size, orientation and margins from Page setup, line-by-line splitting with widow and orphan control, headers and footers, section breaks and a ruler. A pageless mode and zoom from 25 to 300 percent are one click away.",
+      "shot": "page"
+    },
+    {
+      "id": "ribbon",
+      "kicker": "Ribbon",
+      "title": "A ribbon and a home screen",
+      "text": "Tabs for Home, Insert, Draw, Design, Layout, References, Mailings, Review, View, AI and Help, with contextual tabs for tables, pictures, shapes and charts. Home offers Start, Recent documents and 39 original templates in 11 categories.",
+      "shot": "ribbon"
+    },
+    {
+      "id": "review",
+      "kicker": "Review and files",
+      "title": "Comments, suggestions and Word round trips",
+      "text": "Word files keep comments with replies, tracked changes, bookmarks, real fields, content controls and the table of contents. Suggesting mode tracks every edit, including paragraph formatting.",
+      "shot": "review"
+    }
+  ],
+  "features": [
+    {
+      "id": "home",
+      "icon": "apps",
+      "title": "Home",
+      "text": "Start, Recent documents, templates and a Trash.",
+      "bullets": [
+        "Open a file, a blank document, a dropzone for Markdown and text files, or Paste text",
+        "39 original templates in 11 categories with search and preview",
+        "Recent documents can be pinned, duplicated, saved as a template or deleted with Undo",
+        "Trash with restore and permanent delete"
+      ],
+      "shot": "home"
+    },
+    {
+      "id": "editor",
+      "icon": "captions",
+      "title": "Editor",
+      "text": "Styles, fonts and the usual formatting, with Markdown-style shortcuts.",
+      "bullets": [
+        "Normal, Title, Subtitle, Quote and Heading 1 to 9",
+        "Lists with nine levels, links, code blocks, find and replace with regular expressions",
+        "Format Painter and a style editor",
+        "Word and Google Docs keyboard shortcuts, rebindable with Ctrl+/",
+        "Find a Command (Ctrl+Shift+P)"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "pages",
+      "icon": "book",
+      "title": "Pages and layout",
+      "text": "Real pagination with a ruler and section control.",
+      "bullets": [
+        "Headers and footers with page numbers in five formats",
+        "Different first page and odd and even pages",
+        "Page colour, page borders, a watermark and a cover page",
+        "Print layout, Draft, Read mode and Focus mode views",
+        "Section breaks with their own headers and numbering"
+      ],
+      "shot": "page"
+    },
+    {
+      "id": "tables",
+      "icon": "grid",
+      "title": "Tables and pictures",
+      "text": "Tables with merge and split, repeating header rows and table styles.",
+      "bullets": [
+        "Convert text separated by tabs, commas, semicolons or pipes to a table and back",
+        "Markdown pipe tables open as tables",
+        "Long tables split between rows across pages",
+        "Pictures in PNG, JPEG, GIF, WebP and more"
+      ],
+      "shot": "tables"
+    },
+    {
+      "id": "references",
+      "icon": "source",
+      "title": "References",
+      "text": "Long-document tools for reports and papers.",
+      "bullets": [
+        "Table of contents, footnotes and endnotes",
+        "Citations in eight source types with a bibliography",
+        "Captions, cross-references, an index and bookmarks"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "review",
+      "icon": "check",
+      "title": "Review and versions",
+      "text": "Comments, suggesting and comparison.",
+      "bullets": [
+        "Comments with reactions",
+        "Suggesting mode with accept and reject",
+        "Compare and combine, tables cell by cell",
+        "Named versions and recovery, protection and passwords",
+        "Approvals, fields and content controls"
+      ],
+      "shot": "review"
+    },
+    {
+      "id": "mailings",
+      "icon": "export",
+      "title": "Mailings and sharing",
+      "text": "Mail merge, envelopes and labels, and live co-editing.",
+      "bullets": [
+        "Signature line",
+        "Autosave to WebDAV cloud storage",
+        "Live co-editing with presence",
+        "Share links on this computer or network, and publish"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "files",
+      "icon": "download",
+      "title": "Files and print",
+      "text": "Open and save the common document formats.",
+      "bullets": [
+        ".docx, .dotx, .odt, .rtf, .html and Markdown",
+        "Export text and EPUB, read Word 97 .doc",
+        "Print preview, ranges and copies, tagged PDF export",
+        "Open a PDF, with OCR for scanned pages"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "proofing",
+      "icon": "mark",
+      "title": "Proofing",
+      "text": "Its own spelling and grammar and an Editor panel.",
+      "bullets": [
+        "Clarity, formality, inclusiveness and vocabulary checks",
+        "AutoCorrect, a thesaurus and dictionary, hyphenation",
+        "Right-to-left text, read aloud and dictation",
+        "An accessibility checker"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "ai",
+      "icon": "formai",
+      "title": "AI with your own key",
+      "text": "Drafting and editing through a provider key you supply.",
+      "bullets": [
+        "Drafting, rewrite and summaries that stay current",
+        "Document edits as tracked suggestions",
+        "Translation, image options and an audio overview"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "ribbon",
+      "icon": "sliders",
+      "title": "Ribbon and preferences",
+      "text": "Ribbon layout since 0.28.0 with galleries filled in by 0.29.0.",
+      "bullets": [
+        "Quick Access Toolbar and command search (Alt+Q)",
+        "Alt key tips, Customize Ribbon, simplified, tabs-only and icons-only displays",
+        "Preferences (Ctrl+,) with 29 themes",
+        "View > Dark Page shows the page dark without changing printing or exports"
+      ],
+      "shot": "ribbon"
+    },
+    {
+      "id": "cli",
+      "icon": "terminal",
+      "title": "Commands and agents",
+      "text": "Every command also runs from a terminal.",
+      "bullets": [
+        "./formtxt cli list shows the command catalogue",
+        "./formtxt cli run tools.stats",
+        "./formtxt cli run edit.replaceAll find=draft replace=final"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Microsoft Word and Google Docs",
+    "summary": "Of the 196 capabilities graded, FormTxt 0.29.6 is full on 180, partial on 13 and has nothing for 3. Every FormTxt cell was traced in code; LibreOffice Writer is the other column. What stays partial needs accounts for share links and signatures, a public server, recorded-audio transcription and screen reader checks."
+  },
+  "docs": {
+    "requirements": [
+      "Python 3.12 or newer",
+      "Node 20.19 or newer"
+    ],
+    "install": "./formtxt_oc_install\nWindows: formtxt_oc_install.bat",
+    "run": "./formtxt\n./formtxt cli list\nWindows: formtxt.bat",
+    "desktop": "./build_app\n./build_app --open",
+    "agents": "Claude Code, Codex or Cursor work on the open document through the same commands, which also run from ./formtxt cli run.",
+    "topics": [
+      {
+        "title": "Stack and ports",
+        "text": "The app runs on http://localhost:5210 and the engine on 127.0.0.1:8210; FORMTXT_UI_PORT, FORMTXT_ENGINE_PORT and FORMTXT_DATA_DIR override them."
+      },
+      {
+        "title": "Keyboard and commands",
+        "text": "Find a Command (Ctrl+Shift+P), command search (Alt+Q) and rebindable shortcuts (Ctrl+/) reach every command."
+      },
+      {
+        "title": "File format",
+        "text": ".ftxt is a zip of document.json and media/; the contract is docs/FORMAT.md."
+      },
+      {
+        "title": "Desktop app",
+        "text": "./build_app makes FormTxt.app and a disk image on macOS, a .deb on Linux and MSI and NSIS installers with build_app.bat on Windows."
+      },
+      {
+        "title": "Parity",
+        "text": "The FormTxt page of the FormAI Parity Tracker lists the 199 Word and Google Docs capabilities in the research baseline, each with its vendor source."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.30.4",
+      "date": "2026-10-31",
+      "items": [
+        "The desktop window's scripts keep their types on Windows, fixing a blank window",
+        "Linux packages pull in the media plugins"
+      ]
+    },
+    {
+      "version": "0.30.3",
+      "date": "2026-10-30",
+      "items": [
+        "The macOS engine is signed for notarization",
+        "Windows scripts are checked out with CRLF"
+      ]
+    },
+    {
+      "version": "0.30.2",
+      "date": "2026-10-26",
+      "items": [
+        ".ftxt files open through both import routes",
+        "The splash logo no longer moves when its line and bar arrive",
+        "Test and window jobs added to CI"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "home",
+      "what": "The Home screen with templates",
+      "how": "Run ./formtxt and open http://localhost:5210; leave the start screen with the template tiles visible."
+    },
+    {
+      "key": "page",
+      "what": "A multi-page document in print layout",
+      "how": "Open a template, add a heading, a table and a picture, and set View to Print layout with the ruler on."
+    },
+    {
+      "key": "ribbon",
+      "what": "The ribbon with a gallery open",
+      "how": "In an open document click the Insert tab and open the Shapes or Symbol gallery."
+    },
+    {
+      "key": "review",
+      "what": "Suggesting mode with comments",
+      "how": "Switch the Editing, Suggesting and Viewing switch to Suggesting, edit a paragraph and add a comment from the Review tab."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:txt"
+  ],
+  "captures": {
+    "home": {
+      "file": "/media/formtxt/ui-home-1.webp", "light": "/media/formtxt/ui-home-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTxt's template gallery: 39 original templates in eleven categories from resumes and letters to reports, proposals, meeting notes and newsletters, plus any document saved as a template",
+      "size": ""
+    },
+    "page": {
+      "file": "/media/formtxt/ui-page-1.webp", "light": "/media/formtxt/ui-page-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A sample report opened in FormTxt: print layout with the ruler, an outline built from its headings, a table, the Home ribbon with styles, dictation and transcription, and a status bar with page and word counts, language and an accessibility check",
+      "size": ""
+    },
+    "ribbon": {
+      "file": "/media/formtxt/ui-ribbon-1.webp", "light": "/media/formtxt/ui-ribbon-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTxt's Insert tab with the Shapes gallery open over the report: lines, rectangles, basic shapes, block arrows, callouts and stars beside Pictures, Icons, Mermaid, IntelligentArt, Chart, Header, Footer, Equation and Symbol",
+      "size": ""
+    },
+    "review": {
+      "file": "/media/formtxt/ui-review-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Review pane beside the page showing a comment thread on the sentence about closing the gate",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formtxt/ui-hero-2.webp", "light": "/media/formtxt/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTxt showing the built-in Annual Report template on a dark page: the ribbon, an outline of headings, a harbour photo and a bar chart of revenue by quarter",
+      "size": ""
+    },
+    "charts": {
+      "file": "/media/formtxt/ui-charts-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A bar chart of flowering stems per square metre below a bulleted packing list and a tracked insertion",
+      "size": ""
+    },
+    "tables": {
+      "file": "/media/formtxt/ui-tables-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A table of five meadow plants with an accent header row and the table design and layout tabs open",
+      "size": ""
+    }
+  },
+  "credit": "The report in the captures was written for this page."
+}

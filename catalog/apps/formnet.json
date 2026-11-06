@@ -1,0 +1,234 @@
+{
+  "id": "formnet",
+  "name": "FormNET",
+  "version": "0.1.2",
+  "repo": "https://github.com/nodemode-dev/formNET",
+  "kind": "Network inspection app",
+  "title": "the network tab for your whole computer",
+  "summary": "FormNET is a network inspector with flows, hosts and every open connection with the process behind it, in one window with no account. Local only.",
+  "lede": "FormNET is the network tab for your whole computer. It shows flows through its local proxy, totals per host and every connection the machine holds with the process that owns it, in one window with no account. Both listeners bind loopback only and recordings stay in memory until you export them.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Shows every request in full: headers, bodies up to a limit, sizes, timings and the TLS that was negotiated.",
+    "Groups flows by host with requests, errors and bytes each way, and labels widely documented third parties as a reading aid, never a verdict.",
+    "Lists every connection the computer holds with the process that owns it.",
+    "Keeps both listeners on loopback only and holds recordings in memory until you export them."
+  ],
+  "facts": [
+    {
+      "dt": "Views",
+      "dd": "Four: Flows, Hosts, Machine and Setup"
+    },
+    {
+      "dt": "Exports",
+      "dd": "HAR 1.2 of any filtered view, and a machine snapshot as JSON"
+    },
+    {
+      "dt": "Stack",
+      "dd": "A Go 1.26 server with the TypeScript and Vite client embedded, and a Tauri 2 window around the same binary"
+    },
+    {
+      "dt": "Tests",
+      "dd": "82 Go tests and a Playwright window smoke in CI"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "flows",
+      "kicker": "Flows",
+      "title": "Every request, in full",
+      "text": "Click a flow to read what was sent and what came back. Opaque tunnels are still counted by host and bytes.",
+      "shot": "editor"
+    },
+    {
+      "id": "hosts",
+      "kicker": "Hosts",
+      "title": "Who it talks to",
+      "text": "Requests, errors and bytes each way per host. Widely documented third parties get a reading-aid label, never a verdict.",
+      "shot": "hosts"
+    },
+    {
+      "id": "machine",
+      "kicker": "Whole machine",
+      "title": "Not one page and not one proxy",
+      "text": "Every connection the computer holds, with the process that owns it. The process column in Flows is filled only where the platform reports it.",
+      "shot": ""
+    }
+  ],
+  "features": [
+    {
+      "id": "flows",
+      "icon": "grid",
+      "title": "Flows",
+      "text": "A live table of requests through the proxy, with the selected request's headers and body beside it.",
+      "bullets": [
+        "Headers, bodies up to a limit, sizes and timings",
+        "The TLS that was negotiated",
+        "Opaque tunnels counted by host and bytes"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "errors",
+      "icon": "target",
+      "title": "Failed requests",
+      "text": "Select a failed request to read its response headers and error body.",
+      "bullets": [
+        "Response headers and body in the detail pane"
+      ],
+      "shot": "flow-detail"
+    },
+    {
+      "id": "hosts",
+      "icon": "globe",
+      "title": "Hosts",
+      "text": "Flows grouped by host with the totals that matter.",
+      "bullets": [
+        "Requests, errors and bytes each way",
+        "Reading-aid labels for widely documented third parties",
+        "An unlabelled host is simply not on the list"
+      ],
+      "shot": "hosts"
+    },
+    {
+      "id": "machine",
+      "icon": "laptop",
+      "title": "Machine",
+      "text": "Every connection the computer holds, with the process behind it.",
+      "bullets": [
+        "./bin/formnet snapshot prints the connection table once as JSON"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "proxy",
+      "icon": "plug",
+      "title": "Proxy",
+      "text": "A local proxy you point a program at.",
+      "bullets": [
+        "Plain HTTP forwarding and CONNECT tunnels",
+        "TLS interception with a local root",
+        "Passthrough patterns"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "ca",
+      "icon": "shield",
+      "title": "Local root certificate",
+      "text": "The certificate is made on first run and HTTPS is opened only once you trust it.",
+      "bullets": [
+        "The private key never leaves ~/formnet",
+        "Until trusted, HTTPS is tunnelled and counted but not opened",
+        "./bin/formnet ca trust prints the command that trusts it for your user only"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "export",
+      "icon": "export",
+      "title": "Export",
+      "text": "Take a recording out when you choose to.",
+      "bullets": [
+        "HAR 1.2 of any filtered view",
+        "Machine snapshot as JSON"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agents and scripts",
+      "text": "Scripts read the same recording over a token-guarded local API.",
+      "bullets": [
+        "./bin/formnet snapshot and ./bin/formnet ca",
+        "/api/flows, /api/flows/{id}, /api/hosts, /api/machine, /api/export/har and /api/stream"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "local",
+      "icon": "moon",
+      "title": "Nothing leaves",
+      "text": "The proxy and the API refuse any other address than loopback.",
+      "bullets": [
+        "The proxy never connects to loopback through a host name",
+        "Recordings stay in memory until exported",
+        "Client and API on 127.0.0.1:8760, proxy on 127.0.0.1:8761"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Go 1.26",
+      "Node.js 22"
+    ],
+    "install": "make build",
+    "run": "./bin/formnet\n./bin/formnet open",
+    "desktop": "./build_app\nWindows: build_app.bat",
+    "agents": "./bin/formnet snapshot prints the connection table as JSON and ./bin/formnet ca prints the root certificate path, fingerprint and trust state. Other scripts call the local API with the token from ~/formnet/token. See AGENTS.md.",
+    "topics": [
+      {
+        "title": "Point a program at the proxy",
+        "text": "For example curl -x http://127.0.0.1:8761 http://example.com/. Until the computer trusts the root, HTTPS is tunnelled and counted but not opened."
+      },
+      {
+        "title": "Settings",
+        "text": "Settings are FORMNET_* environment variables, such as FORMNET_DATA, FORMNET_PASSTHROUGH and FORMNET_INTERCEPT. ./bin/formnet help lists them all."
+      },
+      {
+        "title": "Client development",
+        "text": "cd web && npm ci && npm run dev serves the client on http://localhost:5176, proxied to a running formnet."
+      },
+      {
+        "title": "Status",
+        "text": "Early (v0.1). The desktop window source has not been compiled yet, and the process column in Flows is filled only where the platform reports it."
+      },
+      {
+        "title": "Releases",
+        "text": "FormNET builds are compiled and released from formcompiler; the repository holds the source."
+      }
+    ]
+  },
+  "releases": [],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "AGENTS.md",
+    "LICENSE",
+    "src-tauri/tauri.conf.json",
+    "build_app"
+  ],
+  "captures": {
+    "flow-detail": {
+      "file": "/media/formnet/ui-flow-detail-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A failed request selected in the Flows view, showing its response headers and JSON error body",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formnet/ui-hero-2.webp",
+      "light": "/media/formnet/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormNET Flows view: a table of local HTTP requests with status, size and timing, and the request headers and JSON body of a POST in the detail pane",
+      "size": ""
+    },
+    "hosts": {
+      "file": "/media/formnet/ui-hosts-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Hosts view grouping flows by host with request counts, errors, bytes sent and received",
+      "size": ""
+    }
+  },
+  "credit": ""
+}

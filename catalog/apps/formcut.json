@@ -1,0 +1,330 @@
+{
+  "id": "formcut",
+  "name": "FormCut",
+  "version": "2.11.6",
+  "repo": "https://github.com/nodemode-dev/formcut",
+  "kind": "Video editor",
+  "title": "local-first video editing with no account and no upload",
+  "summary": "FormCut is an open-source video editor: multi-track timeline, one renderer for preview and export, a real effect catalogue, local captions and cutout, and an MCP server.",
+  "lede": "FormCut is a complete video editor that runs entirely on your machine, with no account and no upload. A multi-track timeline, one renderer shared by preview and export, a catalogue of grades, effects and transitions, captions and subject cutout from local models, and a scripting API come in a desktop shell. Claude Code, Codex or Cursor can build, render and collect an edit over MCP.",
+  "replaces": "CapCut",
+  "project": ".fc",
+  "runs_on": "macOS (Apple silicon), Windows and Linux",
+  "checks": [
+    "Previews and exports through one renderer, so the frame you approve is the frame you ship, held by a golden-frame check in CI.",
+    "Browses 74 colour grades, 76 visual effects, 48 audio chains, 23 transitions and a library of 180 looks.",
+    "Transcribes with Whisper locally, removes backgrounds with models that ship in the engine and tracks subjects, planes and rotoscoped shapes.",
+    "Exports H.264, HEVC, AV1 and VP9 with hardware encoders, and exchanges timelines as OpenTimelineIO, EDL and Final Cut XML."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fc, a package with the document, every media file, fonts, LUTs and shaders"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python and FastAPI with a Rust frame executor and a 3D device pass, in a Tauri 2 shell"
+    },
+    {
+      "dt": "Interface",
+      "dd": "16 languages, Arabic, Persian and Hebrew right to left"
+    },
+    {
+      "dt": "Privacy",
+      "dd": "The engine binds loopback, model downloads are pinned by SHA-256 and there is no telemetry"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "render",
+      "kicker": "One renderer",
+      "title": "What you see is what you export",
+      "text": "The same decode, crop, colour, effect, mask, grade, transform and composite path serves the canvas and the file. Proxy editing keeps 4K scrubbing light, and exports always read the originals.",
+      "shot": "timeline"
+    },
+    {
+      "id": "look",
+      "kicker": "Effects and grading",
+      "title": "A catalogue that is real",
+      "text": "74 colour grades, 76 visual effects, 48 audio chains, 23 transitions and 180 looks, each with a thumbnail rendered by the engine, plus scopes, wheels, curves and effect packages you import yourself.",
+      "shot": "color"
+    },
+    {
+      "id": "speech",
+      "kicker": "Captions and cutout",
+      "title": "Speech and subject models run locally",
+      "text": "Whisper in tiny to large sizes writes captions with word timestamps, and a transcript row marks a range from the speech found in the audio so the timeline makes the cut. Background removal works out of the box, with Point to select (SAM 2) tracking an object through video.",
+      "shot": "captions"
+    }
+  ],
+  "features": [
+    {
+      "id": "renderer",
+      "icon": "film",
+      "title": "One renderer for preview and export",
+      "text": "Pixel-measured parameters follow the resolution actually decoded.",
+      "bullets": [
+        "Frames with an effect, mask or transform go through the renderer",
+        "A plain cut and untouched layers export through ffmpeg filtergraphs with the grade baked into a 33-point cube",
+        "Golden-frame check in CI compares the two paths on every push"
+      ],
+      "shot": "timeline"
+    },
+    {
+      "id": "catalogue",
+      "icon": "extensions",
+      "title": "Effect catalogue",
+      "text": "Browsable and real: every card's thumbnail is rendered by the engine.",
+      "bullets": [
+        "74 colour grades, 76 visual effects, 48 audio chains and 23 transitions",
+        "180 looks, twenty colour grades each with nine finishes",
+        "Effect packages: a manifest, a WGSL kernel or an audio filter chain, each checked before it loads",
+        "A community registry installs packages from the effects browser"
+      ],
+      "shot": "effects"
+    },
+    {
+      "id": "recording",
+      "icon": "play",
+      "title": "Voiceover, camera and screen recording",
+      "text": "Recording straight onto the timeline from Studio's Recording tab.",
+      "bullets": [
+        "Microphone with a device picker and peak-holding level meter",
+        "Camera previewed live before and during a take",
+        "Screen or window with system sound and your microphone mixed in"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "cutout",
+      "icon": "cut",
+      "title": "Cutout and scene tools",
+      "text": "Background removal that works out of the box.",
+      "bullets": [
+        "Subject (Auto), Point to select (SAM 2) and a smart brush",
+        "Scene detection splits long clips at their cuts",
+        "Smooth slow motion that makes the frames between",
+        "Canvas backgrounds: a colour, gradient, image or blurred copy of the clip"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "editing",
+      "icon": "layers",
+      "title": "Editing surface",
+      "text": "Multi-timeline with compound clips, which also serve as multicam.",
+      "bullets": [
+        "Multi-track, marquee, trim, blade, ripple delete and freeze frame",
+        "Reorderable timeline tabs and any timeline placed on another as a compound clip",
+        "Detach and reattach audio, crop with canvas grips",
+        "A Pro tab with a source monitor, three-point editing, roll, slip and slide, and Premiere, Final Cut and Avid key layouts"
+      ],
+      "shot": "timeline"
+    },
+    {
+      "id": "color",
+      "icon": "grade",
+      "title": "Color grading",
+      "text": "A Color tab with scopes and a colour-managed BT.709 pipeline.",
+      "bullets": [
+        "Waveform, RGB parade, vectorscope and histogram",
+        "Lift, gamma, gain and offset wheels and custom luma and RGB curves",
+        "Hue against hue, hue against saturation and luminance against saturation curves",
+        "PQ and HLG sources tone-mapped at decode; every export tagged BT.709"
+      ],
+      "shot": "color"
+    },
+    {
+      "id": "keyframes",
+      "icon": "keyframe",
+      "title": "Keyframes and tracking",
+      "text": "Cubic-bezier easing with named presets and handles of your own.",
+      "bullets": [
+        "Keyframes on transform properties and any effect parameter",
+        "Motion tracking pins a title or overlay to a moving subject",
+        "Planar tracking and roto in the Track workspace",
+        "Screen replacement and device mockups rendered in 3D"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "captions",
+      "icon": "captions",
+      "title": "Captions and speech",
+      "text": "Whisper in the engine's own ONNX Runtime.",
+      "bullets": [
+        "tiny, base, small, medium or large models",
+        "Word timestamps and SCC, SRT and WebVTT caption files",
+        "Transcript rows mark a range and the timeline cuts it"
+      ],
+      "shot": "captions"
+    },
+    {
+      "id": "library",
+      "icon": "box",
+      "title": "Library and Studio",
+      "text": "Built-in assets plus sources you import.",
+      "bullets": [
+        "86 stickers and 52 sound effects",
+        "Pexels stock and Openverse sounds, music and images with licence and attribution",
+        "A media downloader for any site yt-dlp supports"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "export",
+      "icon": "export",
+      "title": "Export and interchange",
+      "text": "Hardware encoders preferred and confirmed by encoding.",
+      "bullets": [
+        "H.264, HEVC, AV1 and VP9, 10-bit where the encoder supports it",
+        "OpenTimelineIO, CMX 3600 EDL, Final Cut Pro 7 XML and FCPXML both ways",
+        "Projects export as a .fc package from the home screen"
+      ],
+      "shot": "export"
+    },
+    {
+      "id": "media",
+      "icon": "download",
+      "title": "Media in",
+      "text": "Imports as phones make it.",
+      "bullets": [
+        "HEIC, HEIF, AVIF and TIFF stills",
+        "PQ and HLG footage tone-mapped to SDR in the decode pipe",
+        "Proxy editing built in the background, never used for export"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "automation",
+      "icon": "plug",
+      "title": "Automation and MCP",
+      "text": "JSON-RPC 2.0 over HTTP, websocket, stdin, TCP and gRPC.",
+      "bullets": [
+        "MCP server with 32 workflow tools over stdio, built into the app as formcut-engine --mcp",
+        "Settings, Connections, AI agents shows each client's config with a Copy button",
+        "Optimistic concurrency on every edit"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "CapCut",
+    "summary": "Revision 13 re-grades FormCut from 2.8.1 to 2.10.1, fifteen releases and 42 commits, and no grade moved: it was full on every row but the phone app, and still is. It has 13 of 13 capabilities beyond CapCut. Concat and UltraMock are the other columns."
+  },
+  "docs": {
+    "requirements": [
+      "Node 18 or newer",
+      "Python 3.11 or newer",
+      "ffmpeg and ffprobe on PATH"
+    ],
+    "install": "chmod +x formcut\nWindows: formcut.bat",
+    "run": "./formcut",
+    "desktop": "./formcut desktop build",
+    "agents": "A built-in MCP server with 32 workflow tools; from a checkout, ./formcut mcp, with .mcp.json, .codex/config.toml and .cursor/mcp.json already set up.",
+    "topics": [
+      {
+        "title": "Download",
+        "text": "Each release carries a zip for macOS (Apple silicon), Windows and Linux that runs with nothing else installed, ffmpeg included."
+      },
+      {
+        "title": "Ports",
+        "text": "The interface runs at http://localhost:3040 and the engine at http://127.0.0.1:8040."
+      },
+      {
+        "title": "MCP server",
+        "text": "The README lists how Claude Code, Codex, Cursor, Claude Desktop and VS Code connect, and Settings, Connections shows the exact command."
+      },
+      {
+        "title": "Local speech",
+        "text": "setup/setup_local_ai re-runs the Kokoro speech runtime install on its own."
+      },
+      {
+        "title": "Releasing",
+        "text": "RELEASING.md covers releases, which formcompiler builds from a compile_vX.Y.Z branch."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "2.11.4",
+      "date": "2026-11-04",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. and the licence"
+      ]
+    },
+    {
+      "version": "2.11.3",
+      "date": "2026-11-02",
+      "items": [
+        "The Windows LGPL FFmpeg build runs under cmd"
+      ]
+    },
+    {
+      "version": "2.11.2",
+      "date": "2026-11-02",
+      "items": [
+        "The engine checks pass on every OS again"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "timeline",
+      "what": "The editor with a multi-track timeline",
+      "how": "Run ./formcut, open http://localhost:3040, create a project, import a few clips from the Media tab and drag them onto two tracks."
+    },
+    {
+      "key": "color",
+      "what": "The Color tab with scopes and wheels",
+      "how": "Select a clip, open the inspector's Color tab and show the waveform and vectorscope."
+    },
+    {
+      "key": "captions",
+      "what": "A transcript with a marked range",
+      "how": "Select a clip with speech, open captions, generate a transcript with a small Whisper model and mark a range on a transcript row."
+    },
+    {
+      "key": "effects",
+      "what": "The effects browser with thumbnails",
+      "how": "Open the effects browser from the library and scroll the colour grades and looks."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:cut"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formcut/ui-hero-2.webp",
+      "light": "/media/formcut/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormCut with four panoramic clips and a music track on the multi-track timeline, the media library on the left and the preview showing a Venice sunset frame",
+      "size": ""
+    },
+    "color": {
+      "file": "/media/formcut/ui-color-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Color tab of the inspector with a waveform scope and lift and gamma wheels beside the preview",
+      "size": ""
+    },
+    "effects": {
+      "file": "/media/formcut/ui-effects-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The effects browser with engine-rendered thumbnails for Sharpen and Edge Detect while a clip is selected",
+      "size": ""
+    },
+    "export": {
+      "file": "/media/formcut/ui-export-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Export video dialog with format, quality, codec, size and colour options and an estimated file size",
+      "size": ""
+    }
+  }
+}

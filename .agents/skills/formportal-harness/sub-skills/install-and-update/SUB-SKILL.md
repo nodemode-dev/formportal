@@ -16,7 +16,7 @@ The result carries `installed.current` (version, path, SHA-256), `installed.prev
 
 ## Updates and preferences
 
-- `updates` lists every installed app with a newer version: from, to, size, release notes, whether it is open, and whether the person's preferences update it automatically. It also says when FormPortal itself has a newer version (`formportal_update`), which the person downloads from formai.dev.
+- `updates` lists every installed app with a newer version: from, to, size, release notes, whether it is open, and whether the person's preferences update it automatically. It also says when FormPortal itself has a newer version (`formportal_update`), which the person downloads from `https://formai.studio/download/`.
 - `update {product, channel?}` updates one app; `update {}` updates everything waiting; `update {automatic_only: true}` does only what the preferences allow, which is what FormPortal's window does each time it opens. Only a newer version counts as an update; an older one offered by the catalogue is never installed this way.
 - `preferences` reads the settings, or changes the ones given: `auto_update` (default on), `auto_update_beta` (default off), `only_when_closed` (default on), `notices` (default on), `keep_previous` (default on; off deletes the replaced version after each update, so rollback is no longer possible), `per_app` (product id to true or false, null to follow the global switch). These are the person's choices; change one only when they ask.
 

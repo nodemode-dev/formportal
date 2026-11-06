@@ -1,0 +1,365 @@
+{
+ "id": "formpath",
+ "name": "FormPath",
+ "version": "0.53.0",
+ "repo": "https://github.com/nodemode-dev/formpath",
+ "kind": "Vector illustration app",
+ "title": "vector illustration on your own machine",
+ "summary": "FormPath is an open-source (Apache-2.0) vector illustration app with artboards, Pen and Curvature tools, Pathfinder, live effects, type, SVG, PDF, EPS and DXF.",
+ "lede": "FormPath is the vector member of the Form family, with artboards, layers, live shapes, the Pen and Curvature tools, Pathfinder, gradients, an appearance stack with live effects and variable fonts. It saves its own .fpth projects and reads and writes SVG, PDF, EPS and DXF. It runs in a browser or as a desktop app.",
+ "replaces": "Illustrator",
+ "project": ".fpth",
+ "runs_on": "macOS, Windows and Linux (desktop build targets: all); also in a browser",
+ "checks": [
+  "Draws with Pen, Curvature, Pencil, Paintbrush and live shapes that stay editable after drawing.",
+  "Combines paths with all ten Pathfinder operations, Fill Regions, Offset Path, Outline Stroke and Simplify.",
+  "Opens any PDF or PDF-compatible .ai as editable art, one artboard per page, and writes SVG, PDF, PNG, JPEG and WebP.",
+  "Lets agents draw through an MCP server with 93 tools, with Claude Code running inside its own terminal dock."
+ ],
+ "facts": [
+  {
+   "dt": "Opens",
+   "dd": ".fpth, SVG, PDF, PDF-compatible .ai, EPS and DXF"
+  },
+  {
+   "dt": "Exports",
+   "dd": "SVG, PDF, EPS, DXF, PNG, JPEG and WebP"
+  },
+  {
+   "dt": "Engine",
+   "dd": "Python 3.12 and FastAPI behind a vanilla TypeScript frontend"
+  },
+  {
+   "dt": "Languages",
+   "dd": "26, English by default"
+  }
+ ],
+ "chapters": [
+  {
+   "id": "drawing",
+   "kicker": "Drawing",
+   "title": "Pen, live shapes and Pathfinder on curves",
+   "text": "Pen, Curvature and the anchor tools sit beside live shapes with corner widgets, Paintbrush and Blob Brush. All ten Pathfinder operations run through paper.js, with Shape Crafter and Fill Regions.",
+   "shot": "canvas"
+  },
+  {
+   "id": "appearance",
+   "kicker": "Appearance",
+   "title": "Multiple fills, live effects and 3D",
+   "text": "Objects take multiple fills and strokes, Graphic Styles and live effects, including fifteen warps and the Effect Gallery's 56 effects. 3D Extrude & Bevel, Revolve, Inflate and Plane work on shapes, type and groups.",
+   "shot": "effects"
+  },
+  {
+   "id": "agents",
+   "kicker": "Agents",
+   "title": "93 MCP tools and a terminal inside the window",
+   "text": "./formpath mcp gives Claude Code, Codex and Cursor 93 tools over the whole command catalogue. Window > Terminal opens real shells with a Claude Code button already connected to FormPath's tools.",
+   "shot": "terminal"
+  }
+ ],
+ "features": [
+  {
+   "id": "artboards",
+   "icon": "layers",
+   "title": "Artboards and layers",
+   "text": "Any number of artboards with the Artboard tool and panel.",
+   "bullets": [
+    "Layers and sublayers with colours, lock, template, print and dim",
+    "Groups with isolation mode",
+    "Clipping masks",
+    "16 blend modes and opacity masks"
+   ],
+   "shot": "canvas"
+  },
+  {
+   "id": "drawing",
+   "icon": "mark",
+   "title": "Drawing",
+   "text": "Pen, Curvature and anchor tools with live shapes editable after drawing.",
+   "bullets": [
+    "Pencil, Smooth, Path Eraser and Join",
+    "Rectangle, Rounded Rectangle, Ellipse, Polygon, Star and Flare as live shapes",
+    "Paintbrush, Blob Brush, Eraser, Scissors and Knife",
+    "Smart guides with equal spacing, snap to pixel, rulers and grids"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "pathfinder",
+   "icon": "cut",
+   "title": "Pathfinder on curves",
+   "text": "All ten Pathfinder operations through paper.js.",
+   "bullets": [
+    "Shape Crafter",
+    "Fill Regions groups with gap detection",
+    "Compound paths, Offset Path and Outline Stroke",
+    "Simplify, Average, Divide Objects Below and Split into Grid"
+   ],
+   "shot": "outline"
+  },
+  {
+   "id": "paint",
+   "icon": "grade",
+   "title": "Paint",
+   "text": "Colour in Grayscale, RGB, HSB, CMYK and Web.",
+   "bullets": [
+    "Swatches with global and spot colours",
+    "Linear, radial and freeform gradients, and gradient mesh",
+    "Patterns with pattern editing mode",
+    "Recolor Art and the Color Guide's harmony rules",
+    "Stroke panel with dashes, arrowheads and width profiles"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "appearance",
+   "icon": "sliders",
+   "title": "Appearance and effects",
+   "text": "Multiple fills and strokes per object, Graphic Styles and live effects.",
+   "bullets": [
+    "Fifteen warps, Distort and Transform, Drop Shadow, glows and Feather",
+    "The Effect Gallery's 56 effects, all live",
+    "3D Extrude & Bevel, Revolve, Inflate and Plane",
+    "Envelopes, blends, repeats and symbols with seven symbolism tools",
+    "Trace Image as a live object with five views"
+   ],
+   "shot": "effects"
+  },
+  {
+   "id": "type",
+   "icon": "captions",
+   "title": "Type",
+   "text": "Point, area, vertical and on-path type typed on the canvas.",
+   "bullets": [
+    "Area type inside any shape, threaded frames and text wrap",
+    "Character and Paragraph panels with OpenType features",
+    "Character and Paragraph Styles",
+    "Glyphs, Change Case, Find and Replace, Find Font",
+    "Create Outlines through real glyph outlines"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "files",
+   "icon": "export",
+   "title": "Files",
+   "text": ".fpth projects with a library, conflict copies and crash recovery.",
+   "bullets": [
+    "SVG in and out with exact round trips",
+    "PDF out with real vectors, shadings, transparency and CMYK",
+    "PDF and PDF-compatible .ai in, one artboard per page",
+    "PNG, JPEG and WebP, Export for Screens and the Asset Export panel",
+    "Placed and linked images"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "corners",
+   "icon": "target",
+   "title": "Live Corners",
+   "text": "Direct Selection shows a corner widget at every corner point of any path.",
+   "bullets": [
+    "Drag to round",
+    "Alt-click for inverted or chamfer",
+    "Double-click for the Corners dialog"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "languages",
+   "icon": "globe",
+   "title": "26 languages",
+   "text": "English by default, set in Preferences > Interface.",
+   "bullets": [
+    "Spanish (Spain and Mexico), Portuguese (Brazil), French (France and Canada)",
+    "Chinese (Simplified and Traditional), Japanese and Korean",
+    "Translated from FormPath's own English in each"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "agents",
+   "icon": "formai",
+   "title": "Agents",
+   "text": "./formpath mcp gives Claude Code, Codex and Cursor 93 tools.",
+   "bullets": [
+    "From get_image to pathfinder to run_command and run_commands",
+    "The window asks the person once",
+    "The formpath-harness skill pack teaches agents to look, plan, build, check and deliver"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "terminal",
+   "icon": "terminal",
+   "title": "Terminal and Claude Code inside the window",
+   "text": "Window > Terminal opens a dock of real shells.",
+   "bullets": [
+    "Claude Code button starts your own claude connected to FormPath's tools",
+    "The Chat tab answers in plain words while it draws",
+    "./formpath cli lists, describes and runs any of the 649 catalogue commands"
+   ],
+   "shot": "terminal"
+  },
+  {
+   "id": "assistant",
+   "icon": "plug",
+   "title": "Assistant and plugins",
+   "text": "Window > Assistant edits through the same tools on the language model you choose.",
+   "bullets": [
+    "Sandboxed JavaScript plugins add commands"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "zero-flash",
+   "icon": "shield",
+   "title": "Zero-flash UI",
+   "text": "Keyed DOM patching, guarded writes, a pre-paint theme boot and reveal after fonts.",
+   "bullets": [
+    "Every interface change is checked in a throttled browser"
+   ],
+   "shot": ""
+  }
+ ],
+ "parity": {
+  "against": "Illustrator",
+  "summary": "Re-traced in code at 0.52.0 against 76 Illustrator capability rows, FormPath is graded 75 full, 1 partial and none missing, 75.5 of 76. Only 3D stays partial, for no 3D export, twist or taper. FormPath's own docs/PARITY.md reports 65.5 of 76 from a driven audit at v0.44.0, whose defects were fixed afterwards and not yet re-driven."
+ },
+ "docs": {
+  "requirements": [
+   "Node 20.19 or newer (22 recommended)",
+   "Python 3.12 or newer",
+   "git",
+   "Rust stable and the Tauri 2 system packages for the desktop build"
+  ],
+  "install": "git clone git@github.com:nodemode-dev/formpath.git\ncd formpath\n./formpath install",
+  "run": "./formpath boot",
+  "desktop": "./build_app",
+  "agents": "./formpath agents install registers FormPath's MCP server with Claude Code, Codex and Cursor for your user account; ./formpath claude starts Claude Code with its tools attached.",
+  "topics": [
+   {
+    "title": "Quick Start",
+    "text": "The README gives install and boot commands for macOS, Linux and Windows (formpath.bat), with a table of the frontend, engine and preview URLs."
+   },
+   {
+    "title": "Manual",
+    "text": "docs/MANUAL.md is the manual and also the in-app Help."
+   },
+   {
+    "title": "Configuration",
+    "text": "The engine reads backend/.env; FORMPATH_HOST, FORMPATH_PORT, FORMPATH_DATA_DIR and others are listed in the README."
+   },
+   {
+    "title": "Parity",
+    "text": "docs/PARITY.md lists what the app covers and what is still partial, row by row."
+   },
+   {
+    "title": "Status",
+    "text": "The README lists what is not verified yet, including desktop bundles and the limits of PDF import."
+   }
+  ]
+ },
+ "releases": [
+  {
+   "version": "0.52.8",
+   "date": "2026-10-31",
+   "items": [
+    "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain in the registry",
+    "The engine now serves scripts and stylesheets with their real types"
+   ]
+  },
+  {
+   "version": "0.52.7",
+   "date": "2026-10-30",
+   "items": [
+    "The engine installs on Windows, where Python is named python",
+    "The Windows desktop build packs the frontend into the engine with Windows paths",
+    "Scripts keep LF line endings on every checkout, and the .bat files keep CRLF"
+   ]
+  },
+  {
+   "version": "0.52.6",
+   "date": "2026-10-26",
+   "items": [
+    "The home screen no longer jumps down when the empty Recent line appears",
+    "The desktop splash holds its logo, line and bar in a fixed box",
+    "A window smoke test runs in CI on every push"
+   ]
+  }
+ ],
+ "shots_wanted": [
+  {
+   "key": "canvas",
+   "what": "The main window with artboards, layers and a few drawn shapes",
+   "how": "Run ./formpath boot, open http://localhost:5230, draw shapes with the Rectangle, Star and Pen tools, and keep the Layers panel open."
+  },
+  {
+   "key": "effects",
+   "what": "An object with live effects or the Effect Gallery",
+   "how": "Select a shape, open Effect in the menu bar, apply a warp or an Effect Gallery effect, and show the Appearance panel."
+  },
+  {
+   "key": "terminal",
+   "what": "The terminal dock with the Claude Code or Chat tab",
+   "how": "Choose Window > Terminal and open the dock; the Chat tab needs Claude Code installed and signed in."
+  },
+  {
+   "key": "import",
+   "what": "An imported PDF with one artboard per page",
+   "how": "Use the File menu to open any multi-page PDF and show the resulting artboards."
+  }
+ ],
+ "sources": [
+  "README.md",
+  "CHANGELOG.md",
+  "src-tauri/tauri.conf.json",
+  "parity:path"
+ ],
+ "captures": {
+  "start": {
+   "file": "/media/formpath/ui-start-1.webp", "light": "/media/formpath/ui-start-light-1.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormPath's start screen: open a drawing or a project, recent documents, and new document sizes from Letter and A4 to web, mobile, post and icon",
+   "size": ""
+  },
+  "canvas": {
+   "file": "/media/formpath/ui-canvas-1.webp", "light": "/media/formpath/ui-canvas-light-1.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormPath with an SVG drawing open on its artboard: a gradient circle, a rounded square, a star and a stroked curve, with the tools and the layers and properties panels",
+   "size": ""
+  },
+  "effects": {
+   "file": "/media/formpath/ui-effects-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormPath with the Effect menu open over a sunset landscape, listing Warp, Distort and Transform, Pathfinder, 3D and Materials, Effect Gallery and raster effect groups",
+   "size": ""
+  },
+  "outline": {
+   "file": "/media/formpath/ui-outline-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormPath in Outline view with every path of a sunset landscape selected and the Pathfinder quick actions in the Properties panel",
+   "size": ""
+  },
+  "properties": {
+   "file": "/media/formpath/ui-properties-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormPath with the sun circle selected over a sunset landscape, showing its transform, fill and quick actions in the Properties panel",
+   "size": ""
+  },
+  "editor": {
+   "file": "/media/formpath/ui-hero-2.webp",
+   "light": "/media/formpath/ui-hero-light-2.webp",
+   "width": 2400,
+   "height": 1350,
+   "alt": "FormPath with the word FORMPATH set as gold 3D extruded type over a purple artboard with orbit rings, the Properties panel and the 3D and Materials panel showing Extrude settings",
+   "size": ""
+  }
+ },
+ "credit": "The drawing in the captures was made for this page."
+}

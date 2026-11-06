@@ -1,0 +1,72 @@
+{
+  "id": "formcompiler",
+  "name": "FormCompiler",
+  "version": "0.9.2",
+  "repo": "https://github.com/nodemode-dev/formcompiler",
+  "kind": "Build and release system",
+  "title": "the one place every FormAI app is built, signed and released",
+  "summary": "Push a compile branch, get a draft release: FormCompiler builds, signs and releases every FormAI app and writes the catalogue FormPortal reads.",
+  "lede": "FormCompiler builds and releases the FormAI apps. The app repositories build nothing: when an app is ready, its owner pushes a branch named compile_vX.Y.Z, and FormCompiler checks it, builds the app on every platform the app lists, signs it and opens a draft release. Publishing the draft hands the release to a private pipeline that refreshes the update feed and the family catalogue FormPortal reads.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "GitHub Actions, with Python 3.11 or later for its scripts",
+  "checks": [
+    "Watches every registered app for compile_vX.Y.Z branches every hour, or at once from the Run workflow button.",
+    "Refuses a branch whose version file disagrees or whose own checks did not conclude success on that commit.",
+    "Builds each app on the platforms its registry file lists, plus phone apps, tarballs, Flatpak, server binaries or a container image where listed.",
+    "Opens a draft release on the app's own repository with SHA256SUMS.txt; the update feeds and signed catalogue are published by a private companion pipeline."
+  ],
+  "facts": [
+    {"dt": "Stack", "dd": "GitHub Actions and Python 3 standard library scripts; cryptography only to sign the catalogue"},
+    {"dt": "Scale", "dd": "26 registered apps, 4 workflows, 19 scripts"},
+    {"dt": "Releases", "dd": "vX.Y.Z drafts on each app's own repository; a published release is never overwritten"}
+  ],
+  "chapters": [
+    {"id": "flow", "kicker": "Release flow", "title": "Push a branch, get a draft", "text": "From an app's repository, after the version bump is on main, push compile_vX.Y.Z from main's head. The next watch run checks the branch, starts the build and leaves a draft release to review and publish. A second push to the same branch rebuilds and refreshes the draft.", "shot": ""},
+    {"id": "registry", "kicker": "Registry", "title": "One file describes each app", "text": "apps/<app>.json says how to read the app's version, which checks must pass, its platforms, toolchain and build commands, extra jobs, release assets, update files and its catalogue entry. scripts/registry.py check validates every file against the contract in docs/REGISTRY.md.", "shot": ""},
+    {"id": "signing", "kicker": "Signing", "title": "Signing in one place", "text": "The Apple Developer ID and notarization, the Windows code-signing certificate and the updater key are FormCompiler secrets only; no app repository holds one. Until they are set, macOS builds are signed ad hoc and Windows builds are unsigned.", "shot": ""}
+  ],
+  "features": [
+    {"id": "watch", "icon": "updates", "title": "The watch", "text": "watch.yml runs every hour (minute 17 UTC) and from the Run workflow button, over every app in apps/*.json.", "bullets": ["Finds compile_v* branches in every registered app", "Skips what is already published, drafted or running", "Refuses a wrong version or a failed check", "Waits while the app's checks are still running", "Starts release.yml for the app, commit and version"], "shot": ""},
+    {"id": "gate", "icon": "shield", "title": "Checked before anything builds", "text": "The branch name, the version file at that commit and the app's own check workflows are checked, and the same rules run again at the start of each release.", "bullets": ["The app's checks must have concluded success on that commit", "Pre-releases work the same way, as in compile_v1.97.0-rc.1", "A published version is refused; bump the version to release again"], "shot": ""},
+    {"id": "build", "icon": "laptop", "title": "Every platform the app lists", "text": "desktop-release.yml builds each platform the registry names, with the app's own build contract or its own commands and a post-build hook.", "bullets": ["macOS on Apple silicon, Intel and universal", "Windows on x64, ARM64 and x86", "Linux on x64 and ARM64", "Experimental platforms and per-platform environment"], "shot": ""},
+    {"id": "extras", "icon": "box", "title": "Extra jobs", "text": "Beyond the desktop matrix, an app's registry file can ask for more, built in the same release run.", "bullets": ["Phone apps", "A riscv64 tarball and a Flatpak", "Server binaries", "A container image"], "shot": ""},
+    {"id": "drafts", "icon": "tag", "title": "Drafts, never surprises", "text": "Every release starts as a draft tagged vX.Y.Z on the app's own repository, titled <title> <version>, with SHA256SUMS.txt and release notes taken from the app's CHANGELOG.", "bullets": ["A rebuilt draft is refreshed in place", "A published release is never overwritten", "A person publishes; nothing ships on its own"], "shot": ""},
+    {"id": "feed", "icon": "download", "title": "Update feeds", "text": "The private publishing pipeline writes the app's <app>-updates feed from the published release, using this repository's scripts.", "bullets": ["Signed updater bundles when the updater key is set", "The updater public key is written into each app's build", "Which app a tag belongs to is read from the tag"], "shot": ""},
+    {"id": "catalog", "icon": "apps", "title": "One catalogue for the family", "text": "Public files are served from https://dl.formai.studio, with the catalogue at catalog/apps.json and catalog/apps.json.sig.", "bullets": ["Ed25519 signature over the catalogue", "Its public half goes into FormPortal's core/catalog_keys.txt", "scripts/catalog.py builds the catalogue and makes a key pair"], "shot": ""},
+    {"id": "secrets", "icon": "settings", "title": "No secrets in the apps", "text": "FormCompiler watches the app repositories itself, so no app holds a token for it. Every secret and variable lives in FormCompiler's repository, and all are optional.", "bullets": ["A read-only token for the app repositories while they are private", "Apple signing and notarization, the Windows certificate", "The Tauri updater key and the token that tells the publishing pipeline about a release"], "shot": ""},
+    {"id": "pinned", "icon": "check", "title": "Pinned actions and a self-check", "text": "Every third-party action is pinned to a full commit SHA, and self-check.yml runs actionlint (checksum-verified), the registry check, the scripts and the text rules.", "bullets": ["actionlint verified by checksum", "scripts/registry.py check over every registry file", "No expressions inside run scripts; values reach the shell through env"], "shot": ""},
+    {"id": "scripts", "icon": "terminal", "title": "Scripts you can run by hand", "text": "The nineteen scripts use only Python's standard library, apart from signing the catalogue, and each can be run from a terminal.", "bullets": ["registry.py check validates every registry file", "watch.py --dry-run shows what the watch would start", "plan.py works out version, tag and platform matrix from an app's root", "catalog.py build writes the catalogue from the published releases"], "shot": ""}
+  ],
+  "parity": {"against": "", "summary": ""},
+  "docs": {
+    "requirements": ["A GitHub repository with Actions", "Python 3.11 or later for the scripts"],
+    "install": "Write apps/<app>.json from docs/REGISTRY.md and add 'compile_v*' to the push branches of the app's check workflow, then:\npython3 scripts/registry.py check\npython3 scripts/registry.py config --app <app>",
+    "run": "git push origin main:refs/heads/compile_v1.96.5",
+    "desktop": "",
+    "agents": "",
+    "topics": [
+      {"title": "The registry contract", "text": "docs/REGISTRY.md documents every field of apps/<app>.json: top level, toolchain, build, extras, image, updater and catalog."},
+      {"title": "Releasing an app", "text": "Push compile_vX.Y.Z from main's head after the version bump, review the draft on the app's own Releases page, then publish it."},
+      {"title": "Secrets and variables", "text": "The README lists every optional secret and variable: the app token, Apple signing and notarization, the Windows certificate, the updater key and the pipeline dispatch token."},
+      {"title": "The scheduled watch", "text": "If GitHub disables the scheduled watch after 60 days without activity, re-enable it under Actions, watch; every published release commits releases.json, which counts as activity."}
+    ]
+  },
+  "releases": [
+    {"version": "0.9.0", "date": "2026-11-03", "items": ["Every app release is drafted on the app's own repository, tagged vX.Y.Z, and FormCompiler keeps no app release", "Release files are assembled by a job with no credential, and a separate publish job writes them", "The publish job attests the provenance of SHA256SUMS.txt and form-app.json", "Tags are vX.Y.Z, no longer <app>-vX.Y.Z"]},
+    {"version": "0.8.0", "date": "2026-11-03", "items": ["Publishing to the download store, the update feeds, the catalogue signature and yanks move to a private companion pipeline", "feed.yml, yank.yml and docs/GO_PUBLIC.md are removed; the scripts stay", "release.yml tells the pipeline about each release it publishes with a repository dispatch"]},
+    {"version": "0.7.1", "date": "2026-11-03", "items": ["Release files are named <app>-<version>-<platform>[-setup].<ext>", "A file_names setting in a registry entry keeps an app's own names", "FormRanker is FormBench: the repository and the registry entry are renamed"]}
+  ],
+  "shots_wanted": [],
+  "sources": ["README.md", "CHANGELOG.md", "docs/REGISTRY.md", "scripts/plan.py"],
+  "captures": {
+    "editor": {
+      "file": "/media/formcompiler/ui-hero-2.webp",
+      "light": "/media/formcompiler/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Terminal running the registry check, the app list and the catalogue listing of FormCompiler",
+      "size": ""
+    }
+  }
+}

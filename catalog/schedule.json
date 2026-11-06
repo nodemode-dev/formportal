@@ -1,0 +1,11 @@
+{
+  "format": "formai-schedule",
+  "format_version": 1,
+  "releases": [
+    { "label": "Launch", "at": "2026-11-03T17:00:00Z", "apps": ["formportal", "formvis", "formlit", "formvfx", "formencoder", "formpdf", "formcut", "formwav", "formmd", "formdeck", "formmcp", "formskill", "formtray"] },
+    { "label": "Group 1", "at": "2026-11-06T17:00:00Z", "apps": ["formdam", "formpath", "formdesign"] },
+    { "label": "Group 2", "at": "2026-11-09T17:00:00Z", "apps": ["formcel", "formtxt"] },
+    { "label": "Group 3", "at": "2026-11-12T17:00:00Z", "apps": ["format", "formpromo", "formref"] }
+  ],
+  "supporters": ["Form3D", "FormAD", "FormAPI", "FormCanvas", "FormDev", "FormHub", "FormLink", "FormPitch", "FormSIM", "FormUI", "NodeForm"]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "formskill",
+  "name": "FormSkills",
+  "version": "0.7.6",
+  "repo": "https://github.com/nodemode-dev/formskills",
+  "kind": "Viewer of released agent skills",
+  "title": "every FormAI app's released skills in one place",
+  "summary": "Every FormAI app's released skills in one place: read them, download them, keep your own edited copies and install them into Claude Code, Codex or Cursor.",
+  "lede": "FormSkills is where the skills of the Form family of desktop apps are found. Each app ships its agent skills with every release; FormSkills lists them by app, shows each one as formatted text with its sub-skills and references, lets you download a skill or an app's whole set, keeps your own edited copies beside the originals and installs skills into Claude Code, Codex or Cursor. It shows exactly what shipped: no unreleased work, and nothing is ever changed in an app.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS 11 or later, Windows and Linux",
+  "checks": [
+    "Shows what each app's latest release carries, across 19 FormAI apps that ship skills, read from the signed family catalogue and digest checked.",
+    "Shows each skill's SKILL.md as formatted text with its sub-skills, references and other files, and never runs a skill.",
+    "Downloads a skill or an app's whole set as a zip shaped like the release asset, and keeps your own edited copies beside the originals.",
+    "Installs a skill, an app's set, your copy or your own skill into Claude Code, Codex or Cursor, for you or for one project."
+  ],
+  "facts": [
+    {"dt": "Engine", "dd": "Rust: formskills-core and formskills-cli, in a Tauri 2 shell"},
+    {"dt": "Window", "dd": "Vanilla TypeScript and Vite, with zero runtime dependencies"},
+    {"dt": "Scale", "dd": "19 FormAI apps that ship skills, from FormCompiler's registry"},
+    {"dt": "Repository", "dd": "nodemode-dev/formskills; FormSkills is the display name, and the app calls itself formskills"}
+  ],
+  "chapters": [
+    {"id": "released", "kicker": "Released skills", "title": "Exactly what each app shipped", "text": "What FormSkills shows is what each app's latest release carries: the skills asset named in the signed family catalogue, its digest checked, kept on this computer and reused until a new release changes it. It never follows an app's unreleased main branch, and keeps no copy of an app's skills in its own repository.", "shot": "apps"},
+    {"id": "edits", "kicker": "Your edits", "title": "Your own copies, beside the originals", "text": "Make your own copy of any skill and edit it with a live preview and the original read-only beside it. The copy is saved as you type and kept in FormSkills' own folder; when a newer release changes the original, your copy is flagged with the files that changed.", "shot": "editor-copy"},
+    {"id": "install", "kicker": "Agents", "title": "Into Claude Code, Codex or Cursor", "text": "Install a skill, an app's set, your copy or your own skill for you in every project or in one project folder. FormSkills writes only folders it made, keeps any change made there unless you choose to lose it, and its Installed page updates or removes what it put in.", "shot": "install"}
+  ],
+  "features": [
+    {"id": "released", "icon": "tag", "title": "Released skills only", "text": "Each app's latest released skills asset, named in the signed family catalogue, its digest checked, kept on this computer and reused until a new release changes it.", "bullets": ["The catalogue is checked with the same keys FormPortal and FormMCP trust", "Each asset's SHA-256 is checked and it is unpacked safely", "When the catalogue or a download cannot be read, the skills kept earlier are shown with the reason", "Dev mode, ./formskills dev, reads local checkouts instead, for building the apps"], "shot": "apps"},
+    {"id": "one-place", "icon": "apps", "title": "One place for skills", "text": "FormMCP gives agents the FormAI apps' tools; FormSkills is where their skills live. The two do not overlap.", "bullets": ["19 FormAI apps that ship skills, listed by app", "Chips for All and each app, and a card per app", "Each app's skill count and where its skills came from", "No MCP server of its own: the FormAI apps' tools are reached through FormMCP"], "shot": ""},
+    {"id": "copies", "icon": "copy", "title": "Your edited copies", "text": "Make your own copy of any skill and edit it with a live preview and the original read-only beside it. The original is never changed.", "bullets": ["Saved as you type, or at once with Ctrl or Cmd+S", "Kept in edits/ in FormSkills' data folder", "Flagged with the changed files when a newer release changes the original", "Mark as seen records the new original without touching your text", "Download your copy as a zip, or discard it after a second click"], "shot": "editor-copy"},
+    {"id": "list", "icon": "grid", "title": "A generated list of apps", "text": "The list of apps is never hand-kept: it is generated from FormCompiler's registry and records the version and commit it came from.", "bullets": ["./formskills apps --compiler PATH writes core/data/apps.json", "--check fails while the list drifts", "The window's footer shows the FormCompiler version and commit", "Apps whose registry file names no skills folder are left out"], "shot": ""},
+    {"id": "search", "icon": "check", "title": "Search and format check", "text": "Search every app's skills by name, description or text, and narrow by topic or app. Every skill shows its licence and whether it passes the SKILL.md format check.", "bullets": ["Topic chips: Media, Design, Documents and Family", "Matching skills appear best first, each with the line that matched", "The check follows the open Agent Skills format plus Claude's own rules", "Check lists each error and note, and runs on your copy after every save", "The Skill format page explains the folder, the front matter fields and what Check reports"], "shot": "search"},
+    {"id": "own", "icon": "code", "title": "Your own skills", "text": "Start a skill of your own from the format's template under Your skills. It opens in the editor and is checked as you type.", "bullets": ["Names are refused unless they meet the format", "Kept in edits/yours/ in FormSkills' data folder", "Downloads as <name>.zip, or can be deleted", "The command line's new and own commands make and list them"], "shot": ""},
+    {"id": "release", "icon": "updates", "title": "Choose the release", "text": "Keep an app on one of its last five releases instead of the latest, or update one app on its own.", "bullets": ["The Release row lists the latest and the earlier releases in the family catalogue", "Pick one to keep it, or Latest to follow new releases again", "A pinned release passes the same signature, digest and unpacking checks as the latest", "Update this app checks and downloads one app's skills again, without the rest"], "shot": ""},
+    {"id": "trust", "icon": "shield", "title": "Know what you are trusting", "text": "The Trust page says what a skill can make an agent do, what FormSkills checks and what it does not, and how far to rely on skills.", "bullets": ["FormSkills checks the signature, the digest and safe unpacking", "Cards say when a skill holds scripts an agent may run", "Skills are shown as text and never run", "Reading refuses paths and links that leave the skills folder"], "shot": ""},
+    {"id": "reader", "icon": "book", "title": "The reader", "text": "Each app's skills appear as cards; open one to read its SKILL.md as formatted text, with its sub-skills, references and other files beside it and links between them followed.", "bullets": ["Files grouped as skill, sub-skills, references and other files", "Markdown rendered without ever parsing HTML", "On a narrow window the reader takes the whole area", "./formskills cli read prints one file as text"], "shot": "reader"},
+    {"id": "download", "icon": "download", "title": "Download what shipped", "text": "One skill, or an app's whole set, as a zip shaped exactly like the release asset, saved to Downloads.", "bullets": ["Download all on an app, Download skill on a skill", "A download never replaces a file: the next free name gets (2)", "A failed download leaves no partial file", "./formskills cli download does the same on the command line"], "shot": ""},
+    {"id": "install", "icon": "plug", "title": "Install into your agent", "text": "Put a skill, an app's set, your copy or your own skill into Claude Code, Codex or Cursor, for you or for one project.", "bullets": ["Claude Code .claude/skills, Codex .agents/skills, Cursor .cursor/skills", "Writes only folders it made, and refuses a folder of the same name it did not install, or a link", "Keeps changes made in an installed skill unless you choose Install anyway or Remove, losing changes", "The Installed page lists every install and any newer release, with Update and a two-click Remove", "Agents read new skills the next time they start"], "shot": "install"},
+    {"id": "window", "icon": "laptop", "title": "A window that does not flicker", "text": "Chips, cards, a detail pane and the reader, painted complete in the first frame; nothing moves when the skills arrive.", "bullets": ["Opens at 1040 by 720 and resizes down to 640 by 480", "The chip row scrolls sideways at a fixed height", "Checked dark and light at 4x CPU and network throttling, with no layout shift (CLS 0)", "Vanilla TypeScript and Vite, with zero runtime dependencies"], "shot": ""},
+    {"id": "cli", "icon": "terminal", "title": "Command line", "text": "The formskills-cli command line calls the same Rust engine as the window, which owns all logic and works with no window.", "bullets": ["apps, app, skills, fetch, search, check, read and download", "pin, pins, new, own, edits and edit", "install, installed, update and uninstall", "catalog, where and version", "check exits 1 on an error, for scripts"], "shot": ""}
+  ],
+  "parity": {"against": "", "summary": ""},
+  "docs": {
+    "requirements": ["Rust (stable)", "Node 20.19 or newer", "On Linux, WebKitGTK 4.1 for the window (the installer names the packages); the command line does not need it"],
+    "install": "./formskills_oc_install\n(Windows: formskills_oc_install.bat)",
+    "run": "./formskills\n./formskills cli apps\n./formskills cli skills formvis\n(Windows: formskills.bat)",
+    "desktop": "./build_app\n(Windows: build_app.bat)",
+    "agents": "FormSkills has no MCP server, as the FormAI apps' tools are FormMCP's; agents find a FormAI app's skills with its command line, as AGENTS.md describes, and ./formskills cli install puts skills into Claude Code, Codex or Cursor.",
+    "topics": [
+      {"title": "Getting Started", "text": "The wiki's Getting Started page covers running from source, released skills, your own copies, installing into an agent, dev mode and every setting."},
+      {"title": "Architecture", "text": "The wiki's Architecture page describes the engine, the list of apps and where it comes from, the shell and the window."},
+      {"title": "Settings", "text": "Environment variables set the data folder (FORMSKILLS_HOME), the catalogue's address (FORMSKILLS_CATALOG), extra trusted keys (FORMAI_CATALOG_PUBKEY), offline use (FORMSKILLS_OFFLINE) and where downloads are saved (FORMSKILLS_DOWNLOADS)."},
+      {"title": "Catalogue trust", "text": "The catalogue is trusted exactly as FormPortal and FormMCP trust it, through core/catalog_keys.txt, which holds the family's production key, plus FORMAI_CATALOG_PUBKEY. When the catalogue cannot be read, FormSkills shows any skills it kept earlier and says why."},
+      {"title": "Dev mode", "text": "./formskills dev reads FormAI app checkouts in the folder that holds this one instead of releases. It shows unreleased work, so it is off unless asked for."},
+      {"title": "Releases", "text": "FormSkills builds nothing in its own repository: after the version bump lands on main, a compile_vX.Y.Z branch is pushed, and FormCompiler builds the bundles with ./build_app and drafts the release formskills-vX.Y.Z."}
+    ]
+  },
+  "releases": [
+    {"version": "0.7.5", "date": "2026-11-03", "items": ["The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only)", "Nothing in the app changes"]},
+    {"version": "0.7.4", "date": "2026-11-02", "items": ["The family catalogue is read from the public download store, dl.formai.studio/catalog/apps.json, with its signature beside it", "This build trusts the family's production catalogue key, so a catalogue formcompiler signs is used", "The list of apps that ship skills is regenerated from formcompiler 0.6.1: FormPromo is added under Media"]},
+    {"version": "0.7.3", "date": "2026-10-26", "items": ["A test suite checks that only skills the signed catalogue releases are shown", "It checks that a downloaded set matches its release's SHA-256 and unpacks only inside its folder", "It checks the SKILL.md format at its limits, that sub-skill and reference links resolve, and that reading a file stays inside the skills folder", "The suite runs on every change; nothing in the app changes"]}
+  ],
+  "shots_wanted": [
+    {"key": "apps", "what": "The main window with All chosen: the chips, a card per app with its skill count and source, and the detail pane", "how": "Run ./formskills_oc_install, then ./formskills. Or run ./formskills dev with FormAI app checkouts in the folder that holds the formskills checkout so the cards fill from local work, and leave All chosen."},
+    {"key": "reader", "what": "A skill open in the reader: its SKILL.md as formatted text, with its sub-skills, references and other files beside it", "how": "Choose formvis from the chips and open the formvis-harness skill."},
+    {"key": "search", "what": "Search results under the topic chips", "how": "Type mask in the Search box above the chips, then choose the Media topic chip."},
+    {"key": "editor", "what": "Your own copy of a skill in the editor, with Preview and the read-only Original", "how": "Open a skill, press Edit a copy, change a line, and show Preview and Original beside the text."},
+    {"key": "install", "what": "The Install page with Claude Code, Codex and Cursor, and Just me or One project folder", "how": "Open an app, press Install all, tick Claude Code and capture the page before pressing Install. The Installed page, in the header, is the view after."}
+  ],
+  "sources": ["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", ".docs/wiki/Home.md", ".docs/wiki/Getting-Started.md", ".docs/wiki/Architecture.md", "NOTICE.md", "src-tauri/tauri.conf.json", "frontend/package.json", "frontend/index.html", "core/data/apps.json", "git remote"],
+  "captures": {
+    "apps": {"file": "/media/formskill/ui-library-2.webp", "width": 2400, "height": 1500, "alt": "The FormVis app card selected, listing its four released skills with their descriptions", "size": ""},
+    "reader": {"file": "/media/formskill/ui-hero-2.webp", "light": "/media/formskill/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
+    "search": {"file": "/media/formskill/ui-search-2.webp", "width": 2400, "height": 1500, "alt": "Search results for the word mask across every app's skills, best match first", "size": ""},
+    "editor": {"file": "/media/formskill/ui-hero-2.webp", "light": "/media/formskill/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
+    "editor-copy": {"file": "/media/formskill/ui-editor-2.webp", "width": 2400, "height": 1500, "alt": "An edited copy of a released skill with the Markdown source on the left and a live preview on the right", "size": ""},
+    "check": {"file": "/media/formskill/ui-check-2.webp", "width": 2400, "height": 1500, "alt": "A format check reporting that formvis-driving passes, with name and description lengths", "size": ""},
+    "install": {"file": "/media/formskill/ui-install-1.webp", "light": "/media/formskill/ui-install-light-1.webp", "width": 2400, "height": 1500, "alt": "FormSkills' Install page for every formMCP skill: Claude Code ticked, Codex and Cursor unticked, Just me, in every project chosen over One project folder, and the skills going to ~/.claude/skills above the Install button", "size": ""}
+  },
+  "credit": "Screenshot content: the released skills of the FormAI apps, read from local checkouts of their repositories."
+}

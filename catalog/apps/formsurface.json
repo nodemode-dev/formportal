@@ -1,0 +1,376 @@
+{
+  "id": "formsurface",
+  "name": "FormSurface",
+  "version": "0.60.4",
+  "repo": "https://github.com/nodemode-dev/formsurface",
+  "kind": "3D texture painter",
+  "title": "3D texture painting with layers, baking and PBR export on your own machine",
+  "summary": "FormSurface paints directly on 3D models with projection painting, fill layers, generators and baking, and exports PBR maps for game engines and renderers.",
+  "lede": "FormSurface is a free, open-source 3D texture painter. The brush hits the mesh in world space and writes into the UV textures, so strokes keep a constant on-screen size and cross UV seams. Painting, compositing and the viewport run on the GPU in a Rust engine, and the finished maps export through templates for glTF, Unreal Engine, Unity, Godot, Blender and more.",
+  "replaces": "Substance 3D Painter",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux, in a WebGPU browser or as a Tauri 2 desktop app",
+  "checks": [
+    "Paints on the mesh in 3D and writes into UV textures, with occluded and back-facing surfaces protected.",
+    "Stacks paint, fill, filter and folder layers with masks, generators and 31 layer blend modes.",
+    "Bakes high-poly normal, ID, height, opacity, ambient occlusion and bent normal maps through a cage, in a background worker.",
+    "Exports separate PBR maps or engine templates as PNG, TIFF, OpenEXR, Radiance HDR, JPEG or PSD.",
+    "Lets Claude Code work on the open model through an MCP server with 68 formsurface_* tools."
+  ],
+  "facts": [
+    {
+      "dt": "Opens",
+      "dd": "glTF, GLB, OBJ, FBX, USD (USDA, USDC, USDZ), PLY and Collada"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Rust and wgpu on WebGPU, with a TypeScript and Vite editor and a FastAPI service"
+    },
+    {
+      "dt": "Interface",
+      "dd": "English and 25 more languages"
+    },
+    {
+      "dt": "Needs",
+      "dd": "A browser with WebGPU (Chrome, Edge, Safari 26, Firefox on Windows or macOS) or WebGL 2"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "paint",
+      "kicker": "Painting",
+      "title": "Paint on the model, not on the flat texture",
+      "text": "Projection painting writes strokes into the UV textures in world space, so they do not stretch on distorted islands. Brush, polygon fill, clone, path, text and a 2D UV view reach every face, and symmetry mirrors across axes or repeats radially.",
+      "shot": "viewport"
+    },
+    {
+      "id": "stack",
+      "kicker": "Layers",
+      "title": "A full texturing stack",
+      "text": "Texture sets, UDIM tiles, fill layers with tri-planar, planar, spherical, cylindrical or warp mapping, masks with effect stacks, and generators such as cavity, edges, thickness and dirt. Intelligent materials and masks can be saved and shared as .fsasset.json files.",
+      "shot": "layers"
+    },
+    {
+      "id": "export",
+      "kicker": "Bake and export",
+      "title": "Bake from high poly, export for your engine",
+      "text": "Bake from a high-poly mesh through a distance cage or a custom cage, then export with templates for glTF, Unreal Engine, Unity HDRP and URP, Godot 4, Blender, Arnold, Redshift, USD Preview Surface and Sketchfab, or build your own template in the Export panel.",
+      "shot": "export"
+    }
+  ],
+  "features": [
+    {
+      "id": "projection",
+      "icon": "target",
+      "title": "3D projection painting",
+      "text": "The brush hits the mesh in world space and writes into the UV textures.",
+      "bullets": [
+        "Strokes keep a constant on-screen size and cross UV seams",
+        "No stretching on distorted islands",
+        "Occluded and back-facing surfaces are protected",
+        "Camera, tangent wrap, tangent planar and UV alignments"
+      ],
+      "shot": "viewport"
+    },
+    {
+      "id": "gpu",
+      "icon": "laptop",
+      "title": "GPU engine in Rust",
+      "text": "wgpu running on WebGPU in the browser. Painting, compositing and the viewport never leave the GPU.",
+      "bullets": [
+        "Nothing round-trips through the server while you paint",
+        "Seam padding (dilation) on the composited maps",
+        "Idle texture sets can be paged out of GPU memory",
+        "Desktop app with a frozen service as a sidecar"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "channels",
+      "icon": "layers",
+      "title": "Channels",
+      "text": "Base color, roughness, metallic and height, plus an extra channel per texture set.",
+      "bullets": [
+        "Extra channel: a named user channel, opacity, ambient occlusion, emissive, transmission or scattering",
+        "Up to two further named grayscale user channels per set",
+        "Height is shown as bump and exported as a normal map",
+        "Each channel can be switched on or off per stroke and per fill"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "tools",
+      "icon": "sliders",
+      "title": "Brush and tools",
+      "text": "A brush with size in screen or object space, hardness, flow, spacing and pen pressure, plus fill, clone, path and text tools.",
+      "bullets": [
+        "Round, square and spray tips or any image as a brush alpha",
+        "Polygon fill, Lasso Fill and Rectangle Fill",
+        "Clone (C), Path (L) and Quick mask (T)",
+        "Text as a brush tip, a stencil or a fill layer image from TTF, OTF or WOFF fonts",
+        "Symmetry with up to eight copies, or radial"
+      ],
+      "shot": "uv2d"
+    },
+    {
+      "id": "layers",
+      "icon": "layers",
+      "title": "Layers, folders and masks",
+      "text": "Paint, fill, filter and folder layers with masks and mask effect stacks.",
+      "bullets": [
+        "31 layer blend modes",
+        "Folders nested up to 16 deep with passthrough blending",
+        "Undo and redo (24 strokes)",
+        "Masks from a brush, an image, an ID map color or a generator that follows every bake",
+        "Fill layers by UV, tri-planar, planar, spherical, cylindrical or warp mapping"
+      ],
+      "shot": "layers"
+    },
+    {
+      "id": "sets",
+      "icon": "grid",
+      "title": "Texture sets and UDIM",
+      "text": "One texture set per material, split per UDIM tile when UVs leave 0 to 1.",
+      "bullets": [
+        "Set size from 256 to 4096 per set",
+        "Layers and folders can be instanced into other texture sets",
+        "Paint across texture sets with one undo",
+        "Mesh reload keeps layers, with optional reprojection onto the new surface"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "baking",
+      "icon": "target",
+      "title": "Baking and generators",
+      "text": "High-poly baking in a background worker so painting continues.",
+      "bullets": [
+        "Tangent-space normal, ID, height, opacity, ambient occlusion and bent normal maps",
+        "GPU baking of curvature, thickness, position and world normal from the mesh",
+        "Generators: cavity, edges, thickness, from top, light, position, 3D noise, dirt, metal edge wear",
+        "Filter layers: blur, sharpen, levels, hue, saturation and more"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "materials",
+      "icon": "box",
+      "title": "Intelligent materials and masks",
+      "text": "Material stacks in an asset browser with thumbnails, search and filters.",
+      "bullets": [
+        "Worn painted metal, rusty iron, dusty plastic and brushed gold built in",
+        "Your own saved stacks, shared as .fsasset.json",
+        "Eight intelligent mask presets",
+        "Any layer's generator setup can be saved to the library"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "viewport",
+      "icon": "sun",
+      "title": "Viewport and path tracer",
+      "text": "PBR shading with choice of view transform, an HDR or studio sky and a progressive path tracer.",
+      "bullets": [
+        "ACES, Standard, AgX, Filmic or OpenColorIO 2 configs",
+        "Working space linear Rec.709 or ACEScg",
+        "Up to 12 bounces, denoiser, depth of field, glass and subsurface scattering",
+        "Render to file up to 3840 by 3840 as PNG",
+        "Bloom, glare, lens flare, vignette, film grain and color correction"
+      ],
+      "shot": "viewport"
+    },
+    {
+      "id": "export",
+      "icon": "export",
+      "title": "Export",
+      "text": "Templates and custom templates, per texture set, at sizes from 512 to 8192 as the GPU allows.",
+      "bullets": [
+        "PNG (8, 16-bit), TIFF (8, 16, 32-bit float), OpenEXR, Radiance HDR, JPEG and PSD",
+        "Padding by infinite dilation, dilation width, transparent, color or diffusion fill",
+        "File names with $mesh, $textureSet, $map, $udim, $u, $v and $size tags",
+        "Mesh as OBJ with UDIM UVs, optionally tessellated and displaced by height"
+      ],
+      "shot": "export"
+    },
+    {
+      "id": "claude",
+      "icon": "terminal",
+      "title": "Claude Code inside the app",
+      "text": "A terminal dock, Claude Code and a chat pane run in the editor.",
+      "bullets": [
+        "Terminal dock (Ctrl+J) with tabs, on a PTY in the service",
+        "Claude Code (Ctrl+Shift+J) already connected to the formsurface MCP server",
+        "Chat (Ctrl+Alt+J) with Markdown replies, tools run, memory and cost",
+        "Edit Layer in External App (Ctrl+Alt+E) round-trips a layer through Photoshop or another app"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "plug",
+      "title": "Agents, batch and scripting",
+      "text": "An MCP server with 68 formsurface_* tools drives the open editor.",
+      "bullets": [
+        "./formsurface batch script.json runs tool calls, also headless",
+        "./formsurface script job.py runs Python with the formsurface_api package",
+        "A Python panel in the editor runs scripts through Pyodide",
+        "Press Agent link in the top bar to let agents in"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "commands",
+      "icon": "settings",
+      "title": "Commands and languages",
+      "text": "One command registry drives the menu bar, palette and shortcuts.",
+      "bullets": [
+        "Command palette (Ctrl+K)",
+        "Edit > Keyboard Shortcuts rebinds any command",
+        "Interface in English and 25 more languages",
+        "The Form family's 28 themes, chosen in Preferences"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Substance 3D Painter",
+    "summary": "Fifty capabilities documented for Substance 3D Painter 12.1.5. Revision 41 re-graded FormSurface 0.59.3 by tracing every row in its code: no grade moved and the five partial rows stay partial. docs/PARITY.md gives 47.5 of 50 (95 percent) at v0.56.3. ArmorPaint and Blender are the other two columns."
+  },
+  "docs": {
+    "requirements": [
+      "Rust (rustup)",
+      "Node 22.12+",
+      "Python 3.11+",
+      "A browser with WebGPU or WebGL 2"
+    ],
+    "install": "./formsurface install\nWindows: formsurface_oc_install.bat",
+    "run": "./formsurface\nWindows: formsurface.bat",
+    "desktop": "./formsurface install-desktop\n./formsurface desktop dev",
+    "agents": "An MCP server with 68 formsurface_* tools; Claude Code picks it up from .mcp.json, other clients run ./formsurface mcp over stdio.",
+    "topics": [
+      {
+        "title": "Controls",
+        "text": "Left drag paints, right drag or Alt + left drag orbits, the wheel zooms, and B, E, P, C, L and M pick paint, eraser, polygon fill, clone, path and mirror."
+      },
+      {
+        "title": "Commands and shortcuts",
+        "text": "Every action is a command in one registry, run from the menu bar, the palette (Ctrl+K) or the keyboard, and Edit > Keyboard Shortcuts rebinds any of them."
+      },
+      {
+        "title": "Export templates",
+        "text": "The Export panel lists templates for glTF, Unreal Engine, Unity, Godot 4, Blender and others, and builds your own with any source per R, G, B and A."
+      },
+      {
+        "title": "Agents and scripting",
+        "text": "The README documents the MCP tools, ./formsurface batch for JSON scripts and ./formsurface script for the formsurface_api Python package."
+      },
+      {
+        "title": "Desktop app",
+        "text": "./build_app freezes the service with PyInstaller and packs it with Tauri 2: a macOS .app and .dmg, and a Linux .deb and AppImage."
+      },
+      {
+        "title": "Parity",
+        "text": "docs/PARITY.md in the repository summarises how FormSurface covers 50 documented capabilities of the reference painter."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.60.1",
+      "date": "2026-10-31",
+      "items": [
+        "The desktop window's scripts keep their types on Windows, fixing a blank window"
+      ]
+    },
+    {
+      "version": "0.59.10",
+      "date": "2026-10-30",
+      "items": [
+        "build_app takes --config and Linux builds the AppImage too",
+        "formsurface.bat gains a desktop build, and Windows installs stop on a failed step",
+        "Headless runs end the whole process tree on Windows"
+      ]
+    },
+    {
+      "version": "0.59.9",
+      "date": "2026-10-26",
+      "items": [
+        "Window smoke test and CI job added",
+        "The fps readout is reserved so the status bar does not shift"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "viewport",
+      "what": "The 3D viewport with a painted model",
+      "how": "Run ./formsurface, open http://localhost:5176 in Chrome or Edge, pick a built-in sample such as the torus knot, then paint a few strokes with the left mouse button."
+    },
+    {
+      "key": "layers",
+      "what": "The layer stack with a fill layer, a mask and a folder",
+      "how": "With a sample mesh loaded, open the Layers panel (Alt+2), add a fill layer with Ctrl+Shift+F and a folder with Ctrl+G, and add a generator mask."
+    },
+    {
+      "key": "export",
+      "what": "The Export panel with a template chosen",
+      "how": "Open the Export panel (Alt+5), choose a template such as glTF or Unreal Engine, and leave the file list visible before exporting."
+    },
+    {
+      "key": "uv2d",
+      "what": "The 2D UV view beside the 3D view",
+      "how": "Press U with a mesh loaded to toggle the 2D view of the active texture set and paint a stroke into it."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:surface"
+  ],
+  "captures": {
+    "viewport": {
+      "file": "/media/formsurface/ui-viewport-1.webp", "light": "/media/formsurface/ui-viewport-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormSurface with its torus-knot sample (17,689 vertices) and a red stroke painted onto it: the tool rail, the Paint tab's brush settings with size, hardness, flow, spacing, alignment and jitter, and symmetry; the status bar reads 2048 px",
+      "size": ""
+    },
+    "layers": {
+      "file": "/media/formsurface/ui-hero-2.webp", "light": "/media/formsurface/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A soft grey plaster head bust with an orange, coral and crimson paint over the back of the hair, a magenta to violet band with thin drips across the lower face and a violet patch on the plinth corner, lit in a soft dark studio against a charcoal-navy backdrop, with the Layers tab open on the right",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formsurface/ui-hero-2.webp", "light": "/media/formsurface/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A soft grey plaster head bust with an orange, coral and crimson paint over the back of the hair, a magenta to violet band with thin drips across the lower face and a violet patch on the plinth corner, lit in a soft dark studio against a charcoal-navy backdrop, with the Layers tab open on the right",
+      "size": ""
+    },
+    "display": {
+      "file": "/media/formsurface/ui-display-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Display tab with exposure, view transform, environment, path tracing and post effects beside a painted bust in a dark studio",
+      "size": ""
+    },
+    "export": {
+      "file": "/media/formsurface/ui-export-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Export tab with template, format, bit depth and padding settings beside a painted bust in a dark studio",
+      "size": ""
+    },
+    "knot": {
+      "file": "/media/formsurface/ui-knot-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "A chrome torus knot painted with red, orange and yellow layers over a sea backdrop, with the Filter Layer sliders open",
+      "size": ""
+    }
+  },
+  "credit": "The torus knot is one of FormSurface's own sample meshes; the stroke was painted for this page."
+}

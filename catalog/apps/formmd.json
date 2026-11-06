@@ -1,0 +1,379 @@
+{
+  "id": "formmd",
+  "name": "Form.md",
+  "version": "0.47.9",
+  "repo": "https://github.com/nodemode-dev/form.md",
+  "kind": "Workspace for people and agents",
+  "title": "documents, databases and realtime editing in a single binary",
+  "summary": "A self-hosted workspace where people and AI agents write documents, run databases and edit together in realtime, as one Go binary with one SQLite file.",
+  "lede": "Form.md is a self-hosted workspace where people and AI agents write documents, run databases and edit together in realtime. It ships as one static Go binary with its web client embedded and one SQLite file beside it: no database server, no cache, no object store. The server holds the real collaborative document, so an agent's edit merges into what a person is typing instead of resetting it.",
+  "replaces": "Notion",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux as a desktop app, or as a server binary",
+  "checks": [
+    "Writes pages in a block editor with a slash menu, Markdown shortcuts, mentions, toggles, callouts, tables, columns and code in 29 highlighted languages.",
+    "Runs databases where every row is a page, with 21 property types and table, board, list, gallery, calendar, timeline and form views.",
+    "Lets agents edit beside people through an MCP server with OAuth 2.1 sign-in, with edits that merge with live typing.",
+    "Shares with six access levels, comments, suggested edits, history, publishing to the web and an audit log."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "One static Go binary (37 MB) with pure-Go SQLite and a server-side CRDT"
+    },
+    {
+      "dt": "Client",
+      "dd": "Vanilla TypeScript and Vite on ProseMirror and Yjs, no UI framework"
+    },
+    {
+      "dt": "Languages",
+      "dd": "26, for the whole window and its mail"
+    },
+    {
+      "dt": "Templates",
+      "dd": "90 in eleven categories, plus 14 example projects"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "docs",
+      "kicker": "Documents",
+      "title": "A block editor with realtime co-editing",
+      "text": "Every page body is a CRDT that the server applies and reads itself, so a Markdown write over the API merges with what people are typing. The server renders the body into the first frame, so a reload shows the text before any script runs.",
+      "shot": "editor"
+    },
+    {
+      "id": "databases",
+      "kicker": "Databases",
+      "title": "Every row is a page",
+      "text": "21 property types including status, relations with two-way sync, rollups and formulas, shown as seven views on one query engine with nested AND/OR filters, multi-sort and groups. The README reports 20,000 rows scrolling at a 54 ms p95 step under 4x CPU and 500 kbps throttling.",
+      "shot": "database"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "Agents edit beside people",
+      "text": "An MCP server with OAuth 2.1 sign-in, consent per workspace and read or write scope. Agents address blocks by id, show as a named cursor and group edits into runs that undo in one click, and a replace of the block you are typing in is refused until you move on.",
+      "shot": "agent"
+    }
+  ],
+  "features": [
+    {
+      "id": "desktop",
+      "icon": "laptop",
+      "title": "Desktop app",
+      "text": "A Tauri 2 window around the same server binary, which it starts on this computer and stops when you quit.",
+      "bullets": [
+        "form.md.app and a .dmg on macOS",
+        ".deb, .rpm and .AppImage on Linux",
+        ".msi and a setup .exe on Windows",
+        "You are signed in as the owner without a password"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "shell",
+      "icon": "apps",
+      "title": "Workspace shell",
+      "text": "A page-first layout with a resizable sidebar, breadcrumbs that list sibling pages and a Home page.",
+      "bullets": [
+        "Search, Home, Library, favorites, shared spaces and your pages in the sidebar",
+        "Back and forward, tabs, tags, trash, covers and icons, uploads",
+        "Home with a greeting, a drop area, recently visited cards and templates",
+        "Phone editing with a block toolbar above the on-screen keyboard"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "editor",
+      "icon": "book",
+      "title": "Block editor",
+      "text": "Slash menu, Markdown shortcuts, a drag handle with turn into and a selection toolbar with colours.",
+      "bullets": [
+        "@ and [[ mentions of pages, people and dates",
+        "Code in 29 highlighted languages, tables, columns, media and PDF",
+        "A live table of contents and backlinks under the body",
+        "Image annotations with arrows, boxes, ellipses, freehand lines and text",
+        "Boards: a moodboard block for pictures, notes and link cards"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "databases",
+      "icon": "grid",
+      "title": "Databases",
+      "text": "Rows are pages, answered by the server, so a filter on a formula works on 20,000 rows.",
+      "bullets": [
+        "21 property types with relations, rollups and formulas",
+        "Table, board, list, gallery, calendar, timeline and form views",
+        "Heatmap, graph, map and feed views",
+        "Kanban with column totals, progress bars and card limits",
+        "CSV import of 20,000 rows in about a second and export of any view"
+      ],
+      "shot": "database"
+    },
+    {
+      "id": "forms",
+      "icon": "check",
+      "title": "Forms and automations",
+      "text": "Public forms built from a database's properties, and automations that react to rows.",
+      "bullets": [
+        "Required and conditional questions, a public link that needs no account",
+        "Each submission kept whole as one response record",
+        "Automations on a row added, a response received, a property changed or a schedule",
+        "Buttons in pages and a button property in databases"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "charts",
+      "icon": "target",
+      "title": "Charts and dashboards",
+      "text": "Charts are computed by the server from the same query engine, so filters and access rules hold.",
+      "bullets": [
+        "Bar, line, area, donut, radial, gauge, histogram, dot plot, period comparison, matrix and calendar heatmaps",
+        "Dashboards of small, medium and wide cards rearranged by drag",
+        "KPI cards with a sparkline and the change",
+        "PNG and SVG export"
+      ],
+      "shot": "database"
+    },
+    {
+      "id": "sharing",
+      "icon": "shield",
+      "title": "Sharing and collaboration",
+      "text": "Six access levels from view to full access, enforced by the server on every route including the sync socket.",
+      "bullets": [
+        "Open, closed and private teamspaces, groups, guests by email",
+        "Share links with expiry and password",
+        "Comment threads and suggest mode with accept or reject per change",
+        "An inbox with browser push and an email fallback",
+        "SCIM, SAML, webhooks and an audit log"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "history",
+      "icon": "updates",
+      "title": "History and offline",
+      "text": "Versions are kept while editing and before every restore, and a restore merges into the live document.",
+      "bullets": [
+        "Preview and a block diff",
+        "The 20 pages and databases opened most recently are kept on the device",
+        "A database kept offline keeps up to 1000 rows and their row pages",
+        "Rows added, edited or deleted offline are sent when you are back"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "publish",
+      "icon": "globe",
+      "title": "Publish to the web",
+      "text": "A page and its subpages as a site at its own slug or a custom domain.",
+      "bullets": [
+        "Server-rendered with the editor's own markup",
+        "SEO fields, themes, fonts, an optional password, indexing control and a sitemap",
+        "Views and unique viewers per page and per workspace over time"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "ai",
+      "icon": "formai",
+      "title": "AI in the workspace",
+      "text": "Bring your own models: Anthropic, OpenAI, Gemini or any OpenAI-compatible server such as Ollama or vLLM.",
+      "bullets": [
+        "/ai in the slash menu: rewrite, fix, shorten, change tone, explain, summarize, translate",
+        "AI blocks and AI autofill properties",
+        "A workspace agent and custom agents that run on a schedule or on changes, each run undoable",
+        "Meeting notes with a transcript, summary and action items",
+        "Keys sealed in the database, an owner allow-list and per-person hourly limits"
+      ],
+      "shot": "agent"
+    },
+    {
+      "id": "claude",
+      "icon": "terminal",
+      "title": "Claude Code inside",
+      "text": "A bottom panel with real terminals and a Claude Code chat that shows each tool call as it runs.",
+      "bullets": [
+        "Claude Code tabs already connected to this instance's MCP tools",
+        "Hand a chat to a terminal tab or bring one back",
+        "Agents list and run window commands through MCP, REST or form-md cli"
+      ],
+      "shot": "agent"
+    },
+    {
+      "id": "search",
+      "icon": "target",
+      "title": "Search and commands",
+      "text": "Search with filters and sorts, and a command finder for every action in the app.",
+      "bullets": [
+        "Title-only, created-by, shared-space, in-page and date filters with five sorts",
+        "Find a command with Ctrl+Shift+P",
+        "Find and replace in a page",
+        "A shortcuts sheet where any key can be changed"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "style",
+      "icon": "sliders",
+      "title": "Style and preferences",
+      "text": "Page styles and themes applied before the first frame.",
+      "bullets": [
+        "14 dark and 6 light theme profiles, nine accent colours or your own",
+        "Six fonts plus uploaded fonts (WOFF2, WOFF, TTF, OTF)",
+        "Three densities and high contrast",
+        "Focus mode and live word, character and reading-time counts"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "templates",
+      "icon": "copy",
+      "title": "Templates and examples",
+      "text": "A starter gallery of the project's own documents and databases.",
+      "bullets": [
+        "90 templates in eleven categories",
+        "14 example projects added with one click",
+        "Any page saved as a template, row templates with a default"
+      ],
+      "shot": "database"
+    }
+  ],
+  "parity": {
+    "against": "Notion",
+    "summary": "Measured line by line against Notion, Form.md was graded 65 of 67 at v0.11.0, and the page reports changes through v0.47.0 including thirteen chart kinds, 90 templates, 34 MCP tools and 26 languages. Still partial: emoji icons (refused by design), the map view, and AI search, which reaches the web but no connected apps."
+  },
+  "docs": {
+    "requirements": [
+      "Go 1.26 or newer",
+      "Node.js 22 or newer",
+      "Rust, for the desktop app",
+      "Xcode Command Line Tools on a Mac, WebKitGTK 4.1 on Linux"
+    ],
+    "install": "chmod +x form-md_oc_install form-md\n./form-md_oc_install",
+    "run": "./form-md",
+    "desktop": "./build_app",
+    "agents": "Form.md is an MCP server with OAuth 2.1; `form-md mcp` is a stdio bridge, and the repo carries CLAUDE.md, AGENTS.md, .mcp.json and a Cursor rule.",
+    "topics": [
+      {
+        "title": "Shortcuts",
+        "text": "The README lists the keys, such as Ctrl+K for search, Ctrl+Shift+P to find a command, Ctrl+Shift+F for focus mode and Ctrl+J for the terminal and Claude Code panel."
+      },
+      {
+        "title": "Configuration",
+        "text": "Environment variables such as FORMMD_DATA, which sets the data directory for the database and uploads, default ./data."
+      },
+      {
+        "title": "Ports",
+        "text": "The dev client runs on 127.0.0.1:5750, the server on 127.0.0.1:8750 and the client preview on 127.0.0.1:5751."
+      },
+      {
+        "title": "Servers",
+        "text": "An installer script for servers, and a Docker option, are documented in the README."
+      },
+      {
+        "title": "Wiki",
+        "text": "An operator and developer wiki lives in .docs/wiki and is checked against the code by make check."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.47.8",
+      "date": "2026-11-04",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. and the licence"
+      ]
+    },
+    {
+      "version": "0.47.7",
+      "date": "2026-10-31",
+      "items": [
+        "The Linux packages pull in the media plugins",
+        "Public hardening for the terminal, the desktop server, AI keys and downloads"
+      ]
+    },
+    {
+      "version": "0.47.6",
+      "date": "2026-10-30",
+      "items": [
+        "The server Docker image builds with Go 1.26.9, as go.mod states",
+        "Line endings are set for Windows checkouts"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "editor",
+      "what": "A page open in the block editor",
+      "how": "Run ./form-md, open http://127.0.0.1:5750, create a page from Home and type / to open the slash menu."
+    },
+    {
+      "key": "database",
+      "what": "A database in board or table view with a chart",
+      "how": "Open Templates in the sidebar, add one of the example projects such as the sales pipeline with one click, and open its database."
+    },
+    {
+      "key": "agent",
+      "what": "The Claude Code or agent panel beside a page",
+      "how": "In the running app press Ctrl+J for the terminal and Claude Code panel, or open Connected apps in Settings to show the MCP snippets."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:md"
+  ],
+  "captures": {
+    "home": {
+      "file": "/media/formmd/ui-home-1.webp",
+      "light": "/media/formmd/ui-home-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Form.md's Home: Start from your material for Markdown, CSV, HTML, PDF, Word, Excel, ZIP, Evernote, OPML, JSON and text files, recently visited pages, the template gallery by category, and the Data and charts panel with a sales dashboard and website analytics",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formmd/ui-hero-2.webp",
+      "light": "/media/formmd/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A trail report page in form.md with a cropped sunrise photo as the cover, a green callout and the Trail survey database below it",
+      "size": ""
+    },
+    "database": {
+      "file": "/media/formmd/ui-database-1.webp",
+      "light": "/media/formmd/ui-database-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A Form.md database made from its Sales dashboard template: Dashboard, Orders, Store map, By region and Channels views, revenue and order totals with trends, a gauge against the monthly target, and revenue by month",
+      "size": ""
+    },
+    "database-board": {
+      "file": "/media/formmd/ui-database-board-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Trail survey database as a board grouped by status: Open, Needs repair and Closed",
+      "size": ""
+    },
+    "database-table": {
+      "file": "/media/formmd/ui-database-table-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Trail survey database as a table with zone, status, length, condition, surveyed and volunteers columns",
+      "size": ""
+    },
+    "templates": {
+      "file": "/media/formmd/ui-templates-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The template gallery with 90 templates in categories and live previews of dashboards",
+      "size": ""
+    }
+  },
+  "credit": "The pages in the captures are Form.md's own Website analytics and Sales dashboard templates with their sample data, shown in its dark or light theme to match this page."
+}

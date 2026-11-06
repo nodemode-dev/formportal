@@ -1,0 +1,323 @@
+{
+  "id": "formwav",
+  "name": "FormWav",
+  "version": "2.22.0",
+  "repo": "https://github.com/nodemode-dev/formwav",
+  "kind": "Audio editor and music studio",
+  "title": "local-first audio editing, repair and mixing with no account",
+  "summary": "FormWav is an open-source multitrack audio editor and small music studio: record, edit, repair, mix and export on your own machine, with Claude Code inside.",
+  "lede": "FormWav is an open-source audio editor that runs on your own machine: record, edit, repair, mix and export without an account, an upload or a usage meter. It is a multitrack editor and a small music studio with Claude Code inside it, working on the open session through one registry of every menu item and session tool. Its target is a measured 90% on a sourced parity scoreboard against the leading audio editors.",
+  "replaces": "",
+  "project": ".fmw",
+  "runs_on": "macOS, Windows and Linux, in a browser or as a Tauri 2 desktop app",
+  "checks": [
+    "Mixes clips, fades, buses, VCAs, automation and realtime effects in one Rust core, in the browser's audio thread and in the export, so what plays is what renders.",
+    "Imports MP3, M4A, FLAC, OGG, Opus, AIFF, WAV or a video's audio, with 200 undo steps.",
+    "Repairs on a spectrogram with box, lasso and painted selections and a Heal command.",
+    "Exports in twelve formats and reports sample peak, true peak and loudness."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fmw; a saved session opens from disk in the browser"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python 3.12 and FastAPI with a Rust audio core, formwav-dsp, built into the engine as a Python module"
+    },
+    {
+      "dt": "Interface",
+      "dd": "English and 25 other languages, with 15 theme profiles and six accents"
+    },
+    {
+      "dt": "Network",
+      "dd": "The interface and the engine bind 127.0.0.1; devices on this network are off by default and need a one-time pairing code"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "mix",
+      "kicker": "Mixing",
+      "title": "One mixer, two places",
+      "text": "The Rust core mixes clips, fades, buses, VCAs, automation and realtime effects the same way in the browser and in the export. A library of studio processors covers EQ, compressor, gate, de-esser, maximizer, reverbs, modulation, drive and pitch shift.",
+      "shot": "mixer"
+    },
+    {
+      "id": "repair",
+      "kicker": "Repair",
+      "title": "Heal clicks, crackle and noise",
+      "text": "The heal brush on the spectrogram paints a selection, and Heal repairs it as one undo step, for box, lasso and painted selections alike. The MCP server adds formwav_heal_selection so an agent can do the same in one explicit call.",
+      "shot": "spectrogram"
+    },
+    {
+      "id": "agent",
+      "kicker": "Agent and models",
+      "title": "Claude Code inside the session",
+      "text": "The Agent column sends each message to the claude program on this computer, using your own login, and it edits through the same commands as the interface. Optional components cover transcription, stem separation, noise suppression and speech made locally.",
+      "shot": "agent"
+    }
+  ],
+  "features": [
+    {
+      "id": "mixer",
+      "icon": "sliders",
+      "title": "Mixer and buses",
+      "text": "The Rust core mixes clips, fades, buses, VCAs and automation.",
+      "bullets": [
+        "A track's effects other than its filters run on its sum, so tails ring past each clip's end",
+        "A track's own bus plays into a user bus, in playback and export",
+        "What plays is what renders"
+      ],
+      "shot": "mixer"
+    },
+    {
+      "id": "studio",
+      "icon": "extensions",
+      "title": "Studio processors",
+      "text": "FormWav's own processors in the audio core, live in playback and in every export.",
+      "bullets": [
+        "Band EQ and a seven-band EQ, compressor with sidechain and lookahead, gate and expander",
+        "Split-band de-esser and a look-ahead maximizer",
+        "A room and a plate reverb",
+        "Chorus, flanger, phaser, drive, bit crusher and pitch shift",
+        "Gain, trim, polarity, DC block, test tone and dither"
+      ],
+      "shot": "effects"
+    },
+    {
+      "id": "import",
+      "icon": "download",
+      "title": "Import, edit and undo",
+      "text": "Import or drop common formats, resampled to the session's rate.",
+      "bullets": [
+        "MP3, M4A, FLAC, OGG, Opus, AIFF, WAV or a video's audio",
+        "Every change is an undo step, 200 deep",
+        "Separate on the grid, Strip silence and range copy and paste"
+      ],
+      "shot": "clip"
+    },
+    {
+      "id": "recording",
+      "icon": "play",
+      "title": "Recording",
+      "text": "Several armed tracks record at once.",
+      "bullets": [
+        "Takes are shifted by the Latency field's value, which you measure yourself",
+        "Tracks on the same device line up exactly"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "interface",
+      "icon": "grid",
+      "title": "The interface",
+      "text": "A header, a browser at the left, the arrangement in the middle, the editor, the Agent column and a footer.",
+      "bullets": [
+        "Browser with one search over Media, Effects and Sounds",
+        "Toolbar: Add a track, Select, Split, Fade, Draw, Zoom, Fit and Follow",
+        "Main counter in Min:Secs, Timecode, Feet+Frames, Samples or Bars|Beats"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "spectrogram",
+      "icon": "target",
+      "title": "Spectrogram repair",
+      "text": "Select and heal on the spectrogram.",
+      "bullets": [
+        "The brush only selects; Heal repairs the selection",
+        "Heal from a button in the Inspector, Edit > Heal selection or Alt Shift H",
+        "A clean-noises skill in the formwav-harness: find each click, box it, heal, then measure before and after"
+      ],
+      "shot": "spectrogram"
+    },
+    {
+      "id": "export",
+      "icon": "export",
+      "title": "Export",
+      "text": "Twelve formats, MP3 at two bitrates, the whole session or a range.",
+      "bullets": [
+        "A dither switch and peak normalisation",
+        "A notice with sample peak, true peak and loudness",
+        "A WAV past 4 GiB is written as RF64",
+        "Renders saved sessions as a mix, 5.1 or ADM objects through MCP"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "models",
+      "icon": "formai",
+      "title": "Optional AI components",
+      "text": "Each component under its own licence.",
+      "bullets": [
+        "Transcription with faster-whisper and stem separation with Demucs",
+        "Noise suppression with an RNNoise model fetched on first use",
+        "Speech and dubbing on your machine with Kokoro, Pocket TTS, Chatterbox and Argos Translate's models",
+        "Isolate sound with Meta's SAM-Audio, with weights gated behind a manual access request"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "generate",
+      "icon": "heart",
+      "title": "Generate with models",
+      "text": "The Sounds tab makes audio and puts it on a new track.",
+      "bullets": [
+        "ElevenLabs models through your own API key",
+        "ACE-Step 1.5 on your machine through its own server, or through fal",
+        "Sound effects from a description, up to 10 s (EzAudio)",
+        "Your own open-weight models through backend/models/local_models.json"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agent",
+      "icon": "terminal",
+      "title": "Agent and MCP",
+      "text": "Claude Code runs inside FormWav with your own Claude login, no API key.",
+      "bullets": [
+        "The Agent column and the embedded terminal",
+        "An MCP server in backend/formwav_mcp with 35 formwav_* tools",
+        "Settings > Agents adds FormWav to Claude Code, Codex, Cursor or Claude Desktop in one click",
+        "The formwav-harness skill teaches an agent which tool fits a job"
+      ],
+      "shot": "agent"
+    },
+    {
+      "id": "design",
+      "icon": "moon",
+      "title": "NodeMode design system",
+      "text": "Tokens, 15 theme profiles and a pre-paint theme boot.",
+      "bullets": [
+        "Zero-flash shell mounted once and patched in place",
+        "Matches FormVis surface for surface"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "thirteen audio tools and SoundCraft",
+    "summary": "No single tool is the reference, so the baseline is every capability that at least one of the fourteen has; nine of the rows are music only. FormWav was re-examined at 2.21.1, about forty releases after the 2.14.6 the v13 page graded, and six rows moved since then."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19 or newer",
+      "Python 3.12",
+      "Rust stable",
+      "git",
+      "ffmpeg on the PATH"
+    ],
+    "install": "git clone https://github.com/nodemode-dev/formwav.git\ncd formwav\n./formwav_oc_install\nWindows: formwav_oc_install.bat",
+    "run": "./formwav\nWindows: formwav.bat",
+    "desktop": "./build_app\n./build_macos_app",
+    "agents": "An MCP server in backend/formwav_mcp; Settings > Agents adds FormWav to Claude Code, Codex, Cursor or Claude Desktop in one click.",
+    "topics": [
+      {
+        "title": "Ports",
+        "text": "The interface runs at http://localhost:3060 and the engine at http://127.0.0.1:8060, with health at /api/health."
+      },
+      {
+        "title": "Desktop app",
+        "text": "./build_macos_app builds formwav.app and a .dmg; ffmpeg and rubberband are found on your PATH and never bundled."
+      },
+      {
+        "title": "Generate with models",
+        "text": "The README lists ElevenLabs, ACE-Step 1.5 and the local speech, dubbing and sound-effect models, and what each needs."
+      },
+      {
+        "title": "Connect an agent",
+        "text": "The README explains the Agent column, the MCP server and the formwav-harness skill."
+      },
+      {
+        "title": "Not built or not verified",
+        "text": "A section of the README lists what is not built or not verified yet, such as the latency measurement and the length limits of very long exports."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "2.21.1",
+      "date": "2026-10-23",
+      "items": [
+        "The MCP server gains formwav_heal_selection (35 tools)",
+        "A clean-noises sub-skill in the formwav-harness skill"
+      ]
+    },
+    {
+      "version": "2.21.0",
+      "date": "2026-10-23",
+      "items": [
+        "The heal brush only paints a selection; Heal repairs it as one undo step",
+        "An optional second predictor from inside the painted run, off by default"
+      ]
+    },
+    {
+      "version": "2.20.4",
+      "date": "2026-10-23",
+      "items": [
+        "The GPL-2.0 Nyquist plug-ins are downloaded on request instead of shipping in the app",
+        "RNNoise, speech-detection, Kokoro and translation model downloads are pinned"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "mixer",
+      "what": "The arrangement with several tracks and the mixer",
+      "how": "Run ./formwav, open http://localhost:3060 and choose File > Open the demo session, a sixteen-bar song made in code."
+    },
+    {
+      "key": "spectrogram",
+      "what": "The spectrogram view with a heal selection",
+      "how": "Import any WAV, switch a clip to the spectrogram, drag a box selection and show the Heal button in the Inspector."
+    },
+    {
+      "key": "agent",
+      "what": "The Agent column with a conversation",
+      "how": "With the demo session open, type a request into the Agent column; it needs the claude program installed."
+    },
+    {
+      "key": "effects",
+      "what": "The Effects tab in the browser",
+      "how": "Click the Effects tab at the left and expand an effect group."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:wav"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formwav/ui-hero-2.webp", "light": "/media/formwav/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormWav with a Final scene session: Dialogue and Music tracks drawn as waveforms, the effects browser on the left, and a Compressor and De-Esser chain with knobs on the Effects tab below",
+      "size": ""
+    },
+    "mixer": {
+      "file": "/media/formwav/ui-mixer-1.webp",
+      "light": "/media/formwav/ui-mixer-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The FormWav editor with spectrograms on and the Mixer tab open: three channel strips, a master strip, and buttons for buses and VCAs",
+      "size": ""
+    },
+    "spectrogram": {
+      "file": "/media/formwav/ui-spectrogram-3.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The four tracks drawn as spectrograms with a frequency ruler, over the mixer",
+      "size": ""
+    },
+    "clip": {
+      "file": "/media/formwav/ui-clip-3.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The pad clip selected on the timeline, with its name, start, length, gain, fades and sound type in the Clip tab",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: music stems made for the Form family, CC0."
+}

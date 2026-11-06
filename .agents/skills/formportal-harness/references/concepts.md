@@ -4,7 +4,7 @@ Read once per session.
 
 ## Ids and names
 
-Product ids are lowercase and come from the registry (`apps`): `formcut`, `formvis`, `formlit`, `formdesign`, `formpath`, `formvfx`, `formencoder`, `formwav`, `formmd` (Form.md), `formdam`, `formslide`, `formpdf`, `formtxt`, `formcel`, `formref`, `formsculpt`, `format`, `formsurface`, `formweb`, `formmcp` (formMCP), `formskills` (formskills), `formtray`, and `formai` (FormPortal itself, the id formai.dev's catalogue uses). Display names keep the owner's spelling: FormCut, Form.md.
+Product ids are lowercase and come from the registry (`apps`): `formcut`, `formvis`, `formlit`, `formdesign`, `formpath`, `formvfx`, `formencoder`, `formwav`, `formmd` (Form.md), `formdam`, `formslide`, `formpdf`, `formtxt`, `formcel`, `formref`, `formsculpt`, `format`, `formsurface`, `formweb`, `formmcp` (formMCP), `formskills` (formskills), `formtray`, and `formai` (FormPortal itself, the id the family catalogue uses). Display names keep the owner's spelling: FormCut, Form.md.
 
 ## Channels
 
@@ -33,7 +33,7 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | Message starts with | Meaning | Do |
 | --- | --- | --- |
 | the catalogue was refused: it is not signed | no signature next to the catalogue | wrong source, or a development catalogue; only the person can accept it, with `FORMPORTAL_ALLOW_UNSIGNED=1` |
-| the catalogue was refused: this build trusts no catalogue key yet | `core/catalog_keys.txt` was empty when this build was made and `FORMAI_CATALOG_PUBKEY` is not set (`status` shows `trusted_keys`) | tell the person; the fix is formai.dev's public key added to that file and FormPortal rebuilt, or the key in `FORMAI_CATALOG_PUBKEY` |
+| the catalogue was refused: this build trusts no catalogue key yet | `core/catalog_keys.txt` was empty when this build was made and `FORMAI_CATALOG_PUBKEY` is not set (`status` shows `trusted_keys`); normal builds trust formcompiler's catalogue key from that file | tell the person; the fix is formcompiler's public key in that file and FormPortal rebuilt, or the key in `FORMAI_CATALOG_PUBKEY` |
 | the catalogue was refused | the signature does not verify | stop; report it |
 | [file] does not match the catalogue: expected SHA-256 | the download differs from the release | stop; report it; do not retry from elsewhere |
 | the catalogue offers this computer nothing for | unreleased, no release on that channel, or no file for this system | read `apps` for which one, and the registry status |

@@ -36,7 +36,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": {} },
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "apps", "title": "List the Form apps",
-          "description": "Every app in the Form family registry (name, what it replaces, group, development status) with, per channel, what the catalogue offers this computer and what is installed. Works offline from the registry when the catalogue cannot be read, and says why.",
+          "description": "The Form apps that are released (a published release in the catalogue or on the app's GitHub repository) or installed here, as on formai.studio: name, what it replaces, group, and per channel what the catalogue offers this computer and what is installed. Apps not released yet are not named; on_the_way gives each scheduled group's opening date and how many apps it holds. Works offline from the registry when the catalogue cannot be read, and says why.",
           "inputSchema": { "type": "object", "properties": props(json!({})) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "app_info", "title": "One app in detail",

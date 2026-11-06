@@ -1,0 +1,356 @@
+{
+  "id": "formsculpt",
+  "name": "FormSculpt",
+  "version": "1.19.6",
+  "repo": "https://github.com/nodemode-dev/formsculpt",
+  "kind": "3D sculpting and modeling app",
+  "title": "3D sculpting and modeling on your own machine",
+  "summary": "FormSculpt is a free, open-source 3D sculpting and modeling app with a Rust engine, quad remesh, UVs, painting, a path render and agent control over MCP.",
+  "lede": "FormSculpt is the Form family's sculpting and modeling app: a Rust sculpting engine driving a TypeScript viewport, a FastAPI engine service and a Tauri 2 desktop build. Every action is a keyed command in one registry, so the interface, the keyboard and outside agents all drive the same engine.",
+  "replaces": "ZBrush",
+  "project": ".fsc",
+  "runs_on": "macOS, Windows and Linux (desktop build targets: all); also in a browser",
+  "checks": [
+    "Sculpts with brushes, layers, dynamic topology, voxel remesh and a field-aligned quad remesh that follows the form and its hard edges.",
+    "Models with ZModeler-style quad actions, creased edges, retopology patches and UVs including UDIM tiles.",
+    "Paints into textures and renders with a path-traced render, a denoiser, spot lights and AgX and Neutral tone maps.",
+    "Hands work to other apps through GoF: a folder and a gof.json manifest, with GLB, FBX and Substance 3D Painter packages."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "Rust engine workspace in native/, with a vanilla TypeScript and Vite client and a FastAPI service"
+    },
+    {
+      "dt": "Projects",
+      "dd": ".fsc files, with a file association in the desktop shell"
+    },
+    {
+      "dt": "Languages",
+      "dd": "26, English by default, switched live in View > Language"
+    },
+    {
+      "dt": "Ports",
+      "dd": "Frontend http://localhost:5260, backend http://127.0.0.1:8260"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "sculpt",
+      "kicker": "Sculpt",
+      "title": "Brushes, layers and remesh",
+      "text": "Brushes include Clay strips, Elastic, Polish, Layer, Nudge and Stamp, with stroke filters, symmetry and nested repeaters. Voxel remesh and a field-aligned quad remesh steered by guide curves rebuild the topology.",
+      "shot": "sculpt"
+    },
+    {
+      "id": "model",
+      "kicker": "Model and UV",
+      "title": "Quad modeling, retopology and UDIM",
+      "text": "ZModeler-style actions, edge loops, creases and retopology templates for a head, a sphere or a whole skeleton work on quads. The UV view adds charts, sew, cut, texel density and UDIM tiles.",
+      "shot": "uv"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "Claude in the window",
+      "text": "A terminal dock holds real shells, a Claude Code tab already connected to FormSculpt's tools and a Chat tab that sculpts through the same tools. Each change is one undo step.",
+      "shot": "dock"
+    }
+  ],
+  "features": [
+    {
+      "id": "registry",
+      "icon": "box",
+      "title": "One command registry",
+      "text": "native/crates/fsc-commands declares every command once.",
+      "bullets": [
+        "Dotted id, MCP name, JSON schema, annotations, label and keys",
+        "Exports the catalogue the UI, MCP server and agent skills read",
+        "Menu bar and right-click menus built from the registry",
+        "Mod+K palette over every command and a Mod+/ shortcut editor"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "engine",
+      "icon": "code",
+      "title": "Rust engine",
+      "text": "One Cargo workspace does the sculpting, remeshing and baking, and compiles to WebAssembly so the window works with no service.",
+      "bullets": [
+        "./formsculpt engine build, check or wasm",
+        "The browser engine is used when no service answers, or at ?engine=wasm"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "sculpt",
+      "icon": "mark",
+      "title": "Sculpting",
+      "text": "Brushes with stroke options and filters.",
+      "bullets": [
+        "Elastic, Polish, Layer, Nudge, Stamp and Clay strips brushes",
+        "Stroke filters: front faces only, connected only, same face group, keep sharp edges",
+        "Alpha stretch, rotation, tiling and saved tool presets",
+        "Nested repeaters and scattering copies over a surface"
+      ],
+      "shot": "sculpt"
+    },
+    {
+      "id": "topology",
+      "icon": "grid",
+      "title": "Topology",
+      "text": "Dynamic topology, decimation and remeshing.",
+      "bullets": [
+        "Dynamic topology modes (speed, balanced, quality) and methods",
+        "Voxel remesh that fuses overlapping parts into one watertight piece",
+        "Field-aligned quad remesh with guide curves and density painted in red and blue",
+        "Decimation that keeps paint, face groups and UVs"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "modeling",
+      "icon": "cut",
+      "title": "Modeling and retopology",
+      "text": "ZModeler-style quad actions with a hover highlight.",
+      "bullets": [
+        "Edge loops, edge extrude, face inset, extrude and delete",
+        "Creased edges that stay sharp through subdivision",
+        "Retopology patch library and whole-object templates for a head, a sphere or a skeleton"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "uv",
+      "icon": "layers",
+      "title": "UVs and UDIM",
+      "text": "A UV view with automatic charts and a UV checker.",
+      "bullets": [
+        "UV sew, cut and straighten, texel density readout and equalizing",
+        "Conformal UV relax with pins",
+        "UDIM tiles, per-tile bakes and export with one material per tile"
+      ],
+      "shot": "uv"
+    },
+    {
+      "id": "paint",
+      "icon": "grade",
+      "title": "Painting",
+      "text": "Vertex paint and painting straight into a texture.",
+      "bullets": [
+        "Paint layers with 23 blend modes",
+        "Spotlight: images held over the view that paint or sculpt through the camera",
+        "Roughness, metalness and opacity drawn in lit shading",
+        "Eyedropper and material presets"
+      ],
+      "shot": "paint"
+    },
+    {
+      "id": "render",
+      "icon": "sun",
+      "title": "Viewport and render",
+      "text": "A studio viewport and a path render.",
+      "bullets": [
+        "Gradient backdrop with vignette and an infinite anti-aliased floor grid (Shift+P toggles the grid)",
+        "Bounce light, screen-space reflections, AgX and Neutral tone maps",
+        "Spot lights with colour temperature in kelvin",
+        "Path render with a denoiser, refraction and renders up to 4K"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "layouts",
+      "icon": "apps",
+      "title": "Layouts",
+      "text": "Several interface layouts, including a tablet layout and the ZUI Layout.",
+      "bullets": [
+        "Floating toolbars built from any command",
+        "Layout files carry the interface arrangement to another browser",
+        "Themes: dark, light, high contrast, or following NodeMode"
+      ],
+      "shot": "layouts"
+    },
+    {
+      "id": "scene",
+      "icon": "source",
+      "title": "Scene",
+      "text": "A scene hierarchy with objects under objects or empty groups.",
+      "bullets": [
+        "Instance, Un-instance and Sync Instances",
+        "Reorder by dragging rows in the object list",
+        "Named camera views kept with the scene and in projects"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "handoff",
+      "icon": "export",
+      "title": "GoF and file exchange",
+      "text": "GoF is FormSculpt's own hand-off to other apps.",
+      "bullets": [
+        "One folder and a gof.json manifest; edits saved there come back",
+        "GLB for Blender, Unreal Engine and FormSurface, FBX for Unity, a Substance 3D Painter package",
+        "A live two-way link with Blender through an add-on",
+        "Print check, with STL and 3MF in millimetres"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agents and terminal",
+      "text": "A terminal dock under the viewport (Mod+J).",
+      "bullets": [
+        "Claude Code tab (Shift+Mod+J) running your own sign-in, already connected to FormSculpt's tools",
+        "Chat tab (Alt+Mod+J) that sculpts through the same tools, each change one undo step",
+        "./formsculpt agents install registers FormSculpt for Claude Code, Codex and Cursor"
+      ],
+      "shot": "dock"
+    },
+    {
+      "id": "zero-flash",
+      "icon": "shield",
+      "title": "Local, zero-flash shell",
+      "text": "Local only by default: Vite and uvicorn bind 127.0.0.1.",
+      "bullets": [
+        "Theme applied before first paint and reserved layout",
+        "In-place text updates only",
+        "26 languages, switched live with no reload"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "ZBrush",
+    "summary": "Re-traced in its own tree at 1.18.2, FormSculpt reaches 94.5 of 97 rows against ZBrush, with quad remesh and texture-map painting now full."
+  },
+  "docs": {
+    "requirements": [
+      "Rust 1.99.1 (pinned in rust-toolchain.toml)",
+      "Node 20.19+ or 22.12+",
+      "Python 3.12+"
+    ],
+    "install": "./formsculpt_oc_install\n./formsculpt doctor",
+    "run": "./formsculpt",
+    "desktop": "./build_app",
+    "agents": "./formsculpt agents install registers FormSculpt for Claude Code, Codex and Cursor; .mcp.json, .codex/config.toml and .cursor/mcp.json start ./formsculpt mcp, and the formsculpt-modeling skill teaches the tools.",
+    "topics": [
+      {
+        "title": "Quick Start",
+        "text": "The README gives requirements and commands for macOS, Linux and Windows (formsculpt_oc_install.bat, formsculpt.bat) and a table of the frontend, backend and preview URLs."
+      },
+      {
+        "title": "Desktop build",
+        "text": "./build_app builds and bundles the app, logged to build_app.log, with flags --clean, --install and --no-install; Windows produces msi and nsis installers."
+      },
+      {
+        "title": "Configuration",
+        "text": "backend/.env sets FSC_HOST, FSC_PORT, FSC_CORS_ORIGINS and FSC_DIST."
+      },
+      {
+        "title": "Shortcuts and palette",
+        "text": "Mod+K opens a palette over every command and Mod+/ opens the shortcut editor."
+      },
+      {
+        "title": "Testing",
+        "text": "./formsculpt test runs the engine and service suites; ./formsculpt test e2e drives a booted window in Chromium under 4x throttling."
+      },
+      {
+        "title": "Status",
+        "text": "The README lists what is not yet built, such as cloth brushes, HD geometry and binary USD, and notes that macOS and Windows bundles were not run."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "1.19.3",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain"
+      ]
+    },
+    {
+      "version": "1.19.2",
+      "date": "2026-10-30",
+      "items": [
+        "The desktop app builds on Windows",
+        "build_app.bat bundles the Blender add-on and the Unreal and Unity receivers",
+        "Scripts check out with LF line endings and .bat files with CRLF on every system"
+      ]
+    },
+    {
+      "version": "1.19.1",
+      "date": "2026-10-26",
+      "items": [
+        "A window smoke test runs in CI, and the splash logo no longer moves when the line under it arrives"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "sculpt",
+      "what": "The main viewport with a sculpted object and the tool rail",
+      "how": "Run ./formsculpt, open http://localhost:5260, add a sphere primitive and sculpt on it with a Clay or Elastic brush."
+    },
+    {
+      "key": "uv",
+      "what": "The UV view with charts laid out",
+      "how": "Select an object, use the UV tools to create automatic charts, and open the UV view."
+    },
+    {
+      "key": "dock",
+      "what": "The terminal dock with the Chat tab",
+      "how": "Press Mod+J (Ctrl+J or Cmd+J) to open the dock and choose the Chat tab."
+    },
+    {
+      "key": "layouts",
+      "what": "A second interface layout such as the tablet layout",
+      "how": "Switch the layout from the Window menu and capture the result."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "parity:sculptor"
+  ],
+  "captures": {
+    "sculpt": {
+      "file": "/media/formsculpt/ui-sculpt-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormSculpt with a sphere sculpted using the Clay and Crease brushes, the brush circle on the surface: the full brush grid on the right, the Objects panel, radius and intensity sliders, the Crease tool bar, and vertex and triangle counts",
+      "size": ""
+    },
+    "layouts": {
+      "file": "/media/formsculpt/ui-layouts-1.webp", "light": "/media/formsculpt/ui-layouts-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormSculpt's panel layout, the alternative to its tablet layout: a menu bar from File to Help, a narrow brush rail, a sphere primitive in the viewport and a side panel of File and Add actions, with export formats, real-size printing and primitives",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formsculpt/ui-hero-2.webp",
+      "light": "/media/formsculpt/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormSculpt with the female head bust from the app icon shown as clean white plaster, soft additive Clay strips marks worked into the hair and plinth while the face stays untouched, the Clay strips tool selected in the tool grid on the right and the Objects panel on the left",
+      "size": ""
+    },
+    "paint": {
+      "file": "/media/formsculpt/ui-paint-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Red paint brushed across the bust's cheek with the Paint tool active and its colour and roughness options below",
+      "size": ""
+    },
+    "wireframe": {
+      "file": "/media/formsculpt/ui-wireframe-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The marble bust shown with its triangle wireframe over the shaded surface",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: a CC0 model from Poly Haven."
+}

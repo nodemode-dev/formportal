@@ -1,0 +1,351 @@
+{
+ "id": "formdesign",
+ "name": "FormDesign",
+ "version": "0.85.4",
+ "repo": "https://github.com/nodemode-dev/formdesign",
+ "kind": "Page layout and publishing",
+ "title": "page layout and publishing for the web and the desktop",
+ "summary": "A page-layout application for magazines, books, reports, print and websites, with its own Rust layout engine, 71 templates and an MCP server for agents.",
+ "lede": "FormDesign is the form family's page-layout application for magazines, newsletters, books, reports, print pieces, ads, websites and blogs. It is made for people and their agents. Drop content on the Make panel, write a brief, pick a template and press Make layout, then refine the result in a full editor.",
+ "replaces": "InDesign and Affinity",
+ "project": "",
+ "runs_on": "macOS, Windows and Linux",
+ "checks": [
+  "Turns Markdown, Word, RTF, text, HTML, CSV, spreadsheets, PDFs, images and a plain-words brief into one content pack.",
+  "Ranks and fills 71 templates, threads articles through continuation pages and matches images to frames.",
+  "Composes text with a Knuth-Plass paragraph composer, styles, tables, footnotes and vector drawing.",
+  "Exports layouts as responsive multi-page websites and publishes a link served from this computer."
+ ],
+ "facts": [
+  {
+   "dt": "Layout core",
+   "dd": "FormDesign's own Rust engine: 394 commands and 41 tools, in a JSON-lines sidecar"
+  },
+  {
+   "dt": "Stack",
+   "dd": "Vanilla TypeScript and Vite, Python and FastAPI, Rust and Tauri 2"
+  },
+  {
+   "dt": "Ports",
+   "dd": "Frontend on http://localhost:5196, engine on http://127.0.0.1:8196"
+  },
+  {
+   "dt": "Languages",
+   "dd": "26, covering all 1,703 interface strings"
+  }
+ ],
+ "chapters": [
+  {
+   "id": "make",
+   "kicker": "Make",
+   "title": "From a brief to a layout",
+   "text": "Intake reads your files and brief for kind, size, page count, tone, colours and brand. The Make pass ranks templates, fills them, threads the article through continuation pages, matches images to frames, fits copy and reports what is still sample text.",
+   "shot": "make"
+  },
+  {
+   "id": "editor",
+   "kicker": "Editor",
+   "title": "A full layout editor",
+   "text": "Tiled rendering with overlays, 41 tools, and menus built from the core's 394 commands, with a dialog for every command that takes options. Edit > Search finds every command, panel and tool.",
+   "shot": "editor"
+  },
+  {
+   "id": "web",
+   "kicker": "Publishing",
+   "title": "Print, PDF and the web",
+   "text": "Any layout can become a responsive multi-page site with a sitemap and feed, and File > Publish Online gives a link served from this computer. Print production has separations preview, soft proofing through ICC profiles and an Ink Manager.",
+   "shot": "web"
+  }
+ ],
+ "features": [
+  {
+   "id": "intake",
+   "icon": "download",
+   "title": "Intake",
+   "text": "Many inputs become one compact content pack.",
+   "bullets": [
+    "Markdown, Word, RTF, text, HTML, CSV and spreadsheets",
+    "PDFs with structure-aware extraction, images and GIFs",
+    "A brief in plain words, read for kind, size, page count, tone, colours, brand, event name and date",
+    "Key: value lines become fields"
+   ],
+   "shot": "make"
+  },
+  {
+   "id": "templates",
+   "icon": "copy",
+   "title": "Templates",
+   "text": "71 templates across magazine, newsletter, book, report, print, stationery, ad, web and presentation.",
+   "bullets": [
+    "Slotted for automatic filling",
+    "Re-skinned by a brand kit",
+    "docs/TEMPLATES.md is the format, so you can add your own"
+   ],
+   "shot": "templates"
+  },
+  {
+   "id": "make",
+   "icon": "formai",
+   "title": "The Make pass",
+   "text": "Ranks templates for your content and fills them.",
+   "bullets": [
+    "Titles, decks, bylines, stats, features, captions and contact fields",
+    "Threads the article through continuation pages",
+    "Matches images to frames and fits copy",
+    "Reports what is still sample text"
+   ],
+   "shot": "make"
+  },
+  {
+   "id": "websites",
+   "icon": "globe",
+   "title": "Websites",
+   "text": "Any layout as a responsive multi-page site in its own type and colours.",
+   "bullets": [
+    "An article per page with a home page of cards",
+    "A web template's rows and columns stack on a phone",
+    "Sitemap and feed via File > Export > Website",
+    "File > Publish Online for a link served from this computer"
+   ],
+   "shot": "web"
+  },
+  {
+   "id": "agents",
+   "icon": "extensions",
+   "title": "Agents",
+   "text": "An MCP server with 38 tools and five task prompts.",
+   "bullets": [
+    "outline, inspect, look and use_tool let an agent read, measure, see and draw cheaply",
+    "Window > Agent Connect shows each connected agent",
+    "Allow, ask or deny per agent and approve risky steps such as publishing"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "editor",
+   "icon": "sliders",
+   "title": "The editor",
+   "text": "A tiled renderer with overlays and 41 tools.",
+   "bullets": [
+    "Menus built from 394 commands, with a dialog for every command that takes options",
+    "Row editors for styles, tabs, rules and gradient stops, never JSON",
+    "Edit > Search over every command, panel and tool"
+   ],
+   "shot": "editor"
+  },
+  {
+   "id": "workspace",
+   "icon": "apps",
+   "title": "Workspace pieces",
+   "text": "Panels for long and careful work.",
+   "bullets": [
+    "Rulers with drag-out guides (Ctrl+R), the Glyphs panel and the Tabs ruler",
+    "One Styles tab for paragraph, character and object styles",
+    "Books via File > Book with chapters, numbering and one PDF",
+    "The Story Editor (Ctrl+Y)",
+    "Seven built-in workspaces and your own"
+   ],
+   "shot": "editor"
+  },
+  {
+   "id": "review",
+   "icon": "check",
+   "title": "Review and output",
+   "text": "Production tools for print.",
+   "bullets": [
+    "Track Changes, Notes and Conditional Text panels",
+    "Separations Preview with ink limit (Shift+F6) and Overprint Preview",
+    "Soft proofing through ICC profiles, with paper simulation and colour-blindness views",
+    "The Ink Manager"
+   ],
+   "shot": "export"
+  },
+  {
+   "id": "long",
+   "icon": "book",
+   "title": "Long documents",
+   "text": "Features for books and reports.",
+   "bullets": [
+    "Footnotes, a table of contents, an index and cross-references that update",
+    "Hyperlinks, PDF bookmarks and text variables",
+    "Data merge, QR codes and anchored objects",
+    "Copy and paste across documents, Step and Repeat, Pathfinder"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "text",
+   "icon": "captions",
+   "title": "Editing text at scale",
+   "text": "Search and proofing across a document.",
+   "bullets": [
+    "Find/Change (Ctrl+F) with Text, GREP, Glyph and Object tabs and saved queries, also the find_change MCP tool",
+    "Check Spelling (Ctrl+I) and Dynamic Spelling in the text's own language",
+    "US English built in and twenty more dictionaries"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "interactive",
+   "icon": "keyframe",
+   "title": "Interactive and structure",
+   "text": "Interactive pages and structured documents.",
+   "bullets": [
+    "Object States, Buttons and Forms and Page Transitions panels",
+    "XML Tags and Structure panels (Alt+Ctrl+1) with style mapping and DTD validation",
+    "Libraries of saved pieces, also as the library MCP tool"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "drawing",
+   "icon": "mark",
+   "title": "Drawing",
+   "text": "Vector tools inside the layout.",
+   "bullets": [
+    "All ten Pathfinder operations, offset path, outline stroke, simplify",
+    "The Curvature, Knife, Shape Builder and Width tools",
+    "Live effects and thirteen warps with several fills and strokes per object"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "tables",
+   "icon": "grid",
+   "title": "Footnotes and tables",
+   "text": "Advanced tables and footnotes.",
+   "bullets": [
+    "Footnotes spanning columns, restarting per page or section or numbered across stories",
+    "Table rows that split across frames under repeated headers",
+    "Slanted and dimensioned cell styles and rounded table corners"
+   ],
+   "shot": ""
+  }
+ ],
+ "parity": {
+  "against": "InDesign and Affinity",
+  "summary": "Of the 133 capabilities the references document, FormDesign is full on 127, partial on 5 and has nothing for 1, re-graded in code at 0.84.5 against InDesign (2026 release) and Affinity by Canva. DesignCraft, the closest open rival, scores 74 percent to FormDesign's 97 on the 133 scored rows."
+ },
+ "docs": {
+  "requirements": [
+   "Node 20.19 or newer (22 recommended)",
+   "Python 3.12 or newer",
+   "Rust stable for the layout core",
+   "git"
+  ],
+  "install": "git clone https://github.com/nodemode-dev/formdesign.git\ncd formdesign\n./formdesign install\n(Windows: formdesign.bat install)",
+  "run": "./formdesign boot\n(Windows: formdesign.bat boot)",
+  "desktop": "",
+  "agents": "An MCP server with 38 tools and five task prompts, with the skills formdesign-harness, formdesign-template-creator and formdesign-skillset in .claude/skills/.",
+  "topics": [
+   {
+    "title": "Manual",
+    "text": "docs/MANUAL.md is the user manual."
+   },
+   {
+    "title": "Templates",
+    "text": "docs/TEMPLATES.md describes the template format, and ./formdesign templates lists the 71 templates."
+   },
+   {
+    "title": "Command line",
+    "text": "./formdesign cmd runs any engine command, ./formdesign tool runs any MCP tool and ./formdesign make builds a layout from files and a brief."
+   },
+   {
+    "title": "Wiki and branching",
+    "text": ".docs/wiki is the developer wiki and .docs/BRANCHING.md is the branch and release model."
+   },
+   {
+    "title": "Changelog",
+    "text": "CHANGELOG.md lists every release, newest first."
+   }
+  ]
+ },
+ "releases": [
+  {
+   "version": "0.85.2",
+   "date": "2026-10-31",
+   "items": [
+    "The Windows desktop app no longer opens to a blank window on PCs where the .js file type is set to text/plain",
+    "The Windows layout core includes the Visual C++ runtime, so it starts without the Redistributable"
+   ]
+  },
+  {
+   "version": "0.85.1",
+   "date": "2026-10-30",
+   "items": [
+    "The Windows desktop build stops with an error when the bundle step fails",
+    "Line endings are fixed for Windows checkouts"
+   ]
+  },
+  {
+   "version": "0.85.0",
+   "date": "2026-10-26",
+   "items": [
+    "The desktop splash no longer shifts its logo when the rest of the card arrives",
+    "A smoke test of the built window runs in CI"
+   ]
+  }
+ ],
+ "shots_wanted": [
+  {
+   "key": "make",
+   "what": "The Make panel with files dropped and a template chosen",
+   "how": "Run ./formdesign boot, open http://localhost:5196, drop a .md file and an image on the Make panel in the right column, write a brief and press Analyse."
+  },
+  {
+   "key": "editor",
+   "what": "A magazine or report layout open in the editor",
+   "how": "After Make layout, open page 1 with the Styles and Layers panels visible."
+  },
+  {
+   "key": "web",
+   "what": "The website export or Publish Online result",
+   "how": "Open File > Export > Website on a layout, or File > Publish Online, and open the resulting link in the browser."
+  }
+ ],
+ "sources": [
+  "README.md",
+  "CHANGELOG.md",
+  "src-tauri/tauri.conf.json",
+  "parity:design"
+ ],
+ "captures": {
+  "start": {
+   "file": "/media/formdesign/ui-start-1.webp", "light": "/media/formdesign/ui-start-light-1.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormDesign's start screen: make a layout, start from a template, open a file or ask Claude, with starting points for a flyer, newsletter, presentation, social posts, a website and stationery",
+   "size": ""
+  },
+  "templates": {
+   "file": "/media/formdesign/ui-templates-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The New from Template dialog showing magazine templates with thumbnails and a preview of Feature Spread",
+   "size": ""
+  },
+  "editor": {
+   "file": "/media/formdesign/ui-hero-2.webp",
+   "light": "/media/formdesign/ui-hero-light-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The Event Poster, Type-Led template open in FormDesign: the poster on the canvas, the Pages panel on the left and document properties on the right",
+   "size": ""
+  },
+  "export": {
+   "file": "/media/formdesign/ui-export-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The Export dialog listing PDF, IDML, EPUB, HTML, website, PNG, JPEG, SVG, text and XML formats, with PDF print options",
+   "size": ""
+  },
+  "inspector": {
+   "file": "/media/formdesign/ui-inspector-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "A text frame selected on the poster, with transform, appearance, character and paragraph controls in the Properties panel",
+   "size": ""
+  }
+ },
+ "credit": "The poster in the captures is FormDesign's own Event Poster, Type-Led template with its sample content."
+}

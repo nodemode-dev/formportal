@@ -48,14 +48,14 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | The person's project files: find, search, open in the right app, versions and going back, disk use | `sub-skills/files/SUB-SKILL.md` |
 | A computer an organisation manages: a refusal naming a policy, locked settings, mirroring the catalogue, silent deployment | `sub-skills/organisations/SUB-SKILL.md` |
 | Which apps exist, what each replaces, status and groups | `sub-skills/catalog-and-registry/SUB-SKILL.md` |
-| Using an installed Form app through its own MCP server, deep links, formai.dev | `sub-skills/form-family-bridge/SUB-SKILL.md` |
+| Using an installed Form app through its own MCP server, deep links, the formai.studio website | `sub-skills/form-family-bridge/SUB-SKILL.md` |
 | Checking work before reporting it | `sub-skills/verification/SUB-SKILL.md` |
 
 ## Rules that hold everywhere
 
 - **Never guess an id.** Product ids come from `apps` (lowercase: `formcut`, `formvis`, `formencoder`, `formmd`). FormPortal itself is `formai` in the catalogue.
-- **The catalogue decides.** If `apps` says `unreleased` or `no-release`, there is nothing to install; say so and name the app's status from the registry ("in progress"), do not look for a download elsewhere.
-- **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for formai.dev's catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
+- **The catalogue decides.** `apps` lists only released or installed apps, as formai.studio does; an app it does not list is not released yet, so there is nothing to install. Say so, give the opening date from `on_the_way` when the person asks what is coming, and never name an unreleased app or look for a download elsewhere.
+- **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for the family catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
 - **Ask before changing the computer**, every time, for `install`, `rollback`, `remove`.
 - **Leave the person's work alone.** FormPortal's tools touch only its own install folder; never delete an app's documents or settings by hand.
 
