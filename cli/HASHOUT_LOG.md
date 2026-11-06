@@ -5,6 +5,15 @@ Living log for `formportal-cli`, FormPortal's command line and MCP server. Sourc
 Current build version: v0.58.0
 Last updated: 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
+## v0.61.0 · no formcompiler app {#compiler}
+
+### ops.rs · mcp.rs · apps
+- refers-to: cli/src/ops.rs :: apps · catalog/products.json
+- kind: fix
+- logged: v0.61.0 · 2026-11-06
+
+The `apps` tool counts what the catalogue lists; with formcompiler removed from products.json it reports 34 products. No change to cli code was needed: nothing there named formcompiler or its repository delivery.
+
 ## v0.58.0 · on_the_way matches formai.studio {#live}
 
 ### ops.rs · on_the_way, preferences · mcp.rs · apps, preferences

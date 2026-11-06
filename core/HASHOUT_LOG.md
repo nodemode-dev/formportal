@@ -28,6 +28,15 @@ The owner: the app takes far too long to connect to the catalogue; it must be in
 
 The owner: Fonts, Stock & templates and Extensions are blank, and need the right assets bundled in the build plus a connection to the site's store (a marketplace in the spirit of a stock and add-on store). Cause of blank: each page read only a signed index beside the catalogue (`dl.formai.studio/catalog/fonts.json`, `media.json`, `extensions.json`) and all three return 404; nothing was bundled, unlike Learn. Now each page is a `Shelf`: the starter index compiled in (`include_str!` of `core/data/store-*.json`) with the remote index merged over it by `id`, the remote tried at the store first (`https://formai.studio/catalog/v1/<name>`) and then beside the catalogue, each still signature-checked by the existing `font_index`, `media_index` and `extension_index` (so policy locks and allow_unsigned behave as before). `reached` names the source that answered; `missed` carries why none did. Starter files use `bundled:<path>`: `download()` reads them through `store::read` (the shell's asset resolver, then `FORMPORTAL_STORE`, then the repository's `frontend/public/store` found from the executable, for the command line) and checks the same sha256 before handing the file on, so installs, saves and template copies take one path. A `bundled:` path with anything but plain components is refused. Extensions ship an empty starter index: none of formcut, formvis or formwav publishes a package in the `formai-package` format (formcut's seven registry zips are its own format, with warm-dust's manifest not at the zip root), and nothing was invented. Measured: the command line lists 12 families and 9 items with the store unreachable, installs Space Grotesk and saves a photograph from the bundled files with matching checksums. The store contract for the site is `.docs/wiki/Store.md`.
 
+## v0.61.0 · formcompiler is not an app {#compiler}
+
+### catalog/ · products.json, schedule.json, apps/formcompiler.json
+- refers-to: catalog/products.json · catalog/schedule.json · catalog/apps/formcompiler.json
+- kind: fix
+- logged: v0.61.0 · 2026-11-06
+
+formcompiler is a repository that builds and signs the catalogue; it is never downloaded or installed, so it is no longer a product. Removed from `products.json` (the only entry with `"delivery": "repository"`, now 34 products), from the Launch wave in `schedule.json`, and its cap file is deleted. No engine code treated it as a product; `COMPILER_CATALOG` in releases.rs still names the pipeline that publishes the signed catalogue.
+
 ## v0.59.0 · installs that work, the site's catalogue {#installs}
 
 ### installers.rs · attach, deploy.rs · the managed macOS script
