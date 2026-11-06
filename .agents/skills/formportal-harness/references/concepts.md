@@ -4,7 +4,7 @@ Read once per session.
 
 ## Ids and names
 
-Product ids are lowercase and come from the registry (`apps`): `formcut`, `formvis`, `formlit`, `formdesign`, `formpath`, `formvfx`, `formencoder`, `formwav`, `formmd` (Form.md), `formdam`, `formslide`, `formpdf`, `formtxt`, `formcel`, `formref`, `formsculpt`, `format`, `formsurface`, `formweb`, `formmcp` (formMCP), `formskills` (formskills), `formtray`, and `formai` (FormPortal itself, the id the family catalogue uses). Display names keep the owner's spelling: FormCut, Form.md.
+Product ids are lowercase and come from the registry (`apps`): `formcut`, `formvis`, `formlit`, `formdesign`, `formpath`, `formvfx`, `formencoder`, `formwav`, `formmd` (form.md), `formdam`, `formslide` (FormDeck), `formpdf`, `formtxt`, `formcel`, `formref`, `formsculpt`, `format` (FormAT), `formsurface`, `formweb`, `formmcp` (FormMCP), `formskills` (FormSkills), `formtray`, and `formai` (FormPortal itself, the id the family catalogue uses). Display names keep the owner's spelling: FormCut, form.md.
 
 ## Channels
 

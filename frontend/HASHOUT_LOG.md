@@ -2,8 +2,17 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.60.0
-Last updated: 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.61.0
+Last updated: 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## formcompiler is not an app {#formcompiler-not-app}
+- refers-to: frontend/public/apps · frontend/markup.ts
+- kind: decision
+- logged: v0.61.0 · 2026-11-06
+
+formcompiler only builds and releases the family and is never downloaded or installed, so formcompiler.webp and formcompiler-light.webp are deleted. The dock and counts come from catalog/products.json, so markup, html and i18n hold no literal list or count to change.
+
+---
 
 ## v0.60.0 · instant start and the store {#store}
 
@@ -71,6 +80,13 @@ The owner, after seeing the build: messages sit at the bottom centre as a hollow
 - logged: v0.59.0 · 2026-11-06
 
 Built page with the fixture (now holding the ten real releases at their real versions, and an `installed=` preview parameter): every page scrolls; dock 11 lit and 23 sealed; Your apps shows exactly the installed apps; Get more and its Instead of Adobe filter; Apps search and Installed filter; all four app-page tabs; the hero shot and icons switch tone with the theme; supporter names fill the sealed tiles; no element added or removed when the theme changes; no console errors (Chromium and WebKit). liveprobe: a first launch with no cache shows no app before the catalogue; a hidden app's page cannot be routed to. leakprobe: none of 23 hidden names visible on any route or in Preferences. prefsprobe: the macOS overlay title bar is 40 px with room for the lights. Known: the old rules for removed surfaces (`.mine`, `.fam`, `.wn`, `.strip`, `.ap-*`, `.soon-*` in `main.css`) are still in the file and match nothing; new strings are not yet in `es.json`, so the Spanish page shows them in English; not looked at in the desktop window on macOS or Windows.
+
+### icon pack · canonical file names
+- refers-to: frontend/public/apps · frontend/markup.ts :: `ICON_FILE`, `ALIAS` · frontend/index.html
+- kind: decision
+- logged: v0.61.0 · 2026-11-06
+
+`public/apps` is now the owner's 35-pair icon pack, named by the family's canonical ids: `formportal`, `formdeck` and `formbench` replace `formai`, `formslide` and `formranker` (dark `<id>.webp`, light `<id>-light.webp`). Product ids stay the catalogue's (`formai`, `formslide`; `formbench` replaces `formranker` this turn), so `markup.ts` has one small map, `ICON_FILE`, from product id to icon file name and its `icon()` helper applies it; every other id is its own file name. `ALIAS` maps `formbench` to itself and keeps `formportal` to `formai` and `formdeck` to `formslide`. The brand icon in `index.html` points at `formportal.webp` and `formportal-light.webp`, and the brand name reads FormPortal. Both images stay in the markup with width and height set, switched by CSS, so a theme change shows no flash. Built: `dist/apps` holds the 70 files and none of the old names. Open: `src/extensions/live/index.ts` and `src/bridge/fixture.ts` still mention the old names (not in this change).
 
 ## v0.58.0 · On the way matches formai.studio, the supporter code {#supporter}
 

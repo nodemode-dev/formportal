@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.61.0 · 2026-11-06
+
+- Every app shows its own new icon, in dark and light, following your theme.
+- Apps go by their true names everywhere: form.md, FormDeck, FormBench, FormMCP, FormSkills and FormAT.
+- FormBench's releases are found again: FormPortal now uses the same id for it as the catalogue.
+- On the way follows the new release plan: Groups 1 to 7 open from November 10 to November 28.
+- FormCompiler is no longer listed as an app. It builds and publishes the Form apps on GitHub and is never installed.
+
 ## v0.60.0 · 2026-11-06
 
 - FormPortal opens straight onto your apps. It shows the catalogue it already has the moment the window appears, then checks formai.studio and GitHub for anything newer in the background, instead of waiting on the network every time it starts.

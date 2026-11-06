@@ -1,12 +1,12 @@
 {
   "id": "formmd",
-  "name": "Form.md",
+  "name": "form.md",
   "version": "0.47.9",
   "repo": "https://github.com/nodemode-dev/form.md",
   "kind": "Workspace for people and agents",
   "title": "documents, databases and realtime editing in a single binary",
   "summary": "A self-hosted workspace where people and AI agents write documents, run databases and edit together in realtime, as one Go binary with one SQLite file.",
-  "lede": "Form.md is a self-hosted workspace where people and AI agents write documents, run databases and edit together in realtime. It ships as one static Go binary with its web client embedded and one SQLite file beside it: no database server, no cache, no object store. The server holds the real collaborative document, so an agent's edit merges into what a person is typing instead of resetting it.",
+  "lede": "form.md is a self-hosted workspace where people and AI agents write documents, run databases and edit together in realtime. It ships as one static Go binary with its web client embedded and one SQLite file beside it: no database server, no cache, no object store. The server holds the real collaborative document, so an agent's edit merges into what a person is typing instead of resetting it.",
   "replaces": "Notion",
   "project": "",
   "runs_on": "macOS, Windows and Linux as a desktop app, or as a server binary",
@@ -244,7 +244,7 @@
   ],
   "parity": {
     "against": "Notion",
-    "summary": "Measured line by line against Notion, Form.md was graded 65 of 67 at v0.11.0, and the page reports changes through v0.47.0 including thirteen chart kinds, 90 templates, 34 MCP tools and 26 languages. Still partial: emoji icons (refused by design), the map view, and AI search, which reaches the web but no connected apps."
+    "summary": "Measured line by line against Notion, form.md was graded 65 of 67 at v0.11.0, and the page reports changes through v0.47.0 including thirteen chart kinds, 90 templates, 34 MCP tools and 26 languages. Still partial: emoji icons (refused by design), the map view, and AI search, which reaches the web but no connected apps."
   },
   "docs": {
     "requirements": [
@@ -256,7 +256,7 @@
     "install": "chmod +x form-md_oc_install form-md\n./form-md_oc_install",
     "run": "./form-md",
     "desktop": "./build_app",
-    "agents": "Form.md is an MCP server with OAuth 2.1; `form-md mcp` is a stdio bridge, and the repo carries CLAUDE.md, AGENTS.md, .mcp.json and a Cursor rule.",
+    "agents": "form.md is an MCP server with OAuth 2.1; `form-md mcp` is a stdio bridge, and the repo carries CLAUDE.md, AGENTS.md, .mcp.json and a Cursor rule.",
     "topics": [
       {
         "title": "Shortcuts",
@@ -334,7 +334,7 @@
       "light": "/media/formmd/ui-home-light-1.webp",
       "width": 2400,
       "height": 1500,
-      "alt": "Form.md's Home: Start from your material for Markdown, CSV, HTML, PDF, Word, Excel, ZIP, Evernote, OPML, JSON and text files, recently visited pages, the template gallery by category, and the Data and charts panel with a sales dashboard and website analytics",
+      "alt": "form.md's Home: Start from your material for Markdown, CSV, HTML, PDF, Word, Excel, ZIP, Evernote, OPML, JSON and text files, recently visited pages, the template gallery by category, and the Data and charts panel with a sales dashboard and website analytics",
       "size": ""
     },
     "editor": {
@@ -350,7 +350,7 @@
       "light": "/media/formmd/ui-database-light-1.webp",
       "width": 2400,
       "height": 1500,
-      "alt": "A Form.md database made from its Sales dashboard template: Dashboard, Orders, Store map, By region and Channels views, revenue and order totals with trends, a gauge against the monthly target, and revenue by month",
+      "alt": "A form.md database made from its Sales dashboard template: Dashboard, Orders, Store map, By region and Channels views, revenue and order totals with trends, a gauge against the monthly target, and revenue by month",
       "size": ""
     },
     "database-board": {
@@ -375,5 +375,5 @@
       "size": ""
     }
   },
-  "credit": "The pages in the captures are Form.md's own Website analytics and Sales dashboard templates with their sample data, shown in its dark or light theme to match this page."
+  "credit": "The pages in the captures are form.md's own Website analytics and Sales dashboard templates with their sample data, shown in its dark or light theme to match this page."
 }

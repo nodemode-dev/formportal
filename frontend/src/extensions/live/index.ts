@@ -4,7 +4,7 @@ import type { Engine } from "../../engine/index.ts";
 import type { Extension } from "../registry.ts";
 
 const KEY = "formportal.live";
-const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills", formbench: "formranker" };
+const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const IDS = registry.products.map((p) => p.id).filter((id) => id !== "formai");
 const GROUPS = schedule.releases.map((g) => ({ at: Date.parse(g.at), apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => IDS.includes(id)) }));
 

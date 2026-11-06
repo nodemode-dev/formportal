@@ -184,7 +184,7 @@
       },
       {
         "title": "Releases",
-        "text": "All SubForm builds are compiled and released from formcompiler; the repository holds the source."
+        "text": "All SubForm builds are compiled and released from FormCompiler; the repository holds the source."
       }
     ]
   },

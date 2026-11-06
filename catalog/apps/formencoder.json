@@ -205,7 +205,7 @@
       "bullets": [
         "DMG, deb, rpm, AppImage, MSI and setup bundles from ./formencoder desktop build",
         "./build_app does everything from a fresh clone on macOS or Linux",
-        "compile_vX.Y.Z branches have formcompiler build the bundles"
+        "compile_vX.Y.Z branches have FormCompiler build the bundles"
       ],
       "shot": ""
     }
@@ -264,7 +264,7 @@
       "version": "0.5.0",
       "date": "2026-10-30",
       "items": [
-        "Desktop builds for formcompiler's signed releases; the app itself does not change",
+        "Desktop builds for FormCompiler's signed releases; the app itself does not change",
         "On macOS, bundled programs and libraries are signed before the bundle is made so the app can be notarized"
       ]
     }

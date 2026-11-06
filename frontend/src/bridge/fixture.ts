@@ -87,7 +87,7 @@ for (const seed of (new URLSearchParams(window.location.search).get("installed")
 const extInstalled = new Map<string, InstalledExtension>();
 
 const SUPPORTER_FIXTURE_CODE = "d1.0.00000000000000000000000000000000.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills", formbench: "formranker" };
+const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const SITE_UNDATED = 9;
 const SITE_SUPPORTERS = 11;
 const SITE_DATED = schedule.releases.map((g) => ({ at: g.at, count: g.apps.length }));

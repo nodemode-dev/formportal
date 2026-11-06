@@ -60,7 +60,7 @@
   },
   "releases": [
     {"version": "0.7.5", "date": "2026-11-03", "items": ["The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only)", "Nothing in the app changes"]},
-    {"version": "0.7.4", "date": "2026-11-02", "items": ["The family catalogue is read from the public download store, dl.formai.studio/catalog/apps.json, with its signature beside it", "This build trusts the family's production catalogue key, so a catalogue formcompiler signs is used", "The list of apps that ship skills is regenerated from formcompiler 0.6.1: FormPromo is added under Media"]},
+    {"version": "0.7.4", "date": "2026-11-02", "items": ["The family catalogue is read from the public download store, dl.formai.studio/catalog/apps.json, with its signature beside it", "This build trusts the family's production catalogue key, so a catalogue FormCompiler signs is used", "The list of apps that ship skills is regenerated from FormCompiler 0.6.1: FormPromo is added under Media"]},
     {"version": "0.7.3", "date": "2026-10-26", "items": ["A test suite checks that only skills the signed catalogue releases are shown", "It checks that a downloaded set matches its release's SHA-256 and unpacks only inside its folder", "It checks the SKILL.md format at its limits, that sub-skill and reference links resolve, and that reading a file stays inside the skills folder", "The suite runs on every change; nothing in the app changes"]}
   ],
   "shots_wanted": [

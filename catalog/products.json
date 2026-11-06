@@ -141,7 +141,7 @@
     },
     {
       "id": "formmd",
-      "name": "Form.md",
+      "name": "form.md",
       "alt_of": "Notion",
       "group": "other",
       "status": "available",
@@ -317,19 +317,6 @@
       ]
     },
     {
-      "id": "formcompiler",
-      "name": "FormCompiler",
-      "note": "Builds, signs and releases every FormAI app",
-      "group": "other",
-      "status": "available",
-      "delivery": "repository",
-      "kind": "build",
-      "summary": "The family's build and release pipeline: every app compiled for macOS, Windows and Linux from one place.",
-      "identifier": "ai.nodemode.formcompiler",
-      "repository": "https://github.com/nodemode-dev/formcompiler",
-      "licence": "GPL-3.0-only"
-    },
-    {
       "id": "formpromo",
       "name": "FormPromo",
       "note": "The Form family's promo app",
@@ -345,7 +332,7 @@
       }
     },
     {
-      "id": "formranker",
+      "id": "formbench",
       "name": "FormBench",
       "group": "next",
       "status": "available",

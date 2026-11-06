@@ -241,7 +241,7 @@
       },
       {
         "title": "Releasing",
-        "text": "RELEASING.md covers releases, which formcompiler builds from a compile_vX.Y.Z branch."
+        "text": "RELEASING.md covers releases, which FormCompiler builds from a compile_vX.Y.Z branch."
       }
     ]
   },

@@ -17,7 +17,7 @@
     "No account and no tray process; FormPortal checks when it is open and stops when you close it."
   ],
   "facts": [
-    {"dt": "Catalogue", "dd": "Ed25519-signed, published by formcompiler (nodemode-dev/formcompiler)"},
+    {"dt": "Catalogue", "dd": "Ed25519-signed, published by FormCompiler (nodemode-dev/formcompiler)"},
     {"dt": "Engine", "dd": "Rust (formportal-core, formportal-cli) in a Tauri 2 shell with a vanilla TypeScript interface"},
     {"dt": "Agents", "dd": "39 MCP tools for Claude Code, Codex and Cursor"},
     {"dt": "Channels", "dd": "Stable, beta and nightly, each its own install"}

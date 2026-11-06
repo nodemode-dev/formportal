@@ -188,7 +188,7 @@
       "title": "Desktop app",
       "text": "A Tauri 2 app for macOS, Windows and Linux with the engine frozen inside, so no Python or Node is needed.",
       "bullets": [
-        "Bundles come from the release page of formcompiler (nodemode-dev/formcompiler)",
+        "Bundles come from the release page of FormCompiler (nodemode-dev/formcompiler)",
         "Or build with ./build_app on macOS or Linux",
         "On Windows, .\\format.bat desktop build bundles .msi and setup.exe"
       ],

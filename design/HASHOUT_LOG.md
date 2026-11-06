@@ -2,8 +2,26 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.59.0
-Last updated: 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+Current build version: v0.61.0
+Last updated: 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+
+---
+
+## formcompiler is not an app {#formcompiler-not-app}
+- refers-to: app-hues.json
+- kind: decision
+- logged: v0.61.0 · 2026-11-06
+
+formcompiler is the repository that builds and releases the family, never downloaded or installed, so its hue is removed from app-hues.json. tokens.css and icons.json never carried a formcompiler entry.
+
+---
+
+## FormBench product id {#formbench-id}
+- refers-to: app-hues.json :: formbench · tokens.css :: [data-product="formbench"]
+- kind: decision
+- logged: v0.61.0 · 2026-11-06
+
+The product id formranker becomes formbench to match the signed catalogue and the canonical name FormBench. Only the key and selector change; the colours (#5ee0e0 in app-hues.json, #f97316 in tokens.css) are untouched. formai and formslide stay as FormPortal's catalogue ids (FormPortal and FormDeck). icons.json and markers.ts hold no product ids or icon file names, so they are unchanged.
 
 ---
 
@@ -52,12 +70,12 @@ FormPortal's copy of the tokens now carries formvis v1.99.7's vocabulary with fo
 
 Formvis names its Preferences layers `--z-base` (wire), `--z-raised` (tabs) and `--z-selected` (port) on its own scale. FormPortal's scale has other numbers, so the three are named for what they do and mapped: wire on `--z-base`, tab on `--z-raised`, port on `--z-raised` plus 1. They only order the children inside the dialog; the dialog itself is in the top layer.
 
-### tokens.css · FormRanker's hue
-- refers-to: tokens.css :: [data-product="formranker"]
+### tokens.css · FormBench's hue
+- refers-to: tokens.css :: [data-product="formbench"]
 - kind: decision
 - logged: FormPortal v0.50.1 · 2026-10-25
 
-FormRanker joins formcompiler's registry (formcompiler 0.4.4) as the desktop app from FormRanker 0.7.0, so it joins FormPortal's catalogue in Family tools; its hue is the orange of FormRanker's own badge, #f97316. Its icon was already in `frontend/public/apps/formranker.webp` from v0.49.0. formai_dev's copy should take the same line.
+FormBench (then named FormRanker) joins formcompiler's registry (formcompiler 0.4.4) as the desktop app from 0.7.0, so it joins FormPortal's catalogue in Family tools; its hue is the orange of FormBench's own badge, #f97316. Its icon was already in `frontend/public/apps/formbench.webp` from v0.49.0. formai_dev's copy should take the same line.
 
 ### tokens.css · hues for the seven apps added to the catalogue
 - refers-to: tokens.css :: [data-product="formpdf"], formtxt, formcel, formref, formsculpt, format, formtray
