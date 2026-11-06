@@ -10,6 +10,9 @@ const when = (seconds: number) => {
   return date.toLocaleString([], { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 };
 
+const ICON_FILE: Record<string, string> = { formai: "formportal", formslide: "formdeck" };
+const iconFile = (product: string) => ICON_FILE[product] ?? product;
+
 const appIcon = (tile: HTMLElement, product: string, name: string) => {
   if (tile.dataset.icon === product) return;
   tile.dataset.icon = product;
@@ -29,8 +32,8 @@ const appIcon = (tile: HTMLElement, product: string, name: string) => {
   };
   const dark = pick("ic-dark");
   const light = pick("ic-light");
-  dark.src = `/apps/${product}.webp`;
-  light.src = `/apps/${product}-light.webp`;
+  dark.src = `/apps/${iconFile(product)}.webp`;
+  light.src = `/apps/${iconFile(product)}-light.webp`;
   if (!dark.isConnected) {
     tile.textContent = "";
     tile.classList.add("tile-icon");

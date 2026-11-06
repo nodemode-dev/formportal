@@ -57,7 +57,8 @@ const GROUPS: [string, string][] = [
   ["adobe", "Instead of Adobe"],
   ["other", "Everything around them"],
 ];
-const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills", formbench: "formranker" };
+const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
+const ICON_FILE: Record<string, string> = { formai: "formportal", formslide: "formdeck" };
 const UPSTREAM: Record<string, string> = Object.fromEntries(Object.entries(ALIAS).map(([theirs, ours]) => [ours, theirs]));
 
 const COMMON: Record<string, string> = {
@@ -93,10 +94,12 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     const m = /^Form(.+)$/.exec(p.name);
     return m ? `<span class="${cls}"><span class="nm-f">Form</span><span class="nm-s">${esc(m[1])}</span></span>` : `<span class="${cls}"><span class="nm-f">${esc(p.name)}</span></span>`;
   };
-  const icon = (id: string, size: number, cls = "app-ic") =>
-    has("apps", id)
+  const icon = (pid: string, size: number, cls = "app-ic") => {
+    const id = ICON_FILE[pid] ?? pid;
+    return has("apps", id)
       ? `<span class="${cls}" aria-hidden="true"><img class="ic-dark" src="/apps/${esc(id)}.webp" alt="" width="${size}" height="${size}" decoding="async" /><img class="ic-light" src="/apps/${esc(id)}-light.webp" alt="" width="${size}" height="${size}" decoding="async" /></span>`
       : `<span class="${cls} app-ic-none" aria-hidden="true"></span>`;
+  };
   const style = (p: App) => ` style="--hue:${hue(p)}"`;
   const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.note ?? ""} ${p.kind}`.toLowerCase());
   const repo = (p: App) => (p.repository?.startsWith("https://github.com/nodemode-dev/") ? p.repository.replace(/\/$/, "") : null);

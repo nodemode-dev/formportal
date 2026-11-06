@@ -72,6 +72,13 @@ The owner, after seeing the build: messages sit at the bottom centre as a hollow
 
 Built page with the fixture (now holding the ten real releases at their real versions, and an `installed=` preview parameter): every page scrolls; dock 11 lit and 23 sealed; Your apps shows exactly the installed apps; Get more and its Instead of Adobe filter; Apps search and Installed filter; all four app-page tabs; the hero shot and icons switch tone with the theme; supporter names fill the sealed tiles; no element added or removed when the theme changes; no console errors (Chromium and WebKit). liveprobe: a first launch with no cache shows no app before the catalogue; a hidden app's page cannot be routed to. leakprobe: none of 23 hidden names visible on any route or in Preferences. prefsprobe: the macOS overlay title bar is 40 px with room for the lights. Known: the old rules for removed surfaces (`.mine`, `.fam`, `.wn`, `.strip`, `.ap-*`, `.soon-*` in `main.css`) are still in the file and match nothing; new strings are not yet in `es.json`, so the Spanish page shows them in English; not looked at in the desktop window on macOS or Windows.
 
+### icon pack · canonical file names
+- refers-to: frontend/public/apps · frontend/markup.ts :: `ICON_FILE`, `ALIAS` · frontend/index.html
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+`public/apps` is now the owner's 35-pair icon pack, named by the family's canonical ids: `formportal`, `formdeck` and `formbench` replace `formai`, `formslide` and `formranker` (dark `<id>.webp`, light `<id>-light.webp`). Product ids stay the catalogue's (`formai`, `formslide`; `formbench` replaces `formranker` this turn), so `markup.ts` has one small map, `ICON_FILE`, from product id to icon file name and its `icon()` helper applies it; every other id is its own file name. `ALIAS` maps `formbench` to itself and keeps `formportal` to `formai` and `formdeck` to `formslide`. The brand icon in `index.html` points at `formportal.webp` and `formportal-light.webp`, and the brand name reads FormPortal. Both images stay in the markup with width and height set, switched by CSS, so a theme change shows no flash. Built: `dist/apps` holds the 70 files and none of the old names. Open: `src/extensions/live/index.ts` and `src/bridge/fixture.ts` still mention the old names (not in this change).
+
 ## v0.58.0 · On the way matches formai.studio, the supporter code {#supporter}
 
 ### vite.config.ts, live.css, prelive.js, extensions/supporter · Date to come and the names
