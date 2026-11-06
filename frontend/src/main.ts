@@ -89,7 +89,7 @@ engine.command("catalog.load", () =>
       ok.length ? t("Updated {list}.", { list: ok.join(", ") }) : "",
       failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : "",
       waiting ? (waiting === 1 ? t("1 update is waiting in Updates.") : t("{n} updates are waiting in Updates.", { n: waiting })) : "",
-      self.version && versionNewer(self.version, pkg.version) ? t("FormPortal {version} is available at formai.dev/download.", { version: self.version }) : "",
+      self.version && versionNewer(self.version, pkg.version) ? t("FormPortal {version} is available at formai.studio/download.", { version: self.version }) : "",
     ].filter(Boolean);
     if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates");
   }),
@@ -303,7 +303,7 @@ engine.command("self.check", async () => {
   engine.setSelf(t("Checking..."), false);
   try {
     const s = await bridge.selfUpdateCheck();
-    if (!s.configured) engine.setSelf(t("This build has no update key yet; new versions come from formai.dev/download."), false);
+    if (!s.configured) engine.setSelf(t("This build has no update key yet; new versions come from formai.studio/download."), false);
     else if (s.available) engine.setSelf(t("FormPortal {version} is available.", { version: s.available }), true);
     else engine.setSelf(t("FormPortal is up to date."), false);
   } catch (e) {

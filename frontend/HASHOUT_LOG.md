@@ -2,8 +2,38 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.54.0
-Last updated: 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.55.0
+Last updated: 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.55.0 · the scroll fix in WebKit, Included on a reopen {#webkit}
+
+### src/styles/main.css · the v0.54.0 scroll fix, measured in WebKit
+- refers-to: src/styles/main.css :: `.shell`, `.main`, `.stage`
+- kind: explainer
+- logged: v0.55.0 · 2026-11-06
+
+The owner reported on 2026-11-06 that FormPortal still would not scroll. Measured on the built interface in Playwright's WebKit (the engine family of the macOS and Linux windows) and in Chromium at 1180 x 600, a wheel over the stage on every sidebar place, every `app-*` page, Learn after opening and closing Preferences, and both "where I left off" launches: every page taller than the stage scrolls, none is held. The same probe on the v0.53.5 interface (commit a7b7cbe) holds every page in WebKit: `.stage` is as tall as its content (1866 px on Home in a 544 px stage). So the CSS in the tree is right; the window that does not scroll is a FormPortal older than 0.54.0. The store's update feed (`dl.formai.studio/formportal/updates/latest.json`) and the signed catalogue both still name 0.53.5 as the newest FormPortal, so no installed copy has been offered 0.54.x. That is fixed where it is published (formpipe), not here; `core/HASHOUT_LOG.md#releases` covers what FormPortal now reads instead.
+
+### src/styles/main.css · Included on a "where I left off" launch
+- refers-to: src/styles/main.css :: `html[data-launch] .pane`, `html[data-launch] .nav-item` · public/prepaint.js :: places
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+`prepaint.js` reopens Included (it is in `places` since v0.51.0), but the pre-paint rules that show the reopened pane before the script runs listed every place except Included, so the first frames hid Home and showed no pane at all until the router ran. With the script held 2 s, the old interface showed an empty stage for about 3 s in WebKit and Chromium (CPU throttled 6x); with `included` in both lists the pane is there at the first sample.
+
+### src/engine/index.ts · Engine.view, prelaunch with a release
+- refers-to: src/engine/index.ts :: Engine.view · ../core/src/lib.rs :: Catalog::view
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+The same rule as the engine: a prelaunch product is unreleased only while it has no release on any channel, so FormTray, formMCP, FormPDF and formskills can be installed from the Apps list and their pages. Their status chip still says In development, because that text comes from `catalog/products.json`, formai_dev's copy; it changes there.
+
+### main.ts, extensions/settings · formai.studio
+- refers-to: src/main.ts :: self-update notices · src/extensions/settings/index.ts :: SOURCE · src/i18n/es.json
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+The update notices and the catalogue line in Preferences named formai.dev, which now serves a different product; they name formai.studio, in English and Spanish.
 
 ## v0.54.0 · the stage scrolls again {#stage-scroll}
 

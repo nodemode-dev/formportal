@@ -8,7 +8,7 @@ const ARCH: Record<string, string> = { arm64: "ARM64", x86_64: "x86-64" };
 const SOURCE: Record<Source, string> = {
   none: "Catalogue not loaded",
   fixture: "Sample catalogue bundled with this build",
-  live: "Catalogue from formai.dev, signature checked",
+  live: "Catalogue from formai.studio, signature checked",
 };
 
 export const settings: Extension = {

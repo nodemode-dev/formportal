@@ -462,7 +462,8 @@ html[data-launch="files"] .pane[data-pane="files"],
 html[data-launch="fonts"] .pane[data-pane="fonts"],
 html[data-launch="stock"] .pane[data-pane="stock"],
 html[data-launch="extensions"] .pane[data-pane="extensions"],
-html[data-launch="learn"] .pane[data-pane="learn"] {
+html[data-launch="learn"] .pane[data-pane="learn"],
+html[data-launch="included"] .pane[data-pane="included"] {
   display: block;
 }
 
@@ -483,7 +484,8 @@ html[data-launch="files"] .nav-item[data-route-to="files"],
 html[data-launch="fonts"] .nav-item[data-route-to="fonts"],
 html[data-launch="stock"] .nav-item[data-route-to="stock"],
 html[data-launch="extensions"] .nav-item[data-route-to="extensions"],
-html[data-launch="learn"] .nav-item[data-route-to="learn"] {
+html[data-launch="learn"] .nav-item[data-route-to="learn"],
+html[data-launch="included"] .nav-item[data-route-to="included"] {
   background: var(--control-press);
   color: var(--ink);
   font-weight: var(--weight-strong);
