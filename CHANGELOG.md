@@ -2,6 +2,15 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.56.0 · 2026-11-06
+
+- FormPortal shows only the Form apps that are released, as formai.studio does: an app appears once it has a published release (or you have it installed), and the rest stay unnamed. Under Apps, On the way shows how many apps open next and when, with a link to support the project on formai.studio.
+- Each app's page says what it does and what it runs on, from the same descriptions as its page on formai.studio.
+- FormPortal opens like the other Form apps: a small card with the loading bar, then the window appears whole once it is ready.
+- The Form family look: dark by default, the family's surfaces, type and orange accent (shared with the other Form apps on this computer, and changeable in Preferences), no scrollbars, and on macOS a slim title row with the window buttons inside it.
+- Preferences is rebuilt like the other Form apps': sections in a rail on the left, every section as a card in one scrolling page, and a Done button.
+- formai.dev is gone from FormPortal: it is not a Form site. formai.studio is the family's address.
+
 ## v0.55.0 · 2026-11-06
 
 - FormPortal offers the newest release each Form app has published on GitHub when it is newer than the catalogue's, so apps released since the catalogue was last signed can be installed and updated: on 2026-11-06 that is FormPDF 0.57.3, formMCP 0.7.8, formskills 0.7.7, FormSlide 0.30.7, FormVFX 0.52.8, Form.md 0.48.0 and FormTray 0.10.2. The release must name the same repository as the signed catalogue, not be withdrawn in formcompiler's list, and list its files' SHA-256 sums, which every download is checked against before anything is unpacked. The catalogue's release stays in Other versions. An organisation's policy can turn this off with `github_releases: false`, and `FORMPORTAL_RELEASES=off` does too.
