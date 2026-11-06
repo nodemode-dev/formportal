@@ -2,8 +2,17 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.59.0
-Last updated: 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+Current build version: v0.61.0
+Last updated: 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+
+---
+
+## formcompiler is not an app {#formcompiler-not-app}
+- refers-to: app-hues.json
+- kind: decision
+- logged: v0.61.0 · 2026-11-06
+
+formcompiler is the repository that builds and releases the family, never downloaded or installed, so its hue is removed from app-hues.json. tokens.css and icons.json never carried a formcompiler entry.
 
 ---
 
