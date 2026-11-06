@@ -9,7 +9,22 @@
   },
   "app": {
     "withGlobalTauri": true,
+    "macOSPrivateApi": true,
     "windows": [
+      {
+        "label": "splash",
+        "title": "FormPortal",
+        "url": "splash.html",
+        "width": 360,
+        "height": 200,
+        "resizable": false,
+        "decorations": false,
+        "center": true,
+        "transparent": true,
+        "shadow": false,
+        "visible": false,
+        "focus": true
+      },
       {
         "label": "main",
         "title": "FormPortal",

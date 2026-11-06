@@ -2,8 +2,40 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.54.1
-Last updated: 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.56.0
+Last updated: 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.56.0 · the family splash and reveal {#reveal}
+
+### reveal.rs, traffic_lights.rs · the splash, the reveal, the lights
+- refers-to: src-tauri/src/reveal.rs :: SPLASH_MIN, BACKGROUND, BAR_FINISH, FALLBACK, mark_launch, round_splash, conceal, app_ready, show_main · src-tauri/src/traffic_lights.rs :: place, set_window_title, inset
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+FormPortal now opens like formvis, the reference app of the Form family: a 360 by 200 rounded dark card with the icon, "Starting FormPortal" and a gradient bar, then the main window appears whole when the page has painted and 2.6 s have passed since launch. Both files are copied from formvis v1.99.7 with the same logic, constants (2600 ms, 220 ms, 20 s, 16 px radius, 38 px row, background 10,10,10) and native calls; only the doc comments were dropped, since source files here stay comment-free, and the splash-done hook is `formportalSplashDone` instead of `formvisSplashDone`. `set_window_title` is registered as in formvis although the page does not call it yet.
+
+### main.rs · setup, main
+- refers-to: src-tauri/src/main.rs :: main, setup, generate_handler
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+`reveal::mark_launch()` is first in `main()`, `reveal::round_splash` first in setup. The main window is still built from its config (`create: false`, page chosen by preferences), now chained with `visible(reveal::BUILD_VISIBLE)`, `background_color(reveal::BACKGROUND)`, on macOS the overlay title bar with a hidden title, and an `on_page_load` that places the lights again. After `build()`: `conceal` and `place`. If the build fails, the splash is closed before the error returns. `app_ready` and `set_window_title` are in `generate_handler!`; the other commands, the single-instance handler and the deep links are untouched. Adapted from formvis: there is no engine or port handshake (the page is bundled, `WebviewUrl::App`), so the reveal waits only on the page; the splash window is created from the config, so nothing else spawns it. build.rs is plain `tauri_build::build()`, so no per-command permission was added; the capability gains `core:window:allow-start-dragging` so the page can drag the window by its title row.
+
+### tauri.conf.json, Cargo.toml, splash.html, splash.css, splash.js, reveal.ts
+- refers-to: src-tauri/tauri.conf.json :: app.macOSPrivateApi, app.windows[splash] · src-tauri/Cargo.toml :: tauri features, macOS objc2 and objc2-app-kit · frontend/public/splash.html, splash.css, splash.js · frontend/src/bridge/reveal.ts :: revealApp
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The `splash` window block and `macOSPrivateApi` are formvis's, and the tauri feature `macos-private-api` and the macOS-only `objc2` 0.6 and `objc2-app-kit` 0.3 (features std, NSWindow, NSButton, NSControl, NSView, NSResponder, NSColor, objc2-core-foundation) are in Cargo.toml; the lock already held both crates and gained only the two direct entries. FormPortal's CSP allows no inline style or script, so formvis's single splash.html is split into splash.html, splash.css and splash.js, with the icon as `favicon.png` in an img tag instead of the inline SVG. `revealApp` in the new bridge/reveal.ts runs once: two frames, `app-ready` on the body, one more frame, then `app_ready` through `window.__TAURI__.core.invoke` when `__TAURI_INTERNALS__` exists; the page still has to call it and carry the critical CSS.
+
+Checked here: `cargo check --locked -p formportal` and `-p formportal-core -p formportal-cli` pass on Linux, and `tsc --noEmit` passes. Not verified: the window was never opened, so the splash, the bar, the reveal and the 20 s fallback have not been seen; the macOS code (round_splash, set_seen, inset, the title bar style) cannot be compiled on Linux and was read against formvis only.
+
+### main.rs · open_web
+- refers-to: src-tauri/src/main.rs :: open_web
+- kind: fix
+- logged: v0.56.0 · 2026-11-06
+
+formai.dev was removed from the refusal message. It is another company's site and was never a Form domain; the family's only domain is formai.studio (formai.tools and formai.design redirect to it). Older entries below keep the name as history.
 
 ## v0.54.1 · the publisher and the licence in the bundle {#publisher}
 

@@ -4,6 +4,9 @@ use formportal_core::extensions::{ExtensionIndex, InstalledExtension};
 use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal, Preferences, Update, UpdateOutcome};
 use std::sync::Mutex;
 
+mod reveal;
+mod traffic_lights;
+
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -372,7 +375,7 @@ fn still_open(product: String, channel: Channel) -> Vec<u32> {
 #[tauri::command]
 fn open_web(url: String) -> Result<(), String> {
     if !formportal_core::links::may_open(&url) {
-        return Err("FormPortal opens only formai.dev, formai.studio's download page, GitHub sign-in, the Form family's repositories and your shared libraries".to_string());
+        return Err("FormPortal opens only formai.studio's download page, GitHub sign-in, the Form family's repositories and your shared libraries".to_string());
     }
     #[cfg(target_os = "macos")]
     let mut command = std::process::Command::new("open");
@@ -666,6 +669,7 @@ fn launch_link(pending: State<'_, Pending>) -> Option<String> {
 }
 
 fn main() {
+    reveal::mark_launch();
     if let Some(code) = app_mcp_from_args() {
         std::process::exit(code);
     }
@@ -696,6 +700,7 @@ fn main() {
         .manage(Pending(Mutex::new(None)))
         .manage(PendingPackage(Mutex::new(package_arg(std::env::args()))))
         .setup(|app| {
+            reveal::round_splash(app.handle());
             #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             {
                 let _ = app.deep_link().register_all();
@@ -710,7 +715,28 @@ fn main() {
             if let Some(config) = app.config().app.windows.iter().find(|w| w.label == "main") {
                 let mut config = config.clone();
                 config.url = tauri::WebviewUrl::App(page.into());
-                tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?.build()?;
+                let builder = tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?
+                    .visible(reveal::BUILD_VISIBLE)
+                    .background_color(reveal::BACKGROUND);
+                #[cfg(target_os = "macos")]
+                let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay).hidden_title(true);
+                let builder = builder.on_page_load(|window, payload| {
+                    if matches!(payload.event(), tauri::webview::PageLoadEvent::Finished) {
+                        traffic_lights::place(&window.as_ref().window());
+                    }
+                });
+                match builder.build() {
+                    Ok(window) => {
+                        reveal::conceal(&window);
+                        traffic_lights::place(&window.as_ref().window());
+                    }
+                    Err(error) => {
+                        if let Some(splash) = app.get_webview_window("splash") {
+                            let _ = splash.close();
+                        }
+                        return Err(error.into());
+                    }
+                }
             }
             watch_saves(app.handle().clone());
             let _ = sync_login();
@@ -720,7 +746,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file,
+            traffic_lights::set_window_title, reveal::app_ready
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")
