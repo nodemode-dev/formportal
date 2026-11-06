@@ -2,8 +2,31 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.56.0
-Last updated: 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.57.0
+Last updated: 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.57.0 · dark and light icons that follow the theme {#icons}
+
+### public/apps, vite.config.ts tile, extensions/files appIcon, src/styles/live.css · the tiles
+- refers-to: public/apps/<id>.webp, public/apps/<id>-light.webp · vite.config.ts :: tile · src/extensions/files/index.ts :: appIcon · src/styles/live.css :: `.ic-dark`, `.ic-light`, `.brand-icon` · index.html :: `.brand`
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+The owner sent the v3 icon sets (`updated-icons-v3`, dark, and `form-icons-v3-FINALS-lightmode`, light, 1024 px each, 35 apps) and asked that both be used, following the theme the person sets, for FormPortal and every app tile, with unreleased apps hidden as on the site. Every registry id has `<id>.webp` (dark) and `<id>-light.webp` (light) at 256 px, made from those files (the source names differ for formai, formpath, formmd, formdam, formslide, format, formmcp, formranker: formportal, formpth, form-md, formDAM, formdeck, formAT, formMCP, formbench). Each tile holds both images and CSS shows the one for `html[data-theme]`, so a change of theme swaps them with no request and no new element; both are loaded up front for that reason. Tiles of apps that are not shown are hidden with their app by the `data-live` rules, as before. The sidebar brand is FormPortal's own icon in both tones in place of the drawn three-bar mark. Checked in WebKit and Chromium on the built interface: one image per visible tile, both tones loaded, and switching to Light shows the light images with the element count unchanged (7617 before and after).
+
+### public/splash-theme.js, splash.html, splash.css · the splash follows the theme
+- refers-to: public/splash-theme.js · public/splash.html · public/splash.css · public/favicon.png, public/favicon-light.png
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+The splash reads the same `formportal-theme` value before it paints (the splash window shares the page's origin, so its storage). Light gives a light card (#f4f4f6, a dark hairline, #5c5c66 text, a light bar track) and the light icon; otherwise formvis's dark card and the dark icon. The bar and the timing are unchanged.
+
+### extensions/appicon · the app's own icon
+- refers-to: src/extensions/appicon/index.ts · ../src-tauri/src/app_icon.rs :: set_app_icon
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+In the desktop app, the theme is sent to the shell's `set_app_icon` at start and on every change (only when it changed), so the window and taskbar icon and, on macOS, the Dock icon follow it. See `src-tauri/HASHOUT_LOG.md#app-icon`.
 
 ## v0.56.0 · only released apps, as on formai.studio {#live}
 

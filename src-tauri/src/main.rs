@@ -4,6 +4,7 @@ use formportal_core::extensions::{ExtensionIndex, InstalledExtension};
 use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal, Preferences, Update, UpdateOutcome};
 use std::sync::Mutex;
 
+mod app_icon;
 mod reveal;
 mod traffic_lights;
 
@@ -747,7 +748,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
             extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file,
-            traffic_lights::set_window_title, reveal::app_ready
+            traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
         .expect("FormPortal could not start")

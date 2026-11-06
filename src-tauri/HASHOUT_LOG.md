@@ -2,8 +2,24 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.56.0
-Last updated: 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.57.0
+Last updated: 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.57.0 · the app icon in both tones {#app-icon}
+
+### icons/ · the bundle icons
+- refers-to: src-tauri/icons/icon.png, 32x32.png, 128x128.png, 128x128@2x.png, icon.ico, icon.icns
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+Made from the owner's v3 `formportal_icon_macos.png` (dark, 1024 px): `icon.png` at 1024, the PNGs at 32, 128 and 256, `icon.ico` with 16 to 256 and `icon.icns` with 16 to 512 at 1x and 2x. The installed app's icon (Finder, Start, the Linux menu) is this one: a bundle carries one icon, and Tauri does not yet bundle a light and dark pair.
+
+### app_icon.rs · set_app_icon
+- refers-to: src-tauri/src/app_icon.rs :: set_app_icon, dock · src-tauri/icons/runtime/* · src-tauri/src/main.rs :: generate_handler! · src-tauri/Cargo.toml :: objc2-app-kit NSApplication, NSImage, objc2-foundation NSData · ../frontend/src/extensions/appicon/index.ts
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+While FormPortal runs, its icon follows the theme the person set. `set_app_icon(light)` sets the main window's icon from raw 256 px RGBA (`icons/runtime/<tone>-256.rgba`, so no image decoder feature is needed in tauri), which is the title bar and taskbar icon on Windows and Linux; on macOS, where a window has no icon, it sets the Dock icon on the main thread with `NSApplication.setApplicationIconImage` from a 512 px PNG (`icons/runtime/<tone>-512.png`). When FormPortal quits, macOS shows the bundle icon again. `cargo check --locked` passes on Linux, and for `aarch64-apple-darwin` with a stand-in C compiler for objc2's exception helper (type checking needs no linking): that check also covered `reveal.rs` and `traffic_lights.rs` from v0.56.0, which until then had only been read against formvis. Not run: the desktop window on any system.
 
 ## v0.56.0 · the family splash and reveal {#reveal}
 

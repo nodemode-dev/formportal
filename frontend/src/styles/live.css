@@ -2,6 +2,23 @@ body:not(.app-ready) #app {
   visibility: hidden;
 }
 
+html[data-theme="light"] .ic-dark,
+html:not([data-theme="light"]) .ic-light {
+  display: none;
+}
+
+.brand-icon {
+  display: inline-grid;
+  flex: none;
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+.brand-icon > img {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
 .soon {
   margin-block-start: var(--sp-7);
 }

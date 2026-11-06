@@ -24,6 +24,7 @@ import { t } from "./i18n/index.ts";
 import { account } from "./extensions/account/index.ts";
 import { share } from "./extensions/share/index.ts";
 import { live, liveNow } from "./extensions/live/index.ts";
+import { appIcon } from "./extensions/appicon/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 
 const revealLate = window.setTimeout(revealApp, 2400);
@@ -34,7 +35,7 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[live, route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share].forEach(register);
+[live, appIcon, route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share].forEach(register);
 activateAll(engine);
 
 interface Target {

@@ -67,7 +67,7 @@ const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""
 const icon = (p: App) => existsSync(resolve(ROOT, "public/apps", `${p.id}.webp`));
 const tile = (p: App, size = "") =>
   icon(p)
-    ? `<span class="tile tile-icon${size ? ` tile-${size}` : ""}" aria-hidden="true"><img src="/apps/${esc(p.id)}.webp" alt="" width="176" height="176" decoding="async" /></span>`
+    ? `<span class="tile tile-icon${size ? ` tile-${size}` : ""}" aria-hidden="true"><img class="ic-dark" src="/apps/${esc(p.id)}.webp" alt="" width="176" height="176" decoding="async" /><img class="ic-light" src="/apps/${esc(p.id)}-light.webp" alt="" width="176" height="176" decoding="async" /></span>`
     : `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
 const words = (p: App) => STATUS[p.status ?? "available"];
 const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.kind}`.toLowerCase());
