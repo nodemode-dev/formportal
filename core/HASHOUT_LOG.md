@@ -2,8 +2,122 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.58.0
+Last updated: 2026-11-06 · v0.58.0 the identifier studio.formai.portal and the data-root move, the site client (upcoming, supporter check), the unannounced caps removed, releases.rs refactor; 2026-11-06 · v0.56.0 formai.dev removed from the links, the schemas and the fixtures, the support page allowed, formai_dev's schedule and app caps copied into catalog/; 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.58.0 · the identifier studio.formai.portal {#identifier}
+
+### portal.rs · Portal::default_root, moved_root
+- refers-to: core/src/portal.rs :: Portal::default_root, moved_root, leave_link · cli/src/ops.rs :: Ctx · src-tauri/src/main.rs :: hub
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The owner, 2026-11-06: the bundle identifier moves from `dev.formai.portal` to `studio.formai.portal`, because formai.dev is another company's domain and the family's is formai.studio. On macOS the data root is `~/Library/Application Support/<identifier>`, so the root moves with it, and v0.57.0 builds may already have written installs there. `default_root` runs the move itself, so the window, the command line and the MCP server (all of which call it) agree without a separate start-up step; `FORMPORTAL_ROOT` returns first and never migrates. `moved_root(old, new)`: if the old path is a real folder (`symlink_metadata`, so a link does not count) and nothing exists at the new path (a dangling link counts as existing), rename old to new and leave a symlink at the old path pointing at the new one, because FormTray and formMCP read `installed.json` from the old path. Both present: neither is touched and the new one is used. Rename fails: the old path is returned, so nothing is lost; if the failure was a second process winning the race and the new path exists by then, the new path is returned. The symlink is best effort; if it cannot be made the move still stands. Nothing is deleted. After the first run each call costs two `lstat`. Linux (`$XDG_DATA_HOME/formportal`) and Windows (`%LOCALAPPDATA%\FormPortal`) do not change, and `leave_link` is a stub off Unix so the file compiles everywhere.
+
+Verified: `cargo check` on Linux and for `aarch64-apple-darwin`; a copy of `moved_root` in a scratch program under /tmp on Linux: nothing there returns the new path and creates nothing; old only moves its contents and leaves a link that resolves; a second call changes nothing; both present leaves the real old folder and returns the new. Not run: macOS itself, the real Application Support folder, FormTray or formMCP reading through the link, a rename failing on a permissions or cross-volume error (both folders sit in one parent, so a cross-volume rename should not occur).
+
+### login.rs · LABEL, forget_old
+- refers-to: core/src/login.rs :: LABEL, OLD_LABEL, forget_old, sync · .docs/wiki/Languages-and-Launch.md
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The macOS LaunchAgent label follows the identifier: `studio.formai.portal.login`, file `~/Library/LaunchAgents/studio.formai.portal.login.plist`. `sync` (on or off) first removes the old `dev.formai.portal.login.plist` if present, so the old login item cannot linger and start a second copy; a missing file is not an error and a failed removal is ignored. Only the file is removed: an agent launchd already loaded this session stays loaded until the next login, which no longer finds the plist. Linux has an empty `forget_old`; Windows is unchanged. Not run on macOS.
+
+### catalog/products.json · identifier
+- refers-to: catalog/products.json :: products[].identifier · src-tauri/tauri.conf.json :: identifier · frontend/src/extensions/settings/index.ts
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+The `formai` entry (FormPortal) now names `studio.formai.portal`. The other stale `dev.formai.*` identifiers took formai_dev v0.56.1's values by id (`/home/claude/in/formai_studio/formai.studio/catalog/products.json`; FormPortal's `formai` is formai_dev's `formportal`): formlit, formdesign, formpath, formvfx, formmd, formsurface and formweb to `ai.nodemode.<id>`, formdam to `ai.nodemode.dam`. `formencoder` stays `dev.formai.formencoder` because formai_dev v0.56.1 still has that value; it is the one `dev.formai.*` left and is formai_dev's to correct. `catalog/fixtures/apps.json` (`dev.formai.hub`) followed later in this version (see the caps entry below). Only `identifier` fields changed. The Preferences page text and the docs that give the macOS folder now say `studio.formai.portal`.
+
+### portal.rs · moved_root after review
+- refers-to: core/src/portal.rs :: moved_root
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+The independent review found two cases the first version got wrong, both now handled. An empty folder already at the new path (a v0.58.0 web view or a crash can make one before the move) used to win over the old folder full of installs; now, when the old path is a real folder and the new one is a folder, `fs::remove_dir(new)` is tried first, which only succeeds when it is empty, so a non-empty new folder still wins and nothing is deleted. An old path that is already a symlink to a folder (a person's own link, or a link left by an earlier move whose target is not the new path) is used as it is rather than followed into a second move. Scratch copy under /tmp: nothing, old only, both present, empty new, old as a link, a second call; all as described.
+
+### releases.rs · read_release and assemble
+- refers-to: core/src/releases.rs :: Outcome, read_release, assemble
+- kind: refactor
+- logged: v0.58.0 · 2026-11-06
+
+`read_release` held a 60-line closure that set a `failed` flag through a capture. It is now a named `assemble(…, &mut failed)` returning `Option<(Release, Vec<String>)>`, and `read_release` maps the result to `Outcome::Found`, `Failed` or `Refused` as before. `Outcome::Found` boxes the release (clippy `large_enum_variant`: 352 bytes against two empty variants). `extensions.rs` passes `std::slice::from_ref` instead of a one-key cloned array and `examples/install.rs` uses `checked_div` (clippy). No behaviour change; the 50 tests pass and the loopback relay run lists the same releases.
+
+### catalog/apps · the eleven unannounced caps removed
+- refers-to: catalog/apps/ · catalog/fixtures/apps.json :: identifier · CLAUDE.md · .claude/skills/formportal-skillset
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The owner asked whether the bundle should drop hidden apps as the site does. Decision: the caps of the 11 apps that are in formai_dev's catalog but not in FormPortal's registry (formcad, formcompiler, formcraft, formfabric, formmorpheus, formnet, formpromo, formrig, formslot, formtools, subform) are removed, because nothing reads them and the repository is public; the 24 registry apps keep theirs, because the registry already names them and a release must show without a FormPortal update (the release, not the bundle, is what makes an app visible). The fixture's `dev.formai.hub` is now `studio.formai.portal`. The skillset's rule now says catalog/ is formai_dev's copy and design/ is FormPortal's own, following formvis since v0.56.0; formai_dev's site keeps its own tokens.
+
+### site.rs · after the independent review
+- refers-to: core/src/site.rs :: update, upcoming, check_supporter, forget, Portal::supporter
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+Review findings, all applied. `site.json` was read, changed and written by the window and the MCP server at once, so one could undo the other: every change now goes through `update`, which holds a process-wide lock around load, change and save (two processes can still interleave; the cache is only a cache and the worst case is one extra request). A check that failed was retried on every call; it now waits `RETRY` (60 s) unless forced and answers `stale`. A check with no answer and no earlier one stores only the attempt time under the code's digest. `upcoming` records the attempt even with no data, so the 60 s back-off applies offline too. `Portal::supporter` reloads Preferences before writing the code, so a change made in the window meanwhile is kept, and calls `forget` if the code was cleared while the check ran. Not run against the real site (403 from its allowlist); run against /home/claude/wk/fakesite.py and in the frontend probe.
+
+## v0.58.0 · what formai.studio tells a desktop app {#site}
+
+### site.rs, prefs.rs :: supporter_code · upcoming and the supporter check
+- refers-to: core/src/site.rs :: upcoming, check_supporter, Portal::{upcoming, supporter, forget_supporter} · core/src/prefs.rs :: supporter_code · src-tauri/src/main.rs :: site_upcoming, supporter_check
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+formai.studio (behind an IP allowlist until it goes live) adds `GET /api/upcoming` (`dated [{at,count}]`, `undated`, `supporters`; no names; cacheable 300 s) and `POST /api/supporter/check` (body `{"code"}` as JSON, no Origin header; 200 `{supporter, until, upcoming [{name, at|null}]}`, 429 busy, 503 closed, 403 for a foreign Origin). `site.rs` reads both. `SITE` is https://formai.studio; `FORMPORTAL_SITE` replaces it for testing (loopback http passes `check_url`) and `off` disables the calls. One agent (connect 5 s, read 10 s, total 20 s, no automatic redirects, each hop through `download::check_url`, bodies capped at 256 KB). A POST redirect is followed only for 307 or 308 within the same origin, so the code can never be forwarded to another host. `releases.rs` was not touched; its helpers are private, so the small agent is duplicated here.
+
+Cache `<root>/catalog/site.json`: upcoming for 15 minutes (a failure is not retried for 60 s and the last good answer is returned as `stale`); a supporter answer is keyed by the SHA-256 of the code (the cache never holds the code), positive until min(`until`, 7 days) and rechecked after 1 day, negative for 1 day; a failed check keeps the last answer and marks it `stale`. The code format `d1.<digits>.<32 hex>.<43 base64url>` is checked before anything is sent; a malformed code answers `no` without a request and is not stored. The code is stored only in Preferences (`supporter_code`, `#[serde(default)]`), and only when the site confirms it as a supporter. `Portal::supporter(None)` re-checks the stored code, `Some("")` forgets (clears the code and the cached names, `forget_supporter`), `Some(code)` checks it afresh and stores it. Neither the view nor any log carries the code. States: `none`, `supporter`, `no`, `unreachable`. Note: `Preferences` still derives `Debug`, which would print the code; nothing prints it.
+
+## v0.56.0 · formai.studio only, the schedule and the app caps {#formai-studio}
+
+### links.rs · PREFIXES
+- refers-to: core/src/links.rs :: PREFIXES · core/tests/open_links.rs
+- kind: fix
+- logged: v0.56.0 · 2026-11-06
+
+The owner, 2026-11-06: formai.dev is another company's product, never owned or built by them, and must be gone from FormPortal entirely; the family's one domain is formai.studio, and formai.tools and formai.design redirect to it. `https://formai.dev/` and `https://docs.formai.dev/` are no longer opened. `https://formai.studio/support/` is, for the Support the Form apps link under On the way (`frontend/HASHOUT_LOG.md#live`); `open_links.rs` reads every `data-web` link in `index.html`, so it covers it. The rest of formai.studio stays refused, as the test requires.
+
+### catalog/ · the schemas, the fixtures, schedule.json, apps/
+- refers-to: catalog/schema/*.schema.json :: $id · catalog/fixtures/apps.json :: origin · catalog/fixtures/extensions.json :: authorities[formai].url, packages[contact-sheet].url · catalog/schedule.json · catalog/apps/*.json
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+formai_dev v0.56.1 (`e81656e`) already names formai.studio in each schema's `$id` and in the fixtures; FormPortal's copies still said formai.dev, so those lines are formai_dev's now. The copies were not replaced whole: they had drifted both ways (FormPortal's schema keeps the catalogue `agents` fields and the extension `support` link that formai_dev's lacks; formai_dev renamed `formai` to `formportal`, which FormPortal's installs and state still use), so only the domain lines changed. `schedule.json` (the release groups: Launch 2026-11-03, Group 1 2026-11-06, Group 2 2026-11-09, Group 3 2026-11-12) and `apps/*.json` (each app's content file: kind, runs on, what it does) are copied unchanged from formai_dev v0.56.1; formai_dev ids map onto FormPortal's as `formportal` to `formai`, `formdeck` to `formslide`, `formskill` to `formskills`, `formbench` to `formranker`. `products.json` is not replaced for the same reason as the schemas; its stale statuses no longer show, because only released apps are listed.
+
+## v0.55.0 · releases read from each app's GitHub release {#releases}
+
+### releases.rs · discover
+- refers-to: core/src/releases.rs :: discover, check, read_release, classify, merge, yanked · core/src/portal.rs :: Portal::catalog
+- kind: decision
+- logged: v0.55.0 · 2026-11-06
+
+Why: on 2026-11-06 the signed catalogue in the download store was still the one generated 2026-11-04T17:21Z. It listed 26 products and gave a build to three (FormPortal 0.53.5, Form.md 0.47.7, FormTray 0.9.8), while formMCP 0.7.8, FormPDF 0.57.3, formskills 0.7.7, formdeck 0.30.7, FormVFX 0.52.8, FormPortal 0.54.3, Form.md 0.48.0 and FormTray 0.10.2 were published on their own repositories on 2026-11-05 and none of their files were in the store (each `dl.formai.studio/<app>/<version>/` path 404). formpipe, which copies releases into the store and signs the catalogue, had not run since; FormPortal had nothing newer to offer, including its own 0.54.x with the scroll fix.
+
+What: after the signed catalogue is verified and parsed, `discover` reads, for each product whose signed `repository` is a `https://github.com/<owner>/<repo>` address, that repository's newest published release: `releases/latest/download/form-app.json`, then `releases/download/<tag>/SHA256SUMS.txt` for that exact tag. The release is used only when every check holds: `format` is `form-app`, its `repository` is the signed catalogue's repository (case ignored), the version is plain `x.y.z` and the tag is `v<version>`, the version is not in formcompiler's `yanked.json` (read from `raw.githubusercontent.com/<catalogue origin>/main/yanked.json`; when that list cannot be read, nothing is discovered at all), the sums list `form-app.json` with the digest of the bytes just read, and at least one file classifies as an installer. Files are classified as formcompiler's `catalog.py classify` does (same skip list, same architecture tokens, `-setup.exe` as nsis), each artifact's SHA-256 comes from the sums, its size from a HEAD request (0 when unknown, which `download` already handles). `published` is the manifest's `Last-Modified`, `notes` the release page, `commit` the manifest's, `agents` the manifest and the `-skills-v<version>.zip` from the sums, and `origin` is `github`. `merge` replaces the stable channel only when the release is newer, and moves the catalogue's release into `history` so rollback still reaches it. Every install still checks the file's SHA-256 before unpacking; this is formcompiler's own `--asset-origin github` shape, read by the client instead of by formpipe, without formpipe's build attestation. Results are kept in `<root>/catalog/releases.json` and rechecked after 15 minutes; a network failure keeps the last result, a 404 (a private repository, or no release) clears it. The signed `apps.json` kept beside it is never rewritten.
+
+Hardening after an independent review (same day): `releases.json` is not signed, so a kept release is used only while it is sound (`sound`): its version plain, its tag `v<version>`, origin `github`, no history of its own, every artifact and agent asset at `<web>/<repo>/releases/download/v<version>/<file>` with a plain file name, and none of the names it was published under (catalogue id, manifest `app` and `id`, kept as `names`) yanked at that version in the current yank list. That check runs on every call, so a yank reaches a cached release at once, and a tampered entry is dropped and read again. The yank list is kept for the same 15 minutes (`yanks`, `yanks_checked`); when it cannot be read, nothing is discovered. Requests go through one agent with a 5 s connect, 15 s read and 30 s total timeout, so a stalled host cannot hold `Portal::catalog`, and follow redirects by hand with `check_url` on every hop (https or loopback only). A failed fetch of the manifest or of the sums (`Outcome::Failed`) keeps the last sound result and is retried after a minute instead of being stored as "no release" for 15. Sizes come from HEAD, then a `Range: bytes=0-0` GET's `Content-Range`. Sums lines whose file name is not plain (`plain_name`) are ignored, and an owner or repository name starting with a dot is refused. Verified 2026-11-06 through the loopback relay: a cached run made 2 requests, a cache entry pointed at another host was replaced by the real address, yanking FormTray 0.10.2 in a served yank list brought FormTray back to the catalogue's 0.9.8 on the next call, an unreachable yank list gave the catalogue's three, and formskills 0.7.7 installed with its SHA-256 verified. Not done: the formcompiler copy is not compared with the kept catalogue's `generated`, so a blocked store can still mean an older signed catalogue, as the kept copy already could.
+
+### portal.rs · Portal::catalog, the formcompiler copy
+- refers-to: core/src/portal.rs :: Portal::catalog · core/src/releases.rs :: STORE_CATALOG, COMPILER_CATALOG
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+When the catalogue address is the store's (`https://dl.formai.studio/catalog/apps.json`) and it cannot be fetched, the signed copy formcompiler publishes on its `catalog` release (`github.com/nodemode-dev/formcompiler/releases/download/catalog/apps.json` and `.sig`) is tried before the kept copy. The same signature check applies to whichever was read.
+
+### releases.rs · Portal::reads_releases
+- refers-to: core/src/releases.rs :: Portal::reads_releases, RELEASES_ENV, RAW_ENV · core/src/policy.rs :: Policy::github_releases
+- kind: decision
+- logged: v0.55.0 · 2026-11-06
+
+Discovery runs only for a catalogue fetched over https or loopback (a local file, as the tests use, is read as it is). `FORMPORTAL_RELEASES=off` (or 0, false, no) turns it off. An organisation's policy decides with `github_releases`; when the policy leaves it out, discovery is on unless the policy names its own `catalog`, so a managed mirror is not mixed with public releases. `FORMPORTAL_GITHUB_WEB` (as for sign-in) and `FORMPORTAL_GITHUB_RAW` point the reads elsewhere; verification on 2026-11-06 used a loopback relay through both.
+
+### lib.rs · Catalog::view and versions, prelaunch with a release
+- refers-to: core/src/lib.rs :: Catalog::view, Catalog::versions · ../frontend/src/engine/index.ts :: Engine.view
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+A prelaunch product is `Unreleased` only while it has no release on any channel. FormTray was prelaunch in the catalogue with a stable 0.9.8 and FormPortal offered nothing; formMCP, FormPDF and formskills are prelaunch with published releases. The interface's `Engine.view` has the same rule. `Release` reads the catalogue's own `origin` (`store` or `github`), which formcompiler emits and the vendored schema does not list yet (formai_dev's schema should add it).
 
 ## v0.54.1 · FormSlide's identifier and repository {#formslide}
 

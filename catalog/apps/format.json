@@ -1,0 +1,336 @@
+{
+  "id": "format",
+  "name": "FormAT",
+  "version": "0.25.4",
+  "repo": "https://github.com/nodemode-dev/format",
+  "kind": "Chat and agent workspace",
+  "title": "chats, artifacts, projects and real terminals on your own Claude API key",
+  "summary": "A chat and agent workspace for the Claude API with artifacts, projects, a real terminal and an MCP server, in the form family's Studio Dark design.",
+  "lede": "FormAT is the form family's chat and agent workspace for the Claude API, also called A.T, the Agentic Terminal. It has chats, artifacts, projects and real terminals on your own Claude API key. FormAT is not affiliated with Anthropic and uses none of its logos, fonts or styles.",
+  "replaces": "claude.ai",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Streams chat on the Claude API with a sidebar, a composer with the + menu, model and effort, and a side panel for artifacts and files.",
+    "Runs a real terminal in a dock, and lets Claude run commands and change files behind approval cards.",
+    "Opens versioned, sandboxed artifacts beside the chat, with documents, spreadsheets and slides exported to Word, Excel, PowerPoint and PDF.",
+    "Acts as an MCP server so Claude Code, Codex and Cursor can use it."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "Python 3.12 and FastAPI on 127.0.0.1:8490, window on http://localhost:5490"
+    },
+    {
+      "dt": "Stack",
+      "dd": "Vanilla TypeScript 7 and Vite 8, Rust (wgpu 30) for the optional native renderer, Tauri 2 for the desktop app"
+    },
+    {
+      "dt": "Keys",
+      "dd": "Your Anthropic key, or Claude Code on your Claude plan when it is installed and signed in"
+    },
+    {
+      "dt": "Windows note",
+      "dd": "Run .\\format.bat from the folder, never a bare format, which is Windows' disk formatter"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "chat",
+      "kicker": "Chat",
+      "title": "Streaming chat on your own key",
+      "text": "A sidebar that folds to a mini rail, a centred conversation and a composer with the + menu, model and effort. Without an API key, FormAT answers through Claude Code on your Claude plan when it is installed and signed in.",
+      "shot": "chat"
+    },
+    {
+      "id": "artifacts",
+      "kicker": "Artifacts",
+      "title": "Documents, sheets and slides beside the chat",
+      "text": "Documents written section by section with comments, spreadsheets and slides open in a side panel and export to Word, Excel, PowerPoint and PDF. Artifacts have share links.",
+      "shot": "deck"
+    },
+    {
+      "id": "terminal",
+      "kicker": "Terminal",
+      "title": "A real terminal and an MCP server",
+      "text": "A terminal dock opens with Mod+J. While FormAT runs it is an MCP server at http://127.0.0.1:8490/mcp, and every engine command is a tool for coding agents.",
+      "shot": "terminal"
+    }
+  ],
+  "features": [
+    {
+      "id": "shell",
+      "icon": "apps",
+      "title": "Shell and composer",
+      "text": "A sidebar that folds to a rail, a centred conversation and a composer.",
+      "bullets": [
+        "Command palette with Mod+K",
+        "Sidebar with Mod+B, Outputs with Mod+., new chat with Mod+Shift+O",
+        "Add files with Mod+U, or drop files anywhere on the chat",
+        "The / menu for commands, skills and plugin commands"
+      ],
+      "shot": "chat"
+    },
+    {
+      "id": "providers",
+      "icon": "plug",
+      "title": "Providers and keys",
+      "text": "The Anthropic API is the main engine; OpenAI and Cursor plug in behind the same provider adapter.",
+      "bullets": [
+        "Add an Anthropic key in Settings > API keys, stored in the data folder, owner-only",
+        "Or put ANTHROPIC_API_KEY in backend/.env",
+        "FormAT answers through Claude Code on your Claude plan when no key is set"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "artifacts",
+      "icon": "layers",
+      "title": "Artifacts and files",
+      "text": "Pages and tools Claude publishes open beside the chat as versioned, sandboxed artifacts.",
+      "bullets": [
+        "Documents, spreadsheets and slides exported to Word, Excel, PowerPoint and PDF",
+        "Share links for artifacts",
+        "The Create picker",
+        "Attachment tiles that open full screen"
+      ],
+      "shot": "sheet"
+    },
+    {
+      "id": "terminal",
+      "icon": "terminal",
+      "title": "Terminal",
+      "text": "A real terminal in a dock, plus Claude's commands in a sandbox.",
+      "bullets": [
+        "Terminal dock with Mod+J",
+        "Real PTY terminals",
+        "Claude runs commands behind approval cards",
+        "Allow all, or Allow for this chat, to stop approving each step"
+      ],
+      "shot": "terminal"
+    },
+    {
+      "id": "projects",
+      "icon": "box",
+      "title": "Projects and memory",
+      "text": "Projects hold instructions, knowledge files and their chats.",
+      "bullets": [
+        "Memory that carries across chats",
+        "Skills that load when a task matches, and /skill to load one",
+        "MCP connectors add tools, local ones with approvals",
+        "Claude plugins in Customize"
+      ],
+      "shot": "project"
+    },
+    {
+      "id": "research",
+      "icon": "globe",
+      "title": "Research and browser",
+      "text": "Research mode and a built-in browser.",
+      "bullets": [
+        "Research mode and find in page with Mod+F",
+        "A built-in browser that Claude can use and you can watch and take over",
+        "Search by message text"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "voice",
+      "icon": "captions",
+      "title": "Dictation",
+      "text": "Speech to text from several sources.",
+      "bullets": [
+        "ElevenLabs Scribe v2 with an ElevenLabs key",
+        "Local Whisper large-v3-turbo via ./format install-voice",
+        "OpenAI, or the browser's own speech recognition in Chrome, Edge and Safari"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "devices",
+      "icon": "phone",
+      "title": "Other devices",
+      "text": "Pair your phone with a QR code and carry on there, live.",
+      "bullets": [
+        "Other devices listen on 0.0.0.0:8492 only while Settings, Other devices is on",
+        "Paired devices and /s/ share links use that port"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "extensions",
+      "title": "Use FormAT from coding agents",
+      "text": "FormAT is an MCP server over Streamable HTTP, and ./format mcp serves the same over stdio.",
+      "bullets": [
+        "Tools such as send_message, wait_for_reply, publish_artifact and list_conversations",
+        "run_command for any command id",
+        "Configs for Claude Code, Cursor and Codex in the repo",
+        "./format agents install --user registers FormAT with Codex and Claude Code"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "cli",
+      "icon": "code",
+      "title": "Command line",
+      "text": "Every engine command is available from the shell.",
+      "bullets": [
+        "./format cli list and describe",
+        "./format cli chat.send text=\"...\" then chat.wait",
+        "./format doctor checks toolchain, installs, key and ports"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "desktop",
+      "icon": "laptop",
+      "title": "Desktop app",
+      "text": "A Tauri 2 app for macOS, Windows and Linux with the engine frozen inside, so no Python or Node is needed.",
+      "bullets": [
+        "Bundles come from the release page of formcompiler (nodemode-dev/formcompiler)",
+        "Or build with ./build_app on macOS or Linux",
+        "On Windows, .\\format.bat desktop build bundles .msi and setup.exe"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "native",
+      "icon": "settings",
+      "title": "Optional native renderer",
+      "text": "A Rust crate on wgpu for the terminal glyph grid.",
+      "bullets": [
+        "./format native build, info or window",
+        "Start FormAT with FORMAT_NATIVE=1 to use it"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "claude.ai",
+    "summary": "Fifty claude.ai capabilities, the rows of FormAT's own parity baseline, are each graded Full, Partial or None found for v0.24.3, where Full counts 1 and Partial one half. The page is regraded with every release."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19 or newer (22 recommended)",
+      "Python 3.12 or newer",
+      "git",
+      "ffmpeg on the PATH for video and audio",
+      "Rust stable for the native crate"
+    ],
+    "install": "./format_oc_install",
+    "run": "./format",
+    "desktop": "./build_app",
+    "agents": "FormAT is an MCP server at http://127.0.0.1:8490/mcp, with .mcp.json, .cursor/mcp.json and .codex/config.toml in the repo and two skills, format-driving and format-harness.",
+    "topics": [
+      {
+        "title": "Shortcuts",
+        "text": "Mod+B, Mod+K, Mod+J, Mod+., Mod+Shift+O and Mod+U, where Mod is Cmd on macOS and Ctrl elsewhere."
+      },
+      {
+        "title": "Ports",
+        "text": "Engine on 127.0.0.1:8490, window on localhost:5490, preview on localhost:5491, other devices on 0.0.0.0:8492."
+      },
+      {
+        "title": "Commands",
+        "text": "A table of ./format commands including install, install-voice, install-browser, freeze, doctor and clean."
+      },
+      {
+        "title": "Manual",
+        "text": "The docs/ folder is the manual for people using FormAT, and .docs/wiki is the developer wiki."
+      },
+      {
+        "title": "Branching",
+        "text": "BRANCHING.md explains branches, tags and how a change reaches main."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.25.2",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain in the registry",
+        "On Linux, the .deb, .rpm and AppImage carry the GStreamer plugins that video and audio previews need"
+      ]
+    },
+    {
+      "version": "0.25.1",
+      "date": "2026-10-30",
+      "items": [
+        "The Windows desktop build passes its arguments on to tauri build, so the installer carries the updater settings and signature",
+        "The Windows build of the LGPL FFmpeg behind local dictation stops at the first step that fails",
+        "Batch files check out with Windows line endings"
+      ]
+    },
+    {
+      "version": "0.25.0",
+      "date": "2026-10-26",
+      "items": [
+        "A test opens the built window under a slow processor and network and checks that it loads with no layout shift, error or failed request",
+        "The desktop splash window's mark no longer moves when its line of text appears"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "chat",
+      "what": "A chat with the sidebar, composer and a streamed reply",
+      "how": "Run ./format, open http://localhost:5490, add a key in Settings > API keys and send a message."
+    },
+    {
+      "key": "artifact",
+      "what": "An artifact open in the side panel beside the chat",
+      "how": "Ask for a document or a small page; it opens in the side panel beside the chat."
+    },
+    {
+      "key": "terminal",
+      "what": "The terminal dock open under a conversation",
+      "how": "Press Mod+J in the running window to open the terminal dock."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "parity:format"
+  ],
+  "captures": {
+    "chat": {
+      "file": "/media/format/ui-chat-1.webp", "light": "/media/format/ui-chat-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormAT's new chat: the composer with attachments and dictation, the model and effort picker (Opus 5.5, Medium) and the Ask permission mode, and the sidebar with Projects, Artifacts, Scheduled and Customize; it runs locally through Claude Code",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/format/ui-hero-2.webp",
+      "light": "/media/format/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormAT with a chat in the middle describing an aurora page, the sidebar with projects and recent chats, and the Northern Light artifact preview on the right",
+      "size": ""
+    },
+    "deck": {
+      "file": "/media/format/ui-deck-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A five slide deck open beside the chat, showing the slide Where the trails wear",
+      "size": ""
+    },
+    "project": {
+      "file": "/media/format/ui-project-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A project page with its chats, instructions and a files area",
+      "size": ""
+    },
+    "sheet": {
+      "file": "/media/format/ui-sheet-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A spreadsheet of six weekends of gate counts open in the side panel",
+      "size": ""
+    }
+  }
+}

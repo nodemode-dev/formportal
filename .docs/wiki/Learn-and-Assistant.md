@@ -4,8 +4,7 @@ FormPortal teaches itself and the Form apps with tutorials you follow step by st
 
 ## Tutorials
 
-FormPortal's six tutorials ship inside it (`core/data/learn-portal.json`). The Form apps' tutorials come from `learn.json` beside the catalogue (`https://formai.dev/catalog/v1/learn.json`, or `FORMPORTAL_LEARN`), with a detached Ed25519 signature `learn.json.sig` made with the catalogue's key. When an organisation locks the catalogue, the tutorial index follows it. formai.dev does not publish it yet; that is part of Phase 9 on formai_dev's side.
-
+FormPortal's six tutorials ship inside it (`core/data/learn-portal.json`). The Form apps' tutorials come from `learn.json` beside the catalogue (in the same folder as `apps.json`, so `https://dl.formai.studio/catalog/learn.json` once published there, or `FORMPORTAL_LEARN`), with a detached Ed25519 signature `learn.json.sig` made with the catalogue's key. When an organisation locks the catalogue, the tutorial index follows it.
 ```json
 {
   "format": "formai-learn",

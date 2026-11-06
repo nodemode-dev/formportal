@@ -2,8 +2,92 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.54.1
-Last updated: 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.58.0
+Last updated: 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.58.0 · the identifier, the web view's data, the second launch {#identifier}
+
+### tauri.conf.json · identifier
+- refers-to: src-tauri/tauri.conf.json :: identifier · core/HASHOUT_LOG.md#identifier
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+`studio.formai.portal` (was `dev.formai.portal`, owner's decision 2026-11-06; formai.dev is another company's domain). The earlier entry that says the identifier must not change once a build has shipped still holds as the reason for the care below: v0.57.0 builds exist, so what hangs on the identifier is moved, not abandoned.
+
+### migrate.rs · webview_data
+- refers-to: src-tauri/src/migrate.rs :: webview_data, parents, rename_across · src-tauri/src/main.rs :: main
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+The system web view keeps localStorage (theme, accent, the Preferences rail, the shown-apps cache) under the identifier, so a new identifier would look like a first run. `webview_data()` runs first in `main`, right after `reveal::mark_launch` and before any Tauri code, and for each pair renames the old folder to the new name only if the old one is a real folder and nothing exists at the new name; a failed rename does nothing; no links; it returns nothing and cannot panic. It runs for the `mcp` and command-line paths too, which costs a few `lstat` calls.
+
+Paths, read from the sources in `~/.cargo/registry/src` (tauri 2.12.1, tauri-runtime-wry 2.12.1, wry 0.57.0): Linux and Windows: `tauri/src/manager/webview.rs` (about line 559) sets the web view's `data_directory` to `path().app_local_data_dir()` when none is given, and `tauri/src/path/desktop.rs` (about line 265) makes that `dirs::data_local_dir()/<identifier>`: `$XDG_DATA_HOME` (if absolute) or `~/.local/share` on Linux, `%LOCALAPPDATA%` on Windows (WebView2's `EBWebView` is inside; `wry/src/webview2/mod.rs` passes it as the user data folder). FormPortal sets no `data_directory` itself (searched `src-tauri/src`). On Linux `wry/src/webkitgtk/web_context.rs` sets both `base_cache_directory` and `base_data_directory` to that one folder, so there is no `~/.cache/<identifier>` from the web view and none is moved. macOS: wry uses `WKWebsiteDataStore::defaultDataStore` (`wry/src/wkwebview/mod.rs` about line 244) with no data-store identifier and no directory, so WebKit itself files the data under the bundle identifier: `~/Library/WebKit/<id>`, `~/Library/Caches/<id>` and `~/Library/HTTPStorages/<id>`. That last part is WebKit's behaviour, not something the crates show, and was not run. Only the web view's folders move; the Application Support data root is `portal.rs`'s job.
+
+Not moved, on purpose: Linux `~/.cache/<id>` (unused), macOS `Preferences/<id>.plist` and `Saved Application State` (not web storage). A running old-identifier copy of the app has its folder renamed under it on macOS and Linux; open files stay valid, and on Windows the rename fails and nothing moves.
+
+### main.rs · the single-instance handler
+- refers-to: src-tauri/src/main.rs :: main, tauri_plugin_single_instance handler · src-tauri/src/reveal.rs :: app_ready, show_main
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+A second launch while the first was still concealed (macOS builds start with the window at zero alpha until `app_ready`, or the 20 s fallback) focused a window nobody could see. The handler now also calls `reveal::app_ready(handle)` on a new thread. `show_main` is private and `reveal.rs` was not to change, so the public `app_ready` (a plain function under `#[tauri::command(async)]`) is the way in; it returns at once if the window was already revealed (the `REVEALED` swap), and otherwise sleeps out the rest of the 2.6 s splash, which is why it is not called on the handler's own thread. The first caller wins, so the frontend's own `app_ready` and this one do not both run. Not run: any launch, on any system.
+
+Verified for the whole change: `cargo check --locked -p formportal-core -p formportal-cli -p formportal` passes; the same for `--target aarch64-apple-darwin -p formportal` with the stand-in compiler; the core and cli tests pass except `store_addresses::updates_are_read_from_and_point_at_the_download_store`, which fails on a second updater endpoint added to `tauri.conf.json` by another edit in the same tree, not by this change. No Mac, no Windows.
+
+### main.rs · after the independent review
+- refers-to: src-tauri/src/main.rs :: main, the single-instance handler, run_install, run_updates
+- kind: fix
+- logged: v0.58.0 · 2026-11-06
+
+`migrate::webview_data()` ran before the CLI and MCP exits, so `formportal mcp` moved the window's web-view folders while a window might be open; it now runs just before `tauri::Builder::default()`, after both exits, so only the window moves them. The single-instance handler had gained a call to `reveal::app_ready`, which on a second launch revealed a window that was still on its splash and blank; it is back to unminimize and focus only. The progress percentages use `checked_div` (clippy `manual_checked_division`), same result. Verified: `cargo check` and `cargo clippy` with no warnings on Linux and for `aarch64-apple-darwin`; under Xvfb with `XDG_DATA_HOME` in /tmp the old `dev.formai.portal` folder moved to `studio.formai.portal`, the splash (360x200) and the window (1180x760) mapped, the splash closed by 8 s. Not run: macOS, Windows.
+
+## v0.57.0 · the app icon in both tones {#app-icon}
+
+### icons/ · the bundle icons
+- refers-to: src-tauri/icons/icon.png, 32x32.png, 128x128.png, 128x128@2x.png, icon.ico, icon.icns
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+Made from the owner's v3 `formportal_icon_macos.png` (dark, 1024 px): `icon.png` at 1024, the PNGs at 32, 128 and 256, `icon.ico` with 16 to 256 and `icon.icns` with 16 to 512 at 1x and 2x. The installed app's icon (Finder, Start, the Linux menu) is this one: a bundle carries one icon, and Tauri does not yet bundle a light and dark pair.
+
+### app_icon.rs · set_app_icon
+- refers-to: src-tauri/src/app_icon.rs :: set_app_icon, dock · src-tauri/icons/runtime/* · src-tauri/src/main.rs :: generate_handler! · src-tauri/Cargo.toml :: objc2-app-kit NSApplication, NSImage, objc2-foundation NSData · ../frontend/src/extensions/appicon/index.ts
+- kind: decision
+- logged: v0.57.0 · 2026-11-06
+
+While FormPortal runs, its icon follows the theme the person set. `set_app_icon(light)` sets the main window's icon from raw 256 px RGBA (`icons/runtime/<tone>-256.rgba`, so no image decoder feature is needed in tauri), which is the title bar and taskbar icon on Windows and Linux; on macOS, where a window has no icon, it sets the Dock icon on the main thread with `NSApplication.setApplicationIconImage` from a 512 px PNG (`icons/runtime/<tone>-512.png`). When FormPortal quits, macOS shows the bundle icon again. `cargo check --locked` passes on Linux, and for `aarch64-apple-darwin` with a stand-in C compiler for objc2's exception helper (type checking needs no linking): that check also covered `reveal.rs` and `traffic_lights.rs` from v0.56.0, which until then had only been read against formvis. Not run: the desktop window on any system.
+
+## v0.56.0 · the family splash and reveal {#reveal}
+
+### reveal.rs, traffic_lights.rs · the splash, the reveal, the lights
+- refers-to: src-tauri/src/reveal.rs :: SPLASH_MIN, BACKGROUND, BAR_FINISH, FALLBACK, mark_launch, round_splash, conceal, app_ready, show_main · src-tauri/src/traffic_lights.rs :: place, set_window_title, inset
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+FormPortal now opens like formvis, the reference app of the Form family: a 360 by 200 rounded dark card with the icon, "Starting FormPortal" and a gradient bar, then the main window appears whole when the page has painted and 2.6 s have passed since launch. Both files are copied from formvis v1.99.7 with the same logic, constants (2600 ms, 220 ms, 20 s, 16 px radius, 38 px row, background 10,10,10) and native calls; only the doc comments were dropped, since source files here stay comment-free, and the splash-done hook is `formportalSplashDone` instead of `formvisSplashDone`. `set_window_title` is registered as in formvis although the page does not call it yet.
+
+### main.rs · setup, main
+- refers-to: src-tauri/src/main.rs :: main, setup, generate_handler
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+`reveal::mark_launch()` is first in `main()`, `reveal::round_splash` first in setup. The main window is still built from its config (`create: false`, page chosen by preferences), now chained with `visible(reveal::BUILD_VISIBLE)`, `background_color(reveal::BACKGROUND)`, on macOS the overlay title bar with a hidden title, and an `on_page_load` that places the lights again. After `build()`: `conceal` and `place`. If the build fails, the splash is closed before the error returns. `app_ready` and `set_window_title` are in `generate_handler!`; the other commands, the single-instance handler and the deep links are untouched. Adapted from formvis: there is no engine or port handshake (the page is bundled, `WebviewUrl::App`), so the reveal waits only on the page; the splash window is created from the config, so nothing else spawns it. build.rs is plain `tauri_build::build()`, so no per-command permission was added; the capability gains `core:window:allow-start-dragging` so the page can drag the window by its title row.
+
+### tauri.conf.json, Cargo.toml, splash.html, splash.css, splash.js, reveal.ts
+- refers-to: src-tauri/tauri.conf.json :: app.macOSPrivateApi, app.windows[splash] · src-tauri/Cargo.toml :: tauri features, macOS objc2 and objc2-app-kit · frontend/public/splash.html, splash.css, splash.js · frontend/src/bridge/reveal.ts :: revealApp
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The `splash` window block and `macOSPrivateApi` are formvis's, and the tauri feature `macos-private-api` and the macOS-only `objc2` 0.6 and `objc2-app-kit` 0.3 (features std, NSWindow, NSButton, NSControl, NSView, NSResponder, NSColor, objc2-core-foundation) are in Cargo.toml; the lock already held both crates and gained only the two direct entries. FormPortal's CSP allows no inline style or script, so formvis's single splash.html is split into splash.html, splash.css and splash.js, with the icon as `favicon.png` in an img tag instead of the inline SVG. `revealApp` in the new bridge/reveal.ts runs once: two frames, `app-ready` on the body, one more frame, then `app_ready` through `window.__TAURI__.core.invoke` when `__TAURI_INTERNALS__` exists; the page still has to call it and carry the critical CSS.
+
+Checked here: `cargo check --locked -p formportal` and `-p formportal-core -p formportal-cli` pass on Linux, and `tsc --noEmit` passes. Not verified: the window was never opened, so the splash, the bar, the reveal and the 20 s fallback have not been seen; the macOS code (round_splash, set_seen, inset, the title bar style) cannot be compiled on Linux and was read against formvis only.
+
+### main.rs · open_web
+- refers-to: src-tauri/src/main.rs :: open_web
+- kind: fix
+- logged: v0.56.0 · 2026-11-06
+
+formai.dev was removed from the refusal message. It is another company's site and was never a Form domain; the family's only domain is formai.studio (formai.tools and formai.design redirect to it). Older entries below keep the name as history.
 
 ## v0.54.1 · the publisher and the licence in the bundle {#publisher}
 

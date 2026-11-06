@@ -3,9 +3,8 @@ use crate::share::{PREFIX, PUBLIC_REPO};
 pub const PREFIXES: &[&str] = &[
     "https://github.com/nodemode-dev/",
     "https://github.com/sponsors/",
-    "https://formai.dev/",
-    "https://docs.formai.dev/",
     "https://formai.studio/download/",
+    "https://formai.studio/support/",
 ];
 pub const EXACT: &[&str] = &["https://github.com/login/device"];
 const GITHUB: &str = "https://github.com/";

@@ -1,0 +1,336 @@
+{
+  "id": "formvfx",
+  "name": "FormVFX",
+  "version": "0.52.7",
+  "repo": "https://github.com/nodemode-dev/formvfx",
+  "kind": "Motion graphics and VFX compositor",
+  "title": "motion graphics and visual effects compositing on your own machine",
+  "summary": "FormVFX is a motion graphics and VFX compositor with 306 effects, a Rust engine, OpenFX and WebAssembly plug-ins, tracking, roto and a Render Queue.",
+  "lede": "FormVFX is a motion graphics and visual effects compositor for the desktop and the browser. It has compositions, layers, keyframes and the Graph Editor, 306 effects, text animators with 169 presets, 3D cameras and lights, tracking, roto and a Render Queue, with an agent harness so Claude Code, Codex and Cursor can drive every tool.",
+  "replaces": "After Effects",
+  "project": ".fvxproj",
+  "runs_on": "macOS, Windows and Linux, in a browser or as a Tauri 2 desktop app",
+  "checks": [
+    "Composites with layers, precomps, shapes, text, masks, track mattes, 39 blend modes and layer styles on the GPU through wgpu or on the CPU.",
+    "Animates with keyframes, the Graph Editor, expressions, behaviours, two-bone IK, 2D physics and cloners.",
+    "Loads OpenFX plug-ins and sandboxed WebAssembly effect plug-ins, and opens Template Controls templates (.mogrt) and .aep projects.",
+    "Renders through a Render Queue to H.264, HEVC, AV1, ProRes 4444, WebM, GIF, PNG, TIFF, EXR, WAV and AIFF."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fvxproj; .ecproj and .ecprojx projects from earlier releases open as imports"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Its own compositing engine in Rust (native/fvx-core), loaded by a Python engine service"
+    },
+    {
+      "dt": "Interface",
+      "dd": "26 languages, English by default"
+    },
+    {
+      "dt": "Footage",
+      "dd": "Through FFmpeg when installed; stills, image sequences, OpenEXR, PSD, PDF, .ai and Lottie on its own"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "comp",
+      "kicker": "Compositing",
+      "title": "Layers, effects and a GPU compositor",
+      "text": "Compositions, precomps, shape layers, text with animators, masks, track mattes and 306 effects, with keying, Color Grade, OCIO transforms, particles and simulations. The compositor renders on the GPU when the engine finds a working adapter.",
+      "shot": "comp"
+    },
+    {
+      "id": "motion",
+      "kicker": "Animation",
+      "title": "Keyframes, graphs and procedural motion",
+      "text": "Keyframes with eases and roving keys, the Graph Editor, Wiggler, Smoother and Motion Sketch, expressions on its own interpreter, stackable behaviours, two-bone IK rigs, 2D physics baked to keyframes and cloners.",
+      "shot": "graph-editor"
+    },
+    {
+      "id": "track",
+      "kicker": "Tracking and roto",
+      "title": "Track, stabilize and cut out",
+      "text": "Point, planar and mask tracking, face tracking, Wrap Stabilization and the 3D Camera Tracker, plus Roto Paint and Object Matte with FormVFX's own MobileSAM and SAM 2 runtimes.",
+      "shot": "roto"
+    }
+  ],
+  "features": [
+    {
+      "id": "comp",
+      "icon": "layers",
+      "title": "Compositions and layers",
+      "text": "Compositions, precomps, solids, shapes, text, nulls, cameras and lights.",
+      "bullets": [
+        "Track mattes, 39 blend modes and layer styles",
+        "Shape layers with every standard operator and tapered, wavy and dashed strokes",
+        "SVG import and paste as shapes",
+        "8, 16 and 32-bit projects with colour management, OCIO and ACES"
+      ],
+      "shot": "comp"
+    },
+    {
+      "id": "effects",
+      "icon": "sliders",
+      "title": "306 effects",
+      "text": "Effects with the Expression Controls, and a Liquify tool.",
+      "bullets": [
+        "Keying, Color Grade and the OCIO transforms",
+        "The 3D Channel set on OpenEXR passes and Cryptomatte",
+        "Particles and simulations, immersive video and 13 audio effects"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "text",
+      "icon": "captions",
+      "title": "Text and shapes",
+      "text": "Text with character styles, OpenType features and variable fonts.",
+      "bullets": [
+        "Text animators with range, wiggly and expression selectors",
+        "169 text animation presets",
+        "Text on a path and per-character 3D",
+        "Shapes and masks from text"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "keyframes",
+      "icon": "keyframe",
+      "title": "Keyframes and the Graph Editor",
+      "text": "Eases, roving keys and tools for refining motion.",
+      "bullets": [
+        "Keyframe Assistant, Wiggler, Smoother and Motion Sketch",
+        "Time stretch, time remapping and freeze frames",
+        "Stackable procedural behaviours: wiggle, oscillate, spring, bounce, loops",
+        "Data-driven animation from CSV and JSON"
+      ],
+      "shot": "graph-editor"
+    },
+    {
+      "id": "rigs",
+      "icon": "target",
+      "title": "Rigs and simulation",
+      "text": "Puppet pins, two-bone IK and 2D physics.",
+      "bullets": [
+        "Two-bone IK rigs with an FK switch",
+        "2D physics baked to keyframes",
+        "Cloners with live per-copy offsets"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "threed",
+      "icon": "box",
+      "title": "3D",
+      "text": "Cameras, lights and 3D layers.",
+      "bullets": [
+        "Cameras with depth of field and lights with soft shadows",
+        "glTF, GLB and OBJ models, 3D primitives and MaterialX materials",
+        "Extruded and bevelled text and shape layers",
+        "Classic and Advanced 3D, 360 VR environments and stereo 3D rigs"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "tracking",
+      "icon": "target",
+      "title": "Tracking and roto",
+      "text": "Tracking, stabilizing and cutting out.",
+      "bullets": [
+        "Point, planar and mask tracking",
+        "Face tracking on the learned MediaPipe Face Landmarker",
+        "Wrap Stabilization and the 3D Camera Tracker",
+        "Roto Paint and Object Matte with MobileSAM and SAM 2",
+        "Selection-Aware-Fill"
+      ],
+      "shot": "roto"
+    },
+    {
+      "id": "plugins",
+      "icon": "plug",
+      "title": "Plug-ins, scripts and templates",
+      "text": "Open extension points.",
+      "bullets": [
+        "OpenFX plug-ins with on-screen handles and sandboxed WebAssembly effect plug-ins",
+        "Scripts with ScriptUI windows and CEP extension panels",
+        "Template Controls templates (.fvxtemplate and .mogrt) with Primary Properties",
+        ".aep projects read by its own RIFX reader"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "render",
+      "icon": "film",
+      "title": "Render Queue and output",
+      "text": "Render Settings, several output modules and templates.",
+      "bullets": [
+        "H.264, HEVC, AV1, ProRes 4444, WebM, GIF, PNG, TIFF, EXR, WAV and AIFF",
+        "Field rendering, pulldown and multi-frame rendering",
+        "A render Watch Folder",
+        "Lottie export and layered PSD and EXR frames"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "interchange",
+      "icon": "export",
+      "title": "Editor interchange and Live Link",
+      "text": "Timelines in and out of editors, and live clips.",
+      "bullets": [
+        "xmeml 5 XML, FCPXML, OpenTimelineIO and CMX 3600 EDL",
+        "Export Live Link Clip writes a .fvxlink that an editor such as FormCut plays with no render",
+        "Links survive moving or renaming the project"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "interface",
+      "icon": "grid",
+      "title": "Panels and Flowchart",
+      "text": "Project, Effect Controls, Composition viewer, Timeline, Effects and Presets, Preview, Character and Render Queue.",
+      "bullets": [
+        "Cmd or Ctrl+K searches every command and effect",
+        "The Flowchart is also a node editor for parenting, mattes and effect order",
+        "Idle preview caching shown as a green strip on the time ruler",
+        "Adaptive Resolution keeps scrubbing light"
+      ],
+      "shot": "flow"
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agents and the command line",
+      "text": "Claude Code starts inside the app, already connected.",
+      "bullets": [
+        "Window > Start Claude Code (Shift+Cmd or Ctrl+J) in the Terminal panel",
+        "Chat with Claude panel (Alt+Cmd or Ctrl+J)",
+        "Codex and Cursor start from the Terminal panel's buttons",
+        "./formvfx state, commands, describe, exec, batch, frame and render"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "After Effects",
+    "summary": "72 After Effects capability rows, re-graded at 0.51.5 by tracing the code: 68 Full, 3 Partial, 1 None, a score of 69.5 of 72 (97%). Fusion, Nuke, Flame, Autograph and EffectCraft are the other columns."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19+ or 22.12+",
+      "Python 3.12+",
+      "Rust 1.95+"
+    ],
+    "install": "./formvfx install\nWindows: formvfx.bat install",
+    "run": "./formvfx\n./formvfx serve",
+    "desktop": "./build_app\n./formvfx desktop build",
+    "agents": "Claude Code starts inside the app already connected; .mcp.json, .codex/config.toml and .cursor/mcp.json run ./formvfx mcp, and ./formvfx agents install sets up all three clients.",
+    "topics": [
+      {
+        "title": "Getting started",
+        "text": "Open http://localhost:5250, choose Open the demo project on the start screen and work in the panels; ./formvfx doctor checks the toolchain."
+      },
+      {
+        "title": "The engine",
+        "text": "The README names native/fvx-core, the Rust engine that renders on the GPU through wgpu or on the CPU; docs/MANUAL.md goes through the application area by area."
+      },
+      {
+        "title": "Plug-ins",
+        "text": "docs/PLUGINS.md covers WebAssembly effect plug-ins and OpenFX plug-ins."
+      },
+      {
+        "title": "Commands",
+        "text": "./formvfx with no arguments prints every command: install, install-native, serve, doctor, claude, mcp, agents, counts, presets and clean among them."
+      },
+      {
+        "title": "Parity",
+        "text": "docs/PARITY.md grades FormVFX line by line on 72 rows and lists where it trails and where it leads."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.51.5",
+      "date": "2026-10-23",
+      "items": [
+        "Agent guardrails for roto propagation and Selection-Aware-Fill"
+      ]
+    },
+    {
+      "version": "0.51.4",
+      "date": "2026-10-23",
+      "items": [
+        "Licence documentation: frozen packages, shell crates, NOTICE in the installers"
+      ]
+    },
+    {
+      "version": "0.51.3",
+      "date": "2026-10-23",
+      "items": [
+        "Own names for five features in the interface",
+        "Feature names updated in README, NOTICE, manual and wiki"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "comp",
+      "what": "The full workspace with the demo project open",
+      "how": "Run ./formvfx, open http://localhost:5250 and choose Open the demo project on the start screen."
+    },
+    {
+      "key": "graph",
+      "what": "The Graph Editor with keyed properties",
+      "how": "In the demo project select an animated layer and open the Graph Editor from the Timeline."
+    },
+    {
+      "key": "roto",
+      "what": "A Roto Paint or tracking session",
+      "how": "Open any footage layer, double-click it to open the layer panel and use the Roto Paint tool or the Tracker panel."
+    },
+    {
+      "key": "flow",
+      "what": "The Flowchart as a node editor",
+      "how": "Choose Composition > Composition Flowchart and turn on Layers and Effects."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:vfx"
+  ],
+  "captures": {
+    "comp": {
+      "file": "/media/formvfx/ui-comp-1.webp", "light": "/media/formvfx/ui-comp-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormVFX's own demo composition at 2 seconds: the orb, its ring and the formvfx title rendered in the viewer, the Orb layer's Scale keyframes on an eased curve in the Graph Editor below, five layers in the timeline, the Effects and Presets panel and 180 frames of RAM preview cached",
+      "size": ""
+    },
+    "flow": {
+      "file": "/media/formvfx/ui-flowchart-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormVFX Flowchart panel showing the Backdrop solid, its Glow and Gradient Ramp effects and the layers wired into the composition",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formvfx/ui-hero-2.webp", "light": "/media/formvfx/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormVFX with a Launch Week composition: a LAUNCH WEEK headline over a sunset field photo, Effect Controls, Effects and Presets searching for bounce, and the timeline with a text layer and an image layer",
+      "size": ""
+    },
+    "graph-editor": {
+      "file": "/media/formvfx/ui-graph-editor-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormVFX Graph Editor showing a scale curve with an ease on the Orb layer of the formvfx Intro composition",
+      "size": ""
+    }
+  },
+  "credit": "The composition in the captures is FormVFX's own demo project."
+}

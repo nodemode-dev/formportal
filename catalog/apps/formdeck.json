@@ -1,0 +1,359 @@
+{
+  "id": "formdeck",
+  "name": "FormDeck",
+  "version": "0.30.5",
+  "repo": "https://github.com/nodemode-dev/formdeck",
+  "kind": "Presentation and pitch deck app",
+  "title": "presentations and pitch decks that agents can draft while you watch",
+  "summary": "An open presentation app with 67 templates, .pptx and .odp exchange, a presenter view and an MCP server so an agent can draft a deck from your material.",
+  "lede": "FormDeck is presentations and pitch decks in the form family, an open alternative to PowerPoint, Keynote and Google Slides. It is built so that Claude Code, Codex or Cursor can draft a whole deck from your material in your chosen template, live, while you watch, then hand it to you for review.",
+  "replaces": "PowerPoint, Keynote and Google Slides",
+  "project": ".fdec",
+  "runs_on": "macOS 12+, Windows 10+ and Linux, in the browser or as a Tauri desktop app",
+  "checks": [
+    "Drafts a deck from dropped md, pdf, docx, pptx, txt, csv, xlsx, images, gifs or meeting notes, a brief and a template.",
+    "Imports and exports .pptx and .potx, and .odp and .otp for LibreOffice Impress.",
+    "Presents full screen with twelve transitions, animation builds, pen, highlighter and laser, and a presenter view.",
+    "Reviews with comments, replies, mentions, assignees and review status per slide."
+  ],
+  "facts": [
+    {
+      "dt": "Repository",
+      "dd": "nodemode-dev/formdeck; FormDeck is the display name. The app was called formsld through 0.7.0."
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python 3.12 and FastAPI on 127.0.0.1:8197, app on http://localhost:5197, in a Tauri 2 shell"
+    },
+    {
+      "dt": "Languages",
+      "dd": "English by default and 25 more"
+    },
+    {
+      "dt": "Data folder",
+      "dd": "~/formdeck, overridden with FORMDECK_DATA_DIR"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "material",
+      "kicker": "Start",
+      "title": "Start from your material",
+      "text": "Drop md, pdf, docx, pptx, txt, csv, xlsx, images, gifs or meeting notes, add a brief, pick a template, and get a drafted deck (about 80% there) in seconds, or hand the intake to an agent.",
+      "shot": "start"
+    },
+    {
+      "id": "templates",
+      "kicker": "Templates",
+      "title": "67 original templates",
+      "text": "67 original templates in 9 categories, each with 21 semantic layouts and a 17-slide sample. Import any .pptx or .potx as a template, and export every template as .pptx.",
+      "shot": "templates"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "An agent that builds the deck in the open window",
+      "text": "An MCP server with 31 tools over HTTP at /mcp or stdio. Live edits are attributed per agent turn and undone as one step, and contact-sheet rendering and real DOM lint let the agent see and fix its own slides.",
+      "shot": "editor"
+    }
+  ],
+  "features": [
+    {
+      "id": "start",
+      "icon": "download",
+      "title": "Start from material",
+      "text": "Drop files, add a brief, pick a template.",
+      "bullets": [
+        "md, pdf, docx, pptx, txt, csv, xlsx, images, gifs and meeting notes",
+        "A PDF opened or dropped anywhere lands as material",
+        "Insert > Slides from PDF Pages adds each page as a slide with its text in the notes"
+      ],
+      "shot": "start"
+    },
+    {
+      "id": "templates",
+      "icon": "copy",
+      "title": "Templates",
+      "text": "67 original templates in 9 categories.",
+      "bullets": [
+        "21 semantic layouts and a 17-slide sample each",
+        "Crafter Ideas shows a slide in every layout of its master",
+        "Import any .pptx or .potx as a template, export every template as .pptx"
+      ],
+      "shot": "templates"
+    },
+    {
+      "id": "editing",
+      "icon": "cut",
+      "title": "Editing",
+      "text": "A full slide editor with a Slide Master view.",
+      "bullets": [
+        "Editable theme colours and fonts, several masters per deck",
+        "Text Art with fill, outline, shadow, glow, reflection and all 40 transforms",
+        "Equations in LaTeX or linear format",
+        "Merge shapes: union, combine, fragment, intersect, subtract"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "exchange",
+      "icon": "export",
+      "title": "Exchange",
+      "text": "Open formats for other apps.",
+      "bullets": [
+        "PowerPoint, Keynote and Google Slides via .pptx and .potx import and export",
+        "OpenDocument .odp and .otp for LibreOffice Impress",
+        ".fdec package, with older .fsld opening",
+        "PDF export writes slides as live, embedded text and passes PDF/UA-1 in veraPDF"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "presenting",
+      "icon": "play",
+      "title": "Presenting",
+      "text": "Full-screen show and a presenter view.",
+      "bullets": [
+        "Twelve transitions including Morpher and animation builds",
+        "Pen, highlighter and laser, Zoom Slider",
+        "A live camera in any shape and a presenter view with a separate audience window",
+        "Rehearsed timings with an optional Speech Rehearsal"
+      ],
+      "shot": "present"
+    },
+    {
+      "id": "review",
+      "icon": "check",
+      "title": "Review",
+      "text": "Feedback on slides.",
+      "bullets": [
+        "Comments with replies, mentions and assignees",
+        "Review status per slide and an activity log",
+        "Compare a deck with a saved version or another file"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "sharing",
+      "icon": "globe",
+      "title": "Sharing",
+      "text": "Off by default: FormDeck answers only this computer.",
+      "bullets": [
+        "File > Share Deck gives people on the same network a link to view, comment or edit one deck",
+        "They co-edit live in a browser",
+        "Removing a link or turning sharing off locks them out",
+        "Beyond the local network it needs a relay that you run yourself"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "addins",
+      "icon": "extensions",
+      "title": "Add-ins",
+      "text": "A Store of add-ins for ribbon commands and task panes.",
+      "bullets": [
+        "Each installed only after you see its permissions, checked against its checksum",
+        "Runs in the macro sandbox",
+        "FormDeck's own catalog lists three add-ins, and other catalogs can be added",
+        "docs/ADDINS.md explains how to publish your own"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "claude",
+      "icon": "terminal",
+      "title": "Claude Code inside",
+      "text": "A terminal dock with shell tabs and a Claude Code tab.",
+      "bullets": [
+        "Runs your own Claude sign-in with FormDeck's tools",
+        "The chat panel's Claude Code assistant uses the same sign-in",
+        "Continue a conversation in the terminal or bring one into the chat"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "commands",
+      "icon": "settings",
+      "title": "Commands",
+      "text": "About 650 ribbon, menu and shortcut commands in one catalogue.",
+      "bullets": [
+        "Find a Command with Shift+Ctrl or Cmd+P",
+        "MCP list_commands and run_command",
+        "/api/commands and ./formdeck cli list"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "designers",
+      "icon": "sliders",
+      "title": "For designers",
+      "text": "Reusable parts and your own fonts.",
+      "bullets": [
+        "Components: save shapes once and update every copy from one",
+        "Named text and colour styles",
+        "Your own fonts (TTF, OTF, WOFF, WOFF2), embedded in .pptx on request",
+        "SVG in as editable shapes"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "languages",
+      "icon": "globe",
+      "title": "Languages",
+      "text": "English by default and 25 more.",
+      "bullets": [
+        "Set in Preferences > Appearance > Language",
+        "./formdeck i18n check finds gaps",
+        "The 25 translations were made by language models and have not been reviewed by native speakers yet"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "desktop",
+      "icon": "laptop",
+      "title": "Desktop builds",
+      "text": "Each package carries the engine as a frozen sidecar.",
+      "bullets": [
+        "macOS 12+ .app and .dmg",
+        "Windows 10+ .msi and setup .exe",
+        "Linux .deb, .rpm and .AppImage, and a .flatpak"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "PowerPoint, Keynote and Google Slides",
+    "summary": "Of the 104 capabilities the three references document, FormDeck is full on 100 and partial on 4; none is missing outright. It was re-read at 0.29.1 and compared with DeckCraft. PDF editing moved to formpdf, which has its own page."
+  },
+  "docs": {
+    "requirements": [
+      "Python 3.12 or newer",
+      "Node 20.19 or newer",
+      "Rust, installed with rustup if missing (build_app asks first)",
+      "WebKitGTK on Linux"
+    ],
+    "install": "./formdeck install\n(Windows: formdeck.bat install)",
+    "run": "./formdeck\n(Windows: formdeck.bat)",
+    "desktop": "./build_app\n(Windows: build_app.bat)",
+    "agents": "./formdeck agents install writes .mcp.json, .codex/config.toml and .cursor/mcp.json and installs the skills; the MCP server runs over HTTP at /mcp or stdio via ./formdeck mcp.",
+    "topics": [
+      {
+        "title": "Manual",
+        "text": "docs/MANUAL.md is the manual for using the app."
+      },
+      {
+        "title": "Deck format",
+        "text": "docs/FORMAT.md is the deck contract."
+      },
+      {
+        "title": "Add-ins",
+        "text": "docs/ADDINS.md explains how to write and publish an add-in."
+      },
+      {
+        "title": "Build a deck with an agent",
+        "text": "The README shows how to ask an agent to build a deck, and a build-deck command that works without the window."
+      },
+      {
+        "title": "Known gaps",
+        "text": "The README lists gaps such as sharing beyond the local network needing your own relay, and no OCR for scanned PDFs."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.30.4",
+      "date": "2026-11-04",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. and the licence"
+      ]
+    },
+    {
+      "version": "0.30.3",
+      "date": "2026-11-03",
+      "items": [
+        "No layout shift in the ribbon groups"
+      ]
+    },
+    {
+      "version": "0.30.2",
+      "date": "2026-11-02",
+      "items": [
+        "Homebrew's rustup passes the desktop check in setup"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "start",
+      "what": "The Start from your material screen",
+      "how": "Run ./formdeck, open http://localhost:5197, and drop a .md or .pdf file on the Start screen."
+    },
+    {
+      "key": "templates",
+      "what": "The template gallery",
+      "how": "Open the Templates view from Start and pick a category to show the 17-slide sample previews."
+    },
+    {
+      "key": "editor",
+      "what": "A deck open in the editor",
+      "how": "Choose a template, create a deck and open slide 1 with the slide panel visible."
+    },
+    {
+      "key": "present",
+      "what": "The presenter view",
+      "how": "With a deck open, start the show from the Slide Show menu and open the presenter view."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:deck"
+  ],
+  "captures": {
+    "start": {
+      "file": "/media/formdeck/ui-start-1.webp", "light": "/media/formdeck/ui-start-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormDeck's New deck from files: a sample brief added, notes and a goal for the deck, the Aurora template chosen from the gallery, and slide count and size before Draft the deck or Hand to an agent",
+      "size": ""
+    },
+    "templates": {
+      "file": "/media/formdeck/ui-templates-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormDeck template picker showing template cards in categories",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formdeck/ui-hero-2.webp",
+      "light": "/media/formdeck/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormDeck editing a seven-slide deck called Above the Clouds: the Home ribbon on top, the slide rail on the left and a full-bleed mountain photo with the title slide on the canvas",
+      "size": ""
+    },
+    "present": {
+      "file": "/media/formdeck/ui-present-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormDeck presenter view with the current slide, the next slide, speaker notes and a questions box",
+      "size": ""
+    },
+    "chart": {
+      "file": "/media/formdeck/ui-chart-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormDeck with a native column chart selected on a budget slide",
+      "size": ""
+    },
+    "sorter": {
+      "file": "/media/formdeck/ui-sorter-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormDeck slide sorter showing ten slides of a travel deck in a grid",
+      "size": ""
+    }
+  },
+  "credit": "The deck in the captures was drafted by FormDeck from a brief written for this page."
+}

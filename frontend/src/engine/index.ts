@@ -215,7 +215,7 @@ export class Engine {
   view(id: string, channel: Channel): ChannelView {
     const product = this.product(id);
     const base = { product: id, channel, version: null, artifact: null };
-    if (!product || product.state === "prelaunch") return { ...base, availability: "unreleased" };
+    if (!product || (product.state === "prelaunch" && Object.keys(product.channels).length === 0)) return { ...base, availability: "unreleased" };
     const release = product.channels[channel];
     if (!release) return { ...base, availability: "no-release" };
     const { os, arch } = this.state.platform;

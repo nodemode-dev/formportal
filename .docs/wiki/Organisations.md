@@ -54,7 +54,7 @@ FORMPORTAL_MIRROR_KEY=<base64 Ed25519 seed> ./formportal cli mirror \
   --platforms windows,macos --channels stable --history
 ```
 
-The mirror reads and verifies the public catalogue, downloads every file it names into `files/[product]/[channel]/[version]/` and checks each SHA-256, rewrites every address to the base address, writes `apps.json` and signs it with the mirror key. Serve the folder at the base address, then set `catalog` to the result's `address` and `catalog_keys` to its `public_key`. Computers then install with no access to formai.dev or GitHub. Without a key the mirror is unsigned and only computers with the developer setting accept it.
+The mirror reads and verifies the public catalogue, downloads every file it names into `files/[product]/[channel]/[version]/` and checks each SHA-256, rewrites every address to the base address, writes `apps.json` and signs it with the mirror key. Serve the folder at the base address, then set `catalog` to the result's `address` and `catalog_keys` to its `public_key`. Computers then install with no access to formai.studio or GitHub. Without a key the mirror is unsigned and only computers with the developer setting accept it.
 
 Make the key pair with formai_dev's `python -m app.signing`, or any Ed25519 tool that prints the 32-byte seed and public key in base64.
 

@@ -4,7 +4,9 @@ use crate::error::Result;
 
 pub const NAME: &str = "FormPortal";
 #[cfg(target_os = "macos")]
-const LABEL: &str = "dev.formai.portal.login";
+const LABEL: &str = "studio.formai.portal.login";
+#[cfg(target_os = "macos")]
+const OLD_LABEL: &str = "dev.formai.portal.login";
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 fn home() -> PathBuf {
@@ -40,8 +42,17 @@ fn entry(program: &Path) -> String {
     )
 }
 
+#[cfg(target_os = "macos")]
+fn forget_old() {
+    let _ = std::fs::remove_file(home().join("Library").join("LaunchAgents").join(format!("{OLD_LABEL}.plist")));
+}
+
+#[cfg(target_os = "linux")]
+fn forget_old() {}
+
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub fn sync(on: bool, program: &Path) -> Result<()> {
+    forget_old();
     let file = location();
     if !on {
         return match std::fs::remove_file(&file) {

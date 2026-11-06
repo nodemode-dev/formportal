@@ -7,6 +7,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::{agents, installers, process};
+use crate::releases::{COMPILER_CATALOG, STORE_CATALOG};
 use crate::signature::{read_local, trusted_keys, verify};
 use crate::policy::{self, Managed};
 use crate::prefs::Preferences;
@@ -254,13 +255,43 @@ fn deep_find(dir: &Path, product: &str, depth: u32) -> Option<PathBuf> {
     found.iter().find(|p| stem(p) == product).or_else(|| found.iter().find(|p| stem(p).contains(product))).or_else(|| found.iter().find(|p| p.parent().map(|d| d.ends_with("bin")).unwrap_or(false))).cloned()
 }
 
+#[cfg(unix)]
+fn leave_link(at: &Path, to: &Path) -> io::Result<()> {
+    std::os::unix::fs::symlink(to, at)
+}
+
+#[cfg(not(unix))]
+fn leave_link(_at: &Path, _to: &Path) -> io::Result<()> {
+    Err(io::Error::new(io::ErrorKind::Unsupported, "no links here"))
+}
+
+fn moved_root(old: &Path, new: &Path) -> PathBuf {
+    let old_kind = fs::symlink_metadata(old).map(|m| m.file_type()).ok();
+    let old_is_folder = old_kind.is_some_and(|k| k.is_dir());
+    if old_is_folder && fs::symlink_metadata(new).is_ok_and(|m| m.file_type().is_dir()) {
+        let _ = fs::remove_dir(new);
+    }
+    if fs::symlink_metadata(new).is_ok() {
+        return new.to_path_buf();
+    }
+    if !old_is_folder {
+        return if old_kind.is_some_and(|k| k.is_symlink()) && old.is_dir() { old.to_path_buf() } else { new.to_path_buf() };
+    }
+    if fs::rename(old, new).is_err() {
+        return if fs::symlink_metadata(new).is_ok() { new.to_path_buf() } else { old.to_path_buf() };
+    }
+    let _ = leave_link(old, new);
+    new.to_path_buf()
+}
+
 impl Portal {
     pub fn default_root() -> PathBuf {
         if let Some(root) = std::env::var_os("FORMPORTAL_ROOT") {
             return PathBuf::from(root);
         }
         if cfg!(target_os = "macos") {
-            home().join("Library").join("Application Support").join("dev.formai.portal")
+            let support = home().join("Library").join("Application Support");
+            moved_root(&support.join("dev.formai.portal"), &support.join("studio.formai.portal"))
         } else if cfg!(target_os = "windows") {
             std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(|| home().join("AppData").join("Local")).join("FormPortal")
         } else {
@@ -305,9 +336,13 @@ impl Portal {
         let dir = self.root.join("catalog");
         let kept = dir.join("apps.json");
         let kept_signature = dir.join("apps.json.sig");
-        let (body, signature, fresh) = match fetch_bytes(&url) {
-            Ok(body) => {
-                let signature = fetch_bytes(&format!("{url}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
+        let fetched = fetch_bytes(&url).map(|b| (b, url.clone())).or_else(|e| match url.as_str() {
+            STORE_CATALOG => fetch_bytes(COMPILER_CATALOG).map(|b| (b, COMPILER_CATALOG.to_string())).map_err(|_| e),
+            _ => Err(e),
+        });
+        let (body, signature, fresh) = match fetched {
+            Ok((body, from)) => {
+                let signature = fetch_bytes(&format!("{from}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
                 (body, signature, true)
             }
             Err(e) => match fs::read(&kept) {
@@ -321,7 +356,7 @@ impl Portal {
             None => return Err(CoreError::Signature("it is not signed".to_string())),
         }
         let text = String::from_utf8(body.clone()).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
-        let catalog = Catalog::from_json(&text)?;
+        let mut catalog = Catalog::from_json(&text)?;
         if fresh {
             fs::create_dir_all(&dir)?;
             fs::write(&kept, &body)?;
@@ -331,6 +366,9 @@ impl Portal {
                     let _ = fs::remove_file(&kept_signature);
                 }
             }
+        }
+        if self.reads_releases()? {
+            crate::releases::discover(&self.root, &mut catalog);
         }
         Ok(catalog)
     }

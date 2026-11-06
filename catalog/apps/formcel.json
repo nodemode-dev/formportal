@@ -1,0 +1,335 @@
+{
+  "id": "formcel",
+  "name": "FormCel",
+  "version": "0.40.9",
+  "repo": "https://github.com/nodemode-dev/formcel",
+  "kind": "Spreadsheet application",
+  "title": "spreadsheets that agents can read and edit while you watch",
+  "summary": "An open spreadsheet app with one Rust calculation engine, Excel and CSV file support, charts, PivotTables and an agent interface for Claude Code, Codex and Cursor.",
+  "lede": "FormCel is spreadsheets in the form family, an open alternative to Excel and Google Sheets. It is built so that Claude Code, Codex or Cursor can read and edit a live workbook while you watch.",
+  "replaces": "Excel and Google Sheets",
+  "project": ".fcel",
+  "runs_on": "macOS, Windows and Linux, in the browser or as a Tauri desktop app",
+  "checks": [
+    "Opens and saves .xlsx and .xlsm, opens .ods and .xls, and reads .csv, .tsv and .txt with a preview.",
+    "Calculates with one Rust engine for a store of 1,048,576 rows by 16,384 columns.",
+    "Formats cells with conditional formatting, data bars, colour scales and icon sets.",
+    "Starts from templates, including finished workbooks with a formula dashboard and charts."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "A Rust core compiled to WebAssembly for the window and to a Python module for the FastAPI engine process on 127.0.0.1:8199"
+    },
+    {
+      "dt": "Window",
+      "dd": "Vanilla TypeScript and Vite on http://localhost:5199, with a canvas grid"
+    },
+    {
+      "dt": "Speed",
+      "dd": "1,000,000 filled rows scroll at a 16.7 ms p95 frame with the CPU slowed 4x"
+    },
+    {
+      "dt": "Data folder",
+      "dd": "~/FormCel, overridden with FORMCEL_DATA_DIR"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "engine",
+      "kicker": "Engine",
+      "title": "One calculation engine, everywhere",
+      "text": "A Rust core is built once for the window as WebAssembly and once for the engine process as a Python module. It holds a chunked cell store for 1,048,576 rows by 16,384 columns, with 500 steps of undo and redo.",
+      "shot": "grid"
+    },
+    {
+      "id": "files",
+      "kicker": "Files",
+      "title": "Works with the files you already have",
+      "text": "Open .xlsx and .xlsm or drop one on Home, and save as .xlsx. .ods opens and downloads, .xls opens with its last saved values, and password-protected .xlsx opens with its password. CSV and TSV open with a preview of separator and encoding.",
+      "shot": "home"
+    },
+    {
+      "id": "templates",
+      "kicker": "Templates",
+      "title": "Finished workbooks to start from",
+      "text": "76 templates ship in the gallery: 40 finished workbooks across Finance, Sales and marketing, Operations and Personal and education, and 14 Data and charts templates, each with a formula dashboard and charts tied to its data.",
+      "shot": "home"
+    }
+  ],
+  "features": [
+    {
+      "id": "home",
+      "icon": "apps",
+      "title": "Home and saving",
+      "text": "Start, Recent, Templates and Trash, after FormDeck, with thumbnails of each workbook's first sheet.",
+      "bullets": [
+        "Templates with category chips and search",
+        ".fcel files in ~/FormCel/Workbooks, saved as you type",
+        "Rename in the top bar",
+        "Trash with restore"
+      ],
+      "shot": "home"
+    },
+    {
+      "id": "excel",
+      "icon": "export",
+      "title": "Excel files",
+      "text": "Open and save .xlsx and .xlsm with a note of anything left out.",
+      "bullets": [
+        "Values, formulas, number formats, fonts, fills, borders, alignment, cell styles, the theme and conditional formatting",
+        ".xlsm keeps its macros (not run) and downloads as .xlsm",
+        "Password-protected .xlsx opens with its password and downloads with a new one"
+      ],
+      "shot": "home"
+    },
+    {
+      "id": "other",
+      "icon": "download",
+      "title": "Other files",
+      "text": "OpenDocument, legacy and text formats.",
+      "bullets": [
+        ".ods opens and downloads",
+        ".xls opens with its last saved values",
+        ".csv, .tsv and .txt with a preview, leading zeros kept",
+        "PDF of a sheet or the whole workbook"
+      ],
+      "shot": "import"
+    },
+    {
+      "id": "sheets",
+      "icon": "layers",
+      "title": "Sheets",
+      "text": "Several sheets per workbook with tabs.",
+      "bullets": [
+        "Double-click a tab to rename it",
+        "The tab menu moves, colours and deletes",
+        "Each sheet keeps its sizes, hidden rows and columns, frozen panes and zoom"
+      ],
+      "shot": "grid"
+    },
+    {
+      "id": "formulas",
+      "icon": "code",
+      "title": "Formulas",
+      "text": "Formulas with references, operators and spilled results.",
+      "bullets": [
+        "Cell, range, column, row and cross-sheet references with $ anchors",
+        "Array constants such as {1,2;3,4}",
+        "Results of several cells spill into the cells beside them, with #SPILL! when something is in the way",
+        "Formula autocomplete with argument tips"
+      ],
+      "shot": "grid"
+    },
+    {
+      "id": "grid",
+      "icon": "grid",
+      "title": "Grid",
+      "text": "A canvas grid with headers and full keyboard support.",
+      "bullets": [
+        "Selection of cells, ranges, rows, columns and the whole sheet",
+        "Name Box and formula bar",
+        "Copy, cut and paste, Paste Special, fill handle series",
+        "Group and ungroup rows and columns"
+      ],
+      "shot": "grid"
+    },
+    {
+      "id": "data",
+      "icon": "sliders",
+      "title": "Data tools",
+      "text": "Sort and filter.",
+      "bullets": [
+        "Sort A to Z or Z to A, and a multi-level Sort dialog",
+        "Filter with Ctrl+Shift+L: by values with search, or one or two conditions with And or Or and ? * wildcards"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "links",
+      "icon": "external",
+      "title": "Links",
+      "text": "HYPERLINK and linked cells.",
+      "bullets": [
+        "Web and email addresses typed into a cell become links",
+        "Insert and Edit link (Ctrl+K) to a page, an address or a place in the workbook such as #Sheet2!A1",
+        "A chip under a linked cell to open, edit or remove it"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "formatting",
+      "icon": "grade",
+      "title": "Formatting",
+      "text": "Conditional formatting and number formats.",
+      "bullets": [
+        "Greater than, less than, between, text contains, duplicates, top and bottom, above and below average, formula rules",
+        "Data bars, two- and three-colour scales and five icon sets",
+        "A rules manager with order and Stop If True",
+        "Number formats on Ctrl+Shift+~ ! @ # $ % ^"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "fonts",
+      "icon": "captions",
+      "title": "Fonts",
+      "text": "28 bundled fonts and all those installed on the computer, as in FormDeck.",
+      "bullets": [
+        "Complete original font files for Lora, Merriweather, Playfair Display, Raleway and Source Sans 3",
+        "PDF export embeds them from those files"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "datatypes",
+      "icon": "tag",
+      "title": "Data types",
+      "text": "Stocks and Currencies data types keep their records in a workbook record store.",
+      "bullets": [
+        "A cell holds only its record id and the label it shows",
+        "Field formulas such as =A2.Price",
+        "Excel export and import keep the display text, the field formulas and the data type part"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "formai",
+      "title": "Agents",
+      "text": "An engine process that exposes commands for agents.",
+      "bullets": [
+        "API at /api/commands, /api/workbooks and /api/import",
+        "Export endpoints for .xlsx, .xlsm, .ods, .csv and .tsv"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Excel and Google Sheets",
+    "summary": "Of 214 capabilities, FormCel is full on 183, partial on 29 and has nothing yet for 2. The baseline is graded from code at v0.40.0 against Microsoft and Google help pages, and 361 of 456 reference cells are settled from a page."
+  },
+  "docs": {
+    "requirements": [
+      "Python 3.12 or newer",
+      "Node 20.19 or newer",
+      "Rust (https://rustup.rs)"
+    ],
+    "install": "./formcel_oc_install\n(Windows: formcel_oc_install.bat)",
+    "run": "./formcel\n(Windows: formcel.bat)",
+    "desktop": "./build_app",
+    "agents": "",
+    "topics": [
+      {
+        "title": "Keys",
+        "text": "The README lists keyboard shortcuts including Ctrl+arrows, F2, Ctrl+Z and Ctrl+Y, Paste Special on Ctrl+Alt+V, and Go To on F5."
+      },
+      {
+        "title": "Status table",
+        "text": "A table of each area of the app with what it does, from formulas and the grid to the engine process."
+      },
+      {
+        "title": "Desktop app",
+        "text": "build_app options --open, --clean and --no-install, with .app and .dmg on macOS, .deb on Linux and .msi and setup .exe on Windows."
+      },
+      {
+        "title": "Data folder",
+        "text": "Workbooks, trash and templates live in ~/FormCel, which FORMCEL_DATA_DIR overrides."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.40.7",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain in the registry"
+      ]
+    },
+    {
+      "version": "0.40.6",
+      "date": "2026-10-30",
+      "items": [
+        "On Windows, the install no longer stops when Tesseract is missing; Data from a picture stays optional",
+        "The macOS app's engine folder is signed with the Developer ID so the app can be notarized",
+        "Windows checkouts get CRLF batch files and LF everywhere else"
+      ]
+    },
+    {
+      "version": "0.40.5",
+      "date": "2026-10-26",
+      "items": [
+        "A test opens the built window under a slow network and processor and fails if it shifts, logs an error or has a request fail"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "home",
+      "what": "Home with templates and recent workbooks",
+      "how": "Run ./formcel, open http://localhost:5199 and show the Templates tab with a category chip selected."
+    },
+    {
+      "key": "grid",
+      "what": "A workbook with formulas, a chart and conditional formatting",
+      "how": "Open one of the finished templates such as a Finance workbook from Home and select a cell with a formula."
+    },
+    {
+      "key": "import",
+      "what": "The CSV import preview",
+      "how": "Drop any .csv file on Home to show the separator, encoding and column type preview."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "parity:cel"
+  ],
+  "captures": {
+    "home": {
+      "file": "/media/formcel/ui-templates-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Templates gallery filtered to Data and charts, each card showing the template's own chart",
+      "size": ""
+    },
+    "grid": {
+      "file": "/media/formcel/ui-grid-1.webp", "light": "/media/formcel/ui-grid-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormCel with its Monthly budget template open: the ribbon, name box and formula bar on a selected Difference cell, Category, Planned, Actual and Difference columns, and the status bar reading Engine 0.40.0",
+      "size": ""
+    },
+    "import": {
+      "file": "/media/formcel/ui-import-1.webp", "light": "/media/formcel/ui-import-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormCel's CSV import preview for a sample file: the semicolon separator it detected, 8 rows in UTF-8, and a type for each column (dates, text, numbers) before the file opens",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formcel/ui-hero-2.webp",
+      "light": "/media/formcel/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormCel's Templates view on the Sales and marketing tab: workbook cards with live charts for campaign ROI, a sales pipeline funnel, A/B test results, cohort retention, lead scoring and price elasticity",
+      "size": ""
+    },
+    "insert": {
+      "file": "/media/formcel/ui-insert-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Insert tab of the ribbon: PivotTable, Table, Pictures, Shapes, Recommended Charts, Maps, Sparklines, Slicer, Comment and Symbol",
+      "size": ""
+    },
+    "summary": {
+      "file": "/media/formcel/ui-summary-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A Summary sheet with formula results and a pie chart of revenue by product line",
+      "size": ""
+    }
+  },
+  "credit": "The workbook in the captures is FormCel's own Monthly budget template; the CSV was written for this page."
+}

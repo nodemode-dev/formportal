@@ -321,6 +321,7 @@ export interface Preferences {
   quiet: NoticeCategory[];
   language: string | null;
   open_at_login: boolean;
+  supporter_code?: string | null;
 }
 
 export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";
@@ -403,4 +404,32 @@ export interface ChannelView {
   availability: Availability;
   version: string | null;
   artifact: Artifact | null;
+}
+
+export interface UpcomingDay {
+  at: string;
+  count: number;
+}
+
+export interface UpcomingView {
+  known: boolean;
+  dated: UpcomingDay[];
+  undated: number;
+  supporters: number;
+  checked: number;
+  stale: boolean;
+}
+
+export interface SupporterTile {
+  name: string;
+  at: string | null;
+}
+
+export interface SupporterView {
+  state: "none" | "supporter" | "no" | "unreachable";
+  supporter: boolean;
+  until: string | null;
+  upcoming: SupporterTile[];
+  checked: number;
+  stale: boolean;
 }

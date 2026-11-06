@@ -1,0 +1,81 @@
+{
+  "id": "formportal",
+  "name": "FormPortal",
+  "version": "0.54.2",
+  "repo": "https://github.com/nodemode-dev/formportal",
+  "kind": "FormAI app installer and updater",
+  "title": "one place to install, open and update every FormAI app",
+  "summary": "FormPortal installs, opens, updates and rolls back every FormAI app, with no account and no background process. Free and open-source under GPL-3.0.",
+  "lede": "FormPortal reads the signed Form family catalogue and offers this computer the right build of every FormAI app. It checks each download's SHA-256 before unpacking, installs per user with no administrator, and keeps the version it replaced so one step back is always there. The same engine runs the window, a command line and an MCP server.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux (build targets: all)",
+  "checks": [
+    "Installs each FormAI app per user with no administrator, from zip, AppImage, deb, rpm, dmg, msi or NSIS.",
+    "Keeps the version it replaced so one step back is always there, and keeps a beta beside the stable build.",
+    "Refuses any download whose SHA-256 does not match, before unpacking; no flag skips the hash.",
+    "No account and no tray process; FormPortal checks when it is open and stops when you close it."
+  ],
+  "facts": [
+    {"dt": "Catalogue", "dd": "Ed25519-signed, published by formcompiler (nodemode-dev/formcompiler)"},
+    {"dt": "Engine", "dd": "Rust (formportal-core, formportal-cli) in a Tauri 2 shell with a vanilla TypeScript interface"},
+    {"dt": "Agents", "dd": "39 MCP tools for Claude Code, Codex and Cursor"},
+    {"dt": "Channels", "dd": "Stable, beta and nightly, each its own install"}
+  ],
+  "chapters": [
+    {"id": "install", "kicker": "Install", "title": "Right build, checked before it unpacks", "text": "FormPortal reads the signed catalogue and offers the right build of every FormAI app for this computer. An Ed25519-signed catalogue and a SHA-256 per file are checked before anything is unpacked.", "shot": "apps"},
+    {"id": "update", "kicker": "Update", "title": "Roll back and run betas side by side", "text": "Every update keeps the version it replaced, and each channel is its own install. An update can wait until you close the app, and Check and repair fixes broken installs and leftovers.", "shot": "updates"},
+    {"id": "agents", "kicker": "Agents", "title": "One engine, three surfaces", "text": "The core does catalogue, verify, install, rollback, remove and launch with no window in it. The window, the command line and the MCP server are thin layers over it, so an agent and a person see the same installs.", "shot": "home"}
+  ],
+  "features": [
+    {"id": "engine", "icon": "box", "title": "One engine, three surfaces", "text": "core/ does catalogue, verify, install, rollback, remove and launch with no window in it.", "bullets": ["src-tauri/ is the window and cli/ is commands and MCP", "An agent and a person see the same installs"], "shot": "home"},
+    {"id": "trust", "icon": "shield", "title": "Trust you can check", "text": "An Ed25519-signed catalogue and a SHA-256 per file.", "bullets": ["A mismatch is refused before unpacking", "https or this computer only", "No flag skips the hash"], "shot": ""},
+    {"id": "rollback", "icon": "updates", "title": "Rollback, betas side by side", "text": "Every update keeps the version it replaced.", "bullets": ["Each channel (stable, beta, nightly) is its own install", "One step back is always there"], "shot": "updates"},
+    {"id": "resident", "icon": "check", "title": "Nothing resident", "text": "No account and no tray process.", "bullets": ["FormPortal checks when it is open and stops when you close it"], "shot": ""},
+    {"id": "agents", "icon": "formai", "title": "Agent ready", "text": "./formportal mcp serves 39 tools over stdio.", "bullets": ["Tools include status, apps, install, update, rollback, remove, open and repair", ".mcp.json, .codex/config.toml and .cursor/mcp.json are wired", "A FormAI app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates"], "shot": ""},
+    {"id": "layout", "icon": "apps", "title": "A calm layout", "text": "A two-level sidebar with Home, Apps (Updates and Beta), Extensions and Learn.", "bullets": ["Search, a notifications bell and Preferences in the top bar", "Apps as a list with one action each and a More menu", "Preferences as a dialog with a switch per app"], "shot": "apps"},
+    {"id": "files", "icon": "source", "title": "Files on your own disk", "text": "Pick folders and FormPortal lists your Form projects and opens each in the right app.", "bullets": ["Keeps a version each time you save while it is open, up to 20 to go back to", "Shows previews the apps write", "Shows what it uses on disk", "No cloud"], "shot": "files"},
+    {"id": "fonts", "icon": "captions", "title": "Fonts without an account", "text": "Open-licensed families from a signed index, or your own TTF and OTF files.", "bullets": ["Installed for you alone with no administrator"], "shot": "fonts"},
+    {"id": "learn", "icon": "book", "title": "Learn, and ask your own agent", "text": "Step-by-step tutorials with progress kept on your computer.", "bullets": ["Suggestions on Home worked out locally", "Notifications filed by kind", "Claude Code or Codex answers questions about your apps through a reading-only server"], "shot": ""},
+    {"id": "repair", "icon": "settings", "title": "Repair, later, and links from the web", "text": "Check and repair finds and fixes broken installs and leftovers, silently from the command line too.", "bullets": ["An update can wait until you close the app", "A web page can hand a Form project file to the right app, after you say yes"], "shot": ""},
+    {"id": "language", "icon": "globe", "title": "Your language, your starting screen", "text": "English and a Spanish draft, chosen before the window opens.", "bullets": ["Open on Home or where you left off"], "shot": ""},
+    {"id": "stock", "icon": "film", "title": "Stock and templates with their credits", "text": "Open-licensed images, video, audio and FormAI app templates from a signed index.", "bullets": ["Saved to your Library with the credit line beside each file", "A template opens in its app in one step", "No paid stock, no generative AI"], "shot": "stock"},
+    {"id": "registry", "icon": "grid", "title": "Built from the registry", "text": "Every app's row, card, page and switch is written at build time from catalog/products.json.", "bullets": ["The first frame is the final layout", "Layout shift 0 under 4x CPU throttling"], "shot": ""}
+  ],
+  "parity": {"against": "Creative Cloud desktop app", "summary": "FormPortal was measured against 71 capabilities of Adobe's Creative Cloud desktop app, alongside JetBrains Toolbox, Setapp and Autodesk Access, with FormPortal's cells traced through its code at 0.44.5. Rows for cloud files, fonts, stock, social feed and paid extensions are marked as non-goals but still count against it."},
+  "docs": {
+    "requirements": ["Node 20.19 or newer", "Rust stable", "git", "WebKitGTK 4.1 on Linux (libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config build-essential)"],
+    "install": "chmod +x formportal formportal_oc_install\n./formportal_oc_install",
+    "run": "./formportal",
+    "desktop": "",
+    "agents": "./formportal agents install adds the MCP server and the formportal-harness skill to Claude Code, Codex and Cursor; ./formportal mcp serves it on stdio.",
+    "topics": [
+      {"title": "Quick Start", "text": "The README gives requirements and commands for macOS, Linux and Windows (formportal_oc_install.bat, formportal.bat); the first boot compiles the shell, which takes a few minutes."},
+      {"title": "Command line", "text": "./formportal cli apps lists the family; ./formportal cli install formcut --channel beta installs a beta."},
+      {"title": "Configuration", "text": "The README lists FORMPORTAL_ROOT, FORMPORTAL_CATALOG, FORMPORTAL_POLICY and other variables, and explains the catalogue key."},
+      {"title": "Interface alone", "text": "cd frontend && npm run dev serves the interface at http://localhost:3250 on the sample catalogue."},
+      {"title": "Wiki", "text": "Wiki pages live in .docs/wiki: Home, Getting Started, Architecture, Agents and Releasing."}
+    ]
+  },
+  "releases": [
+    {"version": "0.54.1", "date": "2026-11-03", "items": ["The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence", "The built-in app list names FormSlide's real identifier and repository"]},
+    {"version": "0.54.0", "date": "2026-11-03", "items": ["Every page scrolls again", "Installers ship as they are, with no zip around them, and an .rpm for Linux", "On Linux and Windows the installer is also the update file"]},
+    {"version": "0.53.5", "date": "2026-11-02", "items": ["FormPortal's own updates come from the public download store at dl.formai.studio", "Links to the Form repositories point at the nodemode-dev organisation, and FormPortal opens every link it shows", "This build trusts the family's production catalogue key"]}
+  ],
+  "shots_wanted": [
+    {"key": "home", "what": "The Home screen built around the apps you have", "how": "Run cd frontend && npm run dev, open http://localhost:3250 (sample catalogue) and stay on Home."},
+    {"key": "apps", "what": "The Apps list with one action per app and the More menu open", "how": "In the sidebar choose Apps, then open the More menu on one row."},
+    {"key": "updates", "what": "Updates and Beta views", "how": "Under Apps choose Updates, then Beta."},
+    {"key": "learn", "what": "A Learn tutorial in progress", "how": "Choose Learn in the sidebar and open any tutorial."}
+  ],
+  "sources": ["README.md", "CHANGELOG.md", "src-tauri/tauri.conf.json", "parity:portal"],
+  "captures": {
+    "files": {"file": "/media/formportal/ui-files-2.webp", "width": 2400, "height": 1500, "alt": "The Files page listing four Form projects with their apps, sizes, version counts and Open, Versions and Public link buttons", "size": ""},
+    "fonts": {"file": "/media/formportal/ui-fonts-2.webp", "width": 2400, "height": 1500, "alt": "The Fonts page with open-licensed font families and Install family buttons", "size": ""},
+    "stock": {"file": "/media/formportal/ui-stock-2.webp", "width": 2400, "height": 1500, "alt": "The Stock and templates page with openly licensed images and FormAI app templates", "size": ""},
+    "home": {"file": "/media/formportal/ui-home-2.webp", "width": 2400, "height": 1500, "alt": "FormPortal Home with two installed apps as cards and the Form family grouped below", "size": ""},
+    "apps": {"file": "/media/formportal/ui-hero-2.webp", "light": "/media/formportal/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "The FormPortal Apps list: two apps marked installed with their versions and Open buttons, the other FormAI apps listed with their icons", "size": ""},
+    "editor": {"file": "/media/formportal/ui-hero-2.webp", "light": "/media/formportal/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "The FormPortal Apps list: two apps marked installed with their versions and Open buttons, the other FormAI apps listed with their icons", "size": ""}
+  },
+  "credit": "The captures show FormPortal 0.54.2's browser preview with its bundled sample catalogue; on the desktop it reads the signed catalogue. The stock images and templates it lists carry their own licences and credits."
+}

@@ -29,6 +29,20 @@ design/
 
 ## tokens.css {#tokens}
 
+### tokens.css · formvis's vocabulary, the family's names mapped onto it
+- refers-to: tokens.css :: `--accent-color` to `--ctl-xl`, `--ground` to `--focus`, `--radius-s`, `--radius-m`, `--radius-l`, `--z-prefs-wire`, `--z-prefs-tab`, `--z-prefs-port`
+- kind: decision
+- logged: FormPortal v0.56.0 · 2026-11-06
+
+FormPortal's copy of the tokens now carries formvis v1.99.7's vocabulary with formvis's values: `--bg-primary/secondary/tertiary/input/hover/scrim`, `--border-color/light/soft`, `--text-primary/secondary/muted/on-accent`, `--accent-color` (#f97316) with `-dim` and `-hover`, `--danger-fill/soft`, `--radius-xs` to `--radius-xl`, `--space-1` to `--space-7`, `--shadow-sm/md/lg/window`, `--fs-11` to `--fs-14`, `--ctl-sm` to `--ctl-xl`. Dark is formvis's Studio Dark, light is its "Light" profile (the light block overrides the surfaces, lines, text, hover, scrim and the two light shadows, as formvis's `body.theme-light` does). The older names stay, as aliases: `--ground`, `--inset`, `--pane`, `--float`, `--control` (and hover and press, mixed from `--bg-tertiary` and `--text-primary`), `--edge`, `--edge-strong`, `--ink` and its two softer steps, `--on-ink`, `--fault` (formvis's `--danger-soft` in dark, the old red in light), `--veil`, `--bar-veil`, `--focus` (the accent), and the radii `--radius-s/m/l` (6, 10, 12 now, from 6, 10, 16). Spacing `--sp-*`, type `--fs-xs` to `--fs-hero`, the product hues and the glow tokens are untouched. The light block still keys on `:root[data-theme="light"]`, not formvis's `body.theme-light`, because FormPortal's prepaint sets the attribute. The site (formai_dev's copy) has not taken these lines; this copy now differs from it, and the change belongs in formai_dev first, per `CLAUDE.md`, before the next sync.
+
+### tokens.css · three layers for the Preferences rail, wire and port
+- refers-to: tokens.css :: `--z-prefs-wire`, `--z-prefs-tab`, `--z-prefs-port`
+- kind: explainer
+- logged: FormPortal v0.56.0 · 2026-11-06
+
+Formvis names its Preferences layers `--z-base` (wire), `--z-raised` (tabs) and `--z-selected` (port) on its own scale. FormPortal's scale has other numbers, so the three are named for what they do and mapped: wire on `--z-base`, tab on `--z-raised`, port on `--z-raised` plus 1. They only order the children inside the dialog; the dialog itself is in the top layer.
+
 ### tokens.css · FormRanker's hue
 - refers-to: tokens.css :: [data-product="formranker"]
 - kind: decision
@@ -104,6 +118,13 @@ Inter is a variable font, so the weights are chosen values (420, 560, 640), not 
 ---
 
 ## icons.json {#icons}
+
+### icons.json · pf-interface, pf-user, pf-about, pf-fold, pf-close
+- refers-to: icons.json :: `pf-interface`, `pf-user`, `pf-about`, `pf-fold`, `pf-close`
+- kind: decision
+- logged: FormPortal v0.56.0 · 2026-11-06
+
+Five stroke icons for the Preferences rail, card heads, fold button and close button. Their shapes follow formvis v1.99.7's `pfInterface`, `pfFold` and `close` in `frontend/src/ui/icons.ts`; formvis's circles and rectangles were rewritten as path commands because this format has only `paths`. `pf-user` and `pf-about` are new (formvis has no Account or About card). They draw at the format's stroke width of 1.75, not formvis's 1.6, since `markers.ts` fixes it. The General card reuses `settings`, Apps reuses `apps`, Catalogue reuses `book`, and the card chevrons reuse `chevron-down`.
 
 ### icons.json · format
 - refers-to: icons.json :: every entry

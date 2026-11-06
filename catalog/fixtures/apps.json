@@ -2,7 +2,7 @@
   "format": "formai-catalog",
   "format_version": 1,
   "generated": "2026-10-04T00:00:00Z",
-  "origin": "https://formai.dev",
+  "origin": "https://formai.studio",
   "fixture": true,
   "products": [
     {
@@ -10,7 +10,7 @@
       "name": "formai",
       "kind": "portal",
       "summary": "Installs, opens and updates formcut, formvis and formwav.",
-      "identifier": "dev.formai.hub",
+      "identifier": "studio.formai.portal",
       "repository": "https://github.com/nodemode-ai/formai_dev",
       "licence": "GPL-3.0-only",
       "state": "prelaunch",

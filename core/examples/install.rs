@@ -54,7 +54,7 @@ fn run() -> Result<(), CoreError> {
     };
     let mut last = 0u64;
     let outcome = hub.install(&product, channel, version, artifact, &mut |have, total| {
-        let percent = if total > 0 { have * 100 / total } else { 0 };
+        let percent = (have * 100).checked_div(total).unwrap_or(0);
         if percent >= last + 25 || have == total {
             last = percent;
             print!("\r{percent:>3}% of {total} bytes");

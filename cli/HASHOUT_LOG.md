@@ -2,8 +2,42 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.58.0
+Last updated: 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.58.0 · on_the_way matches formai.studio {#live}
+
+### ops.rs · on_the_way, preferences · mcp.rs · apps, preferences
+- refers-to: cli/src/ops.rs :: on_the_way, apps, preferences · cli/src/mcp.rs :: apps and preferences descriptions · ../core/src/site.rs :: Portal::upcoming, Portal::supporter
+- kind: decision
+- logged: v0.58.0 · 2026-11-06
+
+`on_the_way` keeps FormPortal's own groups and, when formai.studio answered `/api/upcoming`, adds `{"opens": null, "apps": undated + supporters}` for apps whose date is still to come. When the stored supporter code is confirmed (the core's cache, rechecked daily; a network failure keeps the last answer), every group also carries `names`: dated groups take the site's tiles with the same `at`, in order, as many as the group's count; the date-to-come group takes the tiles without a date. Without a supporter there is no `names` key. `preferences` reports `supporter_code` only as true or false, never the code, so an agent cannot read it. `FORMPORTAL_SITE=off` disables the site calls. Run 2026-11-06 against a fake site on loopback (no code: groups 10, 3, 2, 2 and `{"opens": null, "apps": 6}`; with the code: the same plus `names` ["FormAlpha","FormBeta"], ["FormGamma","FormDelta"] and the six undated and codename tiles; a second `apps` made no request; with the site down the last answer was kept). The apps description changed, so `./formportal agents sync` regenerated `references/tools.md` and the mirror; `--check` is in step.
+
+### main.rs · progress
+- refers-to: cli/src/main.rs :: the install progress closure
+- kind: refactor
+- logged: v0.58.0 · 2026-11-06
+
+`checked_div` and `is_multiple_of(10)` in the progress line (clippy); the same steps print. `cargo clippy --workspace --all-targets` now reports nothing.
+
+## v0.56.0 · only released apps, as on formai.studio {#live}
+
+### ops.rs · apps, on_the_way · mcp.rs · apps
+- refers-to: cli/src/ops.rs :: apps, on_the_way, SCHEDULE, ALIAS · cli/src/mcp.rs :: apps description · ../frontend/src/extensions/live/index.ts
+- kind: decision
+- logged: v0.56.0 · 2026-11-06
+
+The owner: 34 Form apps exist, 13 are public with a release schedule, and the rest stay hidden as they are on formai.studio. formai.studio's gate (formai_dev `site/backend/app/gate.py`, `release.py` `states`) hides every product that is not live, and live means a published release exists (in formcompiler's catalogue, or a public repository's non-draft release with files); the schedule only dates the countdown tiles, and a supporter sees the hidden apps' names, never their builds. `apps` now follows the same rule when a catalogue was read: a product is listed when the catalogue (with each app's GitHub releases, `core/HASHOUT_LOG.md#releases`) offers it a release on stable or beta, or it is installed here; FormPortal itself stays listed. `on_the_way` gives each schedule group still holding unreleased apps as its opening time and a count, never the names. Without a catalogue the registry is listed as before, with the reason. Run 2026-11-06 through the loopback relay: 8 rows (FormPortal, FormVFX, Form.md, FormSlide, FormPDF, formMCP, formskills, FormTray) and on_the_way 5, 3, 2 and 2; with `FORMPORTAL_RELEASES=off`, 3 rows and 10, 3, 2, 2. The tool description changed, so `./formportal agents sync` regenerated `references/tools.md` and the mirror. After review: `info` answers "not a released Form app" for an id that is neither released nor installed (it returned the registry entry before), and `apps` without a catalogue lists installed apps only. `info formcut` is refused, `info formpdf` answers 0.57.3.
+
+## v0.55.0 · formai.studio and GitHub releases {#releases}
+
+### ops.rs · updates, mcp.rs · INSTRUCTIONS
+- refers-to: cli/src/ops.rs :: updates (formportal_update.get) · cli/src/mcp.rs :: INSTRUCTIONS · ../core/src/releases.rs :: discover
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+`formportal_update.get` was `https://formai.dev/download/`; formai.dev now serves a different product, so it is `https://formai.studio/download/`. The server's instructions said the catalogue is published at formai.dev; they say the signed catalogue on dl.formai.studio and the newer releases each app publishes on GitHub, which every command now reads through the engine (`core/HASHOUT_LOG.md#releases`). No tool changed, so `references/tools.md` is unchanged. Verified on 2026-11-06 through a loopback relay to github.com and dl.formai.studio: `apps` offered 9 products where it offered 2 (FormPortal 0.54.3, FormVFX 0.52.8, Form.md 0.48.0, FormSlide 0.30.7, FormPDF 0.57.3, formMCP 0.7.8, formskills 0.7.7, FormTray 0.10.2, and the catalogue's own), a second `apps` within 15 minutes made 3 requests and took 0.7 s, `install formtray` fetched the 83 MB AppImage from the GitHub release and verified its SHA-256, and `FORMPORTAL_RELEASES=off` gave back the catalogue's three.
 
 ## v0.53.5 · the default catalogue pinned to the download store {#store}
 

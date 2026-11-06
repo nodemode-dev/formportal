@@ -13,21 +13,28 @@ const when = (seconds: number) => {
 const appIcon = (tile: HTMLElement, product: string, name: string) => {
   if (tile.dataset.icon === product) return;
   tile.dataset.icon = product;
-  const img = tile.querySelector("img") ?? document.createElement("img");
-  img.alt = "";
-  img.width = 176;
-  img.height = 176;
-  img.decoding = "async";
-  img.onerror = () => {
-    img.remove();
-    tile.classList.remove("tile-icon");
-    tile.textContent = name.replace(/^Form\.?/, "").slice(0, 2);
+  const pick = (tone: string) => {
+    const img = tile.querySelector<HTMLImageElement>(`img.${tone}`) ?? document.createElement("img");
+    img.className = tone;
+    img.alt = "";
+    img.width = 176;
+    img.height = 176;
+    img.decoding = "async";
+    img.onerror = () => {
+      tile.querySelectorAll("img").forEach((i) => i.remove());
+      tile.classList.remove("tile-icon");
+      tile.textContent = name.replace(/^Form\.?/, "").slice(0, 2);
+    };
+    return img;
   };
-  img.src = `/apps/${product}.webp`;
-  if (!img.isConnected) {
+  const dark = pick("ic-dark");
+  const light = pick("ic-light");
+  dark.src = `/apps/${product}.webp`;
+  light.src = `/apps/${product}-light.webp`;
+  if (!dark.isConnected) {
     tile.textContent = "";
     tile.classList.add("tile-icon");
-    tile.append(img);
+    tile.append(dark, light);
   }
 };
 

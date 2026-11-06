@@ -1,0 +1,318 @@
+{
+  "id": "formweb",
+  "name": "FormWeb",
+  "version": "0.18.9",
+  "repo": "https://github.com/nodemode-dev/formweb",
+  "kind": "Visual website builder",
+  "title": "visual website authoring for people and their agents",
+  "summary": "FormWeb is a visual website builder with a Rust engine, a CMS, design systems, a vector editor and static export, driven from an editor or from agents over MCP.",
+  "lede": "FormWeb is the Form family's visual website builder, researched against Framer and Webflow. One Rust engine owns the editable site, validation, history and static compilation, and the TypeScript editor and MCP clients operate that same document. Sites export as portable HTML, CSS and runtime ZIPs.",
+  "replaces": "Framer and Webflow",
+  "project": ".fweb",
+  "runs_on": "macOS and Linux; Windows launchers are supplied but have not been run on Windows",
+  "checks": [
+    "Builds pages from nested semantic elements with flex and grid placement, custom breakpoints and a live responsive preview of the exported site.",
+    "Keeps design systems: typed tokens, text presets, and components with properties, variants and slots.",
+    "Runs a CMS with typed relations, detail routes, queries, pagination and CSV round trips.",
+    "Exports portable HTML, CSS and runtime ZIPs, and publishes immutable local releases with promotion and rollback."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fweb with portable history and assets, autosaved to SQLite"
+    },
+    {
+      "dt": "Engine",
+      "dd": "A Rust workspace owns the document, validation, history and export; FastAPI bridges it to the editor and MCP"
+    },
+    {
+      "dt": "Interface",
+      "dd": "26 languages, switched live from Settings > Editor language"
+    },
+    {
+      "dt": "Data",
+      "dd": "Kept in ~/FormWeb in the desktop app; FORMWEB_DATA_DIR sets it for a checkout"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "design",
+      "kicker": "Pages and design systems",
+      "title": "Layout, tokens and components",
+      "text": "Nested semantic elements, page duplication, flex and grid placement, custom breakpoints and a live responsive preview. Design systems add typed tokens, linked text presets, component variants and slots, and reviewed pinned libraries.",
+      "shot": "canvas"
+    },
+    {
+      "id": "vector",
+      "kicker": "Vector editing",
+      "title": "A vector editor in the page builder",
+      "text": "Pen, Curvature, shape and Pathfinder tools, Live Corners, gradients, clipping and opacity masks, Shape Crafter, Fill Regions, Trace Image and Pin Warp. Paths are svg and path elements the engine validates and exports, so agents author them too.",
+      "shot": "vector"
+    },
+    {
+      "id": "cms",
+      "kicker": "Content and forms",
+      "title": "A CMS, forms and local releases",
+      "text": "Collections with relations, filters, sorting, sliders and tables, multi-step forms with file uploads and validation presets, and immutable local releases with redirects, inbox and signed webhook delivery.",
+      "shot": "cms"
+    }
+  ],
+  "features": [
+    {
+      "id": "pages",
+      "icon": "grid",
+      "title": "Pages and layout",
+      "text": "Nested semantic elements with flex and grid placement.",
+      "bullets": [
+        "Page duplication",
+        "Custom breakpoints; the editing canvas draws the breakpoint picked from the list",
+        "Live responsive preview of the exported HTML and CSS in a sandboxed frame"
+      ],
+      "shot": "mobile"
+    },
+    {
+      "id": "systems",
+      "icon": "layers",
+      "title": "Design systems",
+      "text": "Typed tokens and components.",
+      "bullets": [
+        "Linked text presets",
+        "Component properties, variants and slots",
+        "Override reset and detachment",
+        "Reviewed pinned libraries"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "content",
+      "icon": "book",
+      "title": "Content and CMS",
+      "text": "Typed relations and bindings with CMS detail routes.",
+      "bullets": [
+        "Queries, pagination and empty states",
+        "Exact CSV round trips",
+        "Localized content, media and routes",
+        "Filters, sorting, a collection slider, tables, folders and manual ordering"
+      ],
+      "shot": "cms"
+    },
+    {
+      "id": "output",
+      "icon": "export",
+      "title": "Output and behavior",
+      "text": "Portable HTML, CSS and runtime ZIPs.",
+      "bullets": [
+        "Owned raster assets and reciprocal language links",
+        "JSON-LD",
+        "Timelines, conditions and accessible overlays",
+        "Isolated code components"
+      ],
+      "shot": "preview"
+    },
+    {
+      "id": "vector",
+      "icon": "keyframe",
+      "title": "Vector editing",
+      "text": "Pen, Curvature, shape and Pathfinder tools with Live Corners.",
+      "bullets": [
+        "Round, inverted or chamfer on any single anchor, non-destructive",
+        "Gradients, clipping and opacity masks, stroke align",
+        "Shape Crafter, Fill Regions, Trace Image and Pin Warp",
+        "Type on a path, blend, repeat, warp and distort"
+      ],
+      "shot": "vector"
+    },
+    {
+      "id": "teams",
+      "icon": "heart",
+      "title": "Projects and teams",
+      "text": "SQLite autosave and portable project files.",
+      "bullets": [
+        "Portable .fweb history and assets",
+        "Isolated review branches and comments",
+        "Roles, presence and attributed operations"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "publishing",
+      "icon": "updates",
+      "title": "Publishing and forms",
+      "text": "Immutable local releases.",
+      "bullets": [
+        "Promotion and rollback, redirects",
+        "Form inbox, retention, constraints and tracking",
+        "Durable signed webhook delivery",
+        "Multi-step forms with file uploads and validation presets"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "services",
+      "icon": "globe",
+      "title": "Connected services",
+      "text": "Configurable adapters whose credentials stay on the server.",
+      "bullets": [
+        "Deployment, domain, translation, fetch and commerce adapters",
+        "Separate visitor membership, consented analytics and experiments"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "dock",
+      "icon": "terminal",
+      "title": "Agent dock",
+      "text": "Terminal tabs, a Claude button and a Chat pane in the editor.",
+      "bullets": [
+        "Starts your Claude Code already connected to the editor's MCP tools",
+        "Chat pane streams Claude's answers and tool calls",
+        "Mod+J toggles the dock"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "commands",
+      "icon": "settings",
+      "title": "Command registry",
+      "text": "Every menu item, toolbar button and shortcut runs through one registry.",
+      "bullets": [
+        "Mod+K search, Mod+Z, Mod+Shift+Z, Mod+S",
+        "Agents list and run window commands, with an Allow or Deny prompt for risky ones"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "desktop",
+      "icon": "laptop",
+      "title": "Desktop app",
+      "text": "./build_app builds it locally; no prebuilt binary is included in this release.",
+      "bullets": [
+        "Checks, installs, builds and freezes the engine in one command",
+        "Runs without the FormWeb folder and keeps data in ~/FormWeb"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Framer, Webflow, Adobe Express and Canva",
+    "summary": "79 researched website-builder capabilities, re-traced in code at v0.18.0: the score stays 77.5 of 79 (98.1%). The four other products are graded from official documentation, so their scores are lower bounds."
+  },
+  "docs": {
+    "requirements": [
+      "Node 22.12 or newer",
+      "Python 3.12 or newer",
+      "Rust stable and Cargo",
+      "git"
+    ],
+    "install": "cd formweb\n./formweb install\nWindows: formweb.bat install",
+    "run": "./formweb boot\nWindows: formweb.bat boot",
+    "desktop": "./build_app\nWindows: build_app.bat",
+    "agents": "An MCP server on http://127.0.0.1:8240/mcp when Agents is enabled; the docs/AGENT_QUICKSTART.md guide covers setup.",
+    "topics": [
+      {
+        "title": "Quick start",
+        "text": "The editor runs at http://localhost:5240; ./formweb build and ./formweb serve give the compiled editor at http://127.0.0.1:8240."
+      },
+      {
+        "title": "Configuration",
+        "text": "backend/.env sets FORMWEB_DATA_DIR, FORMWEB_AGENTS, FORMWEB_AUTH_TOKEN, FORMWEB_PORT and FORMWEB_ORIGINS."
+      },
+      {
+        "title": "Architecture",
+        "text": "The README maps the Rust crates for the model, engine and export, the FastAPI backend and the frontend."
+      },
+      {
+        "title": "Limits",
+        "text": "The README states that Windows, native desktop bundles and automatic skill activation remain unverified."
+      },
+      {
+        "title": "Manual and parity",
+        "text": "docs/MANUAL.md, the Studio guide and the four-vendor comparison in docs/comparisons/ record the features and each release's score."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.18.7",
+      "date": "2026-11-02",
+      "items": [
+        "On Linux and Windows the window no longer shifts a few pixels after it opens, because it appears once its bundled Inter font has loaded"
+      ]
+    },
+    {
+      "version": "0.18.6",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain in the registry"
+      ]
+    },
+    {
+      "version": "0.18.5",
+      "date": "2026-10-26",
+      "items": [
+        "The built window has a smoke test in CI: no console error, no failed request and no layout shift",
+        "The splash screen logo no longer jumps when the rest of the splash arrives"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "canvas",
+      "what": "The editing canvas with a page and breakpoint list",
+      "how": "Run ./formweb boot, open http://localhost:5240, start a site from a starter site tile on Home and pick a breakpoint from the list."
+    },
+    {
+      "key": "vector",
+      "what": "A vector shape being edited with the Pen tool",
+      "how": "In the editor choose the Pen tool, draw a few anchors on a page and open its fill gradient."
+    },
+    {
+      "key": "cms",
+      "what": "A CMS collection and a bound list",
+      "how": "Open the CMS view, add a collection with a few items and bind it to a list on a page."
+    },
+    {
+      "key": "preview",
+      "what": "The Live responsive preview at a narrow width",
+      "how": "Open Preview and type a phone width such as 390 into the width field."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "git log",
+    "src-tauri/tauri.conf.json",
+    "parity:web"
+  ],
+  "captures": {
+    "canvas": {
+      "file": "/media/formweb/ui-canvas-1.webp", "light": "/media/formweb/ui-canvas-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormWeb with its Business site starter open at the 1280 px desktop breakpoint: three pages and the layer tree, the headline selected on the canvas, and the Design inspector with layout and spacing controls; the status bar reads Rust engine connected",
+      "size": ""
+    },
+    "mobile": {
+      "file": "/media/formweb/ui-responsive-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The travel page at the mobile breakpoint with the layer tree and the selected button's mobile overrides",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formweb/ui-hero-2.webp", "light": "/media/formweb/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormWeb editing a travel landing page: layers on the left, the page on the canvas, and the properties of the selected photo on the right",
+      "size": ""
+    },
+    "audit": {
+      "file": "/media/formweb/ui-audit-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The SEO and accessibility audit dialog listing warnings over the editor",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: CC0 photos from Poly Haven, cropped."
+}

@@ -1,0 +1,327 @@
+{
+  "id": "formencoder",
+  "name": "FormEncoder",
+  "version": "0.5.3",
+  "repo": "https://github.com/nodemode-dev/formencoder",
+  "kind": "Media encoder",
+  "title": "a media encoder with a queue, presets and its own Rust engine",
+  "summary": "A media encoder with a parallel queue, 93 encoding presets, 40 formats, watch folders and publishing, on its own Rust engine driving a pinned LGPL FFmpeg.",
+  "lede": "FormEncoder is the media encoder of the form family, beside FormCut (video), FormVFX (motion graphics), FormWav (audio) and FormVis (images), for the desktop and the browser. It queues sources with several outputs each and encodes them in parallel.",
+  "replaces": "Adobe Media Encoder",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux, as a desktop app or in the browser",
+  "checks": [
+    "Encodes a queue of sources with several outputs each, in parallel, with undo.",
+    "Ships 93 encoding presets and 5 ingest presets across web, social, devices, broadcast, cinema, DVD and Blu-ray, image sequences, GIF, audio, archive and proxies.",
+    "Covers 40 formats from H.264, HEVC, AV1 and WebM to ProRes, DNxHR, CineForm, XDCAM and JPEG 2000 MXF.",
+    "Queues work from FormCut, FormVFX, FormWav and FormVis running on the same computer."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "FormEncoder's own, in Rust (seven fencoder crates in native/), driving a pinned LGPL FFmpeg 7.1.5"
+    },
+    {
+      "dt": "Ports",
+      "dd": "Engine on 127.0.0.1:8270, interface on http://localhost:5270"
+    },
+    {
+      "dt": "Code size",
+      "dd": "186 files and 23,021 lines in total, per the README table"
+    },
+    {
+      "dt": "H.264 and HEVC",
+      "dd": "Hardware encoders (VideoToolbox, Media Foundation, NVENC, AMF, VA-API), or Cisco's OpenH264 downloaded in Preferences, never bundled"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "queue",
+      "kicker": "Queue",
+      "title": "A queue with several outputs per source",
+      "text": "Drag media into the Queue, drag presets from the Preset Browser onto a source to add outputs, and press Start. Cmd or Ctrl+K searches every command.",
+      "shot": "queue"
+    },
+    {
+      "id": "settings",
+      "kicker": "Export Settings",
+      "title": "Every setting, with a preview",
+      "text": "Click a preset to open Export Settings: Source, Output and Compare views, every setting, effects, captions, metadata, publish and the estimated size.",
+      "shot": "settings"
+    },
+    {
+      "id": "family",
+      "kicker": "Family",
+      "title": "Part of the form family",
+      "text": "FormEncoder finds FormCut, FormVFX, FormWav and FormVis running on the same computer and queues their work. Finished files can go back to FormCut or FormVFX from the Queue.",
+      "shot": "queue"
+    }
+  ],
+  "features": [
+    {
+      "id": "queue",
+      "icon": "layers",
+      "title": "Queue",
+      "text": "A queue of sources with several outputs each, encoded in parallel.",
+      "bullets": [
+        "Undo for queue changes",
+        "Drag presets from the Preset Browser onto a source",
+        "Watch folders and card ingest with checksums and proxies"
+      ],
+      "shot": "queue"
+    },
+    {
+      "id": "presets",
+      "icon": "box",
+      "title": "Presets",
+      "text": "93 encoding presets and 5 ingest presets.",
+      "bullets": [
+        "Web, social, devices, mezzanine, broadcast, cinema, DVD and Blu-ray",
+        "Image sequences, GIF, audio, archive and proxies"
+      ],
+      "shot": "queue"
+    },
+    {
+      "id": "formats",
+      "icon": "film",
+      "title": "Formats",
+      "text": "40 formats.",
+      "bullets": [
+        "H.264, HEVC, AV1 and WebM",
+        "ProRes, DNxHR, CineForm, XDCAM and JPEG 2000 MXF",
+        "AS-10, AS-11, P2 and DCP packages, DPX and OpenEXR"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "settings",
+      "icon": "sliders",
+      "title": "Export Settings",
+      "text": "A panel for every setting.",
+      "bullets": [
+        "Source, Output and Compare views",
+        "Effects, captions, metadata and publish",
+        "The estimated size"
+      ],
+      "shot": "settings"
+    },
+    {
+      "id": "effects",
+      "icon": "grade",
+      "title": "Effects and conform",
+      "text": "Picture and sound processing.",
+      "bullets": [
+        "LUTs and HDR to SDR conform",
+        "Image, name, text and timecode overlays",
+        "Fit Tuning, a video limiter and loudness normalisation"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "captions",
+      "icon": "captions",
+      "title": "Captions and speech",
+      "text": "Captions in several forms.",
+      "bullets": [
+        "Burnt in, as sidecars or embedded",
+        "Speech to text"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "metadata",
+      "icon": "tag",
+      "title": "Metadata",
+      "text": "Templates and credentials.",
+      "bullets": [
+        "Metadata templates and XMP",
+        "Content Credentials"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "publish",
+      "icon": "export",
+      "title": "Publishing",
+      "text": "Output to folders and services.",
+      "bullets": [
+        "Folders, FTP, S3 and webhooks",
+        "YouTube and Vimeo"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "engine",
+      "icon": "code",
+      "title": "The engine",
+      "text": "Seven fencoder crates (core, io, plan, run, engine, commands, py) loaded as the fe_core Python extension.",
+      "bullets": [
+        "Owns the queue with undo and 96 commands with parameter schemas",
+        "./formencoder install-native rebuilds it",
+        "LGPL FFmpeg 7.1.5, every file checked against src-tauri/binaries/ffmpeg-licence.json"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "family",
+      "icon": "apps",
+      "title": "The form family",
+      "text": "Works with the other family apps on the same computer.",
+      "bullets": [
+        "A FormCut project rendered by FormCut",
+        "A FormVFX composition pulled over Live Link with no render in FormVFX",
+        "A FormWav session mixed by FormWav, and a FormVis image"
+      ],
+      "shot": "queue"
+    },
+    {
+      "id": "agents",
+      "icon": "extensions",
+      "title": "Agents",
+      "text": "27 curated MCP tools and a terminal.",
+      "bullets": [
+        "The Terminal panel opens a shell with Claude Code, Codex and Cursor buttons",
+        "Tools include encode, export_settings, preview_frame, contact_sheet and verify",
+        "./formencoder agents install sets up the three clients"
+      ],
+      "shot": "agents"
+    },
+    {
+      "id": "cli",
+      "icon": "terminal",
+      "title": "Command line",
+      "text": "Encode from the shell.",
+      "bullets": [
+        "./formencoder encode FILE --preset system/youtube-1080p",
+        "queue, exec, batch, commands, describe, presets, probe, frame and wait"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "desktop",
+      "icon": "laptop",
+      "title": "Desktop",
+      "text": "Bundles for macOS, Linux and Windows.",
+      "bullets": [
+        "DMG, deb, rpm, AppImage, MSI and setup bundles from ./formencoder desktop build",
+        "./build_app does everything from a fresh clone on macOS or Linux",
+        "compile_vX.Y.Z branches have formcompiler build the bundles"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "Media Encoder",
+    "summary": "FormEncoder is traced against 84 Media Encoder capabilities, with HandBrake, Shutter Encoder and Compressor compared beside it. The README states 84 traced rows: 82 Full, 2 Partial, 0 None. The Partial rows are AVC-Intra and vendor camera raw."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19+ or 22.12+",
+      "Python 3.12+",
+      "Rust 1.95+"
+    ],
+    "install": "./formencoder install\n(Windows: formencoder.bat install)",
+    "run": "./formencoder\n(Windows: formencoder.bat)",
+    "desktop": "./formencoder desktop build",
+    "agents": "./formencoder mcp serves the MCP server over stdio, with .mcp.json, .codex/config.toml and .cursor/mcp.json in the repo and the formencoder-harness skill.",
+    "topics": [
+      {
+        "title": "Quick start",
+        "text": "./formencoder doctor checks the toolchain, and FFmpeg is downloaded on first boot."
+      },
+      {
+        "title": "Commands",
+        "text": "A table of FormEncoder commands including install, install-native, install-tools, serve, doctor, mcp, agents and clean."
+      },
+      {
+        "title": "Capabilities",
+        "text": "docs/PARITY.md is the capability checklist FormEncoder is built against."
+      },
+      {
+        "title": "Licences",
+        "text": "NOTICE.md lists every third-party component, the FFmpeg source offer and Cisco's OpenH264 licence."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.5.2",
+      "date": "2026-11-03",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. as the publisher, with the Apache-2.0 licence",
+        "The updater reads its feed from the download store"
+      ]
+    },
+    {
+      "version": "0.5.1",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window on PCs where the .js file type is set to text/plain",
+        "The pinned FFmpeg download names nodemode-dev/formcut-binaries"
+      ]
+    },
+    {
+      "version": "0.5.0",
+      "date": "2026-10-30",
+      "items": [
+        "Desktop builds for formcompiler's signed releases; the app itself does not change",
+        "On macOS, bundled programs and libraries are signed before the bundle is made so the app can be notarized"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "queue",
+      "what": "The Queue with a source and several outputs",
+      "how": "Run ./formencoder, open http://localhost:5270, drag any video into the Queue and drag two presets from the Preset Browser onto it."
+    },
+    {
+      "key": "settings",
+      "what": "Export Settings with the Compare view",
+      "how": "Click a preset on a queued source and switch between the Source, Output and Compare views."
+    },
+    {
+      "key": "agent",
+      "what": "The Terminal or Agents panel",
+      "how": "Open the Terminal panel (or the Agent workspace) to show the Claude Code, Codex and Cursor buttons."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "parity:encoder"
+  ],
+  "captures": {
+    "queue": {
+      "file": "/media/formencoder/ui-encoding-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormEncoder queue with three sources and five outputs, three done and one encoding at 34 percent with a preview frame",
+      "size": ""
+    },
+    "settings": {
+      "file": "/media/formencoder/ui-settings-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Export Settings dialog for a TikTok 1080x1920 H.264 output with a preview and video settings",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formencoder/ui-hero-2.webp",
+      "light": "/media/formencoder/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1350,
+      "alt": "FormEncoder encoding one source to three outputs: the Preset Browser, a queue with YouTube 1080p, TikTok 1080x1920 and animated GIF outputs, and the Encoding panel with progress and a live preview",
+      "size": ""
+    },
+    "agents": {
+      "file": "/media/formencoder/ui-agents-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Agents panel with set-up buttons for Claude Code, Codex and Cursor, the MCP endpoints, permissions and recent agent activity",
+      "size": ""
+    }
+  },
+  "credit": "Screenshot content: CC0 photos from Poly Haven, used as video clips."
+}

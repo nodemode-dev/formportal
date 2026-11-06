@@ -1,0 +1,366 @@
+{
+  "id": "formref",
+  "name": "FormRef",
+  "version": "0.38.3",
+  "repo": "https://github.com/nodemode-dev/formref",
+  "kind": "Reference board app",
+  "title": "reference boards for images, ideas and creative work",
+  "summary": "FormRef is a free, open-source local reference workspace: collect images and files, arrange them on a free canvas, add notes and tasks, and connect ideas.",
+  "lede": "FormRef is a local reference workspace in the Form family. Collect images and files, arrange them on a free canvas, add notes and tasks, connect ideas and organize boards, then export or control the same workspace through MCP. A Rust engine owns geometry, locking, grouping, arrangement and undo.",
+  "replaces": "PureRef and Milanote",
+  "project": "",
+  "runs_on": "In a browser on loopback, or as a Tauri desktop app for macOS, Linux and Windows (the packaged builds have not yet been run on every OS)",
+  "checks": [
+    "Arranges images on a free canvas with crop, flip, grayscale, opacity, snapping, grouping and columns.",
+    "Adds study aids: Value Study, Drawing Grid, Extract Palette, Measure, Compare and timed Practice with a Practice Log.",
+    "Imports BeeRef .bee boards and iStack, and exports PNG, SVG, Markdown, JSON, PDF and a ZIP of every picture's original file.",
+    "Finds pictures by colour or by similarity, with saved searches and a tag cloud."
+  ],
+  "facts": [
+    {
+      "dt": "Engine",
+      "dd": "Rust document engine under a Python FastAPI media and persistence service"
+    },
+    {
+      "dt": "Interop",
+      "dd": "BeeRef .bee in and out, iStack import, PDF, Word, Markdown and text export"
+    },
+    {
+      "dt": "Languages",
+      "dd": "26, English by default"
+    },
+    {
+      "dt": "Ports",
+      "dd": "Editor http://localhost:5320, backend http://127.0.0.1:8320"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "canvas",
+      "kicker": "Canvas",
+      "title": "A free canvas for references",
+      "text": "Collect images and files, crop nondestructively on the board, flip, set per-image grayscale and opacity, and pack or distribute spacing. Groups, columns, nested boards and board tabs keep large boards organised.",
+      "shot": "board"
+    },
+    {
+      "id": "study",
+      "kicker": "Study",
+      "title": "Tools for studying a picture",
+      "text": "Value Study reduces a picture to 2 to 8 grey values, and Timed Practice shows pictures one at a time for gesture and figure drawing, from 30 seconds to 10 minutes each. Compare shows two pictures side by side, as an onion skin, with a swipe divider or as a difference.",
+      "shot": "study"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "An agent panel that asks before big changes",
+      "text": "The Agent panel (Ctrl+J) runs Claude Code, Codex, Cursor or Ollama on your board, shows each tool call, and asks before removing or bulk-moving items. Stop and Undo This Turn takes the whole turn back.",
+      "shot": "agent"
+    }
+  ],
+  "features": [
+    {
+      "id": "engine",
+      "icon": "box",
+      "title": "One engine",
+      "text": "Rust commands own geometry, locking, grouping, arrangement and undo/redo.",
+      "bullets": [
+        "Menus, palette, shortcuts and agents share one command registry",
+        "list_commands, describe_command and run_command reach every command an agent may run"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "study",
+      "icon": "target",
+      "title": "Study aids",
+      "text": "Value Study, Drawing Grid, Extract Palette, Measure and Compare.",
+      "bullets": [
+        "Value Study with 2 to 8 grey values, notan at 2",
+        "Measure (Shift+M) for lengths, angles and proportions",
+        "Compare (Alt+C): side by side, onion skin, swipe divider or difference",
+        "Timed Practice (Alt+T) with a Practice Log of every session"
+      ],
+      "shot": "study"
+    },
+    {
+      "id": "media",
+      "icon": "film",
+      "title": "Reference media",
+      "text": "Original assets are kept, with nondestructive editing on the board.",
+      "bullets": [
+        "Crop on the board (C) and lasso crop, flip, per-image and canvas grayscale",
+        "Opacity controls and ordered reference presentation",
+        "Playable video and audio cards with In and Out points",
+        "YouTube, Vimeo, Spotify and SoundCloud players",
+        "GIF frames: pause, step, scrub and keep"
+      ],
+      "shot": "board"
+    },
+    {
+      "id": "canvas",
+      "icon": "grid",
+      "title": "Canvas workflow",
+      "text": "Persistent grid preferences and snapping with shared-engine undo.",
+      "bullets": [
+        "Explicit pack and distribution spacing",
+        "Sizes normalized across a selection or within each group",
+        "Drag items into columns, or lock a column against drops",
+        "Split boards: copy or move a selection to a new board"
+      ],
+      "shot": "board"
+    },
+    {
+      "id": "connect",
+      "icon": "layers",
+      "title": "Connecting groups",
+      "text": "Groups connect like single nodes with the connect tool (Shift+C).",
+      "bullets": [
+        "Name Group and Collapse Group (Alt+G)",
+        "Connect Selected (Ctrl/Cmd+Shift+L) chains the selection in reading order",
+        "Right-click a line for solid, dashed or dotted, arrowheads, route and colour"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "find",
+      "icon": "tag",
+      "title": "Find and organize",
+      "text": "Find by colour, find similar and saved searches.",
+      "bullets": [
+        "Find by colour dims everything except pictures that contain it",
+        "Find similar at three levels, including mirrored or greyscale copies",
+        "Tag cloud with counts; right-click a tag to select, rename, merge or remove",
+        "Pictures take 1 to 5 stars",
+        "Select Duplicate Images"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "notes",
+      "icon": "captions",
+      "title": "Notes, tables and comments",
+      "text": "Notes, tasks, tables with typed columns and formulas, and map cards.",
+      "bullets": [
+        "Synced notes: linked copies that change together",
+        "Comment threads on any item, resolved or reopened",
+        "Google Maps and OpenStreetMap links as map cards",
+        "Export any document as PDF, Word, Markdown or text"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "interop",
+      "icon": "export",
+      "title": "Interoperability",
+      "text": "Import and export in the formats other reference tools use.",
+      "bullets": [
+        "iStack import and BeeRef .bee boards in and out",
+        "Portable archives and PNG, SVG, Markdown and JSON export",
+        "Full-resolution PDF export, including tiled at 100% across A4, Letter, A3 or Tabloid",
+        "A read-only phone viewer page",
+        "Every picture's original file in one ZIP"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "background",
+      "icon": "cut",
+      "title": "Background removal",
+      "text": "FormCut's models (U2Net built in, Person, IS-Net, Auto and SAM 2.1 click to select) or a model-free plain-background cut.",
+      "bullets": [
+        "The original is kept and restored any time"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "vector",
+      "icon": "mark",
+      "title": "Vector tools",
+      "text": "Optional and off by default (Preferences, Vector drawing tools).",
+      "bullets": [
+        "Pen, Curvature, Pencil and Direct Selection with Live Corner widgets",
+        "Pathfinder, Offset Path and Outline Stroke",
+        "Linear and radial gradients with up to 16 stops",
+        "Smart Guides (Ctrl/Cmd+U)"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "capture",
+      "icon": "download",
+      "title": "Capture and cloud",
+      "text": "A browser clipper and opt-in cloud storage.",
+      "bullets": [
+        "Chrome and Firefox extension in clipper/ saves images, text, links and pages",
+        "Google Drive and Dropbox with your own app credentials, off until you connect",
+        "Drag, paste or fetch images and pages from the web"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "formai",
+      "title": "Agents and terminal",
+      "text": "Embedded agent panel, chat and terminal dock.",
+      "bullets": [
+        "Agent panel (Ctrl+J) running Claude Code, Codex, Cursor or Ollama",
+        "Chat tab (Ctrl/Cmd+Alt+J) with a memory and cost meter",
+        "Terminal dock with a Claude Code button (Ctrl/Cmd+Shift+J)",
+        "Python MCP SDK stdio server; ./formref claude starts Claude Code with the same tools"
+      ],
+      "shot": "agent"
+    },
+    {
+      "id": "languages",
+      "icon": "globe",
+      "title": "Languages and shortcuts",
+      "text": "The whole window in 26 languages, English by default.",
+      "bullets": [
+        "Your own board text is never translated",
+        "Change any shortcut from the shortcut sheet (?)",
+        "Board tabs restore where you left them",
+        "Trash keeps deleted boards and items until you empty it"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "PureRef and Milanote",
+    "summary": "Of the 54 capabilities scored, FormRef is full on 51, partial on 1 and has nothing for 2, graded from its code at v0.37.2. PureRef and Milanote each document 38 of the 54 rows."
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19.x or 22.12+",
+      "Python 3.12+",
+      "Rust/Cargo 1.82+",
+      "Rust 1.90+ and the Tauri prerequisites for a native desktop shell",
+      "CairoSVG's native Cairo/libffi prerequisites for SVG-to-PNG export"
+    ],
+    "install": "./formref install",
+    "run": "./formref",
+    "desktop": "./build_app",
+    "agents": "Outside agents are refused until you allow them in the Agent panel; .mcp.json, .cursor/mcp.json and .codex/config.toml run ./formref mcp, and the MCP server is also at http://127.0.0.1:8320/mcp.",
+    "topics": [
+      {
+        "title": "Quick Start",
+        "text": "The README gives requirements, commands for macOS, Linux and Windows (formref_oc_install.bat, formref.bat) and a table of the editor, backend, API docs and MCP addresses."
+      },
+      {
+        "title": "MCP",
+        "text": "The README explains how the three client configs run the root launcher and how to set an absolute path or a Windows cmd command."
+      },
+      {
+        "title": "Configuration",
+        "text": "Variables such as FORMREF_DATA_DIR, FORMREF_API_URL and FORMREF_MCP_IMPORT_DIR are listed in the README."
+      },
+      {
+        "title": "Shortcuts",
+        "text": "Press ? for every shortcut; the right-click menu follows iStack's order and shortcuts."
+      },
+      {
+        "title": "Command line",
+        "text": "./formref open <board> and ./formref import <folder> work with the running app; ./formref i18n review and apply handle translation sheets."
+      },
+      {
+        "title": "Wiki",
+        "text": ".docs/wiki holds usage, engine contract, shell, agent and release guides."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.38.1",
+      "date": "2026-10-31",
+      "items": [
+        "The Windows desktop app no longer opens to a blank window when the .js file type is set to text/plain",
+        "The Windows build links its C runtime statically, so it starts without the Visual C++ Redistributable",
+        "The Linux packages recommend the GStreamer plug-ins used for audio and video, and the AppImage carries them"
+      ]
+    },
+    {
+      "version": "0.38.0",
+      "date": "2026-10-30",
+      "items": [
+        "FormRef installs as a desktop app on macOS, Linux and Windows, carrying its own engine",
+        "If the engine cannot start, the start-up screen says why and where its log is",
+        "build_app and build_app.bat make the installers on the computer they run on"
+      ]
+    },
+    {
+      "version": "0.37.8",
+      "date": "2026-10-26",
+      "items": [
+        "The start-up screen's logo no longer jumps when the rest of the screen appears",
+        "A window smoke test fails on any layout shift, console error or failed request"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "board",
+      "what": "A board with many images arranged on the canvas",
+      "how": "Run ./formref, open http://localhost:5320, then import a folder of images with ./formref import <folder> or drag images onto the canvas."
+    },
+    {
+      "key": "study",
+      "what": "Value Study or Compare on a picture",
+      "how": "Select a picture and open Value Study from the Images menu or press Alt+C for Compare with two pictures selected."
+    },
+    {
+      "key": "agent",
+      "what": "The Agent panel open beside a board",
+      "how": "Press Ctrl+J to open the Agent panel beside the board (the Chat tab is Ctrl/Cmd+Alt+J)."
+    },
+    {
+      "key": "find",
+      "what": "Find by colour with a tag cloud visible",
+      "how": "Use the find box under the item count, pick a swatch colour and show the tag cloud beneath."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "parity:ref"
+  ],
+  "captures": {
+    "board": {
+      "file": "/media/formref/ui-hero-2.webp",
+      "light": "/media/formref/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A FormRef board of golden-hour photographs and brick, marble, plank and velvet textures, with coloured notes and orange arrows linking the ideas",
+      "size": ""
+    },
+    "study": {
+      "file": "/media/formref/ui-value-study-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "One photograph of a harbour reduced to three grey values by Value Study, beside the rest of the board",
+      "size": ""
+    },
+    "compare": {
+      "file": "/media/formref/ui-compare-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Two photographs blended as an onion skin with the Side by Side, Onion Skin, Swipe and Difference modes along the top",
+      "size": ""
+    },
+    "palette": {
+      "file": "/media/formref/ui-palette-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Six colour swatches with hex values placed in a row below a board, extracted from one sunset photograph",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formref/ui-hero-2.webp",
+      "light": "/media/formref/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A FormRef board of golden-hour photographs and brick, marble, plank and velvet textures, with coloured notes and orange arrows linking the ideas",
+      "size": ""
+    }
+  },
+  "credit": "The board in the captures is FormRef's own Quiet structures sample."
+}

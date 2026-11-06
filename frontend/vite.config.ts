@@ -38,6 +38,26 @@ const APPS = loadJson<{ products: App[] }>(resolve(CATALOG, "products.json"))
   .products.filter((p) => p.id !== "formai")
   .sort((a, b) => ORDER.indexOf(a.group ?? "other") - ORDER.indexOf(b.group ?? "other"));
 const RELEASED = APPS.filter((p) => (p.status ?? "available") === "available");
+const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills", formbench: "formranker" };
+const UPSTREAM: Record<string, string> = Object.fromEntries(Object.entries(ALIAS).map(([theirs, ours]) => [ours, theirs]));
+const SCHEDULE = loadJson<{ releases: { label: string; at: string; apps: string[] }[] }>(resolve(CATALOG, "schedule.json")).releases.map((g) => ({
+  ...g,
+  apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => APPS.some((p) => p.id === id)),
+}));
+const MORE_SLOTS = 40;
+const BUILT = Date.now();
+const LIVE: string[] = [];
+const LEFT = SCHEDULE.map((g) => g.apps.length);
+interface Caps {
+  kind?: string;
+  runs_on?: string;
+  checks?: string[];
+}
+const caps = (p: App): Caps | null => {
+  const file = resolve(CATALOG, "apps", `${UPSTREAM[p.id] ?? p.id}.json`);
+  return existsSync(file) ? loadJson<Caps>(file) : null;
+};
+const opens = (at: string) => new Date(at).toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
 const SHOTS = new Set(["formcut", "formvis", "formwav"]);
 const STATUS: Record<string, string> = { available: "Available", "in-progress": "In progress", "in-development": "In development" };
 
@@ -47,7 +67,7 @@ const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""
 const icon = (p: App) => existsSync(resolve(ROOT, "public/apps", `${p.id}.webp`));
 const tile = (p: App, size = "") =>
   icon(p)
-    ? `<span class="tile tile-icon${size ? ` tile-${size}` : ""}" aria-hidden="true"><img src="/apps/${esc(p.id)}.webp" alt="" width="176" height="176" decoding="async" /></span>`
+    ? `<span class="tile tile-icon${size ? ` tile-${size}` : ""}" aria-hidden="true"><img class="ic-dark" src="/apps/${esc(p.id)}.webp" alt="" width="176" height="176" decoding="async" /><img class="ic-light" src="/apps/${esc(p.id)}-light.webp" alt="" width="176" height="176" decoding="async" /></span>`
     : `<span class="tile${size ? ` tile-${size}` : ""}" aria-hidden="true">${short(p)}</span>`;
 const words = (p: App) => STATUS[p.status ?? "available"];
 const searchable = (p: App) => esc(`${p.name} ${p.summary} ${p.alt_of ?? ""} ${p.kind}`.toLowerCase());
@@ -56,6 +76,13 @@ const web = (href: string, text: string) => `<a class="link" href="${esc(href)}"
 const help = (p: App) => {
   const r = repo(p);
   return r ? `${web(`${r}#readme`, "Guide and docs")}${web("https://formai.studio/download/", "Every release")}${web(`${r}/issues/new`, "Report a problem")}${web(`${r}/discussions`, "Ask the community")}` : "";
+};
+const capsBlock = (p: App) => {
+  const c = caps(p);
+  if (!c || !(c.checks?.length || c.runs_on)) return "";
+  const runs = c.runs_on ? `<p class="fine ap-runs"><span class="ap-runs-label">Runs on</span> ${esc(c.runs_on)}</p>` : "";
+  const list = c.checks?.length ? `<ul class="ap-checks">${c.checks.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>` : "";
+  return `<section class="ap-caps" aria-label="What ${esc(p.name)} does"><h3 class="block-title">What it does</h3>${list}${runs}</section>`;
 };
 const feedback = (p: App) => {
   const r = repo(p);
@@ -83,7 +110,7 @@ function renderPortal(html: string): string {
 
   const family = GROUPS.map(
     ([group, title]) =>
-      `<section class="fam-group"><h3 class="group-title">${title}</h3><ul class="fam-list">${APPS.filter((p) => (p.group ?? "other") === group)
+      `<section class="fam-group" data-fam-group="${group}"><h3 class="group-title">${title}</h3><ul class="fam-list">${APPS.filter((p) => (p.group ?? "other") === group)
         .map(
           (p) =>
             `<li class="fam" data-row="stable" data-product="${p.id}" data-status="${p.status ?? "available"}">${tile(p)}<div class="fam-text"><button class="fam-name" type="button" data-route-to="app-${p.id}">${esc(p.name)}</button><p class="fam-sub">${line(p)}</p><p class="fam-state">${(p.status ?? "available") === "available" ? state : `<span class="chip">${words(p)}</span>`}</p></div>${(p.status ?? "available") === "available" ? "<!-- @include card-actions.html -->" : ""}</li>`,
@@ -105,9 +132,9 @@ function renderPortal(html: string): string {
       ? `<div class="ap-beta" data-row="beta" data-product="${p.id}"><p class="ap-beta-text"><span class="ap-beta-label">Beta</span>${state}</p><!-- @include card-actions.html --></div>`
       : "";
     const agents = available
-      ? `<section class="ap-agents" data-agents="${p.id}" hidden aria-label="${esc(p.name)} with your AI tools"><h3 class="block-title">Use ${esc(p.name)} with your AI tools</h3><p class="fine">${esc(p.name)} has its own MCP server. FormPortal adds it to Claude Code, Codex and Cursor and starts whichever version is installed, so updates and going back a version need nothing more.</p><ul class="agent-list">${[["claude", "Claude Code"], ["codex", "Codex"], ["cursor", "Cursor"]].map(([id, label]) => `<li class="agent" data-client="${id}"><span class="agent-name">${label}</span><span class="agent-state" data-agent-state>Checking</span></li>`).join("")}</ul><div class="agent-acts"><button class="btn btn-primary" type="button" data-agents-connect>Connect</button><button class="btn" type="button" data-agents-disconnect>Disconnect</button></div>${p.id === "formmcp" ? "" : `<p class="fine ap-via">Or connect every Form app at once: <button class="link-btn" type="button" data-route-to="app-formmcp">formMCP</button> is one connection to the whole family, and loads an app's tools only when they are needed.</p>`}</section>`
+      ? `<section class="ap-agents" data-agents="${p.id}" hidden aria-label="${esc(p.name)} with your AI tools"><h3 class="block-title">Use ${esc(p.name)} with your AI tools</h3><p class="fine">${esc(p.name)} has its own MCP server. FormPortal adds it to Claude Code, Codex and Cursor and starts whichever version is installed, so updates and going back a version need nothing more.</p><ul class="agent-list">${[["claude", "Claude Code"], ["codex", "Codex"], ["cursor", "Cursor"]].map(([id, label]) => `<li class="agent" data-client="${id}"><span class="agent-name">${label}</span><span class="agent-state" data-agent-state>Checking</span></li>`).join("")}</ul><div class="agent-acts"><button class="btn btn-primary" type="button" data-agents-connect>Connect</button><button class="btn" type="button" data-agents-disconnect>Disconnect</button></div>${p.id === "formmcp" ? "" : `<p class="fine ap-via" data-product="formmcp">Or connect every Form app at once: <button class="link-btn" type="button" data-route-to="app-formmcp">formMCP</button> is one connection to the whole family, and loads an app's tools only when they are needed.</p>`}</section>`
       : "";
-    return `<section class="pane" data-pane="app-${p.id}" data-title="${esc(p.name)}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="page"><button class="back" type="button" data-route-to="apps">%icon:arrow-right:ic-s back-ic%<span>All apps</span></button><div class="ap" data-row="stable" data-product="${p.id}"><header class="ap-head">${tile(p, "xl")}<div class="ap-title"><h2 class="ap-name">${esc(p.name)}</h2><p class="ap-line">${line(p)}</p><p class="ap-state"><span class="chip">${words(p)}</span>${state}<span class="state-ver" data-field="size"></span></p></div><!-- @include row-actions.html --></header><p class="ap-sum">${esc(p.summary)}</p><div class="ap-body"><dl class="facts"><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>What's new</dt><dd class="facts-notes" data-field="notes"></dd></div><div><dt>Download</dt><dd data-field="file"></dd></div><div><dt>Needs</dt><dd data-field="minimum"></dd></div><div><dt>Project files</dt><dd data-field="project"></dd></div><div><dt>Licence</dt><dd data-field="licence"></dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills">Read them in formskills</button><span class="skills-no">None published</span></dd></div><div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div></dl>${shot}</div></div>${betaRow}<p class="links">${help(p)}</p>${agents}</div></section>`;
+    return `<section class="pane" data-pane="app-${p.id}" data-title="${esc(p.name)}" data-product="${p.id}" aria-label="${esc(p.name)}"><div class="page"><button class="back" type="button" data-route-to="apps">%icon:arrow-right:ic-s back-ic%<span>All apps</span></button><div class="ap" data-row="stable" data-product="${p.id}"><header class="ap-head">${tile(p, "xl")}<div class="ap-title"><h2 class="ap-name">${esc(p.name)}</h2><p class="ap-line">${line(p)}</p><p class="ap-state"><span class="chip">${words(p)}</span>${state}<span class="state-ver" data-field="size"></span></p></div><!-- @include row-actions.html --></header><p class="ap-sum">${esc(p.summary)}</p>${capsBlock(p)}<div class="ap-body"><dl class="facts"><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>What's new</dt><dd class="facts-notes" data-field="notes"></dd></div><div><dt>Download</dt><dd data-field="file"></dd></div><div><dt>Needs</dt><dd data-field="minimum"></dd></div><div><dt>Project files</dt><dd data-field="project"></dd></div><div><dt>Licence</dt><dd data-field="licence"></dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills" data-product="formskills">Read them in formskills</button><span class="skills-no">None published</span></dd></div><div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div></dl>${shot}</div></div>${betaRow}<p class="links">${help(p)}</p>${agents}</div></section>`;
   });
 
   const autolist = RELEASED.map(
@@ -122,17 +149,47 @@ function renderPortal(html: string): string {
     (p) => `<li class="learn" data-product="${p.id}">${tile(p)}<div class="learn-text"><h3 class="learn-name"><button class="link-btn" type="button" data-route-to="app-${p.id}">${esc(p.name)}</button></h3><p class="fine">${line(p) || esc(p.summary)}</p><p class="fine inc-terms"><span class="chip">Free</span><span>${esc(p.licence ?? "GPL-3.0-only")}</span><span>${words(p)}</span></p></div></li>`,
   );
 
+  const soonTile = `<li class="soon-tile"><span class="soon-mark" aria-hidden="true">?</span><span class="soon-name">Form?</span></li>`;
+  const soon = [
+    ...SCHEDULE.map(
+      (g, i) =>
+        `<li class="soon-group" data-soon-group="${i}" data-soon-at="${esc(g.at)}"${Date.parse(g.at) <= BUILT ? " data-due" : ""}><p class="soon-when"><span class="soon-date">Opens ${esc(opens(g.at))}</span><span class="soon-due">Due now</span></p><ul class="soon-tiles">${g.apps.map(() => soonTile).join("")}</ul></li>`,
+    ),
+    `<li class="soon-group" data-soon-extra><p class="soon-when"><span class="soon-date">Date to come</span></p><ul class="soon-tiles">${Array.from({ length: MORE_SLOTS }, () => soonTile).join("")}</ul></li>`,
+  ];
+
   const parts: Record<string, string[]> = {
-    all, updates, beta, mine, family, whatsnew, pages, autolist, learn, included,
-    count: [String(APPS.length)],
+    all, updates, beta, mine, family, whatsnew, pages, autolist, learn, included, soon,
+    count: [String(LIVE.length)],
     released: [String(RELEASED.length)],
   };
-  return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n"));
+  const rootState = ` data-live="${LIVE.join(" ")}"${LEFT.map((n, i) => ` data-soon-g${i}="${n}"`).join("")} data-soon-left="${LEFT.reduce((a, b) => a + b, 0)}" data-soon-more="0"`;
+  return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n")).replace(/<html lang="en"/, `<html lang="en"${rootState}`);
 }
+
+const liveRules = () =>
+  [
+    ...APPS.map((p) => `html:not([data-live~="${p.id}"]) [data-product="${p.id}"]:not([data-path]) { display: none !important; }`),
+    ...SCHEDULE.flatMap((g, i) => [
+      `html[data-soon-g${i}="0"] [data-soon-group="${i}"] { display: none; }`,
+      ...g.apps.map((_, k) => `html[data-soon-g${i}="${k}"] [data-soon-group="${i}"] .soon-tile:nth-child(n + ${k + 1}) { display: none; }`),
+    ]),
+    `html[data-soon-more="0"] [data-soon-extra] { display: none; }`,
+    ...Array.from({ length: MORE_SLOTS - 1 }, (_, k) => `html[data-soon-more="${k + 1}"] [data-soon-extra] .soon-tile:nth-child(n + ${k + 2}) { display: none; }`),
+    `html[data-soon-left="0"][data-soon-more="0"] [data-soon] { display: none; }`,
+    ...GROUPS.map(([group]) => {
+      const none = APPS.filter((p) => (p.group ?? "other") === group).map((p) => `:not([data-live~="${p.id}"])`).join("");
+      return `html${none} [data-group-head="${group}"], html${none} [data-fam-group="${group}"] { display: none; }`;
+    }),
+  ].join("\n");
 
 function portalPlugin(): Plugin {
   return {
     name: "formportal",
+    transform(code, id) {
+      if (id.split("?")[0].endsWith("/src/styles/live.css")) return { code: `${code}\n${liveRules()}\n`, map: null };
+      return null;
+    },
     transformIndexHtml: {
       order: "pre",
       handler(source) {

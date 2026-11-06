@@ -25,10 +25,18 @@
   try {
     var mode = localStorage.getItem("formportal-theme");
     var sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    if (mode === "light" || (mode !== "dark" && sys)) d.setAttribute("data-theme", "light");
-  } catch (e) {
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) d.setAttribute("data-theme", "light");
-  }
+    if (mode === "light" || (mode === "system" && sys)) d.setAttribute("data-theme", "light");
+  } catch (e) {}
+  try {
+    var shared = JSON.parse(localStorage.getItem("nodemode_ui_settings") || "null");
+    var tint = shared && typeof shared.accentColor === "string" ? shared.accentColor : "";
+    if (/^#[0-9a-fA-F]{6}$/.test(tint)) {
+      d.style.setProperty("--accent-color", tint);
+      d.style.setProperty("--accent-color-dim", tint + "33");
+      d.style.setProperty("--accent-color-hover", "color-mix(in srgb, " + tint + " 82%, #ffffff)");
+    }
+  } catch (e) {}
+  if ("__TAURI_INTERNALS__" in window && navigator.userAgent.indexOf("Mac") >= 0) d.classList.add("has-overlay-titlebar");
   try {
     var last = localStorage.getItem("formportal-last");
     var places = ["apps", "updates", "beta", "files", "fonts", "stock", "extensions", "learn", "included"];

@@ -1,0 +1,370 @@
+{
+ "id": "formdam",
+ "name": "FormDAM",
+ "version": "1.28.6",
+ "repo": "https://github.com/nodemode-dev/formDAM",
+ "kind": "Photo library and asset manager",
+ "title": "a local-first photo library and asset manager",
+ "summary": "An open-source, local-first photo library with a SQLite catalog, RAW and HEIC, CLIP search, a non-destructive editor, offline maps and private albums.",
+ "lede": "FormDAM is an open-source, local-first photo library and asset manager. Originals stay in a managed or referenced store with a SQLite catalog beside them, and you browse, search, organize, edit and export from one window.",
+ "replaces": "Apple Photos and Adobe Bridge",
+ "project": "",
+ "runs_on": "macOS, Windows and Linux, plus a browser build",
+ "checks": [
+  "Imports from a path, a browsed folder or a drop, skipping exact duplicates by SHA-256 and bringing XMP sidecars along.",
+  "Reads HEIC/HEIF, 23 camera RAW extensions via LibRaw, video via ffmpeg, and full EXIF.",
+  "Searches every text field, dates, places and CLIP visual search such as \"puppies in flowers\".",
+  "Edits non-destructively and exports to JPEG, HEIC, PNG, TIFF or WebP."
+ ],
+ "facts": [
+  {
+   "dt": "Engine",
+   "dd": "FastAPI on SQLite, under a vanilla TypeScript window in a Tauri 2 shell"
+  },
+  {
+   "dt": "Ports",
+   "dd": "Backend on 127.0.0.1:8000, frontend dev server on 127.0.0.1:5173"
+  },
+  {
+   "dt": "Models",
+   "dd": "Face, CLIP, Clean Up and Look Up models, about 650 MB on disk and about 1.2 GB downloaded once, sha256-pinned"
+  },
+  {
+   "dt": "Automation",
+   "dd": "Scripts, agents and MCP tools are off by default and turned on in Settings > Privacy"
+  }
+ ],
+ "chapters": [
+  {
+   "id": "library",
+   "kicker": "Library",
+   "title": "Import, browse and find anything",
+   "text": "A day-grouped grid with Years, Months and All Photos views, eleven sort orders, stacks and combinable quick filters. One search covers every text field, dates and places, plus CLIP visual search and Advanced Find saved as smart albums.",
+   "shot": "library"
+  },
+  {
+   "id": "edit",
+   "kicker": "Edit",
+   "title": "A non-destructive editor",
+   "text": "Light, colour, B&W, curves, levels, sharpen, noise and vignette adjustments, filters, crop and straighten, markup, and Clean Up that removes distractions with LaMa. RAW files add a develop section, and every edit can be reverted.",
+   "shot": "adjust"
+  },
+  {
+   "id": "private",
+   "kicker": "Privacy",
+   "title": "Private by design",
+   "text": "Private albums need a passkey and vanish from every general view. Share as Encrypted Package makes a WinZip AES-256 zip, and location is stripped losslessly unless you include it. Only the app window reaches the engine by default.",
+   "shot": "privacy"
+  }
+ ],
+ "features": [
+  {
+   "id": "import",
+   "icon": "download",
+   "title": "Import",
+   "text": "Paste a path, browse a folder or drop files and folders anywhere, including onto an album.",
+   "bullets": [
+    "Files are copied, moved or added in place (referenced)",
+    "SHA-256 fingerprints, filed as an import batch",
+    "Exact duplicates are skipped at the door",
+    "XMP sidecars from Bridge or Lightroom bring ratings, labels, keywords and IPTC"
+   ],
+   "shot": "library"
+  },
+  {
+   "id": "formats",
+   "icon": "film",
+   "title": "Formats and metadata",
+   "text": "Wide format coverage with full metadata.",
+   "bullets": [
+    "HEIC/HEIF and 23 camera RAW extensions via LibRaw",
+    "Video via ffmpeg",
+    "EXIF, GPS, lens and exposure",
+    "Apple maker notes: Live Photo pairing, bursts, selfies, portraits, and QuickTime tags"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "grid",
+   "icon": "grid",
+   "title": "Library grid",
+   "text": "Day-grouped tiles with fast selection and infinite scroll via keyset cursors.",
+   "bullets": [
+    "Years, Months and All Photos views with a zoom slider",
+    "Quick filters for media types, rating, label and keyword",
+    "Eleven sort orders and stacks",
+    "Cmd-click and Shift-click selection"
+   ],
+   "shot": "library"
+  },
+  {
+   "id": "viewer",
+   "icon": "play",
+   "title": "Viewer",
+   "text": "Full-size photos and range-streamed video with an info panel.",
+   "bullets": [
+    "Camera data, location, keywords, people, subjects and recognised text",
+    "Ratings and labels from the keyboard",
+    "Download and delete"
+   ],
+   "shot": "library"
+  },
+  {
+   "id": "organize",
+   "icon": "tag",
+   "title": "Organize",
+   "text": "Metadata tools for large libraries.",
+   "bullets": [
+    "0-5 stars, seven colour labels and reject",
+    "Titles, captions and alt text",
+    "A hierarchical keyword manager, smart albums, album folders and pinned views",
+    "Batch rename with tokens",
+    "Show in Finder and Edit With, with each save coming back as a revertible edit"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "search",
+   "icon": "target",
+   "title": "Search",
+   "text": "One search over every text field, dates and places, plus CLIP.",
+   "bullets": [
+    "CLIP search such as \"puppies in flowers\"",
+    "Suggestions",
+    "Advanced Find (Cmd-F) saved as smart albums"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "places",
+   "icon": "globe",
+   "title": "Places",
+   "text": "Offline geography with no map service needed.",
+   "bullets": [
+    "Offline reverse geocoding and an offline map with clustered thumbnails",
+    "City and country collections and trips",
+    "Location and date editing singly or in batches"
+   ],
+   "shot": "places"
+  },
+  {
+   "id": "recognition",
+   "icon": "formai",
+   "title": "Recognition",
+   "text": "On-device recognition of people, pets, subjects and things.",
+   "bullets": [
+    "People by YuNet face detection and SFace embeddings, including in video",
+    "Pets grouped per animal and content collections such as documents, receipts and QR codes",
+    "Look Up for species (about 384,000 via BioCLIP), dog and cat breeds and about 3,700 landmarks"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "edit",
+   "icon": "sliders",
+   "title": "Edit",
+   "text": "Non-destructive adjustments with revert.",
+   "bullets": [
+    "Light, colour, B&W, curves, levels, definition, sharpen, noise, vignette",
+    "Filters, crop and straighten, markup, lens corrections",
+    "Clean Up with LaMa, Live Photo Long Exposure, copy and paste edits, video trim",
+    "RAW develop section with Kelvin white balance and tint"
+   ],
+   "shot": "adjust"
+  },
+  {
+   "id": "output",
+   "icon": "export",
+   "title": "Output",
+   "text": "Export and print options.",
+   "bullets": [
+    "XMP sidecars and File Info (IPTC) with templates",
+    "Export to JPEG, HEIC, PNG, TIFF or WebP with sizing, naming and metadata options",
+    "Print and PDF contact sheets, saved workflows"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "sharing",
+   "icon": "shield",
+   "title": "Sharing and sync",
+   "text": "Encrypted packages, optional folder sync and a LAN-only family library.",
+   "bullets": [
+    "Share as Encrypted Package: WinZip AES-256 zip with a generated password or your own of at least 16 characters",
+    "Sync through a folder such as iCloud Drive, Dropbox, Syncthing or a NAS, off by default",
+    "Shared Library works only on the local network between apps with the same share key"
+   ],
+   "shot": "privacy"
+  },
+  {
+   "id": "vault",
+   "icon": "heart",
+   "title": "Albums, vault and Recently Deleted",
+   "text": "Private albums and a 30-day trash.",
+   "bullets": [
+    "Private albums require a passkey (scrypt-hashed) and disappear from every general view",
+    "One vault passkey guards Recently Deleted",
+    "Touch ID and Keychain on macOS, Windows Hello on Windows, polkit sign-in on Linux",
+    "Items auto-purge after 30 days, configurable"
+   ],
+   "shot": "privacy"
+  },
+  {
+   "id": "duplicates",
+   "icon": "copy",
+   "title": "Duplicates",
+   "text": "The bundled deduplakit engine finds exact and visually identical sets across photos and videos.",
+   "bullets": [
+    "Dual-gradient dHash, confidence-masked DCT pHash and a color grid",
+    "Resolving keeps the best copy and trashes the rest, reversible from Recently Deleted"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "curation",
+   "icon": "keyframe",
+   "title": "Curation and libraries",
+   "text": "Memories, slideshows and several libraries.",
+   "bullets": [
+    "Memories, generated or described, with generated music",
+    "Slideshows and compare with linked zoom",
+    "Several libraries, repair and consolidate referenced files"
+   ],
+   "shot": ""
+  }
+ ],
+ "parity": {
+  "against": "Apple Photos and Adobe Bridge",
+  "summary": "Graded at zip v1.27.5 against Apple Photos for macOS 27 and Adobe Bridge 16.0.6, with Immich v3.3.1 as the open-source comparison. Every build cell was traced in code, and the references come from Apple's and Adobe's own documentation fetched on October 10, 2026."
+ },
+ "docs": {
+  "requirements": [
+   "Python 3.10 or newer for the desktop build",
+   "Node 20.19 or 22.12 or newer",
+   "Rust, installed with rustup when missing",
+   "ffmpeg on PATH for video thumbnails, video dedup and video face scanning"
+  ],
+  "install": "setup/formDAM_oc_install",
+  "run": "./formDAM",
+  "desktop": "./build_app",
+  "agents": "Automation access for scripts, agents and MCP tools is off by default; Settings > Privacy turns it on and shows a token.",
+  "topics": [
+   {
+    "title": "Quickstart",
+    "text": "The README lists the master launcher, install only, boot only and a banner script."
+   },
+   {
+    "title": "Desktop app",
+    "text": "build_app options such as --no-install, --install, --open and --clean, and the Windows build_app.bat."
+   },
+   {
+    "title": "Configuration",
+    "text": "Environment variables such as FORMDAM_LIBRARY, FORMDAM_MODELS, FORMDAM_AUTOMATION and FORMDAM_TRASH_DAYS."
+   },
+   {
+    "title": "Dependency licenses",
+    "text": "A table of every dependency, its license and where it runs."
+   }
+  ]
+ },
+ "releases": [
+  {
+   "version": "1.28.4",
+   "date": "2026-10-31",
+   "items": [
+    "Windows pins the MIME types of .js, .mjs and .css, so the window no longer stays blank",
+    "When no ffmpeg is on PATH, the engine downloads a pinned LGPL build on first run and checks every file's SHA-256"
+   ]
+  },
+  {
+   "version": "1.28.3",
+   "date": "2026-10-30",
+   "items": [
+    "The macOS DMG keeps tauri's Developer ID signature",
+    "Windows PyInstaller data pairs use a semicolon and PyInstaller is pinned to 6.16.0",
+    "Linux and Windows pin @tauri-apps/cli 2.12.3"
+   ]
+  },
+  {
+   "version": "1.28.2",
+   "date": "2026-10-26",
+   "items": [
+    "A window smoke test runs in CI",
+    "The topbar subtitle line is reserved, so the title no longer jumps",
+    "The splash logo no longer moves when the rest of the page streams in"
+   ]
+  }
+ ],
+ "shots_wanted": [
+  {
+   "key": "library",
+   "what": "The library grid with a day-grouped view of photos",
+   "how": "Run ./formDAM, open the address it prints, then import a folder of JPEG, HEIC or RAW files from the import button."
+  },
+  {
+   "key": "editor",
+   "what": "A photo open in the non-destructive editor",
+   "how": "Double-click any imported photo in the grid and open the edit panel to show the adjustments."
+  },
+  {
+   "key": "privacy",
+   "what": "Private albums and the Recently Deleted vault",
+   "how": "Create a private album from the Albums section and set a passkey, or open Recently Deleted after trashing a photo."
+  }
+ ],
+ "sources": [
+  "README.md",
+  "git log",
+  "src-tauri/tauri.conf.json",
+  "frontend/package.json",
+  "parity:dam"
+ ],
+ "licence": "Apache-2.0",
+ "captures": {
+  "library": {
+   "file": "/media/formdam/ui-hero-2.webp",
+   "light": "/media/formdam/ui-hero-light-2.webp",
+   "width": 2400,
+   "height": 1350,
+   "alt": "The FormDAM Library in All Photos view: 62 items grouped by date in a square grid, with Pinned, Albums and Utilities in the sidebar",
+   "size": ""
+  },
+  "editor": {
+   "file": "/media/formdam/ui-hero-2.webp",
+   "light": "/media/formdam/ui-hero-light-2.webp",
+   "width": 2400,
+   "height": 1350,
+   "alt": "The FormDAM Library in All Photos view: 62 items grouped by date in a square grid, with Pinned, Albums and Utilities in the sidebar",
+   "size": ""
+  },
+  "adjust": {
+   "file": "/media/formdam/ui-editor-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The editor with the Adjust tab: lens corrections, light, colour, black and white and detail sliders beside a Venice photo",
+   "size": ""
+  },
+  "places": {
+   "file": "/media/formdam/ui-places-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The Places view: an offline world map with clustered photo thumbnails above a grid of city collections",
+   "size": ""
+  },
+  "viewer": {
+   "file": "/media/formdam/ui-viewer-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The viewer open on a Venice waterfront photo with the info panel showing rating, labels, keywords, location and camera data",
+   "size": ""
+  },
+  "privacy": {
+   "file": "/media/formdam/ui-privacy-1.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormDAM's Hidden view, locked, asking for a vault passkey that encrypts Hidden, Recently Deleted and any private album without its own, with the warning that a forgotten passkey cannot be recovered",
+   "size": ""
+  }
+ },
+ "credit": "Images in the captures: FormCut's demo image (Pexels photo 36025195 by Mahmoud Ramadan) and stills from FormCut's demo clips."
+}

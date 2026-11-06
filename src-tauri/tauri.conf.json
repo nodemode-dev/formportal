@@ -1,15 +1,30 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "FormPortal",
-  "version": "0.54.3",
-  "identifier": "dev.formai.portal",
+  "version": "0.58.0",
+  "identifier": "studio.formai.portal",
   "build": {
     "frontendDist": "../frontend/dist",
     "devUrl": "http://localhost:3250"
   },
   "app": {
     "withGlobalTauri": true,
+    "macOSPrivateApi": true,
     "windows": [
+      {
+        "label": "splash",
+        "title": "FormPortal",
+        "url": "splash.html",
+        "width": 360,
+        "height": 200,
+        "resizable": false,
+        "decorations": false,
+        "center": true,
+        "transparent": true,
+        "shadow": false,
+        "visible": false,
+        "focus": true
+      },
       {
         "label": "main",
         "title": "FormPortal",

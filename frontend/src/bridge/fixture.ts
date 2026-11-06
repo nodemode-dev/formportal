@@ -1,5 +1,7 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import extensions from "../../../catalog/fixtures/extensions.json";
+import registry from "../../../catalog/products.json";
+import schedule from "../../../catalog/schedule.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
@@ -97,6 +99,17 @@ for (const seed of (new URLSearchParams(window.location.search).get("installed")
 
 const extInstalled = new Map<string, InstalledExtension>();
 
+const SUPPORTER_FIXTURE_CODE = "d1.0.00000000000000000000000000000000.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills", formbench: "formranker" };
+const SITE_UNDATED = 9;
+const SITE_SUPPORTERS = 11;
+const SITE_DATED = schedule.releases.map((g) => ({ at: g.at, count: g.apps.length }));
+const SITE_NAMES = new Map(registry.products.map((p) => [p.id, p.name]));
+const SITE_TILES: { name: string; at: string | null }[] = [
+  ...schedule.releases.flatMap((g) => g.apps.filter((id) => id !== "formportal").map((id) => ({ name: SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id, at: g.at as string | null }))),
+  ...["FormDAM", "FormSculpt", "FormSurface", "FormWeb", "Planned app 1", "Planned app 2", "Planned app 3", "Planned app 4", "Planned app 5"].slice(0, SITE_UNDATED).map((name) => ({ name, at: null })),
+  ...Array.from({ length: SITE_SUPPORTERS }, (_, i) => ({ name: `Codename ${i + 1}`, at: null })),
+];
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
 
 function missing(product: string): Error {
@@ -419,6 +432,18 @@ export const fixtureBridge: Bridge = {
   preferences: async () => ({ ...prefs, per_app: { ...prefs.per_app } }),
   setPreferences: async (next) => {
     prefs = { ...next, per_app: { ...next.per_app } };
+  },
+  siteUpcoming: async () => ({ known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: Math.floor(Date.now() / 1000), stale: false }),
+  supporterCheck: async (code) => {
+    const given = code === null ? (prefs.supporter_code ?? "") : code.trim();
+    if (code === "") {
+      prefs = { ...prefs, supporter_code: null };
+      return { state: "none", supporter: false, until: null, upcoming: [], checked: 0, stale: false };
+    }
+    if (given === "") return { state: "none", supporter: false, until: null, upcoming: [], checked: 0, stale: false };
+    if (given !== SUPPORTER_FIXTURE_CODE) return { state: "no", supporter: false, until: null, upcoming: [], checked: Math.floor(Date.now() / 1000), stale: false };
+    prefs = { ...prefs, supporter_code: given };
+    return { state: "supporter", supporter: true, until: new Date(Date.now() + 90 * 86400000).toISOString().replace(/\.\d+Z$/, "Z"), upcoming: SITE_TILES, checked: Math.floor(Date.now() / 1000), stale: false };
   },
   autoUpdate: async (progress) => {
     const done: UpdateOutcome[] = [];

@@ -15,12 +15,12 @@ Route every change to FormPortal's code through this file. It maps the subsystem
 | Command line and MCP | `cli/src/` (`ops.rs` shared operations, `mcp.rs` the server, `main.rs` the commands), `setup/agents.py`, `.mcp.json`, `.codex/`, `.cursor/`, `.claude/skills/formportal-harness`, `.agents/skills` | `sub-skills/agent-substrate/SUB-SKILL.md` |
 | Interface | `frontend/` (`vite.config.ts` builds every pane from `catalog/products.json`; `src/engine` state and commands, no DOM; `src/bridge` fixture or Tauri; `src/extensions` one module per behaviour) | `sub-skills/interface/SUB-SKILL.md` |
 | Shell and release | `src-tauri/`, `setup/build_*`, `setup/package_release.py` (releases are built by formcompiler) | `sub-skills/shell-and-release/SUB-SKILL.md` |
-| Contract and design | `catalog/` and `design/`, copies of formai_dev's | `sub-skills/contract-and-design/SUB-SKILL.md` |
+| Contract and design | `catalog/` (a copy of formai_dev's) and `design/` (FormPortal's own, following formvis) | `sub-skills/contract-and-design/SUB-SKILL.md` |
 
 ## How the pieces depend
 
 ```text
-formai.dev (formai_dev repo) publishes catalog/v1/apps.json + .sig  -- contract: catalog/schema
+formcompiler (via formpipe) publishes dl.formai.studio/catalog/apps.json + .sig  -- contract: catalog/schema from formai_dev
 formportal-core (core/)            no window, no Tauri
   -> src-tauri (Tauri commands: platform, catalog, installs, install, open, rollback, remove, launch_link)
        -> frontend (bridge/tauri.ts) -> engine -> extensions -> DOM
@@ -33,7 +33,7 @@ frontend in a browser: bridge/fixture.ts reads catalog/fixtures (./formportal is
 - **The core does the work.** Install, verify, rollback, launch and catalogue logic live in `core`; the shell, the CLI and the MCP server are thin surfaces over it and add no behaviour of their own. A capability the window has and the MCP server lacks (or the reverse) is a bug.
 - **Never weaken trust.** Signature check on the catalogue and SHA-256 on every artifact before unpacking; only https or loopback fetched. No flag skips the hash.
 - **Zero flash.** The interface's markup is complete at build time; script writes attributes and text on keyed nodes and never rebuilds a container. Every colour a token, every z-index a layer token, every icon an inline `currentColor` SVG from `design/icons.json`.
-- **The contract is formai_dev's.** `catalog/` and `design/` are copies. Change them in formai_dev first, then copy here in a commit that names the formai_dev version.
+- **The contract is formai_dev's.** `catalog/` is a copy. Change it in formai_dev first, then copy here in a commit that names the formai_dev version. `design/` is FormPortal's own and follows the Form apps' tokens (formvis); the website keeps its own.
 - **Keep the agents in step.** After changing an MCP tool, run `./formportal agents sync` and commit `references/tools.md` and the `.agents/skills` mirror; `./formportal agents sync --check` fails while they drift.
 - **Text hygiene.** No pictographs anywhere, no em dashes in Markdown, comment-free source with the reasoning in the in-tree `HASHOUT_LOG.md` files (`core`, `cli`, `frontend`, `src-tauri`, `design`).
 - **Versions together.** `core/Cargo.toml`, `cli/Cargo.toml`, `src-tauri/Cargo.toml`, `Cargo.lock`, `src-tauri/tauri.conf.json`, `frontend/package.json` and both fields of its lockfile, and the README badge carry the same `v*.*.*`.

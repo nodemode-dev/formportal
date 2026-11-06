@@ -7,7 +7,7 @@ use crate::ops::{self, Ctx};
 const PROTOCOL: &str = "2025-06-18";
 const SUPPORTED: [&str; 4] = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 
-const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and removes the Form family's desktop apps on this computer, from a signed catalogue published at formai.dev. Start with status, then apps. Every install verifies the file's SHA-256 against the catalogue before anything is unpacked. install, rollback and remove change the person's computer: say what will change and get their go-ahead first. The formportal-harness skill has the workflow.";
+const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and removes the Form family's desktop apps on this computer, from the signed catalogue on dl.formai.studio and the newer releases each app publishes on GitHub. Start with status, then apps. Every install verifies the file's SHA-256 against the catalogue before anything is unpacked. install, rollback and remove change the person's computer: say what will change and get their go-ahead first. The formportal-harness skill has the workflow.";
 
 fn props(extra: Value) -> Value {
     let mut base = json!({
@@ -36,7 +36,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": {} },
           "annotations": { "readOnlyHint": true, "openWorldHint": false } },
         { "name": "apps", "title": "List the Form apps",
-          "description": "Every app in the Form family registry (name, what it replaces, group, development status) with, per channel, what the catalogue offers this computer and what is installed. Works offline from the registry when the catalogue cannot be read, and says why.",
+          "description": "The Form apps that are released (a published release in the catalogue or on the app's GitHub repository) or installed here, as on formai.studio: name, what it replaces, group, and per channel what the catalogue offers this computer and what is installed. Apps not released yet are not named; on_the_way gives each scheduled group's opening date and how many apps it holds, plus one group with opens null for apps whose date is still to come (counted from formai.studio, present only when it answered); a names array per group appears only when the person has a supporter code that formai.studio confirmed. Works offline from the registry when the catalogue cannot be read, and says why.",
           "inputSchema": { "type": "object", "properties": props(json!({})) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "app_info", "title": "One app in detail",
@@ -64,7 +64,7 @@ fn tools() -> Value {
           "inputSchema": { "type": "object", "properties": props(json!({ "product": target()["product"], "channel": target()["channel"], "automatic_only": { "type": "boolean", "description": "Only the updates the preferences allow or that were put off." }, "later": { "type": "boolean", "description": "Put this app's update off until it is closed (true), or cancel that (false)." } })) },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true } },
         { "name": "preferences", "title": "Update preferences",
-          "description": "Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting), open_at_login (default off: open the FormPortal window when the person logs in; the window writes or removes its login item when it next starts, and runs nothing in the background). Changing them is the person's choice: confirm first.",
+          "description": "Reads FormPortal's update preferences, or changes the ones given: auto_update (all apps, default on, applied while FormPortal is open), auto_update_beta (default off), only_when_closed (default on), notices (default on), keep_previous (default on: keep the replaced version for rollback; off deletes it after each update), per_app (an object of product id to true, false, or null to follow the global setting), open_at_login (default off: open the FormPortal window when the person logs in; the window writes or removes its login item when it next starts, and runs nothing in the background). supporter_code is only ever reported as true or false. Changing them is the person's choice: confirm first.",
           "inputSchema": { "type": "object", "properties": {
               "auto_update": { "type": "boolean" }, "auto_update_beta": { "type": "boolean" }, "only_when_closed": { "type": "boolean" }, "notices": { "type": "boolean" }, "keep_previous": { "type": "boolean" }, "open_at_login": { "type": "boolean" },
               "per_app": { "type": "object", "additionalProperties": { "type": ["boolean", "null"] } } } },

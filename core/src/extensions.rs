@@ -151,7 +151,7 @@ fn check_signature(package: &Path, signature: &PackageSignature, publishers: &[P
     if signature.algorithm != "ed25519" {
         return Err(CoreError::Refused(format!("the package's signature uses {:?}, not ed25519", signature.algorithm)));
     }
-    verify(&fs::read(package)?, &signature.value, &[publisher.public_key.clone()]).map_err(|_| CoreError::Refused(format!("the package's signature does not match {}'s key", publisher.name)))?;
+    verify(&fs::read(package)?, &signature.value, std::slice::from_ref(&publisher.public_key)).map_err(|_| CoreError::Refused(format!("the package's signature does not match {}'s key", publisher.name)))?;
     Ok(publisher.id.clone())
 }
 

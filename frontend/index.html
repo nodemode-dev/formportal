@@ -8,14 +8,16 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="preload" href="/fonts/inter-4-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <script src="/prepaint.js"></script>
+    <script src="/prelive.js"></script>
     <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/src/styles/live.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
     <div id="app" class="shell">
       <nav class="side" aria-label="FormPortal">
-        <div class="brand">
-          <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="mark-cut" fill="currentColor" d="M4 5h16a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-vis" fill="currentColor" d="M4 10.5h11a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/><path class="mark-wav" fill="currentColor" d="M4 16h6a1.5 1.5 0 0 1 0 3H4a1.5 1.5 0 0 1 0-3z"/></svg>
+        <div class="brand" data-tauri-drag-region>
+          <span class="brand-icon" aria-hidden="true"><img class="ic-dark" src="/apps/formai.webp" alt="" width="24" height="24" /><img class="ic-light" src="/apps/formai-light.webp" alt="" width="24" height="24" /></span>
           <span>FormPortal</span>
         </div>
         <ul class="nav">
@@ -37,13 +39,13 @@
       </nav>
 
       <div class="main">
-        <header class="top">
-          <h1 class="top-title" data-route-label>Home</h1>
+        <header class="top" data-tauri-drag-region>
+          <h1 class="top-title" data-route-label data-tauri-drag-region>Home</h1>
           <label class="search">
             <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             <input type="search" data-search placeholder="Search Form apps" aria-label="Search Form apps" autocomplete="off" spellcheck="false" />
           </label>
-          <div class="top-tools">
+          <div class="top-tools" data-tauri-drag-region>
             <button class="icon-btn" type="button" data-ask-open aria-label="Ask your agent" title="Ask your agent"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H11l-4 3.5v-3.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 10h7M8.5 13h4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
             <button class="icon-btn bell" type="button" data-bell aria-label="Notifications" aria-expanded="false" aria-controls="bell-panel">
               <svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -117,6 +119,14 @@
                 <!-- @portal:all -->
               </ul>
               <p class="empty" data-search-empty hidden>No Form app matches that search.</p>
+              <section class="soon" data-soon aria-labelledby="h-soon">
+                <h2 class="group-title" id="h-soon">On the way</h2>
+                <p class="fine soon-note">These Form apps open on the dates shown, once their releases are published. Supporters see their names on formai.studio.</p>
+                <ul class="soon-list">
+                  <!-- @portal:soon -->
+                </ul>
+                <p class="links"><a class="link" href="https://formai.studio/support/" data-web>Support the Form apps</a></p>
+              </section>
             </div>
           </section>
 
@@ -154,7 +164,7 @@
 
               <section class="block files-start" data-files-start>
                 <h2 class="block-title">Choose where your projects live</h2>
-                <p class="fine">Pick a folder, or start with the suggested one below. FormPortal lists the FormCut, FormVis and FormWav projects inside it and keeps a version each time one changes.</p>
+                <p class="fine">Pick a folder, or start with the suggested one below. FormPortal lists the Form app projects inside it and keeps a version each time one changes.</p>
                 <p class="fine mono files-suggested" data-files-suggested></p>
                 <div class="agent-acts"><button class="btn btn-primary" type="button" data-folder-suggested>Use the suggested folder</button><button class="btn" type="button" data-folder-add>Choose a folder</button></div>
               </section>
@@ -302,9 +312,9 @@
               <div class="toolbar">
                 <div class="seg" role="group" aria-label="Show extensions for">
                   <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
-                  <button class="seg-item" type="button" data-ext-filter="formcut" aria-pressed="false">FormCut</button>
-                  <button class="seg-item" type="button" data-ext-filter="formvis" aria-pressed="false">FormVis</button>
-                  <button class="seg-item" type="button" data-ext-filter="formwav" aria-pressed="false">FormWav</button>
+                  <button class="seg-item" type="button" data-ext-filter="formcut" data-product="formcut" aria-pressed="false">FormCut</button>
+                  <button class="seg-item" type="button" data-ext-filter="formvis" data-product="formvis" aria-pressed="false">FormVis</button>
+                  <button class="seg-item" type="button" data-ext-filter="formwav" data-product="formwav" aria-pressed="false">FormWav</button>
                 </div>
                 <p class="toolbar-note">Checked against the catalogue before install. An app uses its extensions from its next start. Open a .formpkg file with FormPortal to install it. <a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/.docs/wiki/Extensions-Troubleshooting.md" data-web>If one will not install</a></p>
               </div>
@@ -401,78 +411,115 @@
       </div>
     </div>
 
-    <dialog class="prefs" data-prefs aria-labelledby="h-prefs">
-      <div class="prefs-frame">
-        <nav class="prefs-tabs" aria-label="Preferences">
-          <h2 id="h-prefs" class="prefs-title">Preferences</h2>
-          <button class="prefs-tab" type="button" data-prefs-tab="general" aria-current="page">General</button>
-          <button class="prefs-tab" type="button" data-prefs-tab="apps">Apps</button>
-          <button class="prefs-tab" type="button" data-prefs-tab="catalogue">Catalogue</button>
-          <button class="prefs-tab" type="button" data-prefs-tab="account">Account</button>
-          <button class="prefs-tab" type="button" data-prefs-tab="about">About</button>
-        </nav>
-        <div class="prefs-body">
-          <section class="prefs-panel" data-prefs-panel="general">
-            <h3 class="prefs-h">Language</h3>
-            <div class="seg" role="group" aria-label="Language" data-langs>
-              <button class="seg-item" type="button" data-lang-set="en" aria-pressed="false" lang="en">English</button>
-              <button class="seg-item" type="button" data-lang-set="es" aria-pressed="false" lang="es">Español (borrador)</button>
-            </div>
-            <p class="fine" data-lang-note>The Spanish text is a first draft that a Spanish speaker has not reviewed yet. Error messages that come from the engine itself are still in English.</p>
-            <h3 class="prefs-h">When FormPortal opens</h3>
-            <div class="seg" role="group" aria-label="When FormPortal opens">
-              <button class="seg-item" type="button" data-open-set="home" aria-pressed="true">Home</button>
-              <button class="seg-item" type="button" data-open-set="last" aria-pressed="false">Where I left off</button>
-            </div>
-            <label class="menu-check"><span>Open FormPortal when I log in</span><input type="checkbox" class="switch" data-pref="open_at_login" /></label>
-            <h3 class="prefs-h">Appearance</h3>
-            <div class="seg" role="group" aria-label="Appearance">
-              <button class="seg-item" type="button" data-theme-set="system" aria-pressed="true">%icon:laptop:ic-s%<span>Match the system</span></button>
-              <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="false">%icon:moon:ic-s%<span>Dark</span></button>
-              <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
-            </div>
-            <h3 class="prefs-h">Notifications</h3>
-            <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
-            <p class="fine">Pop up a notice for:</p>
-            <label class="menu-check"><span>Updates</span><input type="checkbox" class="switch" data-quiet="updates" checked /></label>
-            <label class="menu-check"><span>Installs and extensions</span><input type="checkbox" class="switch" data-quiet="installs" checked /></label>
-            <label class="menu-check"><span>Files, fonts and stock</span><input type="checkbox" class="switch" data-quiet="library" checked /></label>
-            <label class="menu-check"><span>Agents</span><input type="checkbox" class="switch" data-quiet="agents" checked /></label>
-            <label class="menu-check"><span>Learning</span><input type="checkbox" class="switch" data-quiet="learn" checked /></label>
-            <label class="menu-check"><span>FormPortal itself</span><input type="checkbox" class="switch" data-quiet="system" checked /></label>
-            <p class="fine">Failures always pop up. Everything lands in the bell in the upper right, where you can show one kind at a time.</p>
-            <h3 class="prefs-h">In the background</h3>
-            <p class="fine">Nothing. FormPortal checks for updates, and applies the automatic ones, only while it is open. It has no tray process and no account, and a login item only when you turn on Open FormPortal when I log in, which opens this window and nothing else.</p>
-          </section>
+    <dialog class="prefs cv-prefs-dlg" data-prefs aria-labelledby="h-prefs">
+      <header class="cv-prefs-head">
+        <span class="cv-prefs-headicon">%icon:settings:ic-s%</span>
+        <h2 id="h-prefs" class="cv-prefs-title">Preferences</h2>
+        <button class="cv-prefs-close" type="button" data-prefs-close aria-label="Close preferences">%icon:pf-close:ic-s%</button>
+      </header>
+      <div class="cv-prefs-pages" data-prefs-pages>
+        <section class="cv-prefs-sec is-current" data-prefs-panel="general" role="tabpanel" aria-labelledby="prefs-head-general">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-general" data-prefs-fold="general" aria-expanded="true" aria-controls="prefs-body-general"><span class="cv-prefs-secicon">%icon:settings:ic-m%</span><span class="cv-prefs-seclabel">General</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-general">
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">When FormPortal opens</h3>
+              <div class="seg" role="group" aria-label="When FormPortal opens">
+                <button class="seg-item" type="button" data-open-set="home" aria-pressed="true">Home</button>
+                <button class="seg-item" type="button" data-open-set="last" aria-pressed="false">Where I left off</button>
+              </div>
+              <label class="menu-check"><span>Open FormPortal when I log in</span><input type="checkbox" class="switch" data-pref="open_at_login" /></label>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Notifications</h3>
+              <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
+              <p class="fine">Pop up a notice for:</p>
+              <label class="menu-check"><span>Updates</span><input type="checkbox" class="switch" data-quiet="updates" checked /></label>
+              <label class="menu-check"><span>Installs and extensions</span><input type="checkbox" class="switch" data-quiet="installs" checked /></label>
+              <label class="menu-check"><span>Files, fonts and stock</span><input type="checkbox" class="switch" data-quiet="library" checked /></label>
+              <label class="menu-check"><span>Agents</span><input type="checkbox" class="switch" data-quiet="agents" checked /></label>
+              <label class="menu-check"><span>Learning</span><input type="checkbox" class="switch" data-quiet="learn" checked /></label>
+              <label class="menu-check"><span>FormPortal itself</span><input type="checkbox" class="switch" data-quiet="system" checked /></label>
+              <p class="fine">Failures always pop up. Everything lands in the bell in the upper right, where you can show one kind at a time.</p>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">In the background</h3>
+              <p class="fine">Nothing. FormPortal checks for updates, and applies the automatic ones, only while it is open. It has no tray process and no account, and a login item only when you turn on Open FormPortal when I log in, which opens this window and nothing else.</p>
+            </section>
+          </div>
+        </section>
 
-          <section class="prefs-panel" data-prefs-panel="apps" hidden>
-            <h3 class="prefs-h">Updates</h3>
-            <label class="menu-check"><span>Update apps automatically</span><input type="checkbox" class="switch" data-pref="auto_update" checked /></label>
-            <label class="menu-check"><span>Beta builds too</span><input type="checkbox" class="switch" data-pref="auto_update_beta" /></label>
-            <label class="menu-check"><span>Only apps that are not open</span><input type="checkbox" class="switch" data-pref="only_when_closed" checked /></label>
-            <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
-            <h3 class="prefs-h">Each app</h3>
-            <p class="fine">Turn automatic updates off for one app; the others follow the switch above.</p>
-            <ul class="auto-list">
-              <!-- @portal:autolist -->
-            </ul>
-          </section>
+        <section class="cv-prefs-sec" data-prefs-panel="interface" role="tabpanel" aria-labelledby="prefs-head-interface">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-interface" data-prefs-fold="interface" aria-expanded="true" aria-controls="prefs-body-interface"><span class="cv-prefs-secicon">%icon:pf-interface:ic-m%</span><span class="cv-prefs-seclabel">Interface</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-interface">
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Appearance</h3>
+              <div class="seg" role="group" aria-label="Appearance">
+                <button class="seg-item" type="button" data-theme-set="system" aria-pressed="false">%icon:laptop:ic-s%<span>Match the system</span></button>
+                <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="true">%icon:moon:ic-s%<span>Dark</span></button>
+                <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
+              </div>
+              <div class="cv-field">
+                <span>Accent colour</span>
+                <span class="cv-field-ctl"><input class="cv-color" type="color" value="#f97316" data-accent aria-label="Accent colour" /><button class="btn" type="button" data-accent-reset>Reset</button></span>
+              </div>
+              <p class="fine">Shared with the other Form apps on this computer.</p>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Language</h3>
+              <div class="seg" role="group" aria-label="Language" data-langs>
+                <button class="seg-item" type="button" data-lang-set="en" aria-pressed="false" lang="en">English</button>
+                <button class="seg-item" type="button" data-lang-set="es" aria-pressed="false" lang="es">Español (borrador)</button>
+              </div>
+              <p class="fine" data-lang-note>The Spanish text is a first draft that a Spanish speaker has not reviewed yet. Error messages that come from the engine itself are still in English.</p>
+            </section>
+          </div>
+        </section>
 
-          <section class="prefs-panel" data-prefs-panel="catalogue" hidden>
-            <h3 class="prefs-h">Catalogue</h3>
-            <p><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></p>
-            <label class="prefs-field"><span>Address</span><input class="field" type="url" inputmode="url" spellcheck="false" autocomplete="off" data-setting-input="catalog" placeholder="https://dl.formai.studio/catalog/apps.json" /></label>
-            <label class="menu-check"><span>Developer: accept a catalogue that is not signed</span><input type="checkbox" class="switch" data-setting-input="unsigned" /></label>
-            <h3 class="prefs-h">This computer</h3>
-            <dl class="facts">
-              <div><dt>System</dt><dd data-setting="platform"></dd></div>
-              <div><dt>Apps go in</dt><dd class="mono" data-setting="folder"></dd></div>
-              <div><dt>Permission</dt><dd>Your own folder; no administrator password.</dd></div>
-            </dl>
-          </section>
+        <section class="cv-prefs-sec" data-prefs-panel="apps" role="tabpanel" aria-labelledby="prefs-head-apps">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-apps" data-prefs-fold="apps" aria-expanded="true" aria-controls="prefs-body-apps"><span class="cv-prefs-secicon">%icon:apps:ic-m%</span><span class="cv-prefs-seclabel">Apps</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-apps">
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Updates</h3>
+              <label class="menu-check"><span>Update apps automatically</span><input type="checkbox" class="switch" data-pref="auto_update" checked /></label>
+              <label class="menu-check"><span>Beta builds too</span><input type="checkbox" class="switch" data-pref="auto_update_beta" /></label>
+              <label class="menu-check"><span>Only apps that are not open</span><input type="checkbox" class="switch" data-pref="only_when_closed" checked /></label>
+              <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Each app</h3>
+              <p class="fine">Turn automatic updates off for one app; the others follow the switch above.</p>
+              <ul class="auto-list">
+                <!-- @portal:autolist -->
+              </ul>
+            </section>
+          </div>
+        </section>
 
-          <section class="prefs-panel" data-prefs-panel="account" hidden>
-            <h3 class="prefs-h">GitHub</h3>
+        <section class="cv-prefs-sec" data-prefs-panel="catalogue" role="tabpanel" aria-labelledby="prefs-head-catalogue">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-catalogue" data-prefs-fold="catalogue" aria-expanded="true" aria-controls="prefs-body-catalogue"><span class="cv-prefs-secicon">%icon:book:ic-m%</span><span class="cv-prefs-seclabel">Catalogue</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-catalogue">
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Catalogue</h3>
+              <p class="cv-prefs-line"><span data-setting="source">Not loaded</span> <span class="fine" data-setting="generated"></span></p>
+              <label class="cv-field cv-field-stack"><span>Address</span><input class="field" type="url" inputmode="url" spellcheck="false" autocomplete="off" data-setting-input="catalog" placeholder="https://dl.formai.studio/catalog/apps.json" /></label>
+              <label class="menu-check"><span>Developer: accept a catalogue that is not signed</span><input type="checkbox" class="switch" data-setting-input="unsigned" /></label>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">This computer</h3>
+              <dl class="facts">
+                <div><dt>System</dt><dd data-setting="platform"></dd></div>
+                <div><dt>Apps go in</dt><dd class="mono" data-setting="folder"></dd></div>
+                <div><dt>Permission</dt><dd>Your own folder; no administrator password.</dd></div>
+              </dl>
+            </section>
+          </div>
+        </section>
+
+        <section class="cv-prefs-sec" data-prefs-panel="account" role="tabpanel" aria-labelledby="prefs-head-account">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-seclabel">Account</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-account">
+            <section class="cv-prefs-group">
+            <h3 class="cv-prefs-label">GitHub</h3>
             <p class="fine">Optional. Installing, updating and everything else in FormPortal work without an account. Signing in uses your own GitHub account, for sharing from Files.</p>
             <div class="account" data-account="checking">
               <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not signed in.</span><span class="account-say" data-say="unset">This FormPortal has no GitHub app set up, so signing in is not available.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Signed in as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
@@ -487,28 +534,67 @@
               </div>
             </div>
             <p class="fine">FormPortal asks only to read your profile when you sign in, and asks again for repository access the first time you share. Your sign-in is kept in this computer's keychain, never in a file; sign out to remove it.</p>
-          </section>
-          <section class="prefs-panel" data-prefs-panel="about" hidden>
-            <h3 class="prefs-h">FormPortal %fact:version%</h3>
-            <p class="fine" translate="no">by nodemode.ai</p>
-            <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
-            <h3 class="prefs-h">Check and repair</h3>
-            <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
-            <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
-            <ul class="repair-list" data-repair-list></ul>
-            <h3 class="prefs-h">Help</h3>
-            <p class="links"><a class="link" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-dev/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-dev/formportal/discussions" data-web>Ask the community</a></p>
-            <h3 class="prefs-h">Licence</h3>
-            <p class="fine">GPL-3.0. Every Form app is open source.</p>
-            <div class="managed" data-managed hidden>
-              <h3 class="prefs-h">Managed</h3>
-              <p data-setting="managed"></p>
+            </section>
+            <section class="cv-prefs-group" data-supporter>
+              <h3 class="cv-prefs-label">Supporter</h3>
+              <p class="fine">Optional. If you supported the Form apps on formai.studio, paste the code from the thanks page. The code says only that you supported us, and it stays on this computer.</p>
+              <label class="cv-field cv-field-stack"><span>Supporter code</span><input class="field" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" data-supporter-input placeholder="d1.0.0000.0000" /></label>
+              <div class="supporter-acts">
+                <button class="btn btn-primary" type="button" data-supporter-check>Check</button>
+                <button class="btn" type="button" data-supporter-forget>Forget</button>
+              </div>
+              <p class="fine supporter-say" role="status" data-supporter-say data-state="none">Not set</p>
+              <p class="links"><a class="link" href="https://formai.studio/support/" data-web>Get a supporter code on formai.studio</a></p>
+            </section>
+          </div>
+        </section>
+
+        <section class="cv-prefs-sec" data-prefs-panel="about" role="tabpanel" aria-labelledby="prefs-head-about">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-about" data-prefs-fold="about" aria-expanded="true" aria-controls="prefs-body-about"><span class="cv-prefs-secicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-seclabel">About</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-about">
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Version</h3>
+              <p class="cv-prefs-line">FormPortal %fact:version% <span class="fine" translate="no">by nodemode.ai</span></p>
+              <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Check and repair</h3>
+              <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
+              <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
+              <ul class="repair-list" data-repair-list></ul>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Help</h3>
+              <p class="links"><a class="link" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-dev/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-dev/formportal/discussions" data-web>Ask the community</a></p>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Licence</h3>
+              <p class="fine">GPL-3.0. Every Form app is open source.</p>
+            </section>
+            <section class="cv-prefs-group managed" data-managed hidden>
+              <h3 class="cv-prefs-label">Managed</h3>
+              <p class="cv-prefs-line" data-setting="managed"></p>
               <p class="fine" data-setting="managed-detail"></p>
-            </div>
-          </section>
-        </div>
-        <button class="icon-btn prefs-close" type="button" data-prefs-close aria-label="Close preferences"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </section>
+          </div>
+        </section>
       </div>
+      <footer class="cv-prefs-foot">
+        <button class="btn btn-primary" type="button" data-prefs-done autofocus>Done</button>
+      </footer>
+      <div class="cv-prefs-rail">
+        <nav class="cv-prefs-nav" role="tablist" aria-label="Preferences" aria-orientation="vertical" data-prefs-nav>
+          <button class="cv-prefs-railtab is-active" type="button" role="tab" aria-selected="true" data-prefs-tab="general" title="General"><span class="cv-prefs-tabicon">%icon:settings:ic-m%</span><span class="cv-prefs-tablabel">General</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="interface" title="Interface"><span class="cv-prefs-tabicon">%icon:pf-interface:ic-m%</span><span class="cv-prefs-tablabel">Interface</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="apps" title="Apps"><span class="cv-prefs-tabicon">%icon:apps:ic-m%</span><span class="cv-prefs-tablabel">Apps</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="catalogue" title="Catalogue"><span class="cv-prefs-tabicon">%icon:book:ic-m%</span><span class="cv-prefs-tablabel">Catalogue</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Account"><span class="cv-prefs-tabicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-tablabel">Account</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="about" title="About"><span class="cv-prefs-tabicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-tablabel">About</span></button>
+        </nav>
+        <button class="cv-prefs-fold" type="button" data-prefs-rail-fold aria-expanded="true" aria-label="Collapse tabs" title="Collapse tabs">%icon:pf-fold:ic-s%</button>
+      </div>
+      <svg class="cv-prefs-wire" aria-hidden="true" focusable="false"><path class="cv-prefs-wire-shade" d=""></path><path class="cv-prefs-wire-line" d=""></path></svg>
+      <span class="cv-prefs-port" aria-hidden="true"></span>
     </dialog>
 
     <dialog class="prefs versions" data-versions-dialog aria-labelledby="h-versions">

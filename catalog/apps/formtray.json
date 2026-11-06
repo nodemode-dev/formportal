@@ -1,0 +1,314 @@
+{
+  "id": "formtray",
+  "name": "FormTray",
+  "version": "0.10.1",
+  "repo": "https://github.com/nodemode-dev/formtray",
+  "kind": "Launcher for the Form family",
+  "title": "one dock icon to switch, launch and arrange every FormAI app",
+  "summary": "FormTray is a launcher and switching station for the 23 FormAI apps: one icon, five views on system glass, rebindable hotkeys, and no network access.",
+  "lede": "FormTray is a launcher and switching station for the 23 FormAI apps. You pin one icon instead of twenty-three; click it in the Dock and a Stack pops up above it, or press a hotkey and the Switcher, Apps panel, open-app cards or Widgets board appears in one frame. It opens and switches apps only; installing and updating stay in FormPortal.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Shows the whole Form family from one registry in five views: Switcher, Stack, Apps, Windows and Widgets.",
+    "Uses real system glass: NSGlassEffectView on macOS 26, vibrancy on older macOS, acrylic on Windows and solid themed panels on Linux.",
+    "Reads each app's own name and icon from its bundle, desktop entry or executable every time it looks for apps.",
+    "Never touches the network."
+  ],
+  "facts": [
+    {
+      "dt": "Views",
+      "dd": "Five views plus Settings, all reading the same state"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Rust (formtray-core, formtray-cli) with a Tauri 2 shell and a vanilla TypeScript and Vite interface with zero runtime dependencies"
+    },
+    {
+      "dt": "Scope",
+      "dd": "23 apps from one registry, 3 operating systems"
+    },
+    {
+      "dt": "Preferences",
+      "dd": "JSON files under the OS config folder; ./formtray cli where prints the path"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "views",
+      "kicker": "Five views",
+      "title": "One engine, five ways in",
+      "text": "Switcher is a Cmd+Tab-style strip, Stack a Dock folder grid, Apps a searchable panel with categories, Windows cards for open apps and Widgets a board you arrange. Pins, recents and running dots always agree.",
+      "shot": "apps"
+    },
+    {
+      "id": "hotkeys",
+      "kicker": "Hotkeys",
+      "title": "Hotkeys that do not fight the system",
+      "text": "Defaults are chosen per OS around the reserved chords. Click a hotkey in Settings and press a new chord; FormTray refuses a chord the system or another FormTray action already uses, and Default puts the original back.",
+      "shot": "settings"
+    },
+    {
+      "id": "widgets",
+      "kicker": "Widgets",
+      "title": "A board you arrange",
+      "text": "The Widgets board holds app tiles in three sizes, groups of apps that open as a pop-over, and a FormPortal Updates tile counting what FormPortal has already seen. The Updates tile reads FormPortal's files and never fetches.",
+      "shot": "widgets"
+    }
+  ],
+  "features": [
+    {
+      "id": "views",
+      "icon": "grid",
+      "title": "Five views",
+      "text": "Every view reads the same state, so pins, recents and running dots agree.",
+      "bullets": [
+        "Switcher: a Cmd+Tab-style strip",
+        "Stack: a Dock folder grid",
+        "Apps: a searchable panel with categories",
+        "Windows: cards for the apps that are open",
+        "Widgets: a board you arrange"
+      ],
+      "shot": "apps"
+    },
+    {
+      "id": "glass",
+      "icon": "moon",
+      "title": "Real system glass",
+      "text": "macOS 26 gets a native glass material, older macOS vibrancy, Windows acrylic and Linux solid themed panels.",
+      "bullets": [
+        "Older macOS gets vibrancy",
+        "Windows gets acrylic",
+        "Linux gets solid themed panels"
+      ],
+      "shot": "switcher"
+    },
+    {
+      "id": "hotkeys",
+      "icon": "settings",
+      "title": "Hotkeys",
+      "text": "Per-OS defaults chosen around each system's reserved chords, with clashes refused, not ignored.",
+      "bullets": [
+        "Switcher: Option + Tab on macOS, Alt + ` on Windows and Linux",
+        "Views 1 to 5 on a chord per OS",
+        "Rebind any hotkey in Settings",
+        "On Wayland, bind formtray --view apps (or switcher, stack, windows, widgets) in your desktop's keyboard settings"
+      ],
+      "shot": "settings"
+    },
+    {
+      "id": "discovery",
+      "icon": "source",
+      "title": "Finds apps however they were built",
+      "text": "FormTray reads FormPortal's install record first, and each app carries every bundle identifier and name it has shipped under.",
+      "bullets": [
+        "Names and icons come from the apps themselves",
+        "Bundled icons are only a fallback for apps that are not installed",
+        "On macOS, a family app FormTray has never heard of appears under More"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "widgets",
+      "icon": "apps",
+      "title": "Widgets",
+      "text": "A board you arrange with tiles and groups.",
+      "bullets": [
+        "App tiles in three sizes",
+        "Groups of apps that open as a pop-over",
+        "A FormPortal Updates tile that reads FormPortal's files and never fetches"
+      ],
+      "shot": "widgets"
+    },
+    {
+      "id": "menubar",
+      "icon": "laptop",
+      "title": "Idles in the menu bar",
+      "text": "Once opened, FormTray waits until a hotkey, the Dock icon or the menu bar calls it.",
+      "bullets": [
+        "Open at login is off by default",
+        "The menu bar icon is a 3x3 grid",
+        "The menu opens your pinned apps directly"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "cli",
+      "icon": "terminal",
+      "title": "Command line",
+      "text": "The engine runs without a window through formtray-cli.",
+      "bullets": [
+        "list, open, quit, hotkeys, hotkey <action> <chord>, updates and where",
+        "./formtray cli list",
+        "./formtray cli where prints the preferences folder"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "privacy",
+      "icon": "shield",
+      "title": "Never touches the network",
+      "text": "FormTray reads, but never writes, FormPortal's installed.json and catalog/apps.json.",
+      "bullets": [
+        "Preferences and usage are local JSON files",
+        "Vite dev server on localhost only (port 5610)",
+        "FORMPORTAL_ROOT overrides FormPortal's location"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "add",
+      "icon": "extensions",
+      "title": "Adding a FormAI app",
+      "text": "Add one entry to core/data/apps.json with its id, form* display name, category, hue, fallback icon and bundle identifiers and names.",
+      "bullets": [
+        "Put a 256 px fallback icon in frontend/public/apps/",
+        "No code changes are needed",
+        "List an id under excluded to hold an app back"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Rust (stable)",
+      "Node 20.19+",
+      "WebKitGTK 4.1 on Linux"
+    ],
+    "install": "./formtray_oc_install\nWindows: formtray_oc_install.bat",
+    "run": "./formtray\n./formtray cli list\nWindows: formtray.bat",
+    "desktop": "./build_app\nWindows: build_app.bat",
+    "agents": "",
+    "topics": [
+      {
+        "title": "Hotkeys",
+        "text": "The README gives the default Switcher hotkey, Option + Tab on macOS and Alt + ` on Windows and Linux (X11), and how to bind each view on Wayland."
+      },
+      {
+        "title": "Desktop builds",
+        "text": "./build_app makes a macOS .app and .dmg, Linux deb, rpm and appimage packages, and on Windows build_app.bat makes an msi and an NSIS setup."
+      },
+      {
+        "title": "Where things live",
+        "text": "core holds the engine and registry, cli the command line, src-tauri the window shell and frontend the views."
+      },
+      {
+        "title": "Adding a FormAI app",
+        "text": "One entry in core/data/apps.json and a fallback icon add an app with no code changes."
+      },
+      {
+        "title": "Releases",
+        "text": "FormTray builds nothing in its repository; pushing a compile_vX.Y.Z branch has formcompiler build the bundles and draft a release."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.9.9",
+      "date": "2026-11-04",
+      "items": [
+        "The About box and the installers name NodeAgentc, Inc. and the licence"
+      ]
+    },
+    {
+      "version": "0.9.8",
+      "date": "2026-11-02",
+      "items": [
+        "First release built end to end by formcompiler for macOS, Linux and Windows"
+      ]
+    },
+    {
+      "version": "0.9.7",
+      "date": "2026-10-26",
+      "items": [
+        "A Linux desktop entry counts only when its program exists",
+        "Test suite for the registry, Linux platform layer and settings, run in CI"
+      ]
+    }
+  ],
+  "shots_wanted": [
+    {
+      "key": "apps",
+      "what": "The Apps panel listing the family with search",
+      "how": "Run ./formtray, open http://localhost:5610 in a browser and press 3 to switch to the Apps view; type in the search box."
+    },
+    {
+      "key": "settings",
+      "what": "Settings with the hotkey list",
+      "how": "In the same browser view press Cmd or Ctrl + , to open Settings and scroll to the hotkeys."
+    },
+    {
+      "key": "widgets",
+      "what": "The Widgets board with tiles and a group",
+      "how": "Press 5 for the Widgets view and arrange a few app tiles, including a group."
+    },
+    {
+      "key": "switcher",
+      "what": "The Switcher strip",
+      "how": "Press 1 for the Switcher view and use the arrow keys to move the selection."
+    }
+  ],
+  "sources": [
+    "README.md",
+    "git log",
+    "src-tauri/tauri.conf.json"
+  ],
+  "captures": {
+    "apps": {
+      "file": "/media/formtray/ui-hero-2.webp", "light": "/media/formtray/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTray's Apps view: a search box, category chips, a Recent row and a grid of FormAI app icons with running dots",
+      "size": ""
+    },
+    "switcher": {
+      "file": "/media/formtray/ui-switcher-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Switcher: a horizontal strip of app icons with the selected app named below",
+      "size": ""
+    },
+    "widgets": {
+      "file": "/media/formtray/ui-widgets-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Widgets board: large and small app tiles showing running state and last opened time",
+      "size": ""
+    },
+    "settings": {
+      "file": "/media/formtray/ui-settings-1.webp",
+      "light": "/media/formtray/ui-settings-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTray Settings in its browser preview: the view it opens with, Open at login (off by default), and every app with switches for whether it shows and whether it joins the Stack",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formtray/ui-hero-2.webp", "light": "/media/formtray/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormTray's Apps view: a search box, category chips, a Recent row and a grid of FormAI app icons with running dots",
+      "size": ""
+    },
+    "stack": {
+      "file": "/media/formtray/ui-stack-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Stack: a three-column grid of pinned app icons with an All Apps button",
+      "size": ""
+    },
+    "windows": {
+      "file": "/media/formtray/ui-windows-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Windows view: cards for three running apps with run time, focus and quit buttons",
+      "size": ""
+    }
+  },
+  "credit": "The captures show FormTray's browser preview, which fills the panel with sample app states, in its dark or light look to match this page; on the desktop it reads the apps installed on the computer."
+}

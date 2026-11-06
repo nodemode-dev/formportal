@@ -1,0 +1,75 @@
+{
+  "id": "formbench",
+  "name": "FormBench",
+  "version": "0.10.2",
+  "repo": "https://github.com/nodemode-dev/formbench",
+  "kind": "Parity, testing and rankings tracker",
+  "title": "parity, testing, feedback and rankings for the FormAI app family",
+  "summary": "FormBench keeps parity grades, testing and feedback for the FormAI app family in a single-user desktop app, with everything on your own computer.",
+  "lede": "FormBench measures how close each FormAI desktop app is to the software it replaces and lets the people who test the apps say so. Every app has a comparison of capability rows graded Full, Partial or None, and testers run sessions, propose grade changes with evidence and file bugs, features and ideas. It is a local, single-user desktop app that signs its owner in by itself, with no account to make.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Keeps parity grades for the FormAI apps in data/, imported from Parity Tracker v5.16.",
+    "Lets testers run sessions, propose grade changes and file reports.",
+    "Ranks the apps by parity, community checks, ratings, momentum or bugs.",
+    "Serves its 76 engine commands to agents as MCP tools over stdio."
+  ],
+  "facts": [
+    {"dt": "Engine", "dd": "Python with FastAPI, SQLAlchemy and Alembic, and an MCP server"},
+    {"dt": "Window", "dd": "Vanilla TypeScript and Vite, with markdown-it"},
+    {"dt": "Shell", "dd": "Tauri 2, with the engine frozen by PyInstaller"},
+    {"dt": "Access", "dd": "Local and single-user, no account to make"}
+  ],
+  "chapters": [
+    {"id": "parity", "kicker": "Parity", "title": "Parity grades for the FormAI apps", "text": "The grades live in data/parity, imported from Parity Tracker v5.16: 23 comparisons, 26 products. Each comparison grades its capability rows Full, Partial or None for the FormAI app and for each rival beside it, and ./formbench tracker writes the tracker back out from FormBench's grades.", "shot": "parity"},
+    {"id": "reports", "kicker": "Reports", "title": "Reports with comments and attachments", "text": "The frontend has a report list, a new report form and report pages with comments and attachments. Reports can name a product, release, environment, steps and expected result.", "shot": "reports"},
+    {"id": "rankings", "kicker": "Rankings", "title": "Test sessions and a leaderboard", "text": "Testers run sessions and record what they see on the current release; verified tester results show beside the official grades and never change them. The leaderboard switches between official parity, community-verified, satisfaction, momentum and open bugs.", "shot": "rankings"}
+  ],
+  "features": [
+    {"id": "parity", "icon": "check", "title": "Parity", "text": "Parity grades kept as data and rendered by the engine.", "bullets": ["Grades in data/parity, imported from Parity Tracker v5.16 (23 comparisons, 26 products)", "A grade moves only through an accepted proposal and keeps its reason in the row history", "./formbench import reads a tracker and ./formbench tracker writes it back", "Trackers v5.16 and the archived v3.1 in data/legacy", "Registry of apps in data/registry.json"], "shot": "parity"},
+    {"id": "reports", "icon": "captions", "title": "Reports", "text": "Bugs, features, ideas and site feedback in one list, with a new report form and report pages.", "bullets": ["Comments, votes and attachments", "Fields for product, release, environment, steps and expected result", "GitHub issues in an app's repository through a GitHub App, when one is configured"], "shot": "reports"},
+    {"id": "testing", "icon": "play", "title": "Testing and rankings", "text": "Testers run sessions and record what they see on the current release, and a leaderboard ranks the apps.", "bullets": ["Verified tester results show beside the grades and never change them", "Grade changes proposed with evidence, accepted or rejected by maintainers", "Leaderboard by official parity, community-verified, satisfaction, momentum or open bugs"], "shot": "rankings"},
+    {"id": "agents", "icon": "formai", "title": "MCP server", "text": "./formbench mcp, or formbench mcp on the installed app, serves the engine's commands as MCP tools over stdio, acting as the local owner.", "bullets": ["One command registry for the window, the command line and agents", "For Claude Code, Codex, Cursor and formMCP", "Built with the MCP Python SDK", "Tools carry read-only hints for commands that do not mutate"], "shot": ""},
+    {"id": "desktop", "icon": "laptop", "title": "Desktop app", "text": "A Tauri 2 shell starts the engine, frozen with PyInstaller, on a free loopback port and opens its window from the files inside the app. The engine stops when the app quits.", "bullets": ["deb and AppImage on Linux, app and dmg on macOS", "MSI and NSIS installers on Windows from build_app.bat", "Data in the app's own folder, such as ~/.local/share/ai.nodemode.formbench"], "shot": ""},
+    {"id": "access", "icon": "shield", "title": "Local owner", "text": "With FR_LOCAL on, everywhere but FR_ENV=production, the engine keeps one owner account and signs the window in as it. A production web deployment keeps sign-in.", "bullets": ["Nothing listens beyond 127.0.0.1", "Only this computer's own window and agents reach the engine (0.9.4)", "Cross-site requests that carry no Origin are refused (0.9.5)", "A dependency ledger and trademark notice ship in NOTICE.md"], "shot": ""}
+  ],
+  "parity": {"against": "", "summary": ""},
+  "docs": {
+    "requirements": ["Node 20.19 or newer", "Python 3", "Rust, for the desktop build"],
+    "install": "./formbench_oc_install",
+    "run": "./formbench",
+    "desktop": "./formbench install-desktop\n./formbench desktop",
+    "agents": "./formbench mcp serves the engine's commands as MCP tools over stdio, and .mcp.json runs it; see CLAUDE.md for agent rules and .docs/wiki/Contracts.md for the seams.",
+    "topics": [
+      {"title": "Contracts", "text": "CLAUDE.md points to .docs/wiki/Contracts.md for the seams and laws."},
+      {"title": "Desktop", "text": ".docs/wiki/Desktop.md covers the desktop app: build, data folder, no sign-in and MCP."},
+      {"title": "Parity data", "text": ".docs/wiki/Parity-Data.md covers importing a parity tracker and writing it back out."},
+      {"title": "Tests", "text": "CLAUDE.md keeps tests in backend/tests and frontend/tests/window, and they run in CI."},
+      {"title": "Commits", "text": "CLAUDE.md sets one author for every commit and no attribution trailers."},
+      {"title": "Notices", "text": "NOTICE.md lists FormBench's dependencies with their licences."}
+    ]
+  },
+  "releases": [
+    {"version": "0.10.1", "date": "2026-11-03", "items": ["Renamed from FormRanker to FormBench", "Repositories moved under nodemode-dev"]},
+    {"version": "0.9.8", "date": "2026-10-31", "items": ["The window's scripts keep their types on Windows"]},
+    {"version": "0.9.7", "date": "2026-10-30", "items": ["Entitlements for the frozen engine under the macOS hardened runtime", "The Tauri CLI is pinned to 2.12.3", "Line endings fixed in the tree: LF, and CRLF for .bat, .cmd and .ps1"]}
+  ],
+  "shots_wanted": [
+    {"key": "parity", "what": "A parity page", "how": "Run ./formbench, open http://127.0.0.1:5280/ranker/ in a browser (the local owner is signed in) and open any app from Apps."},
+    {"key": "reports", "what": "The report list", "how": "From the top bar open Reports and capture the list with at least one report."},
+    {"key": "rankings", "what": "The rankings leaderboard", "how": "Open Rankings from the top bar."}
+  ],
+  "sources": ["README.md", "CLAUDE.md", "NOTICE.md", "frontend/package.json", "src-tauri/tauri.conf.json", "git log"],
+  "captures": {
+    "home": {"file": "/media/formbench/ui-home-2.webp", "light": "/media/formbench/ui-home-light-2.webp", "width": 2400, "height": 1500, "alt": "FormBench's overview: how close each Form product is to the software it aims to replace, 23 of 26 comparisons built, with the parity completeness chart showing each app's share of its baseline, full and partial, and its strongest rival", "size": ""},
+    "rankings": {"file": "/media/formbench/ui-rankings-3.webp", "width": 2400, "height": 1500, "alt": "The Rankings board with three apps on the podium by official parity", "size": ""},
+    "parity": {"file": "/media/formbench/ui-hero-2.webp", "light": "/media/formbench/ui-hero-light-2.webp","width": 2400, "height": 1500, "alt": "A comparison at 99.1 percent official parity against darktable and LightCraft, with Full, Partial and None grades per capability", "size": ""},
+    "session": {"file": "/media/formbench/ui-session-2.webp", "width": 2400, "height": 1500, "alt": "A test session at 34 of 58 capabilities checked, each row marked Works, Partial, Broken, Missing or Skip with a note", "size": ""},
+    "testing": {"file": "/media/formbench/ui-testing-2.webp", "width": 2400, "height": 1500, "alt": "The Test an app page listing each FormAI app with its release, official score and Start testing button", "size": ""},
+    "reports": {"file": "/media/formbench/ui-reports-2.webp", "light": "/media/formbench/ui-reports-light-2.webp", "width": 2400, "height": 1500, "alt": "FormBench's reports list with three sample feature requests and ideas for FormBench, and filters for bugs, features, ideas and site feedback", "size": ""},
+    "editor": {"file": "/media/formbench/ui-hero-2.webp", "light": "/media/formbench/ui-hero-light-2.webp","width": 2400, "height": 1500, "alt": "A comparison at 99.1 percent official parity against darktable and LightCraft, with Full, Partial and None grades per capability", "size": ""}
+  },
+  "credit": "The captures show FormBench, released as FormRanker, running locally as its own local owner, with its shipped parity data and three sample reports, in its dark or light look to match this page."
+}

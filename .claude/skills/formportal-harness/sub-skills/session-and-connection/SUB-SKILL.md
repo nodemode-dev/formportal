@@ -26,7 +26,7 @@ description: How an agent reaches FormPortal. Use when the formportal MCP tools 
 Read `apps`' `catalog_error` and match it in `references/concepts.md`. Common cases:
 
 - **Offline:** the last good catalogue is used automatically; say that the answer may be stale.
-- **No trusted key:** every current build refuses a signed catalogue until formai.dev's key is compiled in. State it plainly.
+- **No trusted key:** a build made without `core/catalog_keys.txt` (formcompiler's catalogue key, compiled in) and without `FORMAI_CATALOG_PUBKEY` refuses a signed catalogue. State it plainly.
 - **A local or forked catalogue:** pass `source` (an https address, `http://127.0.0.1:[port]/...`, or a file path with its `.sig` beside it) or set `FORMPORTAL_CATALOG`. A development catalogue is usually unsigned; only the person can accept it, by starting FormPortal with `FORMPORTAL_ALLOW_UNSIGNED=1`. The MCP tools ignore an `allow_unsigned` argument.
 
 ## A scratch install folder

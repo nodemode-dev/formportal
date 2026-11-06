@@ -147,8 +147,8 @@ fn main() -> ExitCode {
     }
     let mut last = u64::MAX;
     let mut progress = |have: u64, total: u64| {
-        let step = if total > 0 { have * 100 / total } else { 0 };
-        if step != last && step % 10 == 0 {
+        let step = (have * 100).checked_div(total).unwrap_or(0);
+        if step != last && step.is_multiple_of(10) {
             last = step;
             eprint!("\r{step:>3}% of {total} bytes");
             let _ = std::io::stderr().flush();

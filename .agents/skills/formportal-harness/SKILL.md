@@ -12,7 +12,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 ## The model
 
 - The **registry** is the family: every Form app's id, name, what it replaces, group (Adobe alternatives, other alternatives, on the way) and development status (available, in progress, in development). It is built into FormPortal, so it answers offline.
-- The **catalogue** is what is released: per product, a state (prelaunch, public, live) and per channel a release with a version and artifacts (file, size, SHA-256, minimum OS). It is fetched, signature-checked, and kept for offline use.
+- The **catalogue** is what is released: per product, a state (prelaunch, public, live) and per channel a release with a version and artifacts (file, size, SHA-256, minimum OS). It is fetched, signature-checked, and kept for offline use; a newer release an app has published on its own GitHub repository is offered over the catalogue's (see `references/concepts.md` Trust).
 - A **view** is what this computer is offered for one product and channel: `available` (with version and size), `other-platform`, `no-release` or `unreleased`.
 - An **install** is one product on one channel: the current version (path, SHA-256) and the previous one kept for rollback. Channels are `stable`, `beta`, `nightly`; each is its own install.
 
@@ -48,14 +48,14 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 | The person's project files: find, search, open in the right app, versions and going back, disk use | `sub-skills/files/SUB-SKILL.md` |
 | A computer an organisation manages: a refusal naming a policy, locked settings, mirroring the catalogue, silent deployment | `sub-skills/organisations/SUB-SKILL.md` |
 | Which apps exist, what each replaces, status and groups | `sub-skills/catalog-and-registry/SUB-SKILL.md` |
-| Using an installed Form app through its own MCP server, deep links, formai.dev | `sub-skills/form-family-bridge/SUB-SKILL.md` |
+| Using an installed Form app through its own MCP server, deep links, the formai.studio website | `sub-skills/form-family-bridge/SUB-SKILL.md` |
 | Checking work before reporting it | `sub-skills/verification/SUB-SKILL.md` |
 
 ## Rules that hold everywhere
 
 - **Never guess an id.** Product ids come from `apps` (lowercase: `formcut`, `formvis`, `formencoder`, `formmd`). FormPortal itself is `formai` in the catalogue.
-- **The catalogue decides.** If `apps` says `unreleased` or `no-release`, there is nothing to install; say so and name the app's status from the registry ("in progress"), do not look for a download elsewhere.
-- **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for formai.dev's catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
+- **The catalogue decides.** `apps` lists only released or installed apps, as formai.studio does; an app it does not list is not released yet, so there is nothing to install. Say so, give the opening date from `on_the_way` when the person asks what is coming, and never name an unreleased app or look for a download elsewhere.
+- **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for the family catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
 - **Ask before changing the computer**, every time, for `install`, `rollback`, `remove`.
 - **Leave the person's work alone.** FormPortal's tools touch only its own install folder; never delete an app's documents or settings by hand.
 

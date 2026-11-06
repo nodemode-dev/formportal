@@ -1,0 +1,395 @@
+{
+ "id": "formlit",
+ "name": "FormLit",
+ "version": "0.47.6",
+ "repo": "https://github.com/nodemode-dev/formlit",
+ "kind": "Photo library and raw developer",
+ "title": "photo library and raw development on your own machine",
+ "summary": "FormLit is a free, open-source photo library and non-destructive raw developer with Library, Develop, Map, Book, Slideshow, Print and Web modules.",
+ "lede": "FormLit is a catalog of your photos and a non-destructive raw developer, with Library, Develop, Map, Book, Slideshow, Print and Web modules. It is local-first and runs in a browser against its local engine or as a desktop app. Claude Code, Codex and Cursor can cull, develop and export through its MCP tools.",
+ "replaces": "Lightroom Classic",
+ "project": "",
+ "runs_on": "macOS, Windows and Linux (desktop build targets: all); also in a browser against the local engine",
+ "checks": [
+  "Catalogs photos in SQLite with one revision counter and undo for every change, people and agents alike.",
+  "Decodes raw from over a thousand cameras through LibRaw, plus JPEG, TIFF, PNG, PSD, HEIC, AVIF, WebP and JPEG XL.",
+  "Develops non-destructively with one pipeline for the screen, 1:1 regions and exports, 978 built-in presets in 103 groups, masks and adjustment layers.",
+  "Runs every AI model locally on ONNX Runtime, downloaded on first use and pinned to a SHA-256."
+ ],
+ "facts": [
+  {
+   "dt": "Opens",
+   "dd": "Raw, JPEG, TIFF, PNG, PSD, HEIC, AVIF, WebP, JPEG XL and video"
+  },
+  {
+   "dt": "Engine",
+   "dd": "Python 3.12 and FastAPI, with a numba kernel and a numpy reference"
+  },
+  {
+   "dt": "Languages",
+   "dd": "26, English by default"
+  },
+  {
+   "dt": "Agents",
+   "dd": "MCP server with 80 curated tools over the engine's 280 commands"
+  }
+ ],
+ "chapters": [
+  {
+   "id": "library",
+   "kicker": "Library",
+   "title": "A catalog with culling, keywords and faces",
+   "text": "Grid, Loupe, Compare, Survey and a Cull view review bursts together with sharpness, exposure and eyes-open scores. Collections, intelligent collections with nested rules, hierarchical keywords and People keep a large library organised.",
+   "shot": "library"
+  },
+  {
+   "id": "develop",
+   "kicker": "Develop",
+   "title": "One pipeline from screen to export",
+   "text": "White balance, curves, colour mixer, colour grading, profiles, lens profiles, masks and up to eight adjustment layers per photo are rendered by the same engine for the screen, 1:1 regions and exports. 978 built-in presets in 103 groups ship with it.",
+   "shot": "develop"
+  },
+  {
+   "id": "output",
+   "kicker": "Output",
+   "title": "Export, print, books, slideshows and the web",
+   "text": "Export to JPEG, PNG, TIFF, PSD, JPEG XL, WebP, AVIF, HEIC or DNG. Print, build books with print-ready PDFs for Blurb, Lulu, Amazon KDP and IngramSpark, make slideshows exported as H.264, and publish web galleries.",
+   "shot": "output"
+  }
+ ],
+ "features": [
+  {
+   "id": "languages",
+   "icon": "globe",
+   "title": "Languages",
+   "text": "The whole window in 26 languages, English by default (Preferences, Language).",
+   "bullets": [
+    "Includes Mexican Spanish, Brazilian Portuguese, Canadian French and Simplified and Traditional Chinese",
+    "Standard photography terms in each language",
+    "Engine messages and preset names translated",
+    "Dates in the chosen locale"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "catalog",
+   "icon": "box",
+   "title": "Catalog",
+   "text": "SQLite in WAL mode with one revision counter and undo for every change.",
+   "bullets": [
+    "Import in place, copy, move or copy as DNG, with rename and folder templates",
+    "Duplicate detection and eject",
+    "Folders synchronize, relocate and find missing files",
+    "Intelligent previews keep offline photos editable",
+    "Export as Catalog and Import from Another Catalog"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "formats",
+   "icon": "apps",
+   "title": "Formats",
+   "text": "Raw from over a thousand cameras through LibRaw, decoded to linear Rec.2020 with the camera's white balance.",
+   "bullets": [
+    "JPEG, TIFF (8, 16 and float, ICC aware), PNG",
+    "PSD (8 and 16-bit), HEIC, AVIF, WebP and JPEG XL",
+    "Video with playback, trim and Capture Frame"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "library-views",
+   "icon": "grid",
+   "title": "Library",
+   "text": "Grid, Loupe with a Navigator, Compare with linked zoom, Survey and a Cull view.",
+   "bullets": [
+    "Cull view (K): bursts reviewed together, best frame starred, one key per decision",
+    "Ratings, flags and colour labels with auto advance",
+    "Collections, sets and intelligent collections with nested rules",
+    "Hierarchical keywords with synonyms, suggestions and the Painter",
+    "Faces found, clustered and named in People"
+   ],
+   "shot": "library"
+  },
+  {
+   "id": "develop",
+   "icon": "sliders",
+   "title": "Develop",
+   "text": "One pipeline rendered by the engine for the screen, 1:1 regions and exports alike.",
+   "bullets": [
+    "White balance, Basic with Auto, parametric and point curves, colour mixer and Point Color",
+    "Colour grading, B&W mix, profiles with a browser, .cube and .dcp import",
+    "Lens profiles from Lensfun and DNG opcodes, Upright, crop and Straighten",
+    "History, snapshots, copy, paste, sync and auto sync",
+    "978 built-in presets in 103 groups, with import of .xmp and .lrtemplate"
+   ],
+   "shot": "develop"
+  },
+  {
+   "id": "masks",
+   "icon": "layers",
+   "title": "Masks and retouching",
+   "text": "Brush, gradients and range masks combined with add, subtract and intersect, plus AI masks.",
+   "bullets": [
+    "AI masks for subject, sky, background, objects, people and landscape parts",
+    "Refine Edge, Shift Edge and Feather on every AI mask",
+    "Adjustment layers, up to eight per photo",
+    "Heal, clone and generative Remove (LaMa)",
+    "Red eye and pet eye, Find Dust and Visualize Spots"
+   ],
+   "shot": "masks"
+  },
+  {
+   "id": "ai-merges",
+   "icon": "formai",
+   "title": "AI and merges",
+   "text": "Every model runs locally on ONNX Runtime, downloads on first use, and is pinned to a SHA-256.",
+   "bullets": [
+    "Denoise (SCUNet), Super Resolution and Raw Details",
+    "HDR, panorama and HDR panorama merges with deghosting",
+    "Focus stacking, astro stacking, and flash and window blending",
+    "Lens Blur from a depth map with five bokeh shapes",
+    "Search by description and Find Similar Photos with SigLIP"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "hdr",
+   "icon": "sun",
+   "title": "HDR",
+   "text": "An HDR editing mode with headroom, previewed as PQ on HDR displays.",
+   "bullets": [
+    "Visualize HDR, an SDR rendition and an HDR histogram",
+    "Ultra HDR JPEG with a gain map on export",
+    "HDR AVIF, JPEG XL and float TIFF on export"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "tethering",
+   "icon": "plug",
+   "title": "Tethering and sessions",
+   "text": "gphoto2 on macOS and Linux, digiCamControl on Windows.",
+   "bullets": [
+    "Live View and camera settings",
+    "A develop setting applied as photos arrive",
+    "Auto import from a watched folder",
+    "Sessions: a folder with Capture, Selects, Output and Trash that opens with its edits on any machine"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "proofing",
+   "icon": "check",
+   "title": "Client proofing",
+   "text": "File, Export Proofing Gallery makes a folder the client opens in any browser, with no account and no server.",
+   "bullets": [
+    "Clients pick, reject, rate and comment",
+    "They save a small selections file",
+    "File, Import Client Selections turns it into flags, ratings, comments and a collection"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "output",
+   "icon": "export",
+   "title": "Output",
+   "text": "Export, print, books, slideshows, web galleries and publish services.",
+   "bullets": [
+    "Export with sizing, output sharpening, custom ICC profiles, watermarks and presets",
+    "Books with print-ready PDFs for Blurb, Lulu, Amazon KDP and IngramSpark",
+    "Slideshows with music (up to ten tracks), exported as H.264",
+    "Web galleries with FTP upload",
+    "Publish to folders, FTP, WebDAV, Nextcloud, S3-compatible storage and Python plug-ins"
+   ],
+   "shot": "output"
+  },
+  {
+   "id": "map",
+   "icon": "target",
+   "title": "Map",
+   "text": "OpenStreetMap tiles with Hybrid, Satellite, Light and Dark styles.",
+   "bullets": [
+    "Search and drag to geotag",
+    "GPX track logs",
+    "Saved and private locations",
+    "Reverse geocoding"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "xmp",
+   "icon": "tag",
+   "title": "XMP",
+   "text": "Sidecars and embedded XMP carry the full Camera Raw settings.",
+   "bullets": [
+    "Curves, profiles, lens profiles, masks, spots and red eye",
+    "Written automatically",
+    "Checked for changes made by other applications"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "agents",
+   "icon": "terminal",
+   "title": "Agents and terminal",
+   "text": "An MCP server with 80 curated tools over the engine's 280 commands, and a terminal dock with Claude Code inside the app.",
+   "bullets": [
+    "17 workflow prompts, and setup_shoot with twelve shoot recipes",
+    "analyze_photo and match_look for measured edits",
+    "Terminal dock (Ctrl or Cmd+J) with real login shells",
+    "Claude Code button (Ctrl or Cmd+Shift+J) connected to FormLit's MCP tools"
+   ],
+   "shot": ""
+  },
+  {
+   "id": "workspace",
+   "icon": "settings",
+   "title": "Workspace",
+   "text": "Every panel can be shown, hidden, dragged to a new place and opened alone with Solo Mode.",
+   "bullets": [
+    "Workspaces: Default, Culling: Big Grid, Editing: Wide Panels, Working with Claude, Photo Only",
+    "Save your own workspaces",
+    "Reset Panels restores the original order"
+   ],
+   "shot": ""
+  }
+ ],
+ "parity": {
+  "against": "Lightroom Classic",
+  "summary": "Measured against fifty-eight Lightroom Classic capabilities, FormLit's parity page says every module Lightroom Classic has is present, from People and Map to Book, Publish and HDR output, now with adjustment layers and 26 languages. Generative and content-aware remove stays Partial, because removing reflections on glass, windows and water still has no model."
+ },
+ "docs": {
+  "requirements": [
+   "Node 20.19 or newer (22 recommended)",
+   "Python 3.12 or newer",
+   "git",
+   "ffmpeg on the PATH for video export, slideshows and graded video",
+   "Rust stable and the Tauri 2 system packages for the desktop build"
+  ],
+  "install": "git clone https://github.com/nodemode-dev/formlit.git\ncd formlit\n./formlit install",
+  "run": "./formlit boot",
+  "desktop": "./formlit desktop build",
+  "agents": "Add the formlit plugin from the Form marketplace, open FormLit and ask Claude; the MCP server is served at /mcp and ./formlit agents install registers it with Claude Code, Codex and Cursor.",
+  "topics": [
+   {
+    "title": "Quick Start",
+    "text": "The README lists requirements and the commands for macOS, Linux and Windows (formlit.bat), with a table of the frontend, engine and preview URLs."
+   },
+   {
+    "title": "Configuration",
+    "text": "The engine reads backend/.env; variables such as FORMLIT_DATA_DIR, FORMLIT_LIBRARY_DIR and FORMLIT_MCP_ALLOW_DELETE are listed in the README."
+   },
+   {
+    "title": "Desktop build",
+    "text": "./build_app builds the desktop app from a fresh clone; flags are --lite, --open, --no-install and --clean."
+   },
+   {
+    "title": "Agents",
+    "text": "The README explains the plugin, Claude Code inside FormLit, the Chat tab and the developer setup for Codex and Cursor."
+   },
+   {
+    "title": "Parity",
+    "text": "docs/PARITY.md lists every module and its status, traced in code and graded by independent audits."
+   },
+   {
+    "title": "Status",
+    "text": "The README lists what is not verified yet, including the desktop app, tethering hardware and printing."
+   }
+  ]
+ },
+ "releases": [
+  {
+   "version": "0.47.5",
+   "date": "2026-11-03",
+   "items": [
+    "The About box and the installers name NodeAgentc, Inc. as the publisher, with the Apache-2.0 licence",
+    "The updater reads its feed from the download store"
+   ]
+  },
+  {
+   "version": "0.47.4",
+   "date": "2026-10-31",
+   "items": [
+    "The Windows desktop app no longer opens to a blank window on PCs where the .js file type is set to text/plain",
+    "Video thumbnails, video export and slideshow video no longer need ffmpeg installed; the desktop app downloads its own LGPL ffmpeg on first run",
+    "On Linux, the .deb and .rpm recommend GStreamer's plugins and the AppImage carries the base and good ones"
+   ]
+  },
+  {
+   "version": "0.47.3",
+   "date": "2026-10-30",
+   "items": [
+    "Windows desktop builds take --config, so formcompiler's Windows release can carry updater files",
+    "macOS installs pin opencv-python-headless to 5.0.0.93, the version Linux and Windows use"
+   ]
+  }
+ ],
+ "shots_wanted": [
+  {
+   "key": "library",
+   "what": "The Library module in Grid view with several photos",
+   "how": "Run ./formlit boot, open http://localhost:5390, import a folder of JPEGs or raw files, and stay in the Library module in Grid view."
+  },
+  {
+   "key": "develop",
+   "what": "The Develop module with a photo open and the panels visible",
+   "how": "Double-click a photo in the grid, switch to the Develop module, and open the Basic and Tone Curve panels."
+  },
+  {
+   "key": "masks",
+   "what": "An AI mask applied to a photo",
+   "how": "In Develop open the masks panel, choose a Subject or Sky AI mask (the model downloads on first use) and show the mask overlay."
+  },
+  {
+   "key": "output",
+   "what": "The export dialog or the Book module",
+   "how": "Select a few photos and choose File, Export, or switch to the Book module and show a spread."
+  }
+ ],
+ "sources": [
+  "README.md",
+  "CHANGELOG.md",
+  "src-tauri/tauri.conf.json",
+  "parity:lit"
+ ],
+ "captures": {
+  "library": {
+   "file": "/media/formlit/ui-library-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The Library grid with star ratings, flags and colour labels, the catalog and keyword panels",
+   "size": ""
+  },
+  "develop": {
+   "file": "/media/formlit/ui-before-after-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "Develop with a split Before and After view of a sunset photo",
+   "size": ""
+  },
+  "output": {
+   "file": "/media/formlit/ui-output-1.webp", "light": "/media/formlit/ui-output-light-1.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "FormLit's Book module with Auto Layout's spread of the imported photos, the template browser on the left and the book settings, auto layout and page templates on the right",
+   "size": ""
+  },
+  "editor": {
+   "file": "/media/formlit/ui-hero-2.webp",
+   "light": "/media/formlit/ui-hero-light-2.webp",
+   "width": 2400,
+   "height": 1350,
+   "alt": "The Develop module showing a coastal photo of driftwood and rocks, with the navigator and preset groups on the left, the tone curve on the right and a filmstrip of twelve coast picks below",
+   "size": ""
+  },
+  "export": {
+   "file": "/media/formlit/ui-export-2.webp",
+   "width": 2400,
+   "height": 1500,
+   "alt": "The Export dialog with presets for web, print, client galleries and archives",
+   "size": ""
+  }
+ },
+ "credit": "Screenshot content: CC0 photos from Poly Haven."
+}

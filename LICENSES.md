@@ -21,6 +21,9 @@ FormPortal is GPL-3.0-only (LICENSE, NOTICE), as formpromo, formMCP and formskil
 | libdbus-1 (the system's D-Bus library, which libdbus-sys links on Linux) | the operating system's | AFL-2.1 or GPL-2.0-or-later, used under AFL-2.1 | Linux only, dynamically linked from the system, never shipped |
 | What those bring (read from `cargo metadata` in formai_dev 0.17.0) | as locked | MIT or Apache-2.0 for most; Unicode-3.0; ISC; Apache-2.0 and ISC (ring); CDLA-Permissive-2.0 (webpki-roots); BSD-3-Clause (subtle); Zlib. Nothing GPL, LGPL, AGPL or MPL in core | core |
 | Tauri's own dependencies (wry, tao and the rest of Cargo.lock) | as locked | permissive, plus the crates under other licences listed in "Crate audit" below | src-tauri |
+| objc2 0.6, objc2-app-kit 0.3, objc2-foundation 0.3 (already in Cargo.lock through tao; direct since 0.56.0 and 0.57.0) | as locked | MIT | src-tauri, macOS only: the rounded splash, the traffic lights, the Dock icon |
+| reveal.rs, traffic_lights.rs and the splash card, from formvis v1.99.7 (nodemode-dev/formvis, the same owner) | 0.56.0 | Apache-2.0 in formvis, compatible with GPL-3.0-only here | src-tauri/src, frontend/public/splash.* |
+| The Form app icons, v3 dark and light (the owner's own artwork) | 0.57.0 | the owner's, shipped as part of FormPortal | frontend/public/apps, frontend/public/favicon*.png, src-tauri/icons |
 | Vite, TypeScript, @types/node | as in frontend/package-lock.json | MIT, Apache-2.0, MIT | frontend, build time only |
 | Inter variable font | 4 | SIL OFL 1.1 | frontend/public/fonts, shipped with LICENSE-Inter.txt |
 | The system web view (WKWebView, WebView2, WebKitGTK) | the operating system's | the operating system's | never shipped |
