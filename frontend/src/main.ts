@@ -26,6 +26,8 @@ import { share } from "./extensions/share/index.ts";
 import { supporter } from "./extensions/supporter/index.ts";
 import { live, liveNow } from "./extensions/live/index.ts";
 import { appIcon } from "./extensions/appicon/index.ts";
+import { side } from "./extensions/side/index.ts";
+import { home } from "./extensions/home/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 
 const revealLate = window.setTimeout(revealApp, 2400);
@@ -36,7 +38,7 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[live, appIcon, route, theme, apps, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter].forEach(register);
+[live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -711,6 +713,15 @@ bridge.onVersionsKept((paths) => {
   window.clearTimeout(rescan);
   rescan = window.setTimeout(() => void engine.dispatch("files.scan"), 400);
   engine.emit("saved", { paths });
+});
+
+bridge.onFileDrop((paths, phase) => {
+  if (phase === "drop" && paths.length === 1 && /\.formpkg$/i.test(paths[0]) && /[\\/]/.test(paths[0])) {
+    void engine.dispatch("route.go", "extensions");
+    void engine.dispatch("ext.install", { path: paths[0] });
+    return;
+  }
+  engine.emit("filedrop", { paths, phase });
 });
 
 bridge.onPackage((path) => {

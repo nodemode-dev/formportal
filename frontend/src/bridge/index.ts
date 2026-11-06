@@ -11,6 +11,7 @@ export interface Bridge {
   removeExtension(product: string, id: string): Promise<void>;
   enableExtension(product: string, id: string, enabled: boolean): Promise<void>;
   onPackage(handler: (path: string) => void): void;
+  onFileDrop(handler: (paths: string[], phase: "over" | "leave" | "drop") => void): void;
   onVersionsKept(handler: (paths: string[]) => void): void;
   selfUpdateCheck(): Promise<SelfUpdate>;
   selfUpdateInstall(): Promise<void>;

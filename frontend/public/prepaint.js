@@ -38,8 +38,13 @@
   } catch (e) {}
   if ("__TAURI_INTERNALS__" in window && navigator.userAgent.indexOf("Mac") >= 0) d.classList.add("has-overlay-titlebar");
   try {
+    var side = Number(localStorage.getItem("formportal.side"));
+    if (side >= 180 && side <= 360) d.style.setProperty("--side-w", Math.round(side) + "px");
+    if (localStorage.getItem("formportal.rail") === "mini") d.setAttribute("data-rail", "mini");
+  } catch (e) {}
+  try {
     var last = localStorage.getItem("formportal-last");
-    var places = ["apps", "updates", "beta", "files", "fonts", "stock", "extensions", "learn", "included"];
+    var places = ["apps", "updates", "files", "fonts", "stock", "extensions", "learn"];
     if (localStorage.getItem("formportal-open") === "last" && places.indexOf(last) >= 0 && !/[?&]link=/.test(location.search)) d.setAttribute("data-launch", last);
   } catch (e) {}
 })();

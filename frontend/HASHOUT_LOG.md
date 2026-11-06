@@ -2,8 +2,59 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.58.0
-Last updated: 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.59.0
+Last updated: 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.59.0 · the Form family redesign {#family}
+
+### why, and what the design is
+- refers-to: frontend/index.html · frontend/markup.ts · frontend/src/styles/portal.css · design/app-hues.json
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+The owner, on v0.58.0 in the desktop app: the redesign was generic, did not reflect the family, named FormDeck "FormSlide", showed 10 apps instead of 34, mixed "In development" and "Available" for the same app, talked about "Your plan", and installs failed. Research first, on the owner's instruction: the formai.studio build (computed styles and screenshots) and FormVis, FormDeck, FormLit and FormVFX (built and opened in a browser, measured). The four apps share one kit (the same token file to two lines): Studio Dark (`#050505` main, `#111` sidebar and cards), warm paper light (`#ecebe6`, ink `#26241d`), 12 to 13 px system type, white (ink in light) primary buttons, orange only as a highlight, 8 to 14 px corners, hairlines, mono format chips, the sidebar with `[app] by nodemode.ai`, Preferences and Help at the foot, and the Start-page pattern (greeting, dashed start card, Recent with See all, a tile grid). formai.studio is the reference for content, voice and app colour, not the standard. FormPortal is the Creative Cloud alternative and most people's first download after the site, so it is the family kit laid out like Creative Cloud, with the apps as the colour: each app's `--hue` (the site's suffix colours, in `design/app-hues.json` as sRGB hex so older WebKit renders them) drives its `Form` + suffix name, card art, install progress, row accent and page wash. Static mockups of Home, Apps and an app page in both themes were approved by the owner ("THAT IS WHAT I WANT EXACTLY") before any of this was built; the two changes asked then (FormDeck's edge handle collapsing to an icon rail and resizing, and each app's hero shot in dark and light) are in.
+
+### markup.ts · buildPortal
+- refers-to: frontend/markup.ts :: buildPortal, COMMON · frontend/vite.config.ts · frontend/more-menu.html
+- kind: refactor
+- logged: v0.59.0 · 2026-11-06
+
+The build-time markup moved out of `vite.config.ts` into `markup.ts`; `vite.config.ts` now only wires it in. It writes: the sidebar's Your apps (every app, shown only when installed), the dock (FormPortal plus one slot per app, `data-slot` not `data-product` so the live rules do not hide it; a slot is lit by `html[data-live~=id]` alone and sorts first by `order`, otherwise a sealed `?` with no name or icon shown), Your apps cards, Get more tiles, On the way waves, Apps rows grouped Instead of Adobe and Everything around them, Updates rows (stable and beta), app pages (hero with the hero shot, Overview with the caps' lede and checks, What's new, Versions and beta, AI tools), the automatic-update switches and Learn entries. One `.acts` per item holds Update, Install and Open; CSS shows the one that fits `data-install` (none, busy, ready, update) so the state is the same on every surface; the More menu (`more-menu.html`) shows for installed apps or an app with earlier versions. `COMMON` maps everyday file extensions to the app that opens them, merged with each app's project extensions and serialised into `data-file-apps` for the drop. Included and Beta panes, `card-actions.html` and `row-actions.html` are gone; Beta is a tab on each app page.
+
+### side · the icon rail and resize
+- refers-to: frontend/src/extensions/side/index.ts · frontend/public/prepaint.js · frontend/src/styles/portal.css :: .side-edge, .side-fold, html[data-rail="mini"]
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+FormDeck's home handle (a 14 by 56 px tab at the sidebar's edge and a resizer that lights in the accent), but collapsing to a 64 px rail of icons instead of hiding: labels, counts and the brand's text go, badges become dots, Your apps keeps its icons and install progress becomes a line under the icon. Dragging the edge resizes from 180 to 360 px; below 120 px it snaps to the rail and dragging out restores it; double-click toggles; arrow keys resize when the edge has focus. Width and rail are kept in `formportal.side` and `formportal.rail` and applied by `prepaint.js` before the first paint, so the shell never moves on launch. Measured in Chromium: collapse gives 64 px and survives a reload, a drag gives 321 px, a drag to 60 px snaps to the rail.
+
+### home · counts, install all, filters, tabs, the drop
+- refers-to: frontend/src/extensions/home/index.ts · frontend/src/bridge/{index,tauri,fixture}.ts :: onFileDrop · frontend/src/main.ts · frontend/src/engine/index.ts :: filedrop
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+The greeting follows the hour. The family line counts lit slots of the 34 and names the next dated release with apps left; wave counts read `data-soon-gN` and `data-soon-more`; a wave whose date has passed says Being prepared. Install every released app installs, one after the other, every live app with a release for this computer that is not installed or blocked. A supporter's names (written by the supporter extension) mark a sealed tile `data-named`, so it shows the name instead of `?`. Cmd K (Ctrl K off macOS) focuses search. Dropping a file anywhere: Tauri's `tauri://drag-*` events in the window (DOM drops never reach the page there), DOM drag events in the browser preview; the family card lights while a file is over. The first file's extension picks the app; installed: the file opens in it; out but not installed: its page opens with a line to install it; not out yet: a line says so and names nothing; a `.formpkg` installs as an extension. Probed in Chromium and WebKit: `poster.psd` routes to FormVis, `sheet.xlsx` says its app is not out yet.
+
+### learn · a missing tutorial index is not an error
+- refers-to: frontend/src/extensions/learn/index.ts
+- kind: fix
+- logged: v0.59.0 · 2026-11-06
+
+The owner's screenshot showed "The Form apps' tutorials could not be read ... the download did not complete": the store has no `learn.json` yet, so the fetch fails for everyone. Only a refused or invalid index (a signature or format problem) is shown as an error now; anything else shows a quiet line that each app's tutorials appear as they are published, and FormPortal's own tutorials list as before.
+
+### notices · toasts in the app's colour, the brand line
+- refers-to: frontend/src/extensions/notices/index.ts :: appOf · frontend/src/styles/portal.css :: .toasts, .toast, .brand-name, .brand-by
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+The owner, after seeing the build: messages sit at the bottom centre as a hollow, rounded, liquid-glass box (1.5 px outline, the pane at 42% over an 18 px backdrop blur); an error's outline and text are red (`#ff5d6c`, `#c9283a` in light); a message about one app uses that app's colour for both. The app is the first family name found in the text (longest names first, so FormDeck is not read as Form...), with no change to the many `setNotice` call sites; a message naming no app keeps the ink colour; light mode darkens the app colour by the same mix as app names, for contrast on paper. Checked: "Updated FormDeck 0.30.7." is lime, "FormWav 2.22.3 is installed." teal, the failed assistant answer red, all centred (toast centre at 720 of 1440). Also on the owner's word: `formportal` is 13.5 px and `by nodemode.ai` 11 px on one line, so both show in full at the default 232 px; below 206 px the second line is dropped rather than cut.
+
+### verified
+- refers-to: /home/claude/wk/newprobe.mjs, liveprobe.mjs, leakprobe.mjs, iconprobe.mjs, prefsprobe.mjs (scratch)
+- kind: fix
+- logged: v0.59.0 · 2026-11-06
+
+Built page with the fixture (now holding the ten real releases at their real versions, and an `installed=` preview parameter): every page scrolls; dock 11 lit and 23 sealed; Your apps shows exactly the installed apps; Get more and its Instead of Adobe filter; Apps search and Installed filter; all four app-page tabs; the hero shot and icons switch tone with the theme; supporter names fill the sealed tiles; no element added or removed when the theme changes; no console errors (Chromium and WebKit). liveprobe: a first launch with no cache shows no app before the catalogue; a hidden app's page cannot be routed to. leakprobe: none of 23 hidden names visible on any route or in Preferences. prefsprobe: the macOS overlay title bar is 40 px with room for the lights. Known: the old rules for removed surfaces (`.mine`, `.fam`, `.wn`, `.strip`, `.ap-*`, `.soon-*` in `main.css`) are still in the file and match nothing; new strings are not yet in `es.json`, so the Spanish page shows them in English; not looked at in the desktop window on macOS or Windows.
 
 ## v0.58.0 · On the way matches formai.studio, the supporter code {#supporter}
 
