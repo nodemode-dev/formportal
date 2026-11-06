@@ -1251,7 +1251,7 @@ dependencies = [
 
 [[package]]
 name = "formportal"
-version = "0.59.0"
+version = "0.60.0"
 dependencies = [
  "formportal-cli",
  "formportal-core",
@@ -1270,7 +1270,7 @@ dependencies = [
 
 [[package]]
 name = "formportal-cli"
-version = "0.59.0"
+version = "0.60.0"
 dependencies = [
  "formportal-core",
  "serde",
@@ -1279,7 +1279,7 @@ dependencies = [
 
 [[package]]
 name = "formportal-core"
-version = "0.59.0"
+version = "0.60.0"
 dependencies = [
  "base64 0.22.1",
  "ed25519-dalek",
