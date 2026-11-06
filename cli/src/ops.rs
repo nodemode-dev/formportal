@@ -489,7 +489,7 @@ pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let (catalog, source) = load(ctx, args)?;
     let list = ctx.portal.updates(&catalog, Platform::current())?;
     let me = catalog.view("formai", Channel::Stable, Platform::current());
-    let portal = me.version.filter(|v| formportal_core::version_newer(v, CORE_VERSION)).map(|v| json!({ "version": v, "get": "https://formai.dev/download/" }));
+    let portal = me.version.filter(|v| formportal_core::version_newer(v, CORE_VERSION)).map(|v| json!({ "version": v, "get": "https://formai.studio/download/" }));
     Ok(json!({ "source": source, "updates": list, "formportal_update": portal }))
 }
 

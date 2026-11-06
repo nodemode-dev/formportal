@@ -7,7 +7,7 @@ use crate::ops::{self, Ctx};
 const PROTOCOL: &str = "2025-06-18";
 const SUPPORTED: [&str; 4] = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 
-const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and removes the Form family's desktop apps on this computer, from a signed catalogue published at formai.dev. Start with status, then apps. Every install verifies the file's SHA-256 against the catalogue before anything is unpacked. install, rollback and remove change the person's computer: say what will change and get their go-ahead first. The formportal-harness skill has the workflow.";
+const INSTRUCTIONS: &str = "FormPortal installs, opens, updates, rolls back and removes the Form family's desktop apps on this computer, from the signed catalogue on dl.formai.studio and the newer releases each app publishes on GitHub. Start with status, then apps. Every install verifies the file's SHA-256 against the catalogue before anything is unpacked. install, rollback and remove change the person's computer: say what will change and get their go-ahead first. The formportal-harness skill has the workflow.";
 
 fn props(extra: Value) -> Value {
     let mut base = json!({

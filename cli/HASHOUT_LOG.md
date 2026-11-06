@@ -2,8 +2,17 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.55.0
+Last updated: 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.55.0 · formai.studio and GitHub releases {#releases}
+
+### ops.rs · updates, mcp.rs · INSTRUCTIONS
+- refers-to: cli/src/ops.rs :: updates (formportal_update.get) · cli/src/mcp.rs :: INSTRUCTIONS · ../core/src/releases.rs :: discover
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+`formportal_update.get` was `https://formai.dev/download/`; formai.dev now serves a different product, so it is `https://formai.studio/download/`. The server's instructions said the catalogue is published at formai.dev; they say the signed catalogue on dl.formai.studio and the newer releases each app publishes on GitHub, which every command now reads through the engine (`core/HASHOUT_LOG.md#releases`). No tool changed, so `references/tools.md` is unchanged. Verified on 2026-11-06 through a loopback relay to github.com and dl.formai.studio: `apps` offered 9 products where it offered 2 (FormPortal 0.54.3, FormVFX 0.52.8, Form.md 0.48.0, FormSlide 0.30.7, FormPDF 0.57.3, formMCP 0.7.8, formskills 0.7.7, FormTray 0.10.2, and the catalogue's own), a second `apps` within 15 minutes made 3 requests and took 0.7 s, `install formtray` fetched the 83 MB AppImage from the GitHub release and verified its SHA-256, and `FORMPORTAL_RELEASES=off` gave back the catalogue's three.
 
 ## v0.53.5 · the default catalogue pinned to the download store {#store}
 
