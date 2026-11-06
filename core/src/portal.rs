@@ -7,6 +7,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::{agents, installers, process};
+use crate::releases::{COMPILER_CATALOG, STORE_CATALOG};
 use crate::signature::{read_local, trusted_keys, verify};
 use crate::policy::{self, Managed};
 use crate::prefs::Preferences;
@@ -305,9 +306,13 @@ impl Portal {
         let dir = self.root.join("catalog");
         let kept = dir.join("apps.json");
         let kept_signature = dir.join("apps.json.sig");
-        let (body, signature, fresh) = match fetch_bytes(&url) {
-            Ok(body) => {
-                let signature = fetch_bytes(&format!("{url}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
+        let fetched = fetch_bytes(&url).map(|b| (b, url.clone())).or_else(|e| match url.as_str() {
+            STORE_CATALOG => fetch_bytes(COMPILER_CATALOG).map(|b| (b, COMPILER_CATALOG.to_string())).map_err(|_| e),
+            _ => Err(e),
+        });
+        let (body, signature, fresh) = match fetched {
+            Ok((body, from)) => {
+                let signature = fetch_bytes(&format!("{from}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string());
                 (body, signature, true)
             }
             Err(e) => match fs::read(&kept) {
@@ -321,7 +326,7 @@ impl Portal {
             None => return Err(CoreError::Signature("it is not signed".to_string())),
         }
         let text = String::from_utf8(body.clone()).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
-        let catalog = Catalog::from_json(&text)?;
+        let mut catalog = Catalog::from_json(&text)?;
         if fresh {
             fs::create_dir_all(&dir)?;
             fs::write(&kept, &body)?;
@@ -331,6 +336,9 @@ impl Portal {
                     let _ = fs::remove_file(&kept_signature);
                 }
             }
+        }
+        if self.reads_releases()? {
+            crate::releases::discover(&self.root, &mut catalog);
         }
         Ok(catalog)
     }

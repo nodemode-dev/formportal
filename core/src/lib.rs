@@ -23,6 +23,7 @@ pub mod policy;
 pub mod portal;
 pub mod prefs;
 pub mod process;
+pub mod releases;
 pub mod repair;
 pub mod share;
 pub mod signature;
@@ -170,6 +171,8 @@ pub struct Release {
     pub history: Vec<Release>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agents: Option<ReleaseAgents>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -327,7 +330,7 @@ impl Catalog {
     }
 
     pub fn versions(&self, id: &str, channel: Channel, platform: Platform) -> Vec<VersionView<'_>> {
-        let Some(product) = self.product(id).filter(|p| p.state != ProductState::Prelaunch) else { return Vec::new() };
+        let Some(product) = self.product(id).filter(|p| p.state != ProductState::Prelaunch || !p.channels.is_empty()) else { return Vec::new() };
         let Some(latest) = product.channels.get(&channel) else { return Vec::new() };
         std::iter::once((latest, true))
             .chain(latest.history.iter().map(|r| (r, false)))
@@ -345,7 +348,7 @@ impl Catalog {
         let Some(product) = self.product(id) else {
             return unreleased;
         };
-        if product.state == ProductState::Prelaunch {
+        if product.state == ProductState::Prelaunch && product.channels.is_empty() {
             return unreleased;
         }
         let Some(release) = product.channels.get(&channel) else {

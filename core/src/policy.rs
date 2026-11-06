@@ -38,6 +38,8 @@ pub struct Policy {
     pub extensions: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sideload: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub github_releases: Option<bool>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]

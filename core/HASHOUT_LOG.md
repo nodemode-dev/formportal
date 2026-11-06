@@ -2,8 +2,40 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.53.5
-Last updated: 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.55.0
+Last updated: 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.55.0 · releases read from each app's GitHub release {#releases}
+
+### releases.rs · discover
+- refers-to: core/src/releases.rs :: discover, check, read_release, classify, merge, yanked · core/src/portal.rs :: Portal::catalog
+- kind: decision
+- logged: v0.55.0 · 2026-11-06
+
+Why: on 2026-11-06 the signed catalogue in the download store was still the one generated 2026-11-04T17:21Z. It listed 26 products and gave a build to three (FormPortal 0.53.5, Form.md 0.47.7, FormTray 0.9.8), while formMCP 0.7.8, FormPDF 0.57.3, formskills 0.7.7, formdeck 0.30.7, FormVFX 0.52.8, FormPortal 0.54.3, Form.md 0.48.0 and FormTray 0.10.2 were published on their own repositories on 2026-11-05 and none of their files were in the store (each `dl.formai.studio/<app>/<version>/` path 404). formpipe, which copies releases into the store and signs the catalogue, had not run since; FormPortal had nothing newer to offer, including its own 0.54.x with the scroll fix.
+
+What: after the signed catalogue is verified and parsed, `discover` reads, for each product whose signed `repository` is a `https://github.com/<owner>/<repo>` address, that repository's newest published release: `releases/latest/download/form-app.json`, then `releases/download/<tag>/SHA256SUMS.txt` for that exact tag. The release is used only when every check holds: `format` is `form-app`, its `repository` is the signed catalogue's repository (case ignored), the version is plain `x.y.z` and the tag is `v<version>`, the version is not in formcompiler's `yanked.json` (read from `raw.githubusercontent.com/<catalogue origin>/main/yanked.json`; when that list cannot be read, nothing is discovered at all), the sums list `form-app.json` with the digest of the bytes just read, and at least one file classifies as an installer. Files are classified as formcompiler's `catalog.py classify` does (same skip list, same architecture tokens, `-setup.exe` as nsis), each artifact's SHA-256 comes from the sums, its size from a HEAD request (0 when unknown, which `download` already handles). `published` is the manifest's `Last-Modified`, `notes` the release page, `commit` the manifest's, `agents` the manifest and the `-skills-v<version>.zip` from the sums, and `origin` is `github`. `merge` replaces the stable channel only when the release is newer, and moves the catalogue's release into `history` so rollback still reaches it. Every install still checks the file's SHA-256 before unpacking; this is formcompiler's own `--asset-origin github` shape, read by the client instead of by formpipe, without formpipe's build attestation. Results are kept in `<root>/catalog/releases.json` and rechecked after 15 minutes; a network failure keeps the last result, a 404 (a private repository, or no release) clears it. The signed `apps.json` kept beside it is never rewritten.
+
+### portal.rs · Portal::catalog, the formcompiler copy
+- refers-to: core/src/portal.rs :: Portal::catalog · core/src/releases.rs :: STORE_CATALOG, COMPILER_CATALOG
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+When the catalogue address is the store's (`https://dl.formai.studio/catalog/apps.json`) and it cannot be fetched, the signed copy formcompiler publishes on its `catalog` release (`github.com/nodemode-dev/formcompiler/releases/download/catalog/apps.json` and `.sig`) is tried before the kept copy. The same signature check applies to whichever was read.
+
+### releases.rs · Portal::reads_releases
+- refers-to: core/src/releases.rs :: Portal::reads_releases, RELEASES_ENV, RAW_ENV · core/src/policy.rs :: Policy::github_releases
+- kind: decision
+- logged: v0.55.0 · 2026-11-06
+
+Discovery runs only for a catalogue fetched over https or loopback (a local file, as the tests use, is read as it is). `FORMPORTAL_RELEASES=off` (or 0, false, no) turns it off. An organisation's policy decides with `github_releases`; when the policy leaves it out, discovery is on unless the policy names its own `catalog`, so a managed mirror is not mixed with public releases. `FORMPORTAL_GITHUB_WEB` (as for sign-in) and `FORMPORTAL_GITHUB_RAW` point the reads elsewhere; verification on 2026-11-06 used a loopback relay through both.
+
+### lib.rs · Catalog::view and versions, prelaunch with a release
+- refers-to: core/src/lib.rs :: Catalog::view, Catalog::versions · ../frontend/src/engine/index.ts :: Engine.view
+- kind: fix
+- logged: v0.55.0 · 2026-11-06
+
+A prelaunch product is `Unreleased` only while it has no release on any channel. FormTray was prelaunch in the catalogue with a stable 0.9.8 and FormPortal offered nothing; formMCP, FormPDF and formskills are prelaunch with published releases. The interface's `Engine.view` has the same rule. `Release` reads the catalogue's own `origin` (`store` or `github`), which formcompiler emits and the vendored schema does not list yet (formai_dev's schema should add it).
 
 ## v0.54.1 · FormSlide's identifier and repository {#formslide}
 
