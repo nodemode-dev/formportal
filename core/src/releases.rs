@@ -2,7 +2,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::sync::OnceLock;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -11,7 +12,7 @@ use sha2::{Digest, Sha256};
 use crate::download::check_url;
 use crate::error::Result;
 use crate::github;
-use crate::{version_newer, AgentAsset, Arch, Artifact, ArtifactKind, Catalog, Channel, Os, Portal, Product, Release, ReleaseAgents};
+use crate::{plain_name, version_newer, AgentAsset, Arch, Artifact, ArtifactKind, Catalog, Channel, Os, Portal, Product, Release, ReleaseAgents};
 
 pub const RELEASES_ENV: &str = "FORMPORTAL_RELEASES";
 pub const RELEASES_FILE: &str = "releases.json";
@@ -23,6 +24,7 @@ pub const RAW_ENV: &str = "FORMPORTAL_GITHUB_RAW";
 const RAW: &str = "https://raw.githubusercontent.com";
 const GITHUB: &str = "https://github.com/";
 const RECHECK: u64 = 15 * 60;
+const RETRY: u64 = 60;
 const MANIFEST: &str = "form-app.json";
 const LIMIT: u64 = 4 * 1024 * 1024;
 
@@ -33,6 +35,8 @@ struct Seen {
     tag: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     release: Option<Release>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    names: Vec<String>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -40,6 +44,16 @@ struct Kept {
     format: String,
     #[serde(default)]
     repos: BTreeMap<String, Seen>,
+    #[serde(default)]
+    yanks_checked: u64,
+    #[serde(default)]
+    yanks: Vec<(String, String)>,
+}
+
+enum Outcome {
+    Found(Release, Vec<String>),
+    Refused,
+    Failed,
 }
 
 enum Fetched {
@@ -52,11 +66,44 @@ fn now() -> u64 {
     SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0)
 }
 
-fn get(url: &str) -> Fetched {
-    if check_url(url).is_err() {
-        return Fetched::Failed;
+fn agent() -> &'static ureq::Agent {
+    static AGENT: OnceLock<ureq::Agent> = OnceLock::new();
+    AGENT.get_or_init(|| {
+        ureq::AgentBuilder::new()
+            .timeout_connect(Duration::from_secs(5))
+            .timeout_read(Duration::from_secs(15))
+            .timeout(Duration::from_secs(30))
+            .redirects(0)
+            .user_agent("FormPortal")
+            .build()
+    })
+}
+
+fn follow(method: &str, url: &str, range: Option<&str>) -> std::result::Result<ureq::Response, Option<u16>> {
+    let mut url = url.to_string();
+    for _ in 0..6 {
+        if check_url(&url).is_err() {
+            return Err(None);
+        }
+        let mut request = agent().request(method, &url);
+        if let Some(range) = range {
+            request = request.set("Range", range);
+        }
+        match request.call() {
+            Ok(r) if (300..400).contains(&r.status()) => match r.header("Location") {
+                Some(next) => url = next.to_string(),
+                None => return Err(None),
+            },
+            Ok(r) => return Ok(r),
+            Err(ureq::Error::Status(code, _)) => return Err(Some(code)),
+            Err(_) => return Err(None),
+        }
     }
-    match ureq::get(url).set("User-Agent", "FormPortal").call() {
+    Err(None)
+}
+
+fn get(url: &str) -> Fetched {
+    match follow("GET", url, None) {
         Ok(response) => {
             let modified = response.header("Last-Modified").and_then(http_date);
             let mut body = Vec::new();
@@ -65,21 +112,17 @@ fn get(url: &str) -> Fetched {
                 Err(_) => Fetched::Failed,
             }
         }
-        Err(ureq::Error::Status(404 | 410 | 451, _)) => Fetched::Missing,
+        Err(Some(404 | 410 | 451)) => Fetched::Missing,
         Err(_) => Fetched::Failed,
     }
 }
 
 fn size_of(url: &str) -> u64 {
-    if check_url(url).is_err() {
-        return 0;
-    }
-    ureq::head(url)
-        .set("User-Agent", "FormPortal")
-        .call()
-        .ok()
-        .and_then(|r| r.header("Content-Length").and_then(|v| v.parse().ok()))
-        .unwrap_or(0)
+    let head = follow("HEAD", url, None).ok().and_then(|r| r.header("Content-Length").and_then(|v| v.parse::<u64>().ok())).filter(|n| *n > 0);
+    head.or_else(|| {
+        follow("GET", url, Some("bytes=0-0")).ok().and_then(|r| r.header("Content-Range").and_then(|v| v.rsplit('/').next()).and_then(|v| v.trim().parse().ok()))
+    })
+    .unwrap_or(0)
 }
 
 fn http_date(text: &str) -> Option<String> {
@@ -105,8 +148,8 @@ fn repo_path(repository: &str) -> Option<String> {
     let rest = repository.strip_prefix(GITHUB)?.trim_end_matches('/');
     let mut parts = rest.split('/');
     let (owner, name) = (parts.next()?, parts.next()?);
-    let plain = |s: &str| !s.is_empty() && s.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'));
-    (parts.next().is_none() && plain(owner) && plain(name) && !name.starts_with('.')).then(|| format!("{owner}/{name}"))
+    let plain = |s: &str| !s.is_empty() && !s.starts_with('.') && s.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'));
+    (parts.next().is_none() && plain(owner) && plain(name)).then(|| format!("{owner}/{name}"))
 }
 
 fn plain_version(version: &str) -> bool {
@@ -120,7 +163,7 @@ fn parse_sums(text: &str) -> BTreeMap<String, String> {
         let line = line.trim();
         let Some((digest, name)) = line.split_once(char::is_whitespace) else { continue };
         let name = name.trim().trim_start_matches('*').trim();
-        if digest.len() == 64 && digest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)) && !name.is_empty() && !name.contains('/') && !name.contains('\\') {
+        if digest.len() == 64 && digest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)) && plain_name(name) {
             sums.insert(name.to_string(), digest.to_string());
         }
     }
@@ -200,7 +243,9 @@ fn yanked(origin: &str) -> Option<BTreeSet<(String, String)>> {
     Some(out)
 }
 
-fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option<String>, yanks: &BTreeSet<(String, String)>) -> Option<Release> {
+fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option<String>, yanks: &BTreeSet<(String, String)>) -> Outcome {
+    let mut failed = false;
+    let mut inner = || -> Option<(Release, Vec<String>)> {
     let app: Value = serde_json::from_slice(manifest).ok()?;
     let text = |k: &str| app.get(k).and_then(Value::as_str).map(str::to_string);
     if text("format").as_deref() != Some("form-app") || !text("repository")?.eq_ignore_ascii_case(path) {
@@ -217,7 +262,14 @@ fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option
     }
     let web = github::web();
     let download = |file: &str| format!("{web}/{path}/releases/download/{tag}/{file}");
-    let Fetched::Body { body: sums, .. } = get(&download("SHA256SUMS.txt")) else { return None };
+    let sums = match get(&download("SHA256SUMS.txt")) {
+        Fetched::Body { body, .. } => body,
+        Fetched::Missing => return None,
+        Fetched::Failed => {
+            failed = true;
+            return None;
+        }
+    };
     let sums = parse_sums(&String::from_utf8_lossy(&sums));
     if sums.get(MANIFEST).map(String::as_str) != Some(sha256(manifest).as_str()) {
         return None;
@@ -248,19 +300,50 @@ fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option
         manifest: Some(AgentAsset { file: MANIFEST.to_string(), url: download(MANIFEST), bytes: manifest.len() as u64, sha256: sha256(manifest) }),
         skills: skills.filter(|s| s.bytes > 0),
     };
-    Some(Release {
+    let release = Release {
         version,
-        published: modified.unwrap_or_default(),
+        published: modified.clone().unwrap_or_default(),
         notes: format!("{}/releases/tag/{tag}", product.repository.trim_end_matches('/')),
         commit: text("commit").filter(|c| c.len() == 40 && c.bytes().all(|b| b.is_ascii_hexdigit())),
         artifacts,
         history: Vec::new(),
         agents: Some(agents),
         origin: Some(ORIGIN_GITHUB.to_string()),
-    })
+    };
+    Some((release, names.into_iter().collect()))
+    };
+    let found = inner();
+    match found {
+        Some((release, names)) => Outcome::Found(release, names),
+        None if failed => Outcome::Failed,
+        None => Outcome::Refused,
+    }
+}
+
+fn sound(path: &str, seen: &Seen, yanks: &BTreeSet<(String, String)>) -> bool {
+    let Some(release) = &seen.release else { return true };
+    let prefix = format!("{}/{path}/releases/download/v{}/", github::web(), release.version);
+    let under = |url: &str, file: &str| url.strip_prefix(&prefix) == Some(file) && plain_name(file);
+    let assets = release.agents.iter().flat_map(|a| [a.manifest.as_ref(), a.skills.as_ref()]).flatten();
+    plain_version(&release.version)
+        && seen.tag.as_deref() == Some(format!("v{}", release.version).as_str())
+        && release.origin.as_deref() == Some(ORIGIN_GITHUB)
+        && release.history.is_empty()
+        && !release.artifacts.is_empty()
+        && release.artifacts.iter().all(|a| under(&a.url, &a.file) && a.sha256.len() == 64)
+        && assets.into_iter().all(|a| under(&a.url, &a.file))
+        && !seen.names.iter().any(|n| yanks.contains(&(n.clone(), release.version.clone())))
+}
+
+fn retry(seen: Option<&Seen>, path: &str, yanks: &BTreeSet<(String, String)>, at: u64) -> Seen {
+    match seen.filter(|s| sound(path, s, yanks)) {
+        Some(seen) => Seen { checked: at.saturating_sub(RECHECK - RETRY), ..seen.clone() },
+        None => Seen { checked: at.saturating_sub(RECHECK - RETRY), ..Seen::default() },
+    }
 }
 
 fn check(product: &Product, path: &str, seen: Option<&Seen>, yanks: &BTreeSet<(String, String)>, at: u64) -> Seen {
+    let seen = seen.filter(|s| sound(path, s, yanks));
     if let Some(seen) = seen.filter(|s| at.saturating_sub(s.checked) < RECHECK) {
         return seen.clone();
     }
@@ -272,12 +355,13 @@ fn check(product: &Product, path: &str, seen: Option<&Seen>, yanks: &BTreeSet<(S
                 return Seen { checked: at, ..seen.clone() };
             }
             match read_release(product, path, &body, modified, yanks) {
-                Some(release) => Seen { checked: at, tag, release: Some(release) },
-                None => Seen { checked: at, tag, release: None },
+                Outcome::Found(release, names) => Seen { checked: at, tag, release: Some(release), names },
+                Outcome::Refused => Seen { checked: at, tag, ..Seen::default() },
+                Outcome::Failed => retry(seen, path, yanks, at),
             }
         }
-        Fetched::Missing => Seen { checked: at, tag: None, release: None },
-        Fetched::Failed => seen.cloned().unwrap_or_default(),
+        Fetched::Missing => Seen { checked: at, ..Seen::default() },
+        Fetched::Failed => retry(seen, path, yanks, at),
     }
 }
 
@@ -315,9 +399,16 @@ pub fn merge(product: &mut Product, mut found: Release) -> bool {
 }
 
 pub fn discover(root: &Path, catalog: &mut Catalog) -> Vec<String> {
-    let Some(yanks) = yanked(&catalog.origin) else { return Vec::new() };
     let mut kept = load(root);
     let at = now();
+    let yanks: BTreeSet<(String, String)> = if kept.yanks_checked > 0 && at.saturating_sub(kept.yanks_checked) < RECHECK {
+        kept.yanks.iter().cloned().collect()
+    } else {
+        let Some(fresh) = yanked(&catalog.origin) else { return Vec::new() };
+        kept.yanks = fresh.iter().cloned().collect();
+        kept.yanks_checked = at;
+        fresh
+    };
     let wanted: Vec<(usize, String)> = catalog.products.iter().enumerate().filter_map(|(i, p)| repo_path(&p.repository).map(|path| (i, path))).collect();
     let results: Vec<(usize, String, Seen)> = std::thread::scope(|scope| {
         let handles: Vec<_> = wanted
