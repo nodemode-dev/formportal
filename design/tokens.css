@@ -226,7 +226,7 @@
 [data-product="formsculpt"] { --hue: color-mix(in oklab, #c9a0ff calc(100% - var(--hue-depth)), #000); }
 [data-product="format"] { --hue: color-mix(in oklab, #f0883e calc(100% - var(--hue-depth)), #000); }
 [data-product="formtray"] { --hue: color-mix(in oklab, #a0aec0 calc(100% - var(--hue-depth)), #000); }
-[data-product="formranker"] { --hue: color-mix(in oklab, #f97316 calc(100% - var(--hue-depth)), #000); }
+[data-product="formbench"] { --hue: color-mix(in oklab, #f97316 calc(100% - var(--hue-depth)), #000); }
 
 [data-product="formcut"] {
   --hue: var(--hue-cut);
