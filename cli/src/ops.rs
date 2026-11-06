@@ -5,7 +5,7 @@ use serde_json::{json, Map, Value};
 pub const DEFAULT_SOURCE: &str = "https://dl.formai.studio/catalog/apps.json";
 const REGISTRY: &str = include_str!("../../catalog/products.json");
 const SCHEDULE: &str = include_str!("../../catalog/schedule.json");
-const ALIAS: [(&str, &str); 4] = [("formportal", "formai"), ("formdeck", "formslide"), ("formskill", "formskills"), ("formbench", "formranker")];
+const ALIAS: [(&str, &str); 3] = [("formportal", "formai"), ("formdeck", "formslide"), ("formskill", "formskills")];
 
 fn released(catalog: &Catalog, id: &str) -> bool {
     [Channel::Stable, Channel::Beta].iter().any(|ch| matches!(catalog.view(id, *ch, Platform::current()).availability, Availability::Available | Availability::OtherPlatform))

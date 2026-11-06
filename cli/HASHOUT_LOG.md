@@ -286,3 +286,10 @@ The dispatcher rebuilds the release binary when anything under `cli/` or `core/`
 - logged: v0.27.0 · 2026-10-11
 
 Driven through `./formportal mcp` against a two-release local catalogue served on 127.0.0.1:8899 with a scratch `FORMPORTAL_ROOT`: initialize, tools/list (eight), install 1.0.0, open (the installed script ran), install 1.1.0, rollback (current 1.0.0), installs, remove, an unknown tool (isError). From the CLI: a catalogue with a wrong SHA-256 was refused before unpacking, and an unsigned remote catalogue without `--allow-unsigned` was refused.
+
+### src/ops.rs · ALIAS drops formbench
+- refers-to: src/ops.rs :: ALIAS
+- kind: explainer
+- logged: v0.60.0 · 2026-11-06
+
+The signed catalogue now calls the product formbench, the same as the schedule, so the formbench to formranker alias is gone. Three aliases remain: formportal to formai, formdeck to formslide, formskill to formskills.
