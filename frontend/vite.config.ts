@@ -44,10 +44,10 @@ const SCHEDULE = loadJson<{ releases: { label: string; at: string; apps: string[
   ...g,
   apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => APPS.some((p) => p.id === id)),
 }));
+const MORE_SLOTS = 40;
 const BUILT = Date.now();
-const OPENED = new Set(SCHEDULE.filter((g) => Date.parse(g.at) <= BUILT).flatMap((g) => g.apps));
-const LIVE = APPS.filter((p) => OPENED.has(p.id)).map((p) => p.id);
-const LEFT = SCHEDULE.map((g) => g.apps.filter((id) => !OPENED.has(id)).length);
+const LIVE: string[] = [];
+const LEFT = SCHEDULE.map((g) => g.apps.length);
 interface Caps {
   kind?: string;
   runs_on?: string;
@@ -149,17 +149,21 @@ function renderPortal(html: string): string {
     (p) => `<li class="learn" data-product="${p.id}">${tile(p)}<div class="learn-text"><h3 class="learn-name"><button class="link-btn" type="button" data-route-to="app-${p.id}">${esc(p.name)}</button></h3><p class="fine">${line(p) || esc(p.summary)}</p><p class="fine inc-terms"><span class="chip">Free</span><span>${esc(p.licence ?? "GPL-3.0-only")}</span><span>${words(p)}</span></p></div></li>`,
   );
 
-  const soon = SCHEDULE.map(
-    (g, i) =>
-      `<li class="soon-group" data-soon-group="${i}"${Date.parse(g.at) <= BUILT ? " data-due" : ""}><p class="soon-when"><span class="soon-date">Opens ${esc(opens(g.at))}</span><span class="soon-due">Due now</span></p><ul class="soon-tiles">${g.apps.map(() => `<li class="soon-tile"><span class="soon-mark" aria-hidden="true">?</span><span class="soon-name">Form?</span></li>`).join("")}</ul></li>`,
-  );
+  const soonTile = `<li class="soon-tile"><span class="soon-mark" aria-hidden="true">?</span><span class="soon-name">Form?</span></li>`;
+  const soon = [
+    ...SCHEDULE.map(
+      (g, i) =>
+        `<li class="soon-group" data-soon-group="${i}" data-soon-at="${esc(g.at)}"${Date.parse(g.at) <= BUILT ? " data-due" : ""}><p class="soon-when"><span class="soon-date">Opens ${esc(opens(g.at))}</span><span class="soon-due">Due now</span></p><ul class="soon-tiles">${g.apps.map(() => soonTile).join("")}</ul></li>`,
+    ),
+    `<li class="soon-group" data-soon-extra><p class="soon-when"><span class="soon-date">Date to come</span></p><ul class="soon-tiles">${Array.from({ length: MORE_SLOTS }, () => soonTile).join("")}</ul></li>`,
+  ];
 
   const parts: Record<string, string[]> = {
     all, updates, beta, mine, family, whatsnew, pages, autolist, learn, included, soon,
     count: [String(LIVE.length)],
     released: [String(RELEASED.length)],
   };
-  const rootState = ` data-live="${LIVE.join(" ")}"${LEFT.map((n, i) => ` data-soon-g${i}="${n}"`).join("")} data-soon-left="${LEFT.reduce((a, b) => a + b, 0)}"`;
+  const rootState = ` data-live="${LIVE.join(" ")}"${LEFT.map((n, i) => ` data-soon-g${i}="${n}"`).join("")} data-soon-left="${LEFT.reduce((a, b) => a + b, 0)}" data-soon-more="0"`;
   return html.replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (parts[which] ?? []).join("\n")).replace(/<html lang="en"/, `<html lang="en"${rootState}`);
 }
 
@@ -170,7 +174,9 @@ const liveRules = () =>
       `html[data-soon-g${i}="0"] [data-soon-group="${i}"] { display: none; }`,
       ...g.apps.map((_, k) => `html[data-soon-g${i}="${k}"] [data-soon-group="${i}"] .soon-tile:nth-child(n + ${k + 1}) { display: none; }`),
     ]),
-    `html[data-soon-left="0"] [data-soon] { display: none; }`,
+    `html[data-soon-more="0"] [data-soon-extra] { display: none; }`,
+    ...Array.from({ length: MORE_SLOTS - 1 }, (_, k) => `html[data-soon-more="${k + 1}"] [data-soon-extra] .soon-tile:nth-child(n + ${k + 2}) { display: none; }`),
+    `html[data-soon-left="0"][data-soon-more="0"] [data-soon] { display: none; }`,
     ...GROUPS.map(([group]) => {
       const none = APPS.filter((p) => (p.group ?? "other") === group).map((p) => `:not([data-live~="${p.id}"])`).join("");
       return `html${none} [data-group-head="${group}"], html${none} [data-fam-group="${group}"] { display: none; }`;

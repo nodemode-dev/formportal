@@ -49,7 +49,7 @@ export const live: Extension = {
       }
       if (count && count.textContent !== String(shown.length)) count.textContent = String(shown.length);
       try {
-        localStorage.setItem(KEY, JSON.stringify({ live: shown.join(" "), soon }));
+        localStorage.setItem(KEY, JSON.stringify({ live: shown.join(" "), soon, more: Number(root.getAttribute("data-soon-more")) || 0 }));
       } catch {}
     };
     engine.on("source", apply);

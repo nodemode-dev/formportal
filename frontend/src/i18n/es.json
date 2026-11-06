@@ -3,6 +3,17 @@
   "name": "Español (borrador)",
   "reviewed": false,
   "strings": {
+    "Supporter": "Colaborador",
+    "Supporter code": "Código de colaborador",
+    "Optional. If you supported the Form apps on formai.studio, paste the code from the thanks page. The code says only that you supported us, and it stays on this computer.": "Opcional. Si apoyaste las apps Form en formai.studio, pega el código de la página de agradecimiento. El código solo indica que nos apoyaste y se queda en este equipo.",
+    "Check": "Comprobar",
+    "Forget": "Olvidar",
+    "Not set": "Sin definir",
+    "Checking": "Comprobando",
+    "That code is not a supporter code.": "Ese código no es un código de colaborador.",
+    "formai.studio cannot be reached; the last answer is kept.": "No se puede contactar con formai.studio; se conserva la última respuesta.",
+    "Get a supporter code on formai.studio": "Obtén un código de colaborador en formai.studio",
+    "Date to come": "Fecha por anunciar",
     "Home": "Inicio",
     "Apps": "Apps",
     "Updates": "Actualizaciones",
@@ -377,6 +388,7 @@
     "Family tools": "Herramientas de la familia"
   },
   "patterns": [
+    ["Supporter until {date}. Upcoming Form apps show their names.", "Colaborador hasta el {date}. Las próximas apps Form muestran sus nombres."],
     ["Instead of {x}", "En lugar de {x}"],
     ["{app} beta", "{app} beta"],
     ["Use {app} with your AI tools", "Usa {app} con tus herramientas de IA"],

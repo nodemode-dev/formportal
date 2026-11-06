@@ -12,5 +12,7 @@
       left += n;
     }
     d.setAttribute("data-soon-left", String(left));
+    var more = Number(kept.more);
+    if (more >= 0 && d.hasAttribute("data-soon-more")) d.setAttribute("data-soon-more", String(Math.min(40, Math.floor(more))));
   } catch (e) {}
 })();

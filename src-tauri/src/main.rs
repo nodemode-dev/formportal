@@ -5,6 +5,7 @@ use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal,
 use std::sync::Mutex;
 
 mod app_icon;
+mod migrate;
 mod reveal;
 mod traffic_lights;
 
@@ -66,7 +67,7 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
         };
         let mut last = u64::MAX;
         let done = hub.install_from(&catalog, &product, channel, version, artifact, &mut |have, total| {
-            let step = if total > 0 { have * 100 / total } else { 0 };
+            let step = (have * 100).checked_div(total).unwrap_or(0);
             if step != last {
                 last = step;
                 let _ = app.emit("install-progress", Progress { product: product.clone(), channel, have, total });
@@ -420,7 +421,7 @@ async fn auto_update(app: AppHandle, url: String, allow_unsigned: bool) -> Resul
         let catalog = hub.catalog(&url, allow_unsigned).map_err(text)?;
         let mut last = u64::MAX;
         hub.apply_updates(&catalog, Platform::current(), true, &mut |product, channel, have, total| {
-            let step = if total > 0 { have * 100 / total } else { 0 };
+            let step = (have * 100).checked_div(total).unwrap_or(0);
             if step != last {
                 last = step;
                 let _ = app.emit("install-progress", Progress { product: product.to_string(), channel, have, total });
@@ -642,6 +643,16 @@ async fn publish_file(file: String, remove: bool) -> Result<formportal_core::sha
     .map_err(text)?
 }
 
+#[tauri::command]
+async fn site_upcoming() -> Result<formportal_core::site::UpcomingView, String> {
+    tauri::async_runtime::spawn_blocking(|| hub().upcoming()).await.map_err(text)
+}
+
+#[tauri::command]
+async fn supporter_check(code: Option<String>) -> Result<formportal_core::site::SupporterView, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().supporter(code).map_err(text)).await.map_err(text)?
+}
+
 fn sync_login() -> Result<(), String> {
     let on = hub().preferences().map_err(text)?.open_at_login;
     let program = std::env::var_os("APPIMAGE").map(std::path::PathBuf::from).or_else(|| std::env::current_exe().ok()).ok_or("no program path")?;
@@ -685,6 +696,7 @@ fn main() {
             }
         });
     }
+    migrate::webview_data();
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -747,7 +759,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file,
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())

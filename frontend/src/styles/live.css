@@ -1,5 +1,6 @@
-body:not(.app-ready) #app {
-  visibility: hidden;
+body:not(.app-ready),
+body:not(.app-ready) * {
+  visibility: hidden !important;
 }
 
 html[data-theme="light"] .ic-dark,
@@ -101,4 +102,22 @@ html:not([data-theme="light"]) .ic-light {
 
 .ap-runs-label {
   color: var(--ink-faint);
+}
+
+.soon-name {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supporter-acts {
+  display: flex;
+  gap: var(--sp-2);
+  min-block-size: 32px;
+}
+
+.supporter-say {
+  min-block-size: 3em;
+  line-height: 1.5;
 }

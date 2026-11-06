@@ -27,6 +27,7 @@ pub mod releases;
 pub mod repair;
 pub mod share;
 pub mod signature;
+pub mod site;
 pub mod state;
 pub mod web;
 

@@ -11,11 +11,16 @@ fn released(catalog: &Catalog, id: &str) -> bool {
     [Channel::Stable, Channel::Beta].iter().any(|ch| matches!(catalog.view(id, *ch, Platform::current()).availability, Availability::Available | Availability::OtherPlatform))
 }
 
-fn on_the_way(shown: &[String]) -> Vec<Value> {
+fn on_the_way(portal: &Portal, shown: &[String]) -> Vec<Value> {
     let known: Vec<String> = registry().iter().filter_map(|p| p.get("id").and_then(Value::as_str).map(str::to_string)).collect();
     let doc: Value = serde_json::from_str(SCHEDULE).unwrap_or(Value::Null);
     let groups = doc.get("releases").and_then(Value::as_array).cloned().unwrap_or_default();
-    groups
+    let tiles = portal.supporter(None).ok().filter(|v| v.supporter).map(|v| v.upcoming);
+    let named = |at: Option<&str>, limit: usize| -> Option<Value> {
+        let when = at.and_then(formportal_core::site::parse_time);
+        tiles.as_ref().map(|list| json!(list.iter().filter(|t| t.at.as_deref().and_then(formportal_core::site::parse_time) == when && (at.is_none() == t.at.is_none())).take(limit).map(|t| t.name.as_str()).collect::<Vec<_>>()))
+    };
+    let mut out: Vec<Value> = groups
         .iter()
         .filter_map(|g| {
             let at = g.get("at").and_then(Value::as_str)?;
@@ -27,9 +32,25 @@ fn on_the_way(shown: &[String]) -> Vec<Value> {
                 .map(|id| ALIAS.iter().find(|(theirs, _)| *theirs == id).map_or(id, |(_, ours)| *ours))
                 .filter(|id| *id != "formai" && known.iter().any(|k| k == id) && !shown.iter().any(|s| s == id))
                 .count();
-            (left > 0).then(|| json!({ "opens": at, "apps": left }))
+            (left > 0).then(|| {
+                let mut group = json!({ "opens": at, "apps": left });
+                if let Some(names) = named(Some(at), left) {
+                    group["names"] = names;
+                }
+                group
+            })
         })
-        .collect()
+        .collect();
+    let site = portal.upcoming();
+    let more = site.undated as usize + site.supporters as usize;
+    if site.known && more > 0 {
+        let mut group = json!({ "opens": null, "apps": more });
+        if let Some(names) = named(None, more) {
+            group["names"] = names;
+        }
+        out.push(group);
+    }
+    out
 }
 
 pub struct Ctx {
@@ -149,7 +170,7 @@ pub fn apps(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
         row.insert("channels".to_string(), Value::Object(channels));
         rows.push(Value::Object(row));
     }
-    let soon = if catalog.is_some() { on_the_way(&shown) } else { Vec::new() };
+    let soon = if catalog.is_some() { on_the_way(&ctx.portal, &shown) } else { Vec::new() };
     Ok(json!({ "catalog": note, "fixture": catalog.as_ref().map(|c| c.fixture), "apps": rows, "on_the_way": soon }))
 }
 
@@ -751,7 +772,11 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     if changed {
         ctx.portal.set_preferences(&prefs)?;
     }
-    Ok(json!({ "preferences": prefs, "saved": changed }))
+    let mut shown = serde_json::to_value(&prefs).unwrap_or(Value::Null);
+    if let Some(slot) = shown.get_mut("supporter_code") {
+        *slot = json!(prefs.supporter_code.is_some());
+    }
+    Ok(json!({ "preferences": shown, "saved": changed }))
 }
 
 fn ext_source(ctx: &Ctx, args: &Value) -> String {

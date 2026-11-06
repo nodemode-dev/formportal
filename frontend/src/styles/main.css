@@ -108,18 +108,6 @@ button {
   block-size: var(--icon-s);
 }
 
-.mark-cut {
-  color: var(--hue-cut);
-}
-
-.mark-vis {
-  color: var(--hue-vis);
-}
-
-.mark-wav {
-  color: var(--hue-wav);
-}
-
 .mono {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
