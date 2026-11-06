@@ -193,7 +193,7 @@
       },
       {
         "title": "Releases",
-        "text": "FormNET builds are compiled and released from formcompiler; the repository holds the source."
+        "text": "FormNET builds are compiled and released from FormCompiler; the repository holds the source."
       }
     ]
   },

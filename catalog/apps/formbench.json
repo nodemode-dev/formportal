@@ -71,5 +71,5 @@
     "reports": {"file": "/media/formbench/ui-reports-2.webp", "light": "/media/formbench/ui-reports-light-2.webp", "width": 2400, "height": 1500, "alt": "FormBench's reports list with three sample feature requests and ideas for FormBench, and filters for bugs, features, ideas and site feedback", "size": ""},
     "editor": {"file": "/media/formbench/ui-hero-2.webp", "light": "/media/formbench/ui-hero-light-2.webp","width": 2400, "height": 1500, "alt": "A comparison at 99.1 percent official parity against darktable and LightCraft, with Full, Partial and None grades per capability", "size": ""}
   },
-  "credit": "The captures show FormBench, released as FormRanker, running locally as its own local owner, with its shipped parity data and three sample reports, in its dark or light look to match this page."
+  "credit": "The captures show FormBench running locally as its own local owner, with its shipped parity data and three sample reports, in its dark or light look to match this page."
 }

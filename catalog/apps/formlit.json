@@ -320,7 +320,7 @@
    "version": "0.47.3",
    "date": "2026-10-30",
    "items": [
-    "Windows desktop builds take --config, so formcompiler's Windows release can carry updater files",
+    "Windows desktop builds take --config, so FormCompiler's Windows release can carry updater files",
     "macOS installs pin opencv-python-headless to 5.0.0.93, the version Linux and Windows use"
    ]
   }

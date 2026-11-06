@@ -207,7 +207,7 @@
       },
       {
         "title": "Releases",
-        "text": "FormRig builds nothing in its repository; pushing a compile_vX.Y.Z branch has formcompiler build the bundles and draft a release."
+        "text": "FormRig builds nothing in its repository; pushing a compile_vX.Y.Z branch has FormCompiler build the bundles and draft a release."
       }
     ]
   },

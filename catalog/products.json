@@ -141,7 +141,7 @@
     },
     {
       "id": "formmd",
-      "name": "Form.md",
+      "name": "form.md",
       "alt_of": "Notion",
       "group": "other",
       "status": "available",
@@ -345,7 +345,7 @@
       }
     },
     {
-      "id": "formranker",
+      "id": "formbench",
       "name": "FormBench",
       "group": "next",
       "status": "available",

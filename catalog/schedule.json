@@ -2,10 +2,14 @@
   "format": "formai-schedule",
   "format_version": 1,
   "releases": [
-    { "label": "Launch", "at": "2026-11-03T17:00:00Z", "apps": ["formportal", "formvis", "formlit", "formvfx", "formencoder", "formpdf", "formcut", "formwav", "formmd", "formdeck", "formmcp", "formskill", "formtray"] },
-    { "label": "Group 1", "at": "2026-11-06T17:00:00Z", "apps": ["formdam", "formpath", "formdesign"] },
-    { "label": "Group 2", "at": "2026-11-09T17:00:00Z", "apps": ["formcel", "formtxt"] },
-    { "label": "Group 3", "at": "2026-11-12T17:00:00Z", "apps": ["format", "formpromo", "formref"] }
+    { "label": "Launch", "at": "2026-11-03T17:00:00Z", "apps": ["formportal", "formtray", "formmd", "formvis", "formwav", "formcut", "formmcp", "formvfx", "formdeck", "formencoder", "formlit", "formskill", "formpdf", "formcompiler"] },
+    { "label": "Group 1", "at": "2026-11-10T17:00:00Z", "apps": ["formdam", "formpath", "formdesign"] },
+    { "label": "Group 2", "at": "2026-11-13T17:00:00Z", "apps": ["formcel", "formtxt", "formtools"] },
+    { "label": "Group 3", "at": "2026-11-16T17:00:00Z", "apps": ["format", "formref", "formweb"] },
+    { "label": "Group 4", "at": "2026-11-19T17:00:00Z", "apps": ["formsurface", "formsculpt", "formfabric"] },
+    { "label": "Group 5", "at": "2026-11-22T17:00:00Z", "apps": ["formmorpheus", "formbench", "formcraft"] },
+    { "label": "Group 6", "at": "2026-11-25T17:00:00Z", "apps": ["formpromo", "formrig", "formcad"] },
+    { "label": "Group 7", "at": "2026-11-28T17:00:00Z", "apps": ["formnet", "formslot", "subform"] }
   ],
   "supporters": ["Form3D", "FormAD", "FormAPI", "FormCanvas", "FormDev", "FormHub", "FormLink", "FormPitch", "FormSIM", "FormUI", "NodeForm"]
 }
