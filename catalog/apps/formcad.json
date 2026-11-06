@@ -1,0 +1,318 @@
+{
+  "id": "formcad",
+  "name": "FormCAD",
+  "version": "0.16.2",
+  "repo": "https://github.com/nodemode-dev/formCAD",
+  "kind": "CAD studio",
+  "title": "2D drafting, parametric parts and NURBS surfaces on your own machine",
+  "summary": "FormCAD is the CAD studio of the Form family: 2D drafting, parametric parts, NURBS surfaces and automation on an OpenCascade engine, with no account. Agents drive it over MCP.",
+  "lede": "FormCAD is the CAD studio of the Form family. It combines 2D drafting, parametric parts with a feature tree, NURBS surfaces and automation on an OpenCascade engine, on your own computer with no account. The window, the command line and an MCP server all call the same 727 commands, so agents can drive it. It saves its own .fcad projects.",
+  "replaces": "",
+  "project": ".fcad",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Drafts in 2D with every drawing command, layers, layouts, blocks and plotting to PDF, PNG and SVG in one project file.",
+    "Models parametric parts with a feature tree and rollback on an OpenCascade kernel, with references that survive edits.",
+    "Blends and matches NURBS surfaces to G2, then checks the seams with zebra, curvature and deviation analysis.",
+    "Runs the same 727 commands from the window, the command line and an MCP server."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fcad; interchange in DXF, SVG, STEP, IGES, 3DM, STL, OBJ, PLY, 3MF and GLB"
+    },
+    {
+      "dt": "Stack",
+      "dd": "Python and FastAPI engine, vanilla TypeScript and Vite interface with three.js and a WebGL2 drafting canvas, Tauri 2 desktop shell"
+    },
+    {
+      "dt": "Kernel",
+      "dd": "A separate OpenCascade 8 worker speaking JSON lines on stdio, so the app itself stays Apache-2.0"
+    },
+    {
+      "dt": "Commands",
+      "dd": "727 commands in one registry, shared by the window, the CLI and the MCP server"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "parts",
+      "kicker": "Parametric parts",
+      "title": "A feature tree you can edit and roll back",
+      "text": "Open any feature, change its radius or depth, and the rest of the part rebuilds. A failed feature is marked with its reason and never silently changes the model.",
+      "shot": "feature-tree"
+    },
+    {
+      "id": "drawings",
+      "kicker": "Drawing sheets",
+      "title": "Sheets that follow the model",
+      "text": "Place base, projected, section and detail views in first or third angle on a layout. Views update when the part changes.",
+      "shot": "drawing"
+    },
+    {
+      "id": "surfaces",
+      "kicker": "NURBS and analysis",
+      "title": "Surfaces checked at the seams",
+      "text": "Loft, sweep, blend and match surfaces, then read continuity at the seams with zebra, curvature, draft and deviation.",
+      "shot": "surface"
+    }
+  ],
+  "features": [
+    {
+      "id": "drafting",
+      "icon": "mark",
+      "title": "Drafting",
+      "text": "Every 2D command, layers, layouts, blocks and plotting in one project file.",
+      "bullets": [
+        "Draw and modify, dimensions and blocks",
+        "Layouts and plotting to PDF, PNG and SVG",
+        "Sketch constraints"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "feature-tree",
+      "icon": "layers",
+      "title": "Feature tree with rollback",
+      "text": "Parametric parts on an OpenCascade kernel, with references that survive edits.",
+      "bullets": [
+        "Change a radius or depth and the part rebuilds",
+        "A failed feature is marked with its reason",
+        "The model is never changed silently"
+      ],
+      "shot": "feature-tree"
+    },
+    {
+      "id": "sheets",
+      "icon": "book",
+      "title": "Drawing sheets from the model",
+      "text": "Views are placed on a layout and update when the part changes.",
+      "bullets": [
+        "Base, projected, section and detail views",
+        "First or third angle",
+        "Isometric views and a title block"
+      ],
+      "shot": "drawing"
+    },
+    {
+      "id": "graph",
+      "icon": "extensions",
+      "title": "Node graph",
+      "text": "Build geometry from wired nodes with data trees.",
+      "bullets": [
+        "Preview the result and bake it into the drawing",
+        "Run a graph headless from the command line",
+        "Loops with scope, pass and collect settings"
+      ],
+      "shot": "graph"
+    },
+    {
+      "id": "nurbs",
+      "icon": "target",
+      "title": "NURBS and analysis",
+      "text": "Loft, sweep, blend and match surfaces to G2.",
+      "bullets": [
+        "Zebra stripes and curvature",
+        "Draft and deviation analysis",
+        "Subdivision forms and meshes"
+      ],
+      "shot": "surface"
+    },
+    {
+      "id": "modelling",
+      "icon": "box",
+      "title": "2D and 3D modelling",
+      "text": "Parts, assemblies and drawing views alongside forms and meshes.",
+      "bullets": [
+        "Assemblies with joints and motion studies",
+        "Sheet metal",
+        "Mesh repair, remesh and mesh to solid"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "workspaces",
+      "icon": "apps",
+      "title": "Engineering workspaces",
+      "text": "Workspaces for making and checking real parts.",
+      "bullets": [
+        "Weldments, molds, toolbox and costing",
+        "Simulation and generative design",
+        "Electronics, harness and pipe routing",
+        "Manufacture, 3D print slicer and renders"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "formats",
+      "icon": "export",
+      "title": "Formats",
+      "text": "Native .fcad plus common interchange and plot formats.",
+      "bullets": [
+        "DXF, SVG, STEP, IGES, 3DM, STL, OBJ, PLY, 3MF, GLB",
+        "Plots to PDF, PNG and SVG"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "scripting",
+      "icon": "code",
+      "title": "Scripting",
+      "text": "Automate the engine from several layers.",
+      "bullets": [
+        "A LISP dialect and macros",
+        "Python macros in an isolated process",
+        "Hashed plugins"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "formai",
+      "title": "Built for agents",
+      "text": "727 commands live in one registry that the window, the CLI and the MCP server all call.",
+      "bullets": [
+        "./formCAD mcp starts an MCP server on stdio for Claude Code, Codex and Cursor",
+        "Two skill packs: formcad-harness and formcad-driving",
+        "Agent rules are in AGENTS.md"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "terminal",
+      "icon": "terminal",
+      "title": "Command line",
+      "text": "Headless commands print JSON.",
+      "bullets": [
+        "python backend/formcad_engine.py commands prints the command catalogue",
+        "python backend/formcad_engine.py info FILE summarises a drawing",
+        "python backend/formcad_engine.py graph run FILE.graph solves a node graph"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "local",
+      "icon": "shield",
+      "title": "On your own computer",
+      "text": "No account is needed.",
+      "bullets": [
+        "The backend listens on loopback only, with a per-start token and Origin check",
+        "The same UI runs in a browser or in the Tauri 2 desktop shell",
+        "The drafting floor comes from a functional study, never from another product's code"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19+ or 22.12+",
+      "Python 3.12+",
+      "Rust only for the desktop shell"
+    ],
+    "install": "./formCAD_oc_install\n./formCAD install-kernel\nWindows: formCAD_oc_install.bat",
+    "run": "./formCAD\nWindows: formCAD.bat",
+    "desktop": "./formCAD desktop dev\n./build_app\nWindows: build_app.bat",
+    "agents": "./formCAD mcp runs the MCP server on stdio for Claude Code, Codex and Cursor. Agent rules are in AGENTS.md, and two skill packs live in skills/: formcad-harness and formcad-driving.",
+    "topics": [
+      {
+        "title": "Run it from source",
+        "text": "./formCAD serves the web UI at http://localhost:5290; ./formCAD install-kernel installs the OpenCascade worker, needed for 3D."
+      },
+      {
+        "title": "Services",
+        "text": "The frontend is on 127.0.0.1:5290 (strict port), the preview on 5291 and the FastAPI engine on 8290, loopback only."
+      },
+      {
+        "title": "Configuration",
+        "text": "Set FORMCAD_DATA_DIR, FORMCAD_PORT or FORMCAD_KERNEL in the shell to move the data folder, the engine port or the kernel worker."
+      },
+      {
+        "title": "Status",
+        "text": "Pre-release: all 43 planned phases have landed, many as first versions. Linux builds are tested; macOS and Windows builds are configured but untested."
+      },
+      {
+        "title": "Manual",
+        "text": "docs/MANUAL.md covers every workspace, and a wiki lives in .docs/wiki."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.16.0",
+      "date": "2026-11-03",
+      "items": [
+        "Two agent skill packs: formcad-harness and formcad-driving",
+        "A user manual covering every workspace, and a wiki",
+        "Workspace panels load their data only when shown"
+      ]
+    },
+    {
+      "version": "0.15.0",
+      "date": "2026-11-03",
+      "items": [
+        "Weldments, mold tools and a toolbox of screws, nuts, bearings and structural shapes",
+        "Inspection, cost estimates and manufacturability checks",
+        "Release preparation: checksums, signing scripts and release workflows"
+      ]
+    },
+    {
+      "version": "0.14.0",
+      "date": "2026-11-03",
+      "items": [
+        "Generative design with preserved regions, loads and manufacturing methods",
+        "Electronics: schematic capture, boards, design rule checks and a two-layer autorouter",
+        "Harnesses and tube and pipe runs with cut lists"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "LICENSE"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formcad/ui-hero-2.webp",
+      "light": "/media/formcad/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A gusseted aluminium bracket with fillets and bolt holes shaded in the 3D view, with the feature tree on the right",
+      "size": ""
+    },
+    "feature-tree": {
+      "file": "/media/formcad/ui-feature-tree-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Fillet feature panel open over the bracket, with the feature tree highlighting the edited feature",
+      "size": ""
+    },
+    "drawing": {
+      "file": "/media/formcad/ui-drawing-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "An A3 drawing sheet with front, top, right, isometric and section views of the bracket and a title block",
+      "size": ""
+    },
+    "graph": {
+      "file": "/media/formcad/ui-graph-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The node graph editor with eight wired nodes that build a plate with bolt holes",
+      "size": ""
+    },
+    "surface": {
+      "file": "/media/formcad/ui-surface-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Three NURBS surfaces joined by a G2 blend, shown with zebra stripes",
+      "size": ""
+    }
+  },
+  "credit": "The captures show a bracket and a node graph made for this page, plus a sample NURBS surface from the repository's fixtures."
+}

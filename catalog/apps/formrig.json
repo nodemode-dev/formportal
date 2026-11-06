@@ -1,0 +1,278 @@
+{
+  "id": "formrig",
+  "name": "FormRig",
+  "version": "0.13.2",
+  "repo": "https://github.com/nodemode-dev/formrig",
+  "kind": "Character rigging studio",
+  "title": "skeleton, skin, controls, face and retargeting from any mesh",
+  "summary": "FormRig is a rigging studio for 3D characters: skeleton, skin, controls, face and retargeting from any mesh, on your own computer. Agents rig over MCP.",
+  "lede": "FormRig builds a rig from any mesh on your own computer with a Rust engine. Open a model, place markers or let FormRig guess them, build a skeleton for the body at hand, bind the skin and read a quality report. The window, the command palette and an MCP server all call the same 178 commands from one registry.",
+  "replaces": "",
+  "project": ".frig",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Opens GLB, glTF, FBX, OBJ, STL, PLY and VRM, with markers placed by you or guessed by FormRig.",
+    "Binds with voxel, closest bone or heat weights and scores the result in a quality report.",
+    "Exports GLB, glTF, FBX, VRM, USD and BVH with a profile and a validator per engine.",
+    "Needs no account and no upload; the network stays off unless you switch a cloud service on with your own key."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".frig"
+    },
+    {
+      "dt": "Engine",
+      "dd": "A Rust workspace with one crate per area, exposed to Python as frg_engine"
+    },
+    {
+      "dt": "Interface",
+      "dd": "Vanilla TypeScript and Vite with a three.js viewport, 28 themes and 30 languages"
+    },
+    {
+      "dt": "Commands",
+      "dd": "178 commands in one registry, shared by the window, the palette and the MCP server"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "skeleton",
+      "kicker": "Any mesh in",
+      "title": "A skeleton for the body at hand",
+      "text": "Open a model, place markers or let FormRig guess them, and build a skeleton from a template such as Humanoid, Quadruped, Bird, Multi-leg, Tentacle, Prop or Mechanical.",
+      "shot": "editor"
+    },
+    {
+      "id": "skin",
+      "kicker": "Skin that holds",
+      "title": "Bind, then read the report",
+      "text": "Bind with voxel, closest bone or heat weights, with four or eight influences per part. A report scores the result and range of motion cards cover left and right limbs.",
+      "shot": "skin"
+    },
+    {
+      "id": "export",
+      "kicker": "Every target",
+      "title": "Export for the engine you use",
+      "text": "Export GLB, glTF, FBX, VRM, USD and BVH, with a profile and a validator per engine and a T pose or A pose output.",
+      "shot": "export"
+    }
+  ],
+  "features": [
+    {
+      "id": "mesh-in",
+      "icon": "source",
+      "title": "Any mesh in",
+      "text": "Open a model, place markers or let FormRig guess them.",
+      "bullets": [
+        "Opens GLB, glTF, FBX, OBJ, STL, PLY, VRM and BVH",
+        "Markers placed by hand or guessed",
+        "A skeleton built for the body at hand"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "rig-types",
+      "icon": "layers",
+      "title": "Rig types",
+      "text": "Templates for the body you are rigging.",
+      "bullets": [
+        "Humanoid, Quadruped, Bird and Multi-leg",
+        "Tentacle, Prop and Mechanical",
+        "Markers drive the build"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "bind",
+      "icon": "target",
+      "title": "Bind and check",
+      "text": "Per-part binding with four or eight influences and a report that scores the result.",
+      "bullets": [
+        "Voxel, closest bone and heat bind",
+        "Quality report",
+        "Range of motion cards for left and right limbs"
+      ],
+      "shot": "skin"
+    },
+    {
+      "id": "weights",
+      "icon": "sliders",
+      "title": "Weight painting",
+      "text": "Paint weights with layers and masks.",
+      "bullets": [
+        "Weight paint",
+        "Delta mush",
+        "Dual quaternion"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "controls",
+      "icon": "settings",
+      "title": "Controls and motion",
+      "text": "Controls for animators on top of the skeleton.",
+      "bullets": [
+        "IK and FK, space switching and foot roll",
+        "Spline spines, spring chains and cloth grids",
+        "Lip sync"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "face",
+      "icon": "captions",
+      "title": "Face",
+      "text": "Faces and ARKit shapes.",
+      "bullets": [
+        "Faces and ARKit shapes",
+        "Lip sync"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "retarget",
+      "icon": "keyframe",
+      "title": "Retarget",
+      "text": "Move clips onto your rig.",
+      "bullets": [
+        "Retarget FBX, BVH and CMU clips"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "export",
+      "icon": "export",
+      "title": "Export profiles",
+      "text": "Export with axis, unit and pose options.",
+      "bullets": [
+        "GLB, glTF, FBX, VRM, USD and BVH",
+        "A profile and a validator per engine",
+        "T pose or A pose output"
+      ],
+      "shot": "export"
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Built for agents",
+      "text": "The window, the palette and an MCP server call the same 178 commands from one registry.",
+      "bullets": [
+        "./formrig mcp serves MCP on stdio for Claude Code, Codex and Cursor",
+        "The formrig-rigging skill rigs a character end to end"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "private",
+      "icon": "shield",
+      "title": "Local and private",
+      "text": "No account and no upload.",
+      "bullets": [
+        "The network stays off unless you switch a cloud service on with your own key"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Node 22",
+      "Python 3.12+",
+      "Rust 1.99.1 (pinned in rust-toolchain.toml)",
+      "WebKitGTK 4.1 development packages on Linux desktop builds"
+    ],
+    "install": "./formrig_oc_install\nWindows: formrig_oc_install.bat",
+    "run": "./formrig\nWindows: formrig.bat",
+    "desktop": "./build_app\nWindows: build_app.bat",
+    "agents": "./formrig mcp starts an MCP server on stdio for Claude Code, Codex and Cursor. .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
+    "topics": [
+      {
+        "title": "Web UI and desktop window",
+        "text": "./formrig starts the backend on 8270 and the web UI at http://localhost:5270; ./formrig desktop dev opens the desktop window instead."
+      },
+      {
+        "title": "Data and port",
+        "text": "FORMRIG_DATA_DIR sets where projects, models, received files and settings live (default ~/Formrig); FORMRIG_PORT sets the backend port (default 8270)."
+      },
+      {
+        "title": "Where things live",
+        "text": "native holds the Rust engine and the command registry, frontend the Vite app, backend the FastAPI service and src-tauri the Tauri 2 desktop shell."
+      },
+      {
+        "title": "Status",
+        "text": "Early development: the Linux build has been run, the macOS and Windows bundles are configured but untested, and local AI models were not run."
+      },
+      {
+        "title": "Releases",
+        "text": "FormRig builds nothing in its repository; pushing a compile_vX.Y.Z branch has formcompiler build the bundles and draft a release."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.13.0",
+      "date": "2026-11-03",
+      "items": [
+        "Every add-on and model consent dialog lists each licence part",
+        "Layers gain Add and Replace influences beside Over",
+        "Weight export writes Maya JSON beside Maya XML"
+      ]
+    },
+    {
+      "version": "0.12.0",
+      "date": "2026-11-03",
+      "items": [
+        "Round trip: Unity and Unreal send edits back and the Export tab lists what changed",
+        "Paint layers with opacity, masks, merge down and flatten",
+        "Weight files export and import, with Maya XML and JSON"
+      ]
+    },
+    {
+      "version": "0.11.0",
+      "date": "2026-11-03",
+      "items": [
+        "Retarget: Hands, Orient warp and Pelvis limit, with an animal contact detector",
+        "Export: Pose applies to and Armpit repair",
+        "Face: a mouth slit is used when the head has one, and a tongue can be synthesised"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "native/Cargo.toml",
+    ".github/workflows/ci.yml",
+    "BRANCHING.md",
+    "LICENSE"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formrig/ui-hero-2.webp",
+      "light": "/media/formrig/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormRig with a rearing horse statue open in the viewport, its generated quadruped skeleton drawn over the model and the joint tree in the Skeleton tab on the right",
+      "size": ""
+    },
+    "skin": {
+      "file": "/media/formrig/ui-skin-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Skin tab after binding the horse, with the bind settings and a quality report scoring 100 with Binding, Bleed and Range of motion passing",
+      "size": ""
+    },
+    "export": {
+      "file": "/media/formrig/ui-export-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Export tab listing GLB, glTF, VRM, Unity Humanoid and Unreal Mannequin with axis, unit and pose options below",
+      "size": ""
+    }
+  },
+  "credit": "The screenshots show a horse statue, a CC0 model from Poly Haven."
+}

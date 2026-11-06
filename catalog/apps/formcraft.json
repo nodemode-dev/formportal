@@ -1,0 +1,280 @@
+{
+  "id": "formcraft",
+  "name": "FormCraft",
+  "version": "0.8.3",
+  "repo": "https://github.com/nodemode-dev/formcraft",
+  "kind": "Generation studio",
+  "title": "images, video, audio, 3D and worlds from models you choose",
+  "summary": "FormCraft is a generation studio for images, video, audio, 3D and worlds: canvases, 3D scenes, moodboards and a multi-track timeline, on your own keys.",
+  "lede": "FormCraft generates images, video, music, sound, 3D meshes and explorable worlds from one prompt bar, with the options each model really has. Canvases, 3D scenes, moodboards and a multi-track timeline sit in one window on your own computer. Generation runs on your own provider keys, kept in the system password store, with no account and no credits.",
+  "replaces": "",
+  "project": ".fcrft",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Generates images, video, music, sound, 3D meshes and worlds from one prompt bar, using 122 catalogued models.",
+    "Stages a 3D scene with props and cameras, then turns the camera's frame into a still and a still into a clip.",
+    "Cuts video on a multi-track timeline with trim, split, ripple, snapping, keyframes and masks, and exports MP4 or WebM.",
+    "Serves 74 tools over MCP to Claude Code, Codex and Cursor, and keeps agents off until you allow them."
+  ],
+  "facts": [
+    {
+      "dt": "Project file",
+      "dd": ".fcrft files that carry their media, saved atomically"
+    },
+    {
+      "dt": "Stack",
+      "dd": "Vanilla TypeScript, Vite and Three.js in the window; Python and FastAPI for the engine; Tauri 2 for the desktop shell"
+    },
+    {
+      "dt": "Providers",
+      "dd": "fal and the World Labs API through their official APIs and your own keys"
+    },
+    {
+      "dt": "Agents",
+      "dd": "./formcraft mcp serves 74 tools: 44 engine tools and 30 studio tools"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "scene",
+      "kicker": "Scene",
+      "title": "Stage the shot, then generate it",
+      "text": "Block out a 3D scene with CC0 models, props and cameras. The camera's frame becomes a still, and a still becomes a clip, all from the prompt bar on the stage.",
+      "shot": "editor"
+    },
+    {
+      "id": "edit",
+      "kicker": "Edit",
+      "title": "Cut on a multi-track timeline",
+      "text": "The Edit studio has trim, split, ripple, snapping, keyframes and masks across overlay, main and audio tracks. Export to MP4 or WebM to disk and to the library.",
+      "shot": "timeline"
+    },
+    {
+      "id": "boards",
+      "kicker": "Boards",
+      "title": "Collect references and lay them out",
+      "text": "Boards hold pictures, clips, notes, colours and links with sections, ratings, tags and a palette. Switch a board to a free canvas with groups, snapping and layout tools, and present it full screen.",
+      "shot": "board"
+    }
+  ],
+  "features": [
+    {
+      "id": "every-medium",
+      "icon": "film",
+      "title": "Every medium",
+      "text": "One prompt bar for images, video, music, sound, 3D meshes and explorable worlds, with the options each model really has.",
+      "bullets": [
+        "122 catalogued models: 32 image, 43 video, 12 audio, 17 mesh, 5 world and 13 utility",
+        "Each field, limit and price is read from the provider",
+        "Providers are fal and the World Labs API"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "scene",
+      "icon": "box",
+      "title": "Scene studio",
+      "text": "Block out a 3D scene with props and cameras, then turn the camera's frame into a still and a still into a clip.",
+      "bullets": [
+        "CC0 models staged in front of a photo backdrop",
+        "A prompt bar on the stage with an outliner on the left",
+        "Opens GLB, FBX, OBJ and SPLAT"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "canvas",
+      "icon": "layers",
+      "title": "Canvas studio",
+      "text": "Layer pictures, shapes and 3D models, paint a mask, then send the mask or the whole composition to the right model.",
+      "bullets": [
+        "Photos, shapes and brush strokes in layers",
+        "A prompt box below the canvas",
+        "Edit image opens a picture from the library"
+      ],
+      "shot": "canvas"
+    },
+    {
+      "id": "edit",
+      "icon": "keyframe",
+      "title": "Edit studio",
+      "text": "A multi-track editor with trim, split, ripple, snapping, keyframes and masks.",
+      "bullets": [
+        "Clips, titles and music on one timeline",
+        "Export to MP4 or WebM, to disk and the library",
+        "Opens MP4, MOV, WEBM, MP3 and WAV"
+      ],
+      "shot": "timeline"
+    },
+    {
+      "id": "board",
+      "icon": "grid",
+      "title": "Board studio",
+      "text": "Boards of pictures, clips, notes, colours and links, with sections, ratings, tags and a palette.",
+      "bullets": [
+        "A grid view with tag filters",
+        "Colour swatches and notes beside the photos",
+        "Opens PNG, JPEG, WEBP and GIF"
+      ],
+      "shot": "board"
+    },
+    {
+      "id": "free-canvas",
+      "icon": "mark",
+      "title": "Free board canvas",
+      "text": "Switch a board to a free canvas with groups, snapping and layout tools, and present it full screen.",
+      "bullets": [
+        "Text labels beside the photos",
+        "Groups and snapping",
+        "Present a board full screen"
+      ],
+      "shot": "references"
+    },
+    {
+      "id": "tools",
+      "icon": "extensions",
+      "title": "Studios and tools",
+      "text": "Create, Canvas, Scene, Board and Edit sit beside smaller tools for single jobs.",
+      "bullets": [
+        "Angles, Remove background and Remove region",
+        "Frame extractor and Background change",
+        "Storyboard and Mesh tools"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "keys",
+      "icon": "shield",
+      "title": "Your keys, your library",
+      "text": "Generation runs on your own provider keys, kept in the system password store. No account, no credits.",
+      "bullets": [
+        "Imports and results stored by content, with thumbnails, posters and durations",
+        "A job queue that survives a restart",
+        "The engine listens on loopback only"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Built for agents",
+      "text": "./formcraft mcp serves 74 tools: 44 engine tools (generate, wait on jobs, search the library, manage projects) and 30 studio tools that work while the window is open.",
+      "bullets": [
+        "Agents are off until you allow them in Preferences, Agents",
+        "claude mcp add --transport stdio formcraft -- ./formcraft mcp registers it with Claude Code",
+        ".mcp.json, .codex/config.toml and .cursor/mcp.json are wired in the repository"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "git",
+      "Node 20.19+ or 22.12+",
+      "Python 3.11+",
+      "Rust for desktop builds"
+    ],
+    "install": "./formcraft_oc_install\nWindows: formcraft_oc_install.bat",
+    "run": "./formcraft boot\nWindows: formcraft.bat boot",
+    "desktop": "./formcraft install-desktop\n./formcraft boot --desktop",
+    "agents": "./formcraft mcp\nclaude mcp add --transport stdio formcraft -- ./formcraft mcp\n./formcraft mcp --where",
+    "topics": [
+      {
+        "title": "Where it runs",
+        "text": "The web UI is at http://localhost:5290 and the engine listens on 127.0.0.1:8290, loopback only."
+      },
+      {
+        "title": "Environment variables",
+        "text": "FORMCRAFT_DATA_DIR sets where the library, jobs, settings and logs live, FORMCRAFT_PORT sets the engine port (0 picks a free one) and FORMCRAFT_MCP_URL makes formcraft mcp attach to the engine at that URL."
+      },
+      {
+        "title": "Status",
+        "text": "All 24 planned phases have landed and the Linux build is checked. Generation was checked against the providers' published schemas and a mock, not against the live services, and the macOS and Windows builds are untested."
+      },
+      {
+        "title": "Where things live",
+        "text": "frontend holds the window, backend the engine with providers, model catalogue, jobs, library and MCP server, src-tauri the desktop shell and setup the scripts behind ./formcraft."
+      },
+      {
+        "title": "Releases",
+        "text": "All FormCraft builds are compiled and released from FormCompiler; the repository holds the source."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.8.1",
+      "date": "2026-11-02",
+      "items": [
+        "The README follows the Form family layout, with the app icon, badges and an up-to-date architecture tree"
+      ]
+    },
+    {
+      "version": "0.8.0",
+      "date": "2026-11-02",
+      "items": [
+        "Agents can use FormCraft through MCP: 44 engine tools and 30 studio tools",
+        "Agents are off until switched on in Preferences, Agents, with allow, ask or deny per client",
+        "A new app icon"
+      ]
+    },
+    {
+      "version": "0.7.0",
+      "date": "2026-11-02",
+      "items": [
+        "The Edit studio, a multi-track video editor with a timeline, keyframes and masks",
+        "Export to MP4 or WebM, to disk and to the library"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "src-tauri/tauri.conf.json",
+    "LICENSE"
+  ],
+  "captures": {
+    "board": {
+      "file": "/media/formcraft/ui-board-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A moodboard grid with five colour swatches, a note and a City section of photos, with tag filters above",
+      "size": ""
+    },
+    "canvas": {
+      "file": "/media/formcraft/ui-canvas-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Canvas studio with three photos, a white brush stroke, an orange circle and a blue triangle layered on a dark canvas, with a prompt box below",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formcraft/ui-hero-2.webp",
+      "light": "/media/formcraft/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The FormCraft Scene studio with a marble bust on a plinth, a treasure chest, an armchair, a rubber duck and a lantern in front of a sunset photo, with the outliner on the left and the prompt bar below",
+      "size": ""
+    },
+    "references": {
+      "file": "/media/formcraft/ui-references-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "A free board canvas with eight photos laid out in rows and a text label reading Warm light",
+      "size": ""
+    },
+    "timeline": {
+      "file": "/media/formcraft/ui-timeline-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Edit studio with the library on the left, a Venice sunset clip in the preview, transform controls on the right and four tracks of clips, titles and music on the timeline",
+      "size": ""
+    }
+  },
+  "credit": "The screenshots use CC0 photos and models from Poly Haven, and music made for the Form family."
+}
