@@ -1,6 +1,6 @@
 # Licences · formportal
 
-FormPortal is GPL-3.0-only (LICENSE, NOTICE), as formpromo, formMCP and formskills are. Everything in it is distributed to people's machines, so the distributed-build rules apply to all of it. Nothing is added to the tree before it is entered here.
+FormPortal is GPL-3.0-only (LICENSE, NOTICE), as FormPromo, FormMCP and FormSkills are. Everything in it is distributed to people's machines, so the distributed-build rules apply to all of it. Nothing is added to the tree before it is entered here.
 
 ## Desktop app
 
