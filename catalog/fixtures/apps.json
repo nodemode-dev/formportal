@@ -1,161 +1,694 @@
 {
-  "format": "formai-catalog",
-  "format_version": 1,
-  "generated": "2026-10-04T00:00:00Z",
-  "origin": "https://formai.studio",
-  "fixture": true,
-  "products": [
-    {
-      "id": "formai",
-      "name": "formai",
-      "kind": "portal",
-      "summary": "Installs, opens and updates formcut, formvis and formwav.",
-      "identifier": "studio.formai.portal",
-      "repository": "https://github.com/nodemode-ai/formai_dev",
-      "licence": "GPL-3.0-only",
-      "state": "prelaunch",
-      "channels": {}
-    },
-    {
-      "id": "formcut",
-      "name": "formcut",
-      "kind": "video",
-      "summary": "Video editing on your own machine: cut, grade, caption and export.",
-      "identifier": "app.formcut.desktop",
-      "repository": "https://github.com/nodemode-dev/formcut",
-      "licence": "GPL-3.0-only",
-      "agents": { "mcp": true, "skills": true },
-      "project_extensions": [
-        ".fc"
-      ],
-      "state": "live",
-      "channels": {
-        "stable": {
-          "version": "2.6.2",
-          "published": "2026-10-04T18:24:00Z",
-          "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.2",
-          "artifacts": [
-            {
-              "platform": "macos",
-              "arch": "arm64",
-              "kind": "zip",
-              "file": "formcut-2.6.2-macos-arm64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-macos-arm64.zip",
-              "bytes": 212000000,
-              "sha256": "ee82a85f05554bd79d270fac7a760e8e446ad8f5efbab07a8ec479504c0aaf39",
-              "minimum_os": "macOS 14"
-            },
-            {
-              "platform": "windows",
-              "arch": "x86_64",
-              "kind": "zip",
-              "file": "formcut-2.6.2-windows-x86_64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-windows-x86_64.zip",
-              "bytes": 245000000,
-              "sha256": "6d6b2b9377d829b0177bb0ccf145a256e57751562da6065aa100554c14d938a3",
-              "minimum_os": "Windows 10"
-            },
-            {
-              "platform": "linux",
-              "arch": "x86_64",
-              "kind": "zip",
-              "file": "formcut-2.6.2-linux-x86_64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-linux-x86_64.zip",
-              "bytes": 231000000,
-              "sha256": "c227087a8d7efa2ae9c883f088d59a1de54e3f7e9425d71e82b1e9bf96426b12",
-              "minimum_os": "glibc 2.35"
-            }
-          ],
-          "history": [
-            {
-              "version": "2.6.1",
-              "published": "2026-09-28T16:10:00Z",
-              "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.1",
-              "artifacts": [
-                { "platform": "macos", "arch": "arm64", "kind": "zip", "file": "formcut-2.6.1-macos-arm64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-macos-arm64.zip", "bytes": 211000000, "sha256": "28fcc7868fc8e921b6f2909627549eec943d99225cb9c2f024c56e74ab7df042", "minimum_os": "macOS 14" },
-                { "platform": "windows", "arch": "x86_64", "kind": "zip", "file": "formcut-2.6.1-windows-x86_64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-windows-x86_64.zip", "bytes": 244000000, "sha256": "412d8c177b7f43a37e59c8df07b527f2354a77d0926d14b519324a4f8d1e9512", "minimum_os": "Windows 10" },
-                { "platform": "linux", "arch": "x86_64", "kind": "zip", "file": "formcut-2.6.1-linux-x86_64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-linux-x86_64.zip", "bytes": 230000000, "sha256": "2ff08bc4afe64b65f6d1beb2ee690b0b21350167d0f32c858dc727971373e373", "minimum_os": "glibc 2.35" }
-              ]
-            },
-            {
-              "version": "2.6.0",
-              "published": "2026-09-20T12:00:00Z",
-              "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.0",
-              "artifacts": [
-                { "platform": "macos", "arch": "arm64", "kind": "zip", "file": "formcut-2.6.0-macos-arm64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-macos-arm64.zip", "bytes": 209000000, "sha256": "f7439801ac96c56e864c43692930377eecb4fd3a470ef93ba054d88346e386e4", "minimum_os": "macOS 14" },
-                { "platform": "windows", "arch": "x86_64", "kind": "zip", "file": "formcut-2.6.0-windows-x86_64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-windows-x86_64.zip", "bytes": 242000000, "sha256": "3109bd1ca061a0d15d387da30b1210e7c86271404717d79c03ac00eac7b6d818", "minimum_os": "Windows 10" },
-                { "platform": "linux", "arch": "x86_64", "kind": "zip", "file": "formcut-2.6.0-linux-x86_64.zip", "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-linux-x86_64.zip", "bytes": 228000000, "sha256": "845fb5efdacde0f07e28cdf6f795e462e77f3a0194c3a0978e21b428e03bc603", "minimum_os": "glibc 2.35" }
-              ]
-            }
-          ]
-        },
-        "beta": {
-          "version": "2.7.0-beta.1",
-          "published": "2026-10-04T19:00:00Z",
-          "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.7.0-beta.1",
-          "artifacts": [
-            {
-              "platform": "macos",
-              "arch": "arm64",
-              "kind": "zip",
-              "file": "formcut-2.7.0-beta.1-macos-arm64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-macos-arm64.zip",
-              "bytes": 214000000,
-              "sha256": "97edf2cb3dc6b203a28a53cce4d1fa16300ec76ddc67a4d471c44870665190d6",
-              "minimum_os": "macOS 14"
-            },
-            {
-              "platform": "windows",
-              "arch": "x86_64",
-              "kind": "zip",
-              "file": "formcut-2.7.0-beta.1-windows-x86_64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-windows-x86_64.zip",
-              "bytes": 247000000,
-              "sha256": "45e2c1c94003ce2c7adbb1ba001131d8b30d973fff19d4d2d9eefab1c897042b",
-              "minimum_os": "Windows 10"
-            },
-            {
-              "platform": "linux",
-              "arch": "x86_64",
-              "kind": "zip",
-              "file": "formcut-2.7.0-beta.1-linux-x86_64.zip",
-              "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-linux-x86_64.zip",
-              "bytes": 233000000,
-              "sha256": "275b9b189191f5515647035a4a8de1b214c75dc3eb0cfbe374e3c0e18bc7783b",
-              "minimum_os": "glibc 2.35"
-            }
-          ]
-        }
+ "format": "formai-catalog",
+ "format_version": 1,
+ "generated": "2026-10-04T00:00:00Z",
+ "origin": "https://formai.studio",
+ "fixture": true,
+ "products": [
+  {
+   "id": "formai",
+   "name": "formai",
+   "kind": "portal",
+   "summary": "Installs, opens and updates formcut, formvis and formwav.",
+   "identifier": "studio.formai.portal",
+   "repository": "https://github.com/nodemode-ai/formai_dev",
+   "licence": "GPL-3.0-only",
+   "state": "prelaunch",
+   "channels": {}
+  },
+  {
+   "id": "formcut",
+   "name": "formcut",
+   "kind": "video",
+   "summary": "Video editing on your own machine: cut, grade, caption and export.",
+   "identifier": "app.formcut.desktop",
+   "repository": "https://github.com/nodemode-dev/formcut",
+   "licence": "GPL-3.0-only",
+   "agents": {
+    "mcp": true,
+    "skills": true
+   },
+   "project_extensions": [
+    ".fc"
+   ],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "2.6.2",
+     "published": "2026-10-04T18:24:00Z",
+     "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.2",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "zip",
+       "file": "formcut-2.6.2-macos-arm64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-macos-arm64.zip",
+       "bytes": 212000000,
+       "sha256": "ee82a85f05554bd79d270fac7a760e8e446ad8f5efbab07a8ec479504c0aaf39",
+       "minimum_os": "macOS 14"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "zip",
+       "file": "formcut-2.6.2-windows-x86_64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-windows-x86_64.zip",
+       "bytes": 245000000,
+       "sha256": "6d6b2b9377d829b0177bb0ccf145a256e57751562da6065aa100554c14d938a3",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "zip",
+       "file": "formcut-2.6.2-linux-x86_64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.2/formcut-2.6.2-linux-x86_64.zip",
+       "bytes": 231000000,
+       "sha256": "c227087a8d7efa2ae9c883f088d59a1de54e3f7e9425d71e82b1e9bf96426b12",
+       "minimum_os": "glibc 2.35"
       }
+     ],
+     "history": [
+      {
+       "version": "2.6.1",
+       "published": "2026-09-28T16:10:00Z",
+       "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.1",
+       "artifacts": [
+        {
+         "platform": "macos",
+         "arch": "arm64",
+         "kind": "zip",
+         "file": "formcut-2.6.1-macos-arm64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-macos-arm64.zip",
+         "bytes": 211000000,
+         "sha256": "28fcc7868fc8e921b6f2909627549eec943d99225cb9c2f024c56e74ab7df042",
+         "minimum_os": "macOS 14"
+        },
+        {
+         "platform": "windows",
+         "arch": "x86_64",
+         "kind": "zip",
+         "file": "formcut-2.6.1-windows-x86_64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-windows-x86_64.zip",
+         "bytes": 244000000,
+         "sha256": "412d8c177b7f43a37e59c8df07b527f2354a77d0926d14b519324a4f8d1e9512",
+         "minimum_os": "Windows 10"
+        },
+        {
+         "platform": "linux",
+         "arch": "x86_64",
+         "kind": "zip",
+         "file": "formcut-2.6.1-linux-x86_64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.1/formcut-2.6.1-linux-x86_64.zip",
+         "bytes": 230000000,
+         "sha256": "2ff08bc4afe64b65f6d1beb2ee690b0b21350167d0f32c858dc727971373e373",
+         "minimum_os": "glibc 2.35"
+        }
+       ]
+      },
+      {
+       "version": "2.6.0",
+       "published": "2026-09-20T12:00:00Z",
+       "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.6.0",
+       "artifacts": [
+        {
+         "platform": "macos",
+         "arch": "arm64",
+         "kind": "zip",
+         "file": "formcut-2.6.0-macos-arm64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-macos-arm64.zip",
+         "bytes": 209000000,
+         "sha256": "f7439801ac96c56e864c43692930377eecb4fd3a470ef93ba054d88346e386e4",
+         "minimum_os": "macOS 14"
+        },
+        {
+         "platform": "windows",
+         "arch": "x86_64",
+         "kind": "zip",
+         "file": "formcut-2.6.0-windows-x86_64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-windows-x86_64.zip",
+         "bytes": 242000000,
+         "sha256": "3109bd1ca061a0d15d387da30b1210e7c86271404717d79c03ac00eac7b6d818",
+         "minimum_os": "Windows 10"
+        },
+        {
+         "platform": "linux",
+         "arch": "x86_64",
+         "kind": "zip",
+         "file": "formcut-2.6.0-linux-x86_64.zip",
+         "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.6.0/formcut-2.6.0-linux-x86_64.zip",
+         "bytes": 228000000,
+         "sha256": "845fb5efdacde0f07e28cdf6f795e462e77f3a0194c3a0978e21b428e03bc603",
+         "minimum_os": "glibc 2.35"
+        }
+       ]
+      }
+     ]
     },
-    {
-      "id": "formvis",
-      "name": "formvis",
-      "kind": "image",
-      "summary": "Layered image editing: layers, masks, selections, painting and export.",
-      "identifier": "ai.nodemode.formvis",
-      "repository": "https://github.com/nodemode-dev/formvis",
-      "licence": "GPL-3.0-only",
-      "project_extensions": [
-        ".fmv",
-        ".formvis"
-      ],
-      "state": "public",
-      "channels": {}
-    },
-    {
-      "id": "formwav",
-      "name": "formwav",
-      "kind": "audio",
-      "summary": "Audio editing: record, edit, repair, mix and export.",
-      "identifier": "ai.nodemode.formwav",
-      "repository": "https://github.com/nodemode-dev/formwav",
-      "licence": "GPL-3.0-only",
-      "project_extensions": [
-        ".fmw"
-      ],
-      "state": "prelaunch",
-      "channels": {}
+    "beta": {
+     "version": "2.7.0-beta.1",
+     "published": "2026-10-04T19:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formcut/releases/tag/v2.7.0-beta.1",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "zip",
+       "file": "formcut-2.7.0-beta.1-macos-arm64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-macos-arm64.zip",
+       "bytes": 214000000,
+       "sha256": "97edf2cb3dc6b203a28a53cce4d1fa16300ec76ddc67a4d471c44870665190d6",
+       "minimum_os": "macOS 14"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "zip",
+       "file": "formcut-2.7.0-beta.1-windows-x86_64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-windows-x86_64.zip",
+       "bytes": 247000000,
+       "sha256": "45e2c1c94003ce2c7adbb1ba001131d8b30d973fff19d4d2d9eefab1c897042b",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "zip",
+       "file": "formcut-2.7.0-beta.1-linux-x86_64.zip",
+       "url": "https://github.com/nodemode-dev/formcut/releases/download/v2.7.0-beta.1/formcut-2.7.0-beta.1-linux-x86_64.zip",
+       "bytes": 233000000,
+       "sha256": "275b9b189191f5515647035a4a8de1b214c75dc3eb0cfbe374e3c0e18bc7783b",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
     }
-  ]
+   }
+  },
+  {
+   "id": "formvis",
+   "name": "FormVis",
+   "kind": "image",
+   "summary": "Layered image editing: layers, masks, selections, painting and export.",
+   "identifier": "ai.nodemode.formvis",
+   "repository": "https://github.com/nodemode-dev/formvis",
+   "licence": "Apache-2.0",
+   "project_extensions": [
+    ".fmv",
+    ".formvis"
+   ],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "1.99.7",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formvis/releases/tag/v1.99.7",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formvis-1.99.7-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.7/formvis-1.99.7-macos-arm64.dmg",
+       "bytes": 104000000,
+       "sha256": "2aabccf6e809188b67f024ed0e8d4bc9c02aee043f1f61c42c80240055a056cf",
+       "minimum_os": "macOS 14"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formvis-1.99.7-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.7/formvis-1.99.7-windows-x86_64.msi",
+       "bytes": 104000000,
+       "sha256": "ea95f77870e42ae21a5d4f533f8c26f0ced5c06ffd8ac2e394265facc2207edd",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formvis-1.99.7-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.7/formvis-1.99.7-linux-x86_64.AppImage",
+       "bytes": 104000000,
+       "sha256": "74e931b0450c960820f8bd4d03e77104d54f0958da6cbdad776dc6aae40daf36",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formwav",
+   "name": "FormWav",
+   "kind": "audio",
+   "summary": "Audio editing: record, edit, repair, mix and export.",
+   "identifier": "ai.nodemode.formwav",
+   "repository": "https://github.com/nodemode-dev/formwav",
+   "licence": "Apache-2.0",
+   "project_extensions": [
+    ".fmw"
+   ],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "2.22.3",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formwav/releases/tag/v2.22.3",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formwav-2.22.3-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formwav/releases/download/v2.22.3/formwav-2.22.3-macos-arm64.dmg",
+       "bytes": 71000000,
+       "sha256": "59e190a39ef6623565fec13556003bed14949386428ab9cd1319bdc5c3ccb889",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formwav-2.22.3-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formwav/releases/download/v2.22.3/formwav-2.22.3-windows-x86_64.msi",
+       "bytes": 71000000,
+       "sha256": "7f8eb7afd85c9530274c24bd9889eac9ec962db064a448f490ec61fad8b863ae",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formwav-2.22.3-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formwav/releases/download/v2.22.3/formwav-2.22.3-linux-x86_64.AppImage",
+       "bytes": 71000000,
+       "sha256": "65d661fb4541e8736b438cdca07533ce05096e0c4294e5670948576e53e9082c",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formlit",
+   "name": "FormLit",
+   "kind": "photo",
+   "summary": "Photo library and raw development on your own machine.",
+   "identifier": "ai.nodemode.formlit",
+   "repository": "https://github.com/nodemode-dev/formlit",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.48.0",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formlit/releases/tag/v0.48.0",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formlit-0.48.0-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formlit/releases/download/v0.48.0/formlit-0.48.0-macos-arm64.dmg",
+       "bytes": 66000000,
+       "sha256": "b9f94b172597456731cf92727ac4a79d735e641fa23eb274a7a839183bf609b5",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formlit-0.48.0-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formlit/releases/download/v0.48.0/formlit-0.48.0-windows-x86_64.msi",
+       "bytes": 66000000,
+       "sha256": "1ae23d75929fad35ff1340105c98e5287a9154cbac9faeb7858c983a3c4649e3",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formlit-0.48.0-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formlit/releases/download/v0.48.0/formlit-0.48.0-linux-x86_64.AppImage",
+       "bytes": 66000000,
+       "sha256": "8ea37b76d499274c54ae9f018ab4b9c25e6430e68c94a28a824cd3210d6ec8e9",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formvfx",
+   "name": "FormVFX",
+   "kind": "motion",
+   "summary": "Motion graphics and visual effects on a layered timeline.",
+   "identifier": "ai.nodemode.formvfx",
+   "repository": "https://github.com/nodemode-dev/formvfx",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.52.8",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formvfx/releases/tag/v0.52.8",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formvfx-0.52.8-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formvfx/releases/download/v0.52.8/formvfx-0.52.8-macos-arm64.dmg",
+       "bytes": 118000000,
+       "sha256": "43cccbc3fa2335e33e6bc3d0909af9c2376eaa07b5a64d950be2e56b17213e56",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formvfx-0.52.8-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formvfx/releases/download/v0.52.8/formvfx-0.52.8-windows-x86_64.msi",
+       "bytes": 118000000,
+       "sha256": "c47e3e62a6567b9aaa8b4ff713e6073c32892a8a787164e29d52fd4a1a814cd0",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formvfx-0.52.8-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formvfx/releases/download/v0.52.8/formvfx-0.52.8-linux-x86_64.AppImage",
+       "bytes": 118000000,
+       "sha256": "4a407358a1885852823593f35b74656effda2744374a5633e209570de5231fd2",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formpdf",
+   "name": "FormPDF",
+   "kind": "pdf",
+   "summary": "A PDF editor that runs on your computer: view, comment, fill, sign and edit.",
+   "identifier": "ai.nodemode.formpdf",
+   "repository": "https://github.com/nodemode-dev/formpdf",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.57.3",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formpdf/releases/tag/v0.57.3",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formpdf-0.57.3-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formpdf/releases/download/v0.57.3/formpdf-0.57.3-macos-arm64.dmg",
+       "bytes": 58000000,
+       "sha256": "ce39c9549f2baf6eeb7c7b6852620193e5329c5ca418ec7a9cd52e3a9af2c0a2",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formpdf-0.57.3-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formpdf/releases/download/v0.57.3/formpdf-0.57.3-windows-x86_64.msi",
+       "bytes": 58000000,
+       "sha256": "c137c2e0f3621950f77c3a392ed2ff374501fcca291d085e2b83a9cf8cfdab5e",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formpdf-0.57.3-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formpdf/releases/download/v0.57.3/formpdf-0.57.3-linux-x86_64.AppImage",
+       "bytes": 58000000,
+       "sha256": "25658ae1d18f22d8fe37c359b909e9542d9e059a9587d36e1b6b4131541308e1",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formmd",
+   "name": "Form.md",
+   "kind": "notes",
+   "summary": "Notes, docs and databases built on plain Markdown files.",
+   "identifier": "ai.nodemode.formmd",
+   "repository": "https://github.com/nodemode-dev/form.md",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.48.0",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/form.md/releases/tag/v0.48.0",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formmd-0.48.0-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/form.md/releases/download/v0.48.0/formmd-0.48.0-macos-arm64.dmg",
+       "bytes": 49000000,
+       "sha256": "35de4c8d014ca64c632131eca192349bb20b7078f98dfcee00a2daf1a1ddbce5",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formmd-0.48.0-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/form.md/releases/download/v0.48.0/formmd-0.48.0-windows-x86_64.msi",
+       "bytes": 49000000,
+       "sha256": "270b81fec896d09c31e10c6a5b3eea6bd42a8a20774ca73809d54c3affbdc188",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formmd-0.48.0-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/form.md/releases/download/v0.48.0/formmd-0.48.0-linux-x86_64.AppImage",
+       "bytes": 49000000,
+       "sha256": "57f5147fcdf6a5b53e22fce12d6601e24bded0896d1f485dbfc1e8f8bdc33547",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formslide",
+   "name": "FormDeck",
+   "kind": "slides",
+   "summary": "Presentations: build slides, present and export.",
+   "identifier": "ai.nodemode.formdeck",
+   "repository": "https://github.com/nodemode-dev/formdeck",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.30.7",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formdeck/releases/tag/v0.30.7",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formdeck-0.30.7-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formdeck/releases/download/v0.30.7/formdeck-0.30.7-macos-arm64.dmg",
+       "bytes": 83000000,
+       "sha256": "b2183078939d4ad4519991e82b3c5ae9fc80884bae428be88c7864cfc6685ef6",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formdeck-0.30.7-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formdeck/releases/download/v0.30.7/formdeck-0.30.7-windows-x86_64.msi",
+       "bytes": 83000000,
+       "sha256": "e1f747d4478f707e7f84779199b99c9856fd1a6f4a77c76a18540aabbf215cea",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formdeck-0.30.7-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formdeck/releases/download/v0.30.7/formdeck-0.30.7-linux-x86_64.AppImage",
+       "bytes": 83000000,
+       "sha256": "19bca0433bc599c4cb9c5d6dc4110f5c240eec69d9cfcbf4944f623b48ba8012",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formmcp",
+   "name": "FormMCP",
+   "kind": "gateway",
+   "summary": "One MCP server that shows agents every FormAI app and loads an app's own tools only when a task needs it.",
+   "identifier": "ai.nodemode.formmcp",
+   "repository": "https://github.com/nodemode-dev/formMCP",
+   "licence": "GPL-3.0-only",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.7.8",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formMCP/releases/tag/v0.7.8",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formmcp-0.7.8-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formMCP/releases/download/v0.7.8/formmcp-0.7.8-macos-arm64.dmg",
+       "bytes": 22000000,
+       "sha256": "bb2bfcaa3cbf959c3f199a134eb0324b0a7e889d93d4d90442e9c7e266438285",
+       "minimum_os": "macOS 11"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formmcp-0.7.8-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formMCP/releases/download/v0.7.8/formmcp-0.7.8-windows-x86_64.msi",
+       "bytes": 22000000,
+       "sha256": "594dd280783735f11ad76a96685e1b4b66cdf28e524039074742e3c66030d5b5",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formmcp-0.7.8-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formMCP/releases/download/v0.7.8/formmcp-0.7.8-linux-x86_64.AppImage",
+       "bytes": 22000000,
+       "sha256": "2d2a80350ffa8753be4c9199e58a431846fdde986b06d5cbf59d62e128adcdc6",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formskills",
+   "name": "FormSkills",
+   "kind": "skills",
+   "summary": "The FormAI apps' released skills: read, download, keep your own edits and install them into your agent.",
+   "identifier": "ai.nodemode.formskills",
+   "repository": "https://github.com/nodemode-dev/formskills",
+   "licence": "GPL-3.0-only",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.7.7",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formskills/releases/tag/v0.7.7",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formskills-0.7.7-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formskills/releases/download/v0.7.7/formskills-0.7.7-macos-arm64.dmg",
+       "bytes": 14000000,
+       "sha256": "577d0b5d7fcdf5bb250ec9a58bfd8397b9f82fc757f59d020cdad683f468fb6f",
+       "minimum_os": "macOS 11"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formskills-0.7.7-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formskills/releases/download/v0.7.7/formskills-0.7.7-windows-x86_64.msi",
+       "bytes": 14000000,
+       "sha256": "af4fa295880023680a336ff4b3e67db4cfcb79587991f0a7cf1c4bc482edc9c4",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formskills-0.7.7-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formskills/releases/download/v0.7.7/formskills-0.7.7-linux-x86_64.AppImage",
+       "bytes": 14000000,
+       "sha256": "a3515508e0f16cd700680d7b8d7f030df0227bd4bec9e24d79ad8590185a31a9",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "formtray",
+   "name": "FormTray",
+   "kind": "launcher",
+   "summary": "One dock icon for every FormAI app: switch, launch and arrange the family.",
+   "identifier": "ai.nodemode.formtray",
+   "repository": "https://github.com/nodemode-dev/formtray",
+   "licence": "Apache-2.0",
+   "project_extensions": [],
+   "state": "live",
+   "channels": {
+    "stable": {
+     "version": "0.10.2",
+     "published": "2026-11-05T17:00:00Z",
+     "notes": "https://github.com/nodemode-dev/formtray/releases/tag/v0.10.2",
+     "artifacts": [
+      {
+       "platform": "macos",
+       "arch": "arm64",
+       "kind": "dmg",
+       "file": "formtray-0.10.2-macos-arm64.dmg",
+       "url": "https://github.com/nodemode-dev/formtray/releases/download/v0.10.2/formtray-0.10.2-macos-arm64.dmg",
+       "bytes": 9000000,
+       "sha256": "854a9be76787ab2d80c063ebfb7036133fbfe7b9a00d5f54213e96388d249afc",
+       "minimum_os": "macOS 12"
+      },
+      {
+       "platform": "windows",
+       "arch": "x86_64",
+       "kind": "msi",
+       "file": "formtray-0.10.2-windows-x86_64.msi",
+       "url": "https://github.com/nodemode-dev/formtray/releases/download/v0.10.2/formtray-0.10.2-windows-x86_64.msi",
+       "bytes": 9000000,
+       "sha256": "5e6f92a763e3ea188e5b213f7c01888aa10c2b9a13db44ea608b8d53c9e2a85e",
+       "minimum_os": "Windows 10"
+      },
+      {
+       "platform": "linux",
+       "arch": "x86_64",
+       "kind": "appimage",
+       "file": "formtray-0.10.2-linux-x86_64.AppImage",
+       "url": "https://github.com/nodemode-dev/formtray/releases/download/v0.10.2/formtray-0.10.2-linux-x86_64.AppImage",
+       "bytes": 9000000,
+       "sha256": "23bee00097da863980b3848a8826ba9f4bc09b62fb54d9039f9c960ac4603275",
+       "minimum_os": "glibc 2.35"
+      }
+     ]
+    }
+   }
+  }
+ ]
 }

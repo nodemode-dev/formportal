@@ -34,7 +34,7 @@ fn every_link_the_interface_opens_is_allowed() {
     let html = repo_file("frontend/index.html");
     let anchors = web_anchors(&html);
     assert!(anchors.len() >= 9, "{anchors:?}");
-    let pages = literals(&repo_file("frontend/vite.config.ts"));
+    let pages = literals(&format!("{}\n{}", repo_file("frontend/vite.config.ts"), repo_file("frontend/markup.ts")));
     assert!(pages.iter().any(|u| u == "https://formai.studio/download/"), "{pages:?}");
     let products: serde_json::Value = serde_json::from_str(&repo_file("catalog/products.json")).unwrap();
     let mut app_pages = Vec::new();

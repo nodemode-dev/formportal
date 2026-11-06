@@ -171,7 +171,9 @@ export const learn: Extension = {
       const finished = view.tutorials.filter((t) => t.finished).length;
       setText(count, tr("{done} of {all} finished", { done: finished, all: view.tutorials.length }));
       if (error) {
-        const text = view.index_error ? `The Form apps' tutorials could not be read, so only FormPortal's own are listed: ${view.index_error}` : "";
+        const refused = Boolean(view.index_error && /refused|not valid|not a tutorial index/.test(view.index_error));
+        const text = !view.index_error ? "" : refused ? tr("The Form apps' tutorials were refused, so only FormPortal's own are listed: {why}", { why: view.index_error }) : tr("Each Form app's own tutorials appear here as they are published.");
+        error.classList.toggle("learn-quiet", !refused);
         setText(error, text);
         if (error.hidden === Boolean(text)) error.hidden = !text;
       }

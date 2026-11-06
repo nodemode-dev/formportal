@@ -1,6 +1,7 @@
 import type { NoticeCategory } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
+import hues from "../../../../design/app-hues.json";
 
 const KEEP = 30;
 const SHOW_MS = 6000;
@@ -36,10 +37,29 @@ export const notices: Extension = {
       root.removeAttribute("data-unread");
     });
 
+    const named = Object.keys(hues)
+      .filter((id) => id !== "formai")
+      .map((id) => ({ id, name: engine.name(id) }))
+      .filter((a) => a.name && a.name !== a.id)
+      .sort((a, b) => b.name.length - a.name.length);
+    const appOf = (text: string) => {
+      let best: { id: string; at: number } | null = null;
+      for (const a of named) {
+        const at = text.indexOf(a.name);
+        if (at >= 0 && (!best || at < best.at)) best = { id: a.id, at };
+      }
+      return best?.id ?? null;
+    };
+
     const toast = (text: string, tone: "info" | "fault") => {
       const item = document.createElement("div");
       item.className = "toast";
       item.dataset.tone = tone;
+      const app = tone === "fault" ? null : appOf(text);
+      if (app) {
+        item.dataset.app = app;
+        item.style.setProperty("--hue", (hues as Record<string, string>)[app] ?? "");
+      }
       item.setAttribute("role", tone === "fault" ? "alert" : "status");
       const body = document.createElement("p");
       body.textContent = text;

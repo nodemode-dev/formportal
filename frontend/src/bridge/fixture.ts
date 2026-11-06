@@ -19,6 +19,12 @@ function browserPlatform(): Platform {
 
 const catalog = apps as unknown as Catalog;
 const installed = new Map<string, InstallRecord>();
+for (const item of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",").filter(Boolean)) {
+  const [product, wanted] = item.split("@");
+  const offered = catalog.products.find((p) => p.id === product)?.channels.stable?.version;
+  const version = wanted ?? offered;
+  if (version) installed.set(`${product}:stable`, { product, channel: "stable", version, previous: null });
+}
 const pause = (ms: number) => new Promise<void>((done) => window.setTimeout(done, ms));
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
 const SAMPLE = "/home/you/Documents/Form";
@@ -152,6 +158,22 @@ export const fixtureBridge: Bridge = {
   selfUpdateInstall: async () => {
     await pause(300);
     throw new Error("the browser mode cannot restart FormPortal");
+  },
+  onFileDrop: (handler) => {
+    const files = (event: DragEvent) => Array.from(event.dataTransfer?.files ?? []).map((f) => f.name);
+    document.addEventListener("dragover", (event) => {
+      if (!event.dataTransfer?.types.includes("Files")) return;
+      event.preventDefault();
+      handler([], "over");
+    });
+    document.addEventListener("dragleave", (event) => {
+      if (!event.relatedTarget) handler([], "leave");
+    });
+    document.addEventListener("drop", (event) => {
+      if (!event.dataTransfer?.types.includes("Files")) return;
+      event.preventDefault();
+      handler(files(event), "drop");
+    });
   },
   onPackage: (handler) => {
     const path = new URLSearchParams(window.location.search).get("package");

@@ -1,0 +1,260 @@
+{
+  "id": "formslot",
+  "name": "FormSlot",
+  "version": "0.16.2",
+  "repo": "https://github.com/nodemode-dev/formslot",
+  "kind": "Codebase memory for coding agents",
+  "title": "codebase memory that tells agents what is already built",
+  "summary": "FormSlot is the Form family's memory for coding agents: what is already built, where it lives and the rules it follows, served in few tokens. Rust and SQLite, on your machine.",
+  "lede": "FormSlot is codebase memory for coding agents. It records what is already built, where it lives and the rules it follows, and serves that in as few tokens as the task needs. It is written in Rust on SQLite and runs on your own machine. It has no window of its own: you use it from a terminal, from Claude Code, or in SubForm, where its panel lives.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Names the code your repositories already have as slots, so an agent finds it before writing a second copy.",
+    "Reads owner rules, declined approaches and decisions from your repository and recalls them with a source line.",
+    "Builds a context pack for a task that fits a token budget you choose, with a byte-stable prefix that caches well.",
+    "Answers the CLI, an MCP server on stdio and Claude Code hooks from the same index."
+  ],
+  "facts": [
+    {
+      "dt": "Workspace",
+      "dd": "Rust 2024 with two crates, formslot-core and formslot-cli"
+    },
+    {
+      "dt": "Store",
+      "dd": "SQLite bundled through rusqlite, with the system git reading objects at a pinned commit"
+    },
+    {
+      "dt": "Search",
+      "dd": "bm25 and trigram lists fused with the graph, memory and slots, plus a PageRank repo map"
+    },
+    {
+      "dt": "Evaluated",
+      "dd": "formslot eval scores recall over a 147-task gold set in docs/eval"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "slots",
+      "kicker": "Slots and drift",
+      "title": "Reuse, not rewrite",
+      "text": "A slot is a manifest for code worth reusing, with its files, hashes and every copy found. Drift says which copies are clean, local, behind or diverged.",
+      "shot": "slots"
+    },
+    {
+      "id": "memory",
+      "kicker": "Memory and packs",
+      "title": "Rules it remembers",
+      "text": "Recall returns ranked records with a token estimate. A pack joins the slots, memory and code excerpts a task needs under your budget.",
+      "shot": "recall"
+    },
+    {
+      "id": "agents",
+      "kicker": "Agents",
+      "title": "Agent-ready",
+      "text": "The same index answers the CLI, an MCP server on stdio and Claude Code hooks, so every route sees the same store.",
+      "shot": "editor"
+    }
+  ],
+  "features": [
+    {
+      "id": "slots",
+      "icon": "layers",
+      "title": "Slots and drift",
+      "text": "A slot is a manifest for code worth reusing.",
+      "bullets": [
+        "Lists its files, hashes and every copy found",
+        "Drift reports copies as clean, local, behind or diverged",
+        "26 first-load slots ship in data/"
+      ],
+      "shot": "slots"
+    },
+    {
+      "id": "memory",
+      "icon": "book",
+      "title": "Memory",
+      "text": "Owner rules, declined approaches and decisions are read from your repository and recalled with a source line.",
+      "bullets": [
+        "Recall returns ranked records with a token estimate",
+        "formslot recall \"seam carving\""
+      ],
+      "shot": "recall"
+    },
+    {
+      "id": "pack",
+      "icon": "box",
+      "title": "Context packs",
+      "text": "A pack joins the slots, memory and code excerpts a task needs under a token budget you choose.",
+      "bullets": [
+        "The prefix is byte-stable, so it caches well",
+        "formslot pack \"add a section to the Preferences dialog\" --corpus my-repo --tokens 4000"
+      ],
+      "shot": "recall"
+    },
+    {
+      "id": "search",
+      "icon": "target",
+      "title": "Ranked search",
+      "text": "bm25 and trigram lists are fused with the graph, memory and slots.",
+      "bullets": [
+        "A PageRank repo map",
+        "The dense search tier is opt-in and off by default"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "languages",
+      "icon": "code",
+      "title": "Five languages parsed",
+      "text": "TypeScript, Python, Rust, CSS and HTML are parsed into code units.",
+      "bullets": [
+        "A per-repository call and use graph",
+        "formslot add ~/code/my-repo indexes a repository at HEAD"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "mcp",
+      "icon": "plug",
+      "title": "MCP server",
+      "text": "9 MCP tools read the same store as the CLI and the Claude Code hooks.",
+      "bullets": [
+        "slot_find, slot_get, slot_source, slot_context_pack and five more",
+        "formslot mcp runs on stdio for Claude Code, Codex and Cursor",
+        "MCP also runs over HTTP"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "hooks",
+      "icon": "extensions",
+      "title": "Claude Code plugin and hooks",
+      "text": "formslot install <repo> writes the plugin files and hooks into a repository.",
+      "bullets": [
+        "A map digest at session start",
+        "A reuse and declined-feature check before every write",
+        "A duplicate audit at stop",
+        "A lookup skill"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "local",
+      "icon": "shield",
+      "title": "On your machine",
+      "text": "The store is local SQLite, and the HTTP service listens on 127.0.0.1.",
+      "bullets": [
+        "FORMSLOT_DATA_DIR moves the data folder from ~/.formslot",
+        "FORMSLOT_PORT moves the service port from 5645 (0 picks a free one)"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "eval",
+      "icon": "grade",
+      "title": "Evaluated",
+      "text": "formslot eval scores recall over a 147-task gold set.",
+      "bullets": [
+        "Reports are in docs/eval"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "git",
+      "Rust 1.90 or later"
+    ],
+    "install": "git clone git@github.com:nodemode-dev/formslot.git\ncd formslot\n./formslot_oc_install\nWindows: formslot_oc_install.bat",
+    "run": "./formslot setup\nWindows: formslot.bat setup",
+    "desktop": "",
+    "agents": "formslot mcp runs an MCP server on stdio for Claude Code, Codex and Cursor. formslot install <repo> writes the plugin files and hooks into a repository. See AGENTS.md and docs/CONTRACT.md.",
+    "topics": [
+      {
+        "title": "Guide",
+        "text": "docs/GUIDE.md is the plain-language guide for new users."
+      },
+      {
+        "title": "Contract",
+        "text": "docs/CONTRACT.md describes the MCP result shapes and the rules slots follow."
+      },
+      {
+        "title": "Configuration",
+        "text": "FORMSLOT_DATA_DIR moves the data folder from ~/.formslot; FORMSLOT_PORT moves the service port from 5645."
+      },
+      {
+        "title": "Evaluation",
+        "text": "docs/eval holds the recall reports, and the dense search tier is opt-in and off by default."
+      },
+      {
+        "title": "Releases",
+        "text": "FormSlot builds are compiled and released from FormCompiler; the repository holds the source."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.16.0",
+      "date": "2026-11-01",
+      "items": [
+        "slot suggest proposes new slots from duplicate clusters the store already found",
+        "The dense list reorders code units only, so it no longer pushes owner rules and declines out",
+        "slot_context_pack reaches the model as text and slot_conventions keeps owner rules"
+      ]
+    },
+    {
+      "version": "0.15.0",
+      "date": "2026-11-01",
+      "items": [
+        "slot_source returns a slot's files at its pinned commit, redacted and capped",
+        "Rule slots are native everywhere in search",
+        "The repo map is stored per corpus state, so a one-off pack is about a third faster"
+      ]
+    },
+    {
+      "version": "0.14.0",
+      "date": "2026-11-01",
+      "items": [
+        "Search and pack about 3.5x faster from a cached repo map and prepared statements",
+        "setup --remove deletes only formslot's own files and never under a running service"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "Cargo.toml",
+    "LICENSE",
+    "git log",
+    "setup/HASHOUT_LOG.md"
+  ],
+  "captures": {
+    "slots": {
+      "file": "/media/formslot/ui-slots-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Terminal listing slots with their copy counts, then a drift report for a repository",
+      "size": ""
+    },
+    "recall": {
+      "file": "/media/formslot/ui-recall-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Terminal showing a recalled owner rule and the start of a context pack for a task",
+      "size": ""
+    },
+    "editor": {
+      "file": "/media/formslot/ui-hero-2.webp", "light": "/media/formslot/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Dark terminal showing formslot stats for a repository and a ranked search for toast notification",
+      "size": ""
+    }
+  },
+  "credit": ""
+}

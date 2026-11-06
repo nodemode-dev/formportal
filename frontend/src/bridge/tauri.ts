@@ -64,6 +64,13 @@ export const tauriBridge: Bridge = {
   onVersionsKept: (handler) => {
     void tauri().event.listen<string[]>("versions-kept", ({ payload }) => handler(payload));
   },
+  onFileDrop: (handler) => {
+    const events = tauri().event;
+    void events.listen<{ paths?: string[] }>("tauri://drag-enter", ({ payload }) => handler(payload?.paths ?? [], "over"));
+    void events.listen<{ paths?: string[] }>("tauri://drag-over", () => handler([], "over"));
+    void events.listen<unknown>("tauri://drag-leave", () => handler([], "leave"));
+    void events.listen<{ paths?: string[] }>("tauri://drag-drop", ({ payload }) => handler(payload?.paths ?? [], "drop"));
+  },
   onPackage: (handler) => {
     void tauri().event.listen<string>("package-open", ({ payload }) => handler(payload));
     void tauri()

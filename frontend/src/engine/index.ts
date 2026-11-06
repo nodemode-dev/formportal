@@ -27,6 +27,7 @@ export interface EngineEvents {
   account: { status: GithubStatus | null; code: DeviceCode | null; busy: boolean; error: string | null };
   shares: { view: SharesView };
   shareResult: { busy: boolean; text: string; url: string };
+  filedrop: { paths: string[]; phase: "over" | "leave" | "drop" };
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false };
