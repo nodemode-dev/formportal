@@ -2,6 +2,19 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.59.0 · 2026-11-06
+
+- Installing works on macOS again. Form apps come as disk images with a licence, and FormPortal now accepts it for you instead of the install being cancelled.
+- A new look, the Form family's own: the same window, controls and themes as FormVis, FormDeck, FormLit and FormVFX, with every app in its own colour.
+- Home: the whole family at a glance (34 apps, the ones that are out lit, the rest waiting with their dates), your installed apps with Open and Update, one button to install every released app, and the apps still to get.
+- Drop a file on FormPortal to find the app that opens it, or open it straight away if that app is installed.
+- Every app has its own page with its screenshot (light or dark, following your theme), what it does, what's new, versions and beta, and its AI tools.
+- The sidebar collapses to icons with the handle on its edge, and drags wider or narrower; FormPortal remembers it.
+- Messages appear at the bottom centre in a clear glass outline: red for anything that went wrong, and in the app's own colour for anything about that app.
+- The family is the 34 apps and names from formai.studio: FormDeck, FormSkills, FormMCP, FormAT and the rest. Each app shows one state everywhere: Install, Installing, Open or Update.
+- The Included and Beta pages are gone; there is no plan to show. Betas are on each app's page.
+- Learn no longer shows an error while the apps' own tutorials are not published yet.
+
 ## v0.58.0 · 2026-11-06
 
 - FormPortal's identifier is now `studio.formai.portal`, on formai.studio's domain. On macOS your installs, settings and sign-in move to `~/Library/Application Support/studio.formai.portal` the first time v0.58.0 starts, and a link is left at the old folder so FormTray and formMCP still find them. Nothing is deleted. The login item is renamed the same way.

@@ -2,8 +2,17 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.1.0
-Last updated: 2026-10-04 · scaffold
+Current build version: v0.59.0
+Last updated: 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+
+---
+
+## v0.59.0 · each app's colour {#hues}
+- refers-to: design/app-hues.json · frontend/markup.ts :: hue
+- kind: decision
+- logged: v0.59.0 · 2026-11-06
+
+formai.studio colours each app's name suffix (FormLit blue, FormDAM green, FormDeck lime, FormWav teal...). The colours were read from the built site in a browser (computed colour of every `.app-suffix`; most are oklab), converted to sRGB hex so WebKit before oklab support renders them, and keyed by FormPortal's ids; FormPortal itself is the site's cream `#f3ebe3`. The v3 icons share one gradient family, so a colour sampled from the icons would not tell the apps apart.
 
 ---
 
