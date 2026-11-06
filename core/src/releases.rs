@@ -51,7 +51,7 @@ struct Kept {
 }
 
 enum Outcome {
-    Found(Release, Vec<String>),
+    Found(Box<Release>, Vec<String>),
     Refused,
     Failed,
 }
@@ -245,7 +245,14 @@ fn yanked(origin: &str) -> Option<BTreeSet<(String, String)>> {
 
 fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option<String>, yanks: &BTreeSet<(String, String)>) -> Outcome {
     let mut failed = false;
-    let mut inner = || -> Option<(Release, Vec<String>)> {
+    match assemble(product, path, manifest, modified, yanks, &mut failed) {
+        Some((release, names)) => Outcome::Found(Box::new(release), names),
+        None if failed => Outcome::Failed,
+        None => Outcome::Refused,
+    }
+}
+
+fn assemble(product: &Product, path: &str, manifest: &[u8], modified: Option<String>, yanks: &BTreeSet<(String, String)>, failed: &mut bool) -> Option<(Release, Vec<String>)> {
     let app: Value = serde_json::from_slice(manifest).ok()?;
     let text = |k: &str| app.get(k).and_then(Value::as_str).map(str::to_string);
     if text("format").as_deref() != Some("form-app") || !text("repository")?.eq_ignore_ascii_case(path) {
@@ -266,7 +273,7 @@ fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option
         Fetched::Body { body, .. } => body,
         Fetched::Missing => return None,
         Fetched::Failed => {
-            failed = true;
+            *failed = true;
             return None;
         }
     };
@@ -302,7 +309,7 @@ fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option
     };
     let release = Release {
         version,
-        published: modified.clone().unwrap_or_default(),
+        published: modified.unwrap_or_default(),
         notes: format!("{}/releases/tag/{tag}", product.repository.trim_end_matches('/')),
         commit: text("commit").filter(|c| c.len() == 40 && c.bytes().all(|b| b.is_ascii_hexdigit())),
         artifacts,
@@ -311,13 +318,6 @@ fn read_release(product: &Product, path: &str, manifest: &[u8], modified: Option
         origin: Some(ORIGIN_GITHUB.to_string()),
     };
     Some((release, names.into_iter().collect()))
-    };
-    let found = inner();
-    match found {
-        Some((release, names)) => Outcome::Found(release, names),
-        None if failed => Outcome::Failed,
-        None => Outcome::Refused,
-    }
 }
 
 fn sound(path: &str, seen: &Seen, yanks: &BTreeSet<(String, String)>) -> bool {
@@ -355,7 +355,7 @@ fn check(product: &Product, path: &str, seen: Option<&Seen>, yanks: &BTreeSet<(S
                 return Seen { checked: at, ..seen.clone() };
             }
             match read_release(product, path, &body, modified, yanks) {
-                Outcome::Found(release, names) => Seen { checked: at, tag, release: Some(release), names },
+                Outcome::Found(release, names) => Seen { checked: at, tag, release: Some(*release), names },
                 Outcome::Refused => Seen { checked: at, tag, ..Seen::default() },
                 Outcome::Failed => retry(seen, path, yanks, at),
             }
