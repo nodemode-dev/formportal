@@ -19,7 +19,7 @@ formcompiler is the repository that builds and releases the family, never downlo
 ## FormBench product id {#formbench-id}
 - refers-to: app-hues.json :: formbench · tokens.css :: [data-product="formbench"]
 - kind: decision
-- logged: v0.59.0 · 2026-11-06
+- logged: v0.61.0 · 2026-11-06
 
 The product id formranker becomes formbench to match the signed catalogue and the canonical name FormBench. Only the key and selector change; the colours (#5ee0e0 in app-hues.json, #f97316 in tokens.css) are untouched. formai and formslide stay as FormPortal's catalogue ids (FormPortal and FormDeck). icons.json and markers.ts hold no product ids or icon file names, so they are unchanged.
 

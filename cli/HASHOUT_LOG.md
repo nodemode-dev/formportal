@@ -299,6 +299,6 @@ Driven through `./formportal mcp` against a two-release local catalogue served o
 ### src/ops.rs · ALIAS drops formbench
 - refers-to: src/ops.rs :: ALIAS
 - kind: explainer
-- logged: v0.60.0 · 2026-11-06
+- logged: v0.61.0 · 2026-11-06
 
 The signed catalogue now calls the product formbench, the same as the schedule, so the formbench to formranker alias is gone. Three aliases remain: formportal to formai, formdeck to formslide, formskill to formskills.
