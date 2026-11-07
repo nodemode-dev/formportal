@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.62.0 · 2026-11-07
+
+- A browser demo: open `demo/index.html` to run FormPortal offline. Installs check a signed catalogue and each download's SHA-256, updates keep the version they replace, your own files keep versions, and Open shows what is inside what you drop.
+
 ## v0.61.0 · 2026-11-06
 
 - Every app shows its own new icon, in dark and light, following your theme.
