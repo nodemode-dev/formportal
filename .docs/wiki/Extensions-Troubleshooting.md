@@ -18,7 +18,8 @@ An extension is a `.formpkg` file: a zip with `manifest.json` at its root, check
 | the package names a publisher that the index does not list | the publisher is unknown to the signed index | install only if you trust the source, with the developer setting (Preferences, Catalogue, Developer) |
 | the package's signature does not match the publisher's key | the file was changed after it was signed, or signed by someone else | do not install it; download it again from the publisher |
 | the package's signature uses something other than ed25519 | an unsupported signature | ask the developer to sign with Ed25519 |
-| runs native code and is not signed; only the developer setting installs it | native code needs a signature unless you are developing it | sign it, or turn on the developer setting while you develop |
+| it needs extension API 2; this FormCut offers API 1 (or the API and app it names) | its manifest asks for an extension API other than 1 | update FormPortal and the app, or ask the developer for an API 1 build |
+| native extensions are not supported by FormCut (or the app it is for) | the package runs native code, which API 1 apps do not load | ask the developer for a build that runs in the app's sandbox |
 | the package's manifest says ... the index says ... | the file and the index disagree on version or product | download the package the index lists, or ask the developer |
 | the manifest and the index disagree on whether it runs native code | the same | the same |
 | the extension index was refused: it is not signed | the index has no signature | check the catalogue address in Preferences, Catalogue |
@@ -26,7 +27,9 @@ An extension is a `.formpkg` file: a zip with `manifest.json` at its root, check
 
 ## After installing
 
-An app uses its extensions from its next start: close and reopen the app. Turning an extension off in Extensions keeps it installed but unused; Remove deletes it.
+FormPortal writes `extensions/<app>/enabled.json` in its folder, and each app that hosts extensions (FormVis 2.1.0, FormCut 2.14.0, FormWav 2.24.0, FormPDF 0.59.0, FormDeck 0.32.0, FormLit 0.50.0, form.md 0.50.0, FormEncoder 0.7.0, FormVFX 0.54.0, FormMCP 0.9.0, FormTray 0.15.0, FormSkills 0.9.0 and newer) watches that file and picks up an install, a removal or a switch while it runs; the notice says "ready in" the app and offers to open it. An older copy of an app uses the change from its next start. Turning an extension off in Extensions keeps it installed but unused; Remove deletes it. The first time an extension opens, the app asks you to allow what it uses.
+
+Each app's own Extensions menu has Manage in FormPortal, which opens this page filtered to that app (`formai://extensions?product=formcut`). A `formai://extensions?install=/full/path/to/file.formpkg` link, and opening a `.formpkg` from form.ext, go through the same checks as opening the file. Make an extension opens form.ext when it is installed, or its page on formai.studio.
 
 Some extensions show Support the maker in their details: it opens the maker's own page (sponsoring, a tip jar) in your browser. FormPortal takes no payment, and the extension works the same whether you use it or not. Makers add it with the `support` field (an https address) in the extensions index.
 
