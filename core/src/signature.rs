@@ -18,6 +18,17 @@ pub fn trusted_keys() -> Vec<String> {
     keys
 }
 
+pub const REGISTRY_KEYS: &str = include_str!("../registry_keys.txt");
+pub const REGISTRY_KEY_ENV: &str = "FORMEXT_REGISTRY_PUBKEY";
+
+pub fn registry_keys() -> Vec<String> {
+    let mut keys: Vec<String> = REGISTRY_KEYS.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')).map(str::to_string).collect();
+    if let Ok(extra) = std::env::var(REGISTRY_KEY_ENV) {
+        keys.extend(extra.split(',').map(|k| k.trim().to_string()).filter(|k| !k.is_empty()));
+    }
+    keys
+}
+
 fn decode(text: &str) -> Option<Vec<u8>> {
     base64::engine::general_purpose::STANDARD.decode(text.trim()).ok()
 }

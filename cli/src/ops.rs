@@ -776,24 +776,16 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     Ok(json!({ "preferences": shown, "saved": changed }))
 }
 
-fn ext_source(ctx: &Ctx, args: &Value) -> String {
-    text(args, "extensions_source")
-        .or_else(|| std::env::var("FORMPORTAL_EXTENSIONS").ok().filter(|s| !s.trim().is_empty()))
-        .unwrap_or_else(|| {
-            let base = text(args, "source").unwrap_or_else(|| ctx.source.clone());
-            match base.rsplit_once('/') {
-                Some((dir, _)) => format!("{dir}/extensions.json"),
-                None => "extensions.json".to_string(),
-            }
-        })
+fn ext_source(args: &Value) -> String {
+    text(args, "extensions_source").unwrap_or_else(formportal_core::extensions::default_index)
 }
 
 fn ext_index(ctx: &Ctx, args: &Value) -> Result<(formportal_core::extensions::ExtensionIndex, String), CoreError> {
-    let source = ext_source(ctx, args);
+    let source = ext_source(args);
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
     let shelf = ctx.portal.extension_library(&source, allow);
     let reached = shelf.reached.unwrap_or(source);
-    let index = shelf.index.ok_or_else(|| CoreError::Unavailable(format!("the extension index could not be read: {}", shelf.missed.unwrap_or_default())))?;
+    let index = shelf.index.ok_or_else(|| CoreError::Invalid(shelf.missed.unwrap_or_else(|| "the extension index could not be read".to_string())))?;
     Ok((index, reached))
 }
 
@@ -801,7 +793,11 @@ pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let installed = ctx.portal.extensions_installed()?;
     let (index, note) = match ext_index(ctx, args) {
         Ok((index, source)) => (Some(index), json!({ "source": source })),
-        Err(e) => (None, json!({ "index_error": e.to_string(), "source": ext_source(ctx, args) })),
+        Err(e) => (None, json!({ "index_error": e.to_string(), "source": ext_source(args) })),
+    };
+    let installed = match &index {
+        Some(_) => ctx.portal.extensions_installed()?,
+        None => installed,
     };
     let listed: Vec<Value> = index
         .as_ref()
@@ -813,12 +809,15 @@ pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
                     json!({ "id": p.id, "name": p.name, "product": p.product, "kind": p.kind, "author": p.author, "description": p.description, "version": p.version,
                             "licence": p.licence, "native": p.native, "permissions": p.permissions, "signed": p.signature.is_some(), "minimum_app": p.minimum_app,
                             "support": p.support, "homepage": p.homepage, "api": p.api, "app": formportal_core::extensions::app_name(&p.product), "installed": have.map(|h| &h.version), "enabled": have.map(|h| h.enabled),
+                            "verified": p.verified, "source": p.source, "blocked": p.blocked,
                             "update": have.map(|h| formportal_core::version_newer(&p.version, &h.version)).unwrap_or(false) })
                 })
                 .collect()
         })
         .unwrap_or_default();
-    Ok(json!({ "index": note, "packages": listed, "installed": installed }))
+    let blocked = index.as_ref().map(|i| i.blocked.clone()).unwrap_or_default();
+    let turned_off = index.as_ref().map(|i| i.turned_off.clone()).unwrap_or_default();
+    Ok(json!({ "index": note, "packages": listed, "installed": installed, "blocked": blocked, "turned_off": turned_off }))
 }
 
 pub fn extension_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {

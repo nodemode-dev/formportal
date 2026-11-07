@@ -73,10 +73,6 @@ pub fn bundled_media() -> MediaIndex {
     serde_json::from_str(include_str!("../data/store-media.json")).unwrap_or(MediaIndex { format: "formai-media".to_string(), format_version: 1, generated: String::new(), items: Vec::new() })
 }
 
-pub fn bundled_extensions() -> Option<ExtensionIndex> {
-    serde_json::from_str(include_str!("../data/store-extensions.json")).ok()
-}
-
 impl Portal {
     pub fn font_library(&self, sibling: &str, allow_unsigned: bool) -> Shelf<FontIndex> {
         let mut index = bundled_fonts();
@@ -108,28 +104,10 @@ impl Portal {
         Shelf { index, reached, missed }
     }
 
-    pub fn extension_library(&self, sibling: &str, allow_unsigned: bool) -> Shelf<Option<ExtensionIndex>> {
-        let bundled = bundled_extensions();
-        let (remote, reached, missed) = reach("extensions.json", sibling, |u| self.extension_index(u, allow_unsigned));
-        let index = match (bundled, remote) {
-            (Some(mut base), Some(remote)) => {
-                for publisher in remote.publishers {
-                    if !base.publishers.iter().any(|p| p.id == publisher.id) {
-                        base.publishers.push(publisher);
-                    }
-                }
-                for package in remote.packages {
-                    match base.packages.iter_mut().find(|p| p.id == package.id) {
-                        Some(slot) => *slot = package,
-                        None => base.packages.push(package),
-                    }
-                }
-                base.name = remote.name;
-                base.description = remote.description;
-                Some(base)
-            }
-            (base, remote) => remote.or(base),
-        };
-        Shelf { index, reached, missed }
+    pub fn extension_library(&self, url: &str, allow_unsigned: bool) -> Shelf<Option<ExtensionIndex>> {
+        match self.extension_index(url, allow_unsigned) {
+            Ok(index) => Shelf { index: Some(index), reached: Some(url.to_string()), missed: None },
+            Err(e) => Shelf { index: None, reached: None, missed: Some(e.to_string()) },
+        }
     }
 }

@@ -6,11 +6,82 @@ use serde::{Deserialize, Serialize};
 
 use crate::download::{download, fetch_bytes, sha256_file};
 use crate::error::{CoreError, Result};
-use crate::signature::{read_local, verify};
+use crate::signature::{registry_keys, verify};
 use crate::{Arch, Artifact, ArtifactKind, Os, Portal};
 
 pub const INDEX_FORMAT: &str = "formai-extensions";
 pub const PACKAGE_FORMAT: &str = "formai-package";
+pub const BLOCKLIST_FORMAT: &str = "formext-blocklist";
+pub const REGISTRY_DOWNLOADS: &str = "https://github.com/nodemode-dev/form.ext-registry/releases/download/";
+pub const REGISTRY_INDEX: &str = "https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json";
+pub const INDEX_ENV: &str = "FORMPORTAL_EXTENSIONS";
+
+pub fn default_index() -> String {
+    std::env::var(INDEX_ENV).ok().map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).unwrap_or_else(|| REGISTRY_INDEX.to_string())
+}
+
+pub fn blocklist_url(index: &str) -> String {
+    match index.rsplit_once('/') {
+        Some((dir, _)) => format!("{dir}/blocklist.json"),
+        None => "blocklist.json".to_string(),
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Blocked {
+    pub id: String,
+    #[serde(default)]
+    pub versions: Vec<String>,
+    pub reason: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub date: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct Blocklist {
+    format: String,
+    format_version: u32,
+    #[serde(default)]
+    blocked: Vec<Blocked>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TurnedOff {
+    pub id: String,
+    pub name: String,
+    pub product: String,
+    pub version: String,
+    pub reason: String,
+}
+
+pub fn blocked_reason<'a>(blocked: &'a [Blocked], id: &str, version: &str) -> Option<&'a str> {
+    blocked.iter().find(|b| b.id == id && (b.versions.is_empty() || b.versions.iter().any(|v| v == "*" || v == version))).map(|b| b.reason.as_str())
+}
+
+fn unreachable(url: &str, error: CoreError) -> CoreError {
+    let answered = match &error {
+        CoreError::Http(text) => ["404", "401", "403"].into_iter().find(|code| text.contains(&format!("status code {code}"))),
+        _ => None,
+    };
+    match answered {
+        Some(code) => CoreError::Invalid(format!("the registry is private or unreachable: {url} answered {code}")),
+        None => CoreError::Invalid(format!("the registry is private or unreachable: {error}")),
+    }
+}
+
+fn registry_check(body: &[u8], signature: Option<&str>, keys: &[String], allow_unsigned: bool, what: &str) -> Result<()> {
+    let refused = |why: &str| CoreError::Invalid(format!("{what} was refused: {why}"));
+    match signature {
+        _ if keys.is_empty() && allow_unsigned => Ok(()),
+        _ if keys.is_empty() => Err(refused("this build trusts no registry key yet")),
+        Some(s) => verify(body, s, keys).map_err(|e| match e {
+            CoreError::Signature(why) => refused(&why),
+            other => other,
+        }),
+        None if allow_unsigned => Ok(()),
+        None => Err(refused("it is not signed")),
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Publisher {
@@ -55,6 +126,14 @@ pub struct Entry {
     pub homepage: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub api: Option<String>,
+    #[serde(default)]
+    pub verified: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub registry_commit: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub blocked: Option<String>,
 }
 
 pub const HOSTS: [(&str, &str, &str); 13] = [
@@ -138,6 +217,10 @@ pub struct ExtensionIndex {
     pub publishers: Vec<Publisher>,
     #[serde(default)]
     pub packages: Vec<Entry>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub blocked: Vec<Blocked>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub turned_off: Vec<TurnedOff>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -193,6 +276,8 @@ pub struct InstalledExtension {
     pub api: Option<String>,
     #[serde(default)]
     pub contributes: Contributes,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub blocked: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -210,8 +295,20 @@ fn parse_index(text: &str) -> Result<ExtensionIndex> {
         if package.support.as_deref().is_some_and(|s| !s.starts_with("https://")) {
             package.support = None;
         }
+        if package.source.as_deref().is_some_and(|s| !s.starts_with("https://")) {
+            package.source = None;
+        }
     }
+    index.turned_off.clear();
     Ok(index)
+}
+
+fn parse_blocklist(body: &[u8]) -> Result<Vec<Blocked>> {
+    let list: Blocklist = serde_json::from_slice(body).map_err(|e| CoreError::Invalid(format!("the block list is not valid: {e}")))?;
+    if list.format != BLOCKLIST_FORMAT || list.format_version != 1 {
+        return Err(CoreError::Invalid(format!("this is not a form.ext-registry block list (format {:?} {})", list.format, list.format_version)));
+    }
+    Ok(list.blocked)
 }
 
 fn read_manifest(package: &Path) -> Result<Manifest> {
@@ -302,33 +399,87 @@ impl Portal {
             None => "extensions.json".to_string(),
         });
         let url = locked.as_deref().unwrap_or(url);
-        let (_, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
+        let allow_unsigned = match &managed {
+            Some(m) => m.policy.unsigned(allow_unsigned),
+            None => allow_unsigned,
+        };
+        let keys = registry_keys();
+        let body = self.registry_file(url, "extensions.json", &keys, allow_unsigned, "the extension index")?.ok_or_else(|| CoreError::Invalid(format!("the registry is private or unreachable: {url} was not found")))?;
+        let mut index = parse_index(&String::from_utf8_lossy(&body))?;
+        index.blocked = match self.registry_file(&blocklist_url(url), "blocklist.json", &keys, allow_unsigned, "the block list")? {
+            Some(list) => parse_blocklist(&list)?,
+            None => Vec::new(),
+        };
+        let mirror = url.strip_suffix("index/extensions.json").filter(|_| url != REGISTRY_INDEX);
+        for package in &mut index.packages {
+            package.blocked = blocked_reason(&index.blocked, &package.id, &package.version).map(str::to_string);
+            if let (Some(base), Some(rest)) = (mirror, package.url.strip_prefix(REGISTRY_DOWNLOADS)) {
+                package.url = format!("{base}{rest}");
+            }
+        }
+        index.turned_off = self.enforce_blocklist(&index.blocked)?;
+        Ok(index)
+    }
+
+    fn registry_file(&self, url: &str, name: &str, keys: &[String], allow_unsigned: bool, what: &str) -> Result<Option<Vec<u8>>> {
         if !(url.starts_with("http://") || url.starts_with("https://")) {
-            return parse_index(&String::from_utf8_lossy(&read_local(url, &keys, allow_unsigned)?));
+            let body = match fs::read(url) {
+                Ok(body) => body,
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+                Err(e) => return Err(CoreError::Io(e)),
+            };
+            let signature = match fs::read_to_string(format!("{url}.sig")) {
+                Ok(s) => Some(s.trim().to_string()),
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => None,
+                Err(e) => return Err(CoreError::Io(e)),
+            };
+            registry_check(&body, signature.as_deref(), keys, allow_unsigned, what)?;
+            return Ok(Some(body));
         }
         let dir = self.root().join("catalog");
-        let kept = dir.join("extensions.json");
+        let kept = dir.join(name);
+        let kept_sig = dir.join(format!("{name}.sig"));
         let (body, signature, fresh) = match fetch_bytes(url) {
             Ok(body) => (body, fetch_bytes(&format!("{url}.sig")).ok().map(|s| String::from_utf8_lossy(&s).trim().to_string()), true),
             Err(e) => match fs::read(&kept) {
-                Ok(body) => (body, fs::read_to_string(dir.join("extensions.json.sig")).ok(), false),
-                Err(_) => return Err(e),
+                Ok(body) => (body, fs::read_to_string(&kept_sig).ok().map(|s| s.trim().to_string()), false),
+                Err(_) if name != "extensions.json" => return Ok(None),
+                Err(_) => return Err(unreachable(url, e)),
             },
         };
-        match &signature {
-            Some(s) => verify(&body, s, &keys)?,
-            None if allow_unsigned => {}
-            None => return Err(CoreError::Invalid("the extension index was refused: it is not signed".to_string())),
-        }
-        let index = parse_index(&String::from_utf8_lossy(&body))?;
+        registry_check(&body, signature.as_deref(), keys, allow_unsigned, what)?;
         if fresh {
             fs::create_dir_all(&dir)?;
             fs::write(&kept, &body)?;
-            if let Some(s) = &signature {
-                fs::write(dir.join("extensions.json.sig"), s)?;
+            match &signature {
+                Some(s) => fs::write(&kept_sig, s)?,
+                None => {
+                    let _ = fs::remove_file(&kept_sig);
+                }
             }
         }
-        Ok(index)
+        Ok(Some(body))
+    }
+
+    pub fn enforce_blocklist(&self, blocked: &[Blocked]) -> Result<Vec<TurnedOff>> {
+        let mut state = self.ext_state()?;
+        let mut turned_off = Vec::new();
+        let mut changed = false;
+        for record in &mut state.extensions {
+            let reason = blocked_reason(blocked, &record.id, &record.version).map(str::to_string);
+            if reason.is_some() && record.enabled {
+                record.enabled = false;
+                turned_off.push(TurnedOff { id: record.id.clone(), name: record.name.clone(), product: record.product.clone(), version: record.version.clone(), reason: reason.clone().unwrap_or_default() });
+            }
+            if record.blocked != reason {
+                record.blocked = reason;
+                changed = true;
+            }
+        }
+        if changed || !turned_off.is_empty() {
+            self.ext_save(&state)?;
+        }
+        Ok(turned_off)
     }
 
     pub fn extensions_installed(&self) -> Result<Vec<InstalledExtension>> {
@@ -362,7 +513,7 @@ impl Portal {
         }
         fs::rename(&staging, &target)?;
         let mut state = self.ext_state()?;
-        let enabled = state.extensions.iter().find(|e| e.product == manifest.product && e.id == manifest.id).map(|e| e.enabled).unwrap_or(true);
+        let enabled = state.extensions.iter().find(|e| e.product == manifest.product && e.id == manifest.id).map(|e| e.enabled || e.blocked.is_some()).unwrap_or(true);
         state.extensions.retain(|e| !(e.product == manifest.product && e.id == manifest.id));
         let record = InstalledExtension {
             id: manifest.id.clone(),
@@ -380,6 +531,7 @@ impl Portal {
             description: manifest.description.clone(),
             api: manifest.api.as_ref().and_then(|a| a.as_str()).map(str::to_string),
             contributes: contributions(manifest.contributes.as_ref()),
+            blocked: None,
         };
         state.extensions.push(record.clone());
         self.ext_save(&state)?;
@@ -402,13 +554,21 @@ impl Portal {
             }
             None => allow_unsigned,
         };
+        if let Some(reason) = blocked_reason(&index.blocked, &entry.id, &entry.version) {
+            return Err(CoreError::Refused(format!("{} {} is on form.ext-registry's block list: {reason}", entry.name, entry.version)));
+        }
         refuse_for_api(&entry.name, &entry.product, entry.api.as_deref(), entry.native)?;
+        if entry.signature.is_none() && !allow_unsigned {
+            return Err(CoreError::Refused(format!("{} carries no publisher signature; only the developer setting installs it", entry.name)));
+        }
         let file = format!("{}-{}.formpkg", entry.id, entry.version);
         let artifact = Artifact { platform: Os::Other, arch: Arch::X86_64, kind: ArtifactKind::Zip, file, url: entry.url.clone(), bytes: entry.bytes, sha256: entry.sha256.clone(), minimum_os: String::new(), signature: None };
-        let package = download(&artifact, &self.root().join("downloads"), progress)?;
+        let package = download(&artifact, &self.root().join("downloads"), progress).map_err(|e| match e {
+            CoreError::Http(_) => unreachable(&entry.url, e),
+            other => other,
+        })?;
         let signed_by = match &entry.signature {
             Some(sig) => Some(check_signature(&package, sig, &index.publishers)?),
-            None if entry.native && !allow_unsigned => return Err(CoreError::Refused(format!("{} runs native code and is not signed; only the developer setting installs it", entry.name))),
             None => None,
         };
         let manifest = read_manifest(&package)?;
@@ -425,6 +585,9 @@ impl Portal {
 
     pub fn install_extension_file(&self, path: &Path, index: Option<&ExtensionIndex>, allow_unsigned: bool) -> Result<InstalledExtension> {
         let manifest = read_manifest(path)?;
+        if let Some(reason) = index.and_then(|i| blocked_reason(&i.blocked, &manifest.id, &manifest.version)) {
+            return Err(CoreError::Refused(format!("{} {} is on form.ext-registry's block list: {reason}", manifest.name, manifest.version)));
+        }
         let sha256 = sha256_file(path)?;
         let listed = index.and_then(|i| i.packages.iter().find(|p| p.sha256 == sha256).map(|p| (p, i)));
         let signed_by = match listed {
@@ -469,6 +632,9 @@ impl Portal {
     pub fn enable_extension(&self, product: &str, id: &str, enabled: bool) -> Result<InstalledExtension> {
         let mut state = self.ext_state()?;
         let found = state.extensions.iter_mut().find(|e| e.product == product && e.id == id).ok_or_else(|| CoreError::NotInstalled(format!("the extension {id} for {product}")))?;
+        if let (true, Some(reason)) = (enabled, &found.blocked) {
+            return Err(CoreError::Invalid(format!("{} {} stays off: it is on form.ext-registry's block list ({reason})", found.name, found.version)));
+        }
         found.enabled = enabled;
         let record = found.clone();
         self.ext_save(&state)?;

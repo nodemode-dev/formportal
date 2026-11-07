@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use formportal_core::extensions::{ExtensionIndex, InstalledExtension};
+use formportal_core::extensions::{default_index, ExtensionIndex, InstalledExtension};
 use formportal_core::{Availability, Catalog, Channel, Install, Platform, Portal, Preferences, Update, UpdateOutcome};
 use std::sync::Mutex;
 
@@ -503,29 +503,23 @@ struct ExtensionsView {
     installed: Vec<InstalledExtension>,
 }
 
-fn index_url(catalog: &str) -> String {
-    match catalog.rsplit_once('/') {
-        Some((dir, _)) => format!("{dir}/extensions.json"),
-        None => "extensions.json".to_string(),
-    }
-}
-
 #[tauri::command]
-async fn extensions(url: String, allow_unsigned: bool) -> Result<ExtensionsView, String> {
+async fn extensions(allow_unsigned: bool) -> Result<ExtensionsView, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let shelf = hub.extension_library(&index_url(&url), allow_unsigned);
-        Ok(ExtensionsView { index: shelf.index, index_error: None, store: shelf.reached, store_note: shelf.missed, installed: hub.extensions_installed().map_err(text)? })
+        let shelf = hub.extension_library(&default_index(), allow_unsigned);
+        Ok(ExtensionsView { index: shelf.index, index_error: shelf.missed, store: shelf.reached, store_note: None, installed: hub.extensions_installed().map_err(text)? })
     })
     .await
     .map_err(text)?
 }
 
 #[tauri::command]
-async fn extension_install(id: Option<String>, path: Option<String>, url: String, allow_unsigned: bool) -> Result<InstalledExtension, String> {
+async fn extension_install(id: Option<String>, path: Option<String>, allow_unsigned: bool) -> Result<InstalledExtension, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
-        let index = hub.extension_library(&index_url(&url), allow_unsigned).index.ok_or_else(|| "the extension index could not be read".to_string());
+        let shelf = hub.extension_library(&default_index(), allow_unsigned);
+        let index = shelf.index.ok_or_else(|| format!("the extension index could not be read: {}", shelf.missed.unwrap_or_default()));
         match (id, path) {
             (_, Some(path)) => hub.install_extension_file(std::path::Path::new(&path), index.as_ref().ok(), allow_unsigned).map_err(text),
             (Some(id), None) => hub.install_extension(&index.map_err(text)?, &id, allow_unsigned, &mut |_, _| {}).map_err(text),
