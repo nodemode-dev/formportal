@@ -57,7 +57,7 @@ The Linux AppImage also carries the build machine's WebKitGTK, GTK and GLib (LGP
 
 ## Starter library (Fonts, Stock and templates)
 
-Since v0.60.0 FormPortal ships a starter library in `frontend/public/store/`, built into the app and listed by `core/data/store-fonts.json`, `store-media.json` and `store-extensions.json`. Every file is unmodified from its source except the photographs, which are resized to their published size and stripped of metadata, and the font files, which are renamed only (the fonts themselves are untouched, so no Reserved Font Name is affected).
+Since v0.60.0 FormPortal ships a starter library in `frontend/public/store/`, built into the app and listed by `core/data/store-fonts.json` and `store-media.json` (extensions were listed by `store-extensions.json`, which never held a package and was removed in v0.63.1: extensions come only from form.ext-registry). Every file is unmodified from its source except the photographs, which are resized to their published size and stripped of metadata, and the font files, which are renamed only (the fonts themselves are untouched, so no Reserved Font Name is affected).
 
 | Item | Licence | Copyright or author | Source |
 |---|---|---|---|

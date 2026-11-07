@@ -35,6 +35,9 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | the catalogue was refused: it is not signed | no signature next to the catalogue | wrong source, or a development catalogue; only the person can accept it, with `FORMPORTAL_ALLOW_UNSIGNED=1` |
 | the catalogue was refused: this build trusts no catalogue key yet | `core/catalog_keys.txt` was empty when this build was made and `FORMAI_CATALOG_PUBKEY` is not set (`status` shows `trusted_keys`); normal builds trust formcompiler's catalogue key from that file | tell the person; the fix is formcompiler's public key in that file and FormPortal rebuilt, or the key in `FORMAI_CATALOG_PUBKEY` |
 | the catalogue was refused | the signature does not verify | stop; report it |
+| the extension index was refused: this build trusts no registry key yet | `core/registry_keys.txt` holds no form.ext-registry key in this build and `FORMEXT_REGISTRY_PUBKEY` is not set; catalogue keys never verify extensions | tell the person; only the developer setting lists the registry without a key |
+| the extension index was refused / the block list was refused | the registry's signature does not verify | stop; report it |
+| the registry is private or unreachable | form.ext-registry answered 404 (private while tested) or the network is down | tell the person plainly; nothing to fix here |
 | [file] does not match the catalogue: expected SHA-256 | the download differs from the release | stop; report it; do not retry from elsewhere |
 | the catalogue offers this computer nothing for | unreleased, no release on that channel, or no file for this system | read `apps` for which one, and the registry status |
 | refused address | not https and not this computer | use the https address |

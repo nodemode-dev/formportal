@@ -1,6 +1,20 @@
 # Extensions Troubleshooting
 
-An extension is a `.formpkg` file: a zip with `manifest.json` at its root, checked against the signed extension index (`extensions.json` beside the catalogue). FormPortal says why whenever it refuses one. This page explains each message and what to do.
+An extension is a `.formpkg` file: a zip with `manifest.json` at its root, checked against the signed extension index. FormPortal says why whenever it refuses one. This page explains each message and what to do.
+
+## Where extensions come from
+
+Extensions come from form.ext-registry (`nodemode-dev/form.ext-registry`), the one source of officially registered Form extensions. Each extension is reviewed in the registry by pull request, built there, and signed by its publisher; the registry publishes a signed index and a signed block list as release files:
+
+- `https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json` and `.sig`
+- `https://github.com/nodemode-dev/form.ext-registry/releases/download/index/blocklist.json` and `.sig`
+- each package at `.../releases/download/ext-<id>-v<version>/<id>-<version>.formpkg`
+
+FormPortal checks the index and the block list with registry keys only: the keys compiled from `core/registry_keys.txt`, plus `FORMEXT_REGISTRY_PUBKEY` (comma-separated, for testing). The app catalogue's keys (`core/catalog_keys.txt`) never verify extensions, and registry keys never verify the app catalogue. Every package from the index must carry its publisher's Ed25519 signature, checked with the publisher key the signed index lists. Each listed extension shows Verified (reviewed and published by the registry) and, in its details, Source in form.ext-registry, the folder it was built from.
+
+The block list names extensions, or single versions, that must not run. A blocked one cannot be installed; one that is already installed is turned off the next time FormPortal reads the index (its `enabled.json` entry goes away, so the app drops it while it runs), with a notice naming the reason, and it cannot be turned back on while it is blocked. When the block is lifted it stays off until you turn it on; installing a newer version that is not blocked turns it on again.
+
+`FORMPORTAL_EXTENSIONS` (or `--extensions-source` on the command line) points FormPortal at another index, such as a test index or an organisation's mirror. When that address ends in `index/extensions.json`, package addresses on the registry's release downloads are read from the same mirror, still checked by SHA-256 and publisher signature.
 
 ## Opening a .formpkg does nothing
 
@@ -22,7 +36,14 @@ An extension is a `.formpkg` file: a zip with `manifest.json` at its root, check
 | native extensions are not supported by FormCut (or the app it is for) | the package runs native code, which API 1 apps do not load | ask the developer for a build that runs in the app's sandbox |
 | the package's manifest says ... the index says ... | the file and the index disagree on version or product | download the package the index lists, or ask the developer |
 | the manifest and the index disagree on whether it runs native code | the same | the same |
-| the extension index was refused: it is not signed | the index has no signature | check the catalogue address in Preferences, Catalogue |
+| the extension index was refused: this build trusts no registry key yet | this FormPortal has no registry key compiled in yet (the registry is in testing) | wait for a FormPortal release with the registry key; developers can turn on the developer setting (Preferences, Catalogue, Developer) or set `FORMEXT_REGISTRY_PUBKEY` |
+| the extension index was refused: its signature does not match a key this build trusts | the index or block list was changed after it was signed, or signed with another key | do not work around it; report it to the registry's owners |
+| the extension index was refused: it is not signed | the index has no signature | check `FORMPORTAL_EXTENSIONS` if you set one |
+| the block list was refused: ... | the block list's signature failed, so the whole index is refused | the same as for the index |
+| the registry is private or unreachable: ... answered 404 | form.ext-registry is private while it is tested (GitHub answers 404 without a token), or the network is down | nothing to fix on this computer; the list returns once the registry is public or reachable. FormPortal keeps the last good copy and uses it while offline |
+| ... is on form.ext-registry's block list: (reason) | the registry blocked this extension or version | do not install it; wait for a fixed version |
+| ... stays off: it is on form.ext-registry's block list | you tried to turn on a blocked extension | the same |
+| ... carries no publisher signature; only the developer setting installs it | an index entry without a publisher signature | install only for development, with the developer setting |
 | (your organisation) does not allow extensions / extensions installed from a file | a policy on a managed computer | ask whoever manages the computer (Preferences, About shows who) |
 
 ## After installing
@@ -31,7 +52,7 @@ FormPortal writes `extensions/<app>/enabled.json` in its folder, and each app th
 
 Each app's own Extensions menu has Manage in FormPortal, which opens this page filtered to that app (`formai://extensions?product=formcut`). A `formai://extensions?install=/full/path/to/file.formpkg` link, and opening a `.formpkg` from form.ext, go through the same checks as opening the file. Make an extension opens form.ext when it is installed, or its page on formai.studio.
 
-Some extensions show Support the maker in their details: it opens the maker's own page (sponsoring, a tip jar) in your browser. FormPortal takes no payment, and the extension works the same whether you use it or not. Makers add it with the `support` field (an https address) in the extensions index.
+Some extensions show Support the maker in their details: it opens the maker's own page (sponsoring, a tip jar) in your browser. FormPortal takes no payment, and the extension works the same whether you use it or not. Makers add it with the `support` field (an https address) in their registry entry.
 
 ## Still stuck
 

@@ -80,6 +80,10 @@
   </tr>
 </table>
 
+## Extensions from form.ext-registry
+
+Extensions for the thirteen Form apps that host them come from one place, [form.ext-registry](https://github.com/nodemode-dev/form.ext-registry), where each is reviewed, built and signed. FormPortal reads the registry's signed index and block list, checks them with registry keys only (`core/registry_keys.txt`, plus `FORMEXT_REGISTRY_PUBKEY` for testing; the app catalogue's keys never verify extensions), and checks every package's SHA-256 and its publisher's signature before it installs. Each extension shows Verified and links its source in the registry. A blocked extension cannot be installed, and an installed one is turned off with a notice naming the reason. Until the owners add the registry key, a build refuses the index with "this build trusts no registry key yet"; while the registry is private, the page says "the registry is private or unreachable". Make an extension opens form.ext. See [Extensions Troubleshooting](.docs/wiki/Extensions-Troubleshooting.md).
+
 ## Everything in the box
 
 <table>
