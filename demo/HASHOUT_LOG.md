@@ -66,7 +66,7 @@ In v0.61.0 `.acts > .btn { display: none }` in `portal.css` hides the Open, Vers
 - kind: decision
 - logged: v0.62.1 · 2026-11-07
 
-Files opens on a curated "Northern coast" folder, not generated placeholders: four Pexels photographs, a 12 second golden-hour clip, a 75 second public-domain piano piece and a five-page PDF of field notes, with a Reference folder holding four real screenshots of Form apps from the sibling repositories. The PDF is typeset for the demo with ReportLab and Instrument Serif (SIL OFL, already in the repository) from the four photographs; NASA's Earth as Art on Commons was the first choice but Wikimedia rate-limited the shared build host for over half an hour, so it was dropped rather than waited for. Each file ships as its own classic script in `assets/media/` that sets one entry of `window.__FORMPORTAL_MEDIA__` to base64 data and a small preview, because file:// cannot read sibling files. `media.ts` injects the script tags on demand, `samples.ts` loads them in parallel before the first Files scan, and the rows appear in the page's own list, so nothing is rebuilt after it shows. The generated poster and tone stay only as the fallback when no pack loads. Provenance is in `CREDITS.md`.
+Files opens on a curated "Northern coast" folder, not generated placeholders: four Pexels photographs, a 12 second golden-hour clip, a 75 second public-domain piano piece and a five-page PDF of field notes, with a Reference folder holding four screenshots of Form apps taken from the sibling demos' verified opening screens, not from their docs/images hero captures, which contain photographs whose licence cannot be verified (the verifier failed v0.62.1 on exactly this). Each visible photograph, clip and recording is listed in CREDITS.md. The PDF is typeset for the demo with ReportLab and Instrument Serif (SIL OFL, already in the repository, the only font and embedded in full use, no base-14 reference left) from the four photographs; NASA's Earth as Art on Commons was the first choice but Wikimedia rate-limited the shared build host for over half an hour, so it was dropped rather than waited for. Each file ships as its own classic script in `assets/media/` that sets one entry of `window.__FORMPORTAL_MEDIA__` to base64 data and a small preview, because file:// cannot read sibling files. `media.ts` injects the script tags on demand, `samples.ts` loads them in parallel before the first Files scan, and the rows appear in the page's own list, so nothing is rebuilt after it shows. The generated poster and tone stay only as the fallback when no pack loads. Provenance is in `CREDITS.md`.
 
 ## Viewer kinds for real files {#viewer}
 - refers-to: demo/src/inspect.ts
@@ -74,6 +74,13 @@ Files opens on a curated "Northern coast" folder, not generated placeholders: fo
 - logged: v0.62.1 · 2026-11-07
 
 Real files need real viewers. Video plays in a `video` element at a reserved 280 px height with its build-time poster. Compressed audio (Ogg or MP3) is decoded with an `OfflineAudioContext` for its length, channel count and waveform, and plays in an `audio` element. A PDF shows its page count and title read from the file and the first page as an image rendered when the demo was built: the demo does not embed a PDF engine, and the dialog says so. Files rows use the same preview image for thumbnails, so video, PDF and photographs have a tile on first paint.
+
+## No hero captures {#heroes}
+- refers-to: demo/vite.config.ts :: plateHeroes
+- kind: decision
+- logged: v0.62.1 · 2026-11-07
+
+`frontend/public/heroes/` holds window captures of the apps (Venice and other panoramas in FormCut, a rainy neon city in FormVis, coast photographs in FormLit, and others) whose photographs carry no verifiable licence. The demo therefore neither copies them nor shows them: after the markup is built, `plateHeroes` swaps each app page's hero image pair for the same icon plate `frontend/markup.ts` uses for an app with no capture, so the page keeps its layout. `frontend/` is untouched; the desktop app's captures need the same review upstream.
 
 ## Media sources and their limits {#sources}
 - refers-to: demo/CREDITS.md

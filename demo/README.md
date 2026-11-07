@@ -36,7 +36,7 @@ npm ci
 npm run build
 ```
 
-The build reads `frontend/`, `design/`, `catalog/` and `core/data/`, and writes `index.html`, `assets/`, and the icons, hero images, thumbnails and fonts it uses into this folder. The output is committed so file:// works with no install. The dev server (`npx vite`) listens on 127.0.0.1:3270 only.
+The build reads `frontend/`, `design/`, `catalog/` and `core/data/`, and writes `index.html`, `assets/`, and the icons, thumbnails and fonts it uses into this folder. App pages show each app's icon on a plate where the desktop app shows a window capture: the repository's hero captures contain photographs whose licence cannot be verified, so the demo leaves them out. The output is committed so file:// works with no install. The dev server (`npx vite`) listens on 127.0.0.1:3270 only.
 
 ## Notes
 
