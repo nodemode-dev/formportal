@@ -3,7 +3,6 @@ import { EXT_PRODUCTS, catalogueId } from "../../engine/hosts.ts";
 import { t } from "../../i18n/index.ts";
 import type { ExtensionEntry, InstalledExtension } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
-import { storeNote } from "../storenote.ts";
 
 const PERMISSIONS: Record<string, string> = {
   document: "the open document",
@@ -61,16 +60,31 @@ function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExt
     if (supportUrl && supportLink.getAttribute("href") !== supportUrl) supportLink.setAttribute("href", supportUrl);
     if (support.hidden !== !supportUrl) support.hidden = !supportUrl;
   }
+  const source = row.querySelector<HTMLElement>("[data-ext-source]");
+  const sourceLink = source?.querySelector<HTMLAnchorElement>("a");
+  const sourceUrl = entry?.source?.startsWith("https://") ? entry.source : "";
+  if (source && sourceLink) {
+    if (sourceUrl && sourceLink.getAttribute("href") !== sourceUrl) sourceLink.setAttribute("href", sourceUrl);
+    if (source.hidden !== !sourceUrl) source.hidden = !sourceUrl;
+  }
+  const verified = row.querySelector<HTMLElement>("[data-ext-verified]");
+  const isVerified = Boolean(entry?.verified) && have?.source !== "sideload";
+  if (verified && verified.hidden !== !isVerified) verified.hidden = !isVerified;
+  const blocked = have?.blocked ?? entry?.blocked ?? null;
+  attr("data-blocked", blocked === null ? null : "");
   set(
     "trust",
-    have?.source === "sideload"
-      ? "Sideloaded from a file, not reviewed"
-      : have?.signed_by || entry?.signature
-        ? `Signed by ${have?.signed_by ?? entry?.signature?.publisher}`
-        : (entry?.native ?? have?.native) ? "Runs native code, unsigned" : "Unsigned",
+    blocked !== null
+      ? t("Blocked by the registry: {reason}", { reason: blocked })
+      : have?.source === "sideload"
+        ? "Sideloaded from a file, not reviewed"
+        : have?.signed_by || entry?.signature
+          ? `Signed by ${have?.signed_by ?? entry?.signature?.publisher}`
+          : (entry?.native ?? have?.native) ? "Runs native code, unsigned" : "Unsigned",
   );
   const box = row.querySelector<HTMLInputElement>("[data-ext-enabled]");
   if (box && have && box.checked !== have.enabled) box.checked = have.enabled;
+  if (box && box.disabled !== Boolean(have?.blocked)) box.disabled = Boolean(have?.blocked);
   const install = row.querySelector<HTMLElement>("[data-ext-act='install']");
   const word = t(have ? "Update" : "Install");
   if (install && install.textContent !== word) install.textContent = word;
@@ -144,7 +158,15 @@ export const library: Extension = {
         mounted.delete(key);
       }
       if (empty && empty.hidden !== keys.size > 0) empty.hidden = keys.size > 0;
-      storeNote(document.querySelector<HTMLElement>("[data-pane='extensions']"), engine.state.extensionsStore, t("Extensions"));
+      const note = pane?.querySelector<HTMLElement>("[data-store-note]");
+      if (note) {
+        const why = engine.state.extensionsError;
+        const text = why ? t("The registry's extensions could not be listed: {why}", { why }) : t("Extensions from form.ext-registry: reviewed, signed by their publisher and checked against the block list.");
+        const state = why ? "starter" : "live";
+        if (note.textContent !== text) note.textContent = text;
+        if (note.dataset.store !== state) note.dataset.store = state;
+        if (note.hidden) note.hidden = false;
+      }
     });
     engine.on("route", ({ route }) => {
       if (route === "extensions") void engine.dispatch("ext.load");

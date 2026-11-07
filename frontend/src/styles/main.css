@@ -1409,8 +1409,26 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
   color: var(--ink-soft);
 }
 
-.ext[data-trust="sideload"] .ext-trust {
+.ext[data-trust="sideload"] .ext-trust,
+.ext[data-blocked] .ext-trust {
   color: var(--fault);
+}
+
+.ext[data-blocked][data-ext-state] [data-ext-act="install"] {
+  display: none;
+}
+
+.ext-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-inline-end: var(--sp-2);
+  color: var(--fp-ok);
+  font-weight: var(--weight-strong);
+}
+
+.ext-verified[hidden] {
+  display: none;
 }
 
 .list:empty {

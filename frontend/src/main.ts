@@ -303,6 +303,11 @@ const extNotice = (product: string, live: string, later: string, extra = "") => 
 const extRefresh = async () => {
   const view = await bridge.extensions();
   engine.setExtensions(view.index, view.installed, view.index_error, view.store ?? null);
+  const off = view.index?.turned_off ?? [];
+  if (off.length) {
+    const lines = off.map((o) => t("{name} {version} was turned off in {app}: form.ext-registry blocked it ({reason}).", { name: o.name, version: o.version, app: engine.name(catalogueId(o.product)), reason: o.reason }));
+    engine.setNotice(lines.join(" "), "fault", "installs");
+  }
 };
 
 engine.command("ext.load", () => guard(extRefresh));

@@ -313,18 +313,18 @@
 
           <section class="pane" data-pane="extensions" data-title="Extensions" data-filter="all" aria-label="Extensions">
             <div class="page">
-              <header class="page-head"><div><h1 class="h1">Extensions</h1><p class="sub">Signed add-ons for the Form apps, checked before they install.</p></div></header>
+              <header class="page-head"><div><h1 class="h1">Extensions</h1><p class="sub">Add-ons for the Form apps from form.ext-registry, signed by their publisher and checked before they install.</p></div></header>
               <div class="toolbar">
                 <div class="seg ext-seg" role="group" aria-label="Show extensions for">
                   <button class="seg-item" type="button" data-ext-filter="all" aria-pressed="true">All</button>
                   <!-- @portal:extfilters -->
                 </div>
                 <button class="btn" type="button" data-ext-make>Make an extension</button>
-                <p class="toolbar-note">Checked against the catalogue before install. Each app picks up its extensions while it runs. Open a .formpkg file with FormPortal to install it. <a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/.docs/wiki/Extensions-Troubleshooting.md" data-web>If one will not install</a></p>
+                <p class="toolbar-note">Checked against the registry's signed index and block list before install. Each app picks up its extensions while it runs. Open a .formpkg file with FormPortal to install it. <a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/.docs/wiki/Extensions-Troubleshooting.md" data-web>If one will not install</a></p>
               </div>
               <p class="store-note" data-store-note hidden></p>
               <ul class="list exts" data-ext-list></ul>
-              <p class="empty" data-ext-empty>No Form app has published an extension yet. When one is published to the formai.studio store, it appears here, checked and ready to install. To make your own, use form.ext.</p>
+              <p class="empty" data-ext-empty>No extension is listed yet. When one is published to form.ext-registry, it appears here, checked and ready to install. To make your own, use form.ext.</p>
               <template id="ext-row">
                 <li class="row ext">
                   <span class="mark"><span class="app-ic" aria-hidden="true"><img class="ic-dark" alt="" width="40" height="40" decoding="async" data-ext-icon="dark" /><img class="ic-light" alt="" width="40" height="40" decoding="async" data-ext-icon="light" /></span></span>
@@ -333,7 +333,7 @@
                     <p class="row-sub" data-field="meta"></p>
                     <p class="row-sub ext-sum" data-field="description"></p>
                   </div>
-                  <p class="row-state ext-trust" data-field="trust"></p>
+                  <p class="row-state ext-trust"><span class="ext-verified" data-ext-verified hidden title="Reviewed and published by form.ext-registry">%icon:shield:ic-s%<span>Verified</span></span><span data-field="trust"></span></p>
                   <div class="acts">
                     <label class="menu-check ext-on"><span>On</span><input type="checkbox" class="switch" data-ext-enabled /></label>
                     <button class="btn" type="button" data-ext-act="remove">Remove</button>
@@ -352,6 +352,7 @@
                           <div><dt>API</dt><dd data-field="api"></dd></div>
                           <div><dt>SHA-256</dt><dd class="facts-hash" data-field="sha256"></dd></div>
                         </dl>
+                        <p class="ext-support" data-ext-source hidden><a class="link" href="#" data-web>%icon:source:ic-s%<span>Source in form.ext-registry</span></a></p>
                         <p class="ext-support" data-ext-support hidden><a class="link" href="#" data-web>%icon:heart:ic-s%<span>Support the maker</span></a><span class="fine">Free to use either way.</span></p>
                       </div>
                     </details>

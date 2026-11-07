@@ -1,14 +1,12 @@
 import apps from "../../../catalog/fixtures/apps.json";
 import fixtureIndex from "../../../catalog/fixtures/extensions.json";
-import api1 from "./fixture-extensions.json";
 import registry from "../../../catalog/products.json";
 import schedule from "../../../catalog/schedule.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
-import storeExtensions from "../../../core/data/store-extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionContributes, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -86,8 +84,25 @@ for (const seed of (new URLSearchParams(window.location.search).get("installed")
 }
 
 const extInstalled = new Map<string, InstalledExtension>();
-const extensions = { ...fixtureIndex, packages: [...fixtureIndex.packages, ...api1.packages] };
-const API1_ADDS = api1.contributes as Record<string, ExtensionContributes>;
+const REGISTRY_INDEX = "https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json";
+const blockedFor = (blocked: ExtensionBlocked[], id: string, version: string) => blocked.find((b) => b.id === id && (b.versions.length === 0 || b.versions.includes("*") || b.versions.includes(version)))?.reason;
+const readIndex = async (): Promise<ExtensionIndex> => {
+  const search = new URLSearchParams(window.location.search);
+  const url = search.get("extindex");
+  if (!url) {
+    if (search.has("extfixture")) return fixtureIndex as unknown as ExtensionIndex;
+    throw new Error(`the registry is private or unreachable: browser mode does not fetch ${REGISTRY_INDEX}; add ?extindex=<address of a test index>`);
+  }
+  const answer = await fetch(url).catch((e: unknown) => {
+    throw new Error(`the registry is private or unreachable: ${String(e)}`);
+  });
+  if (!answer.ok) throw new Error(`the registry is private or unreachable: ${url} answered ${answer.status}`);
+  const index = (await answer.json()) as ExtensionIndex;
+  const list = await fetch(url.replace(/[^/]*$/, "blocklist.json")).then((r) => (r.ok ? (r.json() as Promise<{ blocked?: ExtensionBlocked[] }>) : { blocked: [] })).catch(() => ({ blocked: [] as ExtensionBlocked[] }));
+  const blocked = list.blocked ?? [];
+  return { ...index, blocked, packages: index.packages.map((p) => ({ ...p, blocked: blockedFor(blocked, p.id, p.version) })) };
+};
+let extensions: ExtensionIndex | null = null;
 const HOST_NAMES: Record<string, string> = { formportal: "FormPortal", formdeck: "FormDeck" };
 const hostName = (product: string) => HOST_NAMES[product] ?? registry.products.find((p) => p.id === product)?.name ?? product;
 
@@ -116,18 +131,33 @@ export const fixtureBridge: Bridge = {
     return catalog;
   },
   catalogKept: async () => (new URLSearchParams(window.location.search).has("cold") ? null : catalog),
-  extensions: async () => ({ index: (new URLSearchParams(window.location.search).has("extfixture") ? extensions : storeExtensions) as unknown as ExtensionIndex, index_error: null, store: null, installed: Array.from(extInstalled.values()) }),
+  extensions: async () => {
+    try {
+      extensions = await readIndex();
+    } catch (e) {
+      return { index: null, index_error: e instanceof Error ? e.message : String(e), store: null, installed: Array.from(extInstalled.values()) };
+    }
+    const turned_off: ExtensionTurnedOff[] = [];
+    for (const [k, have] of extInstalled) {
+      const reason = blockedFor(extensions.blocked ?? [], have.id, have.version);
+      if (reason && have.enabled) turned_off.push({ id: have.id, name: have.name, product: have.product, version: have.version, reason });
+      if (reason !== have.blocked || (reason && have.enabled)) extInstalled.set(k, { ...have, enabled: reason ? false : have.enabled, blocked: reason });
+    }
+    return { index: { ...extensions, turned_off }, index_error: null, store: new URLSearchParams(window.location.search).get("extindex"), installed: Array.from(extInstalled.values()) };
+  },
   installExtension: async ({ id, path }) => {
-    const index = extensions as unknown as ExtensionIndex;
+    const index = extensions ?? (await readIndex());
     const entry = id ? index.packages.find((p) => p.id === id) : undefined;
     if (id && !entry) throw new Error(`${id} is not in the extension index`);
+    if (entry?.blocked) throw new Error(`${entry.name} ${entry.version} is on form.ext-registry's block list: ${entry.blocked}. It was not installed`);
+    if (entry && !entry.signature) throw new Error(`${entry.name} carries no publisher signature; only the developer setting installs it. It was not installed`);
     const name = path ? path.split(/[\\/]/).pop()?.replace(/\.formpkg$/i, "") ?? "package" : "";
     const file = path ? index.packages.find((p) => `${p.id}-${p.version}` === name) : undefined;
     if (/api2/.test(name)) throw new Error(`${name}: it needs extension API 2; this ${hostName("formcut")} offers API 1`);
     if (/native/.test(name)) throw new Error(`${name}: native extensions are not supported by ${hostName("formcut")}`);
     const listed = entry ?? file;
     const record: InstalledExtension = listed
-      ? { id: listed.id, name: listed.name, product: listed.product, kind: listed.kind, version: listed.version, sha256: listed.sha256, source: "catalogue", signed_by: listed.signature?.publisher ?? null, native: listed.native, permissions: listed.permissions, enabled: true, description: listed.description, api: listed.api, contributes: API1_ADDS[listed.id] ?? { panels: [], commands: [] } }
+      ? { id: listed.id, name: listed.name, product: listed.product, kind: listed.kind, version: listed.version, sha256: listed.sha256, source: "catalogue", signed_by: listed.signature?.publisher ?? null, native: listed.native, permissions: listed.permissions, enabled: true, description: listed.description, api: listed.api, contributes: { panels: [], commands: [] } }
       : { id: name, name, product: "formcut", kind: "preset", version: "0.1.0", sha256: "", source: "sideload", signed_by: null, native: false, permissions: [], enabled: true, contributes: { panels: [], commands: [] } };
     await pause(300);
     extInstalled.set(`${record.product}:${record.id}`, record);
@@ -139,6 +169,7 @@ export const fixtureBridge: Bridge = {
   enableExtension: async (product, id, enabled) => {
     const record = extInstalled.get(`${product}:${id}`);
     if (!record) throw new Error(`the extension ${id} for ${product} is not installed`);
+    if (enabled && record.blocked) throw new Error(`${record.name} ${record.version} stays off: it is on form.ext-registry's block list (${record.blocked})`);
     extInstalled.set(`${product}:${id}`, { ...record, enabled });
   },
   selfUpdateCheck: async () => {
