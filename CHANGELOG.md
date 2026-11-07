@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.62.3 · 2026-11-07
+
+- The loading bar on the start-up card moves again; the last release left it stopped at the start.
+
 ## v0.62.2 · 2026-11-07
 
 - The start-up card matches the other Form apps: the same rounded card, icon and loading bar, held for 2.6 seconds before the window appears whole.
