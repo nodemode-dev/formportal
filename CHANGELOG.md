@@ -2,6 +2,15 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.0 · 2026-11-07
+
+- FormPortal is the hub for extensions in every Form app that loads them: FormVis, FormCut, FormWav, FormPDF, FormDeck, FormLit, form.md, FormEncoder, FormVFX, FormMCP, FormTray, FormSkills and FormPortal. The Extensions page has a filter per app, and an extension's details say which app it goes to and the panels and commands it adds.
+- An app picks an install, a switch on or off, or a removal up while it runs: the notice says "{name} {version} is ready in {app}", with Open {app} when the app is installed. An app older than its first extension-aware release still uses the change the next time it starts.
+- Extensions made for a newer extension API, and native extensions, are refused with the reason.
+- `formai://extensions?product=...` opens the Extensions page for that app (each app's Manage in FormPortal), and `formai://extensions?install=...` installs a package file through the usual checks.
+- Make an extension opens form.ext, the new extension studio, or its page on formai.studio. form.ext is listed with the other apps.
+- The command line and the MCP tools name the thirteen apps and report live pickup.
+
 ## v0.62.4 · 2026-11-07
 
 - Two more browser demos open offline beside the first: `demos/updates` (updates, go back, a beta beside stable, release notes, and a Trust page that runs every check step by step and refuses a tampered catalogue, download or package) and `demos/library` (fonts, stock with credit lines, templates and Learn). The first demo links to both.
