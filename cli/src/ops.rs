@@ -5,6 +5,7 @@ use serde_json::{json, Map, Value};
 pub const DEFAULT_SOURCE: &str = "https://dl.formai.studio/catalog/apps.json";
 const REGISTRY: &str = include_str!("../../catalog/products.json");
 const SCHEDULE: &str = include_str!("../../catalog/schedule.json");
+const EXT_PRODUCT: &str = "give the product the extension is for: formvis, formcut, formwav, formpdf, formdeck, formlit, formmd, formencoder, formvfx, formmcp, formtray, formskills or formportal";
 const ALIAS: [(&str, &str); 3] = [("formportal", "formai"), ("formdeck", "formslide"), ("formskill", "formskills")];
 
 fn released(catalog: &Catalog, id: &str) -> bool {
@@ -811,7 +812,7 @@ pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
                     let have = installed.iter().find(|e| e.product == p.product && e.id == p.id);
                     json!({ "id": p.id, "name": p.name, "product": p.product, "kind": p.kind, "author": p.author, "description": p.description, "version": p.version,
                             "licence": p.licence, "native": p.native, "permissions": p.permissions, "signed": p.signature.is_some(), "minimum_app": p.minimum_app,
-                            "support": p.support, "installed": have.map(|h| &h.version), "enabled": have.map(|h| h.enabled),
+                            "support": p.support, "homepage": p.homepage, "api": p.api, "app": formportal_core::extensions::app_name(&p.product), "installed": have.map(|h| &h.version), "enabled": have.map(|h| h.enabled),
                             "update": have.map(|h| formportal_core::version_newer(&p.version, &h.version)).unwrap_or(false) })
                 })
                 .collect()
@@ -825,26 +826,28 @@ pub fn extension_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, 
     if let Some(path) = text(args, "path") {
         let index = ext_index(ctx, args).ok().map(|(i, _)| i);
         let done = ctx.portal.install_extension_file(std::path::Path::new(&path), index.as_ref(), allow)?;
-        return Ok(json!({ "installed": done, "note": "the app picks it up the next time it starts" }));
+        let note = ctx.portal.extension_note(&done.product);
+        return Ok(json!({ "installed": done, "note": note }));
     }
     let id = text(args, "id").ok_or_else(|| fail("give id (from extensions) or path (a .formpkg file)"))?;
     let (index, _) = ext_index(ctx, args)?;
     let done = ctx.portal.install_extension(&index, &id, allow, progress)?;
-    Ok(json!({ "installed": done, "note": "the app picks it up the next time it starts" }))
+    let note = ctx.portal.extension_note(&done.product);
+    Ok(json!({ "installed": done, "note": note }))
 }
 
 pub fn extension_remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = text(args, "id").ok_or_else(|| fail("give the extension's id"))?;
-    let product = text(args, "product").ok_or_else(|| fail("give the product the extension is for"))?;
+    let product = text(args, "product").ok_or_else(|| fail(EXT_PRODUCT))?;
     ctx.portal.remove_extension(&product, &id)?;
-    Ok(json!({ "removed": id, "product": product }))
+    Ok(json!({ "removed": id, "product": product, "note": ctx.portal.extension_note(&product) }))
 }
 
 pub fn extension_enable(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = text(args, "id").ok_or_else(|| fail("give the extension's id"))?;
-    let product = text(args, "product").ok_or_else(|| fail("give the product the extension is for"))?;
+    let product = text(args, "product").ok_or_else(|| fail(EXT_PRODUCT))?;
     let on = flag(args, "enabled").ok_or_else(|| fail("give enabled true or false"))?;
-    Ok(json!({ "extension": ctx.portal.enable_extension(&product, &id, on)?, "note": "the app picks the change up the next time it starts" }))
+    Ok(json!({ "extension": ctx.portal.enable_extension(&product, &id, on)?, "note": ctx.portal.extension_note(&product) }))
 }
 
 pub fn open(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {

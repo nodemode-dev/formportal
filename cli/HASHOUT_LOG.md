@@ -5,6 +5,15 @@ Living log for `formportal-cli`, FormPortal's command line and MCP server. Sourc
 Current build version: v0.58.0
 Last updated: 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
+## v0.63.0 · extensions for thirteen apps, picked up live {#ext-api1}
+
+### ops.rs · mcp.rs · main.rs · extensions, extension_install, extension_remove, extension_enable
+- refers-to: cli/src/ops.rs :: EXT_PRODUCT, extensions, extension_install, extension_remove, extension_enable · cli/src/mcp.rs :: ext_product, the four extension tools · cli/src/main.rs :: USAGE · core/src/extensions.rs :: HOSTS, extension_note
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+`extensions` adds each package's `app` (its name), `api` and `homepage`; installed records carry `description`, `api` and `contributes`. The `note` after install, remove and enable is `Portal::extension_note` (live, or from the next start for an app older than its extension host release) instead of "the next time it starts". `extension_remove` and `extension_enable` take `product` as an enum of the thirteen contract ids (from `HOSTS`), described as the contract's (formdeck and formportal, not formslide and formai); the missing-product message lists them, and so does the usage text. After this change `./formportal agents sync` must regenerate the harness `references/tools.md`.
+
 ## v0.61.0 · no formcompiler app {#compiler}
 
 ### ops.rs · mcp.rs · apps

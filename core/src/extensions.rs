@@ -51,6 +51,78 @@ pub struct Entry {
     pub signature: Option<PackageSignature>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub support: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub homepage: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api: Option<String>,
+}
+
+pub const HOSTS: [(&str, &str, &str); 13] = [
+    ("formvis", "FormVis", "2.1.0"),
+    ("formcut", "FormCut", "2.14.0"),
+    ("formwav", "FormWav", "2.24.0"),
+    ("formpdf", "FormPDF", "0.59.0"),
+    ("formdeck", "FormDeck", "0.32.0"),
+    ("formlit", "FormLit", "0.50.0"),
+    ("formmd", "form.md", "0.50.0"),
+    ("formencoder", "FormEncoder", "0.7.0"),
+    ("formvfx", "FormVFX", "0.54.0"),
+    ("formmcp", "FormMCP", "0.9.0"),
+    ("formtray", "FormTray", "0.15.0"),
+    ("formskills", "FormSkills", "0.9.0"),
+    ("formportal", "FormPortal", "0.63.0"),
+];
+
+pub fn app_name(product: &str) -> &str {
+    HOSTS.iter().find(|(id, _, _)| *id == product).map_or(product, |(_, name, _)| *name)
+}
+
+pub fn catalogue_id(product: &str) -> &str {
+    match product {
+        "formportal" => "formai",
+        "formdeck" => "formslide",
+        other => other,
+    }
+}
+
+pub fn host_release(product: &str) -> Option<&'static str> {
+    HOSTS.iter().find(|(id, _, _)| *id == product).map(|(_, _, version)| *version)
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Panel {
+    pub id: String,
+    pub title: String,
+    #[serde(default)]
+    pub location: String,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Command {
+    pub id: String,
+    pub title: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub panel: Option<String>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Contributes {
+    #[serde(default)]
+    pub panels: Vec<Panel>,
+    #[serde(default)]
+    pub commands: Vec<Command>,
+}
+
+fn contributions(value: Option<&serde_json::Value>) -> Contributes {
+    let items = |key: &str| value.and_then(|v| v.get(key)).and_then(serde_json::Value::as_array).cloned().unwrap_or_default();
+    let field = |item: &serde_json::Value, key: &str| item.get(key).and_then(serde_json::Value::as_str).map(str::to_string);
+    Contributes {
+        panels: items("panels")
+            .iter()
+            .filter_map(|p| Some(Panel { id: field(p, "id")?, title: field(p, "title")?, location: field(p, "location").unwrap_or_else(|| "dock".to_string()) }))
+            .collect(),
+        commands: items("commands").iter().filter_map(|c| Some(Command { id: field(c, "id")?, title: field(c, "title")?, panel: field(c, "panel") })).collect(),
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -84,6 +156,14 @@ pub struct Manifest {
     pub permissions: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub minimum_app: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entry: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contributes: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -107,6 +187,12 @@ pub struct InstalledExtension {
     pub permissions: Vec<String>,
     pub enabled: bool,
     pub path: PathBuf,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub api: Option<String>,
+    #[serde(default)]
+    pub contributes: Contributes,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -143,7 +229,27 @@ fn read_manifest(package: &Path) -> Result<Manifest> {
     if !crate::plain_name(&manifest.version) {
         return Err(CoreError::Archive(format!("its manifest names a version, {:?}, that is not a plain name", manifest.version)));
     }
+    let api = manifest.api.as_ref().map(|a| a.as_str().map_or_else(|| format!("{a} (not text)"), str::to_string));
+    refuse_for_api(&manifest.name, &manifest.product, api.as_deref(), manifest.native)?;
     Ok(manifest)
+}
+
+fn refuse_for_api(name: &str, product: &str, api: Option<&str>, native: bool) -> Result<()> {
+    if let Some(wanted) = api.filter(|a| *a != "1") {
+        return Err(CoreError::Refused(format!("{name}: it needs extension API {wanted}; this {} offers API 1", app_name(product))));
+    }
+    if native {
+        return Err(CoreError::Refused(format!("{name}: native extensions are not supported by {}", app_name(product))));
+    }
+    Ok(())
+}
+
+fn write_enabled(dir: &Path, product: &str, enabled: Vec<serde_json::Value>) -> Result<()> {
+    fs::create_dir_all(dir)?;
+    let doc = serde_json::json!({ "format": "formportal-enabled-extensions", "format_version": 1, "product": product, "extensions": enabled });
+    fs::write(dir.join("enabled.json.tmp"), serde_json::to_string_pretty(&doc).unwrap_or_default())?;
+    fs::rename(dir.join("enabled.json.tmp"), dir.join("enabled.json"))?;
+    Ok(())
 }
 
 fn check_signature(package: &Path, signature: &PackageSignature, publishers: &[Publisher]) -> Result<String> {
@@ -184,10 +290,7 @@ impl Portal {
                 .filter(|e| e.product == product && e.enabled)
                 .map(|e| serde_json::json!({ "id": e.id, "kind": e.kind, "version": e.version, "path": e.path, "permissions": e.permissions, "native": e.native, "source": e.source }))
                 .collect();
-            let dir = root.join(product);
-            fs::create_dir_all(&dir)?;
-            let doc = serde_json::json!({ "format": "formportal-enabled-extensions", "format_version": 1, "product": product, "extensions": enabled });
-            fs::write(dir.join("enabled.json"), serde_json::to_string_pretty(&doc).unwrap_or_default())?;
+            write_enabled(&root.join(product), product, enabled)?;
         }
         Ok(())
     }
@@ -232,6 +335,16 @@ impl Portal {
         Ok(self.ext_state()?.extensions)
     }
 
+    pub fn extension_note(&self, product: &str) -> String {
+        let app = app_name(product);
+        let id = catalogue_id(product);
+        let have = self.state().ok().and_then(|s| s.installs.into_iter().filter(|i| i.product == id).map(|i| i.current.version).reduce(|a, b| if crate::version_newer(&b, &a) { b } else { a }));
+        match (have, host_release(product)) {
+            (Some(v), Some(host)) if crate::version_newer(host, &v) => format!("{app} {v} uses it the next time it starts; {app} {host} and newer pick changes up while they run"),
+            _ => format!("ready in {app}: {app} picks the change up while it runs"),
+        }
+    }
+
     fn place_package(&self, package: &Path, manifest: &Manifest, sha256: String, source: Source, signed_by: Option<String>) -> Result<InstalledExtension> {
         let base = self.ext_root().join(&manifest.product).join(&manifest.id);
         let target = base.join(&manifest.version);
@@ -264,6 +377,9 @@ impl Portal {
             permissions: manifest.permissions.clone(),
             enabled,
             path: target.clone(),
+            description: manifest.description.clone(),
+            api: manifest.api.as_ref().and_then(|a| a.as_str()).map(str::to_string),
+            contributes: contributions(manifest.contributes.as_ref()),
         };
         state.extensions.push(record.clone());
         self.ext_save(&state)?;
@@ -286,6 +402,7 @@ impl Portal {
             }
             None => allow_unsigned,
         };
+        refuse_for_api(&entry.name, &entry.product, entry.api.as_deref(), entry.native)?;
         let file = format!("{}-{}.formpkg", entry.id, entry.version);
         let artifact = Artifact { platform: Os::Other, arch: Arch::X86_64, kind: ArtifactKind::Zip, file, url: entry.url.clone(), bytes: entry.bytes, sha256: entry.sha256.clone(), minimum_os: String::new(), signature: None };
         let package = download(&artifact, &self.root().join("downloads"), progress)?;
@@ -344,8 +461,7 @@ impl Portal {
         }
         self.ext_save(&state)?;
         if !state.extensions.iter().any(|e| e.product == product) {
-            let doc = serde_json::json!({ "format": "formportal-enabled-extensions", "format_version": 1, "product": product, "extensions": [] });
-            fs::write(self.ext_root().join(product).join("enabled.json"), serde_json::to_string_pretty(&doc).unwrap_or_default())?;
+            write_enabled(&self.ext_root().join(product), product, Vec::new())?;
         }
         Ok(())
     }

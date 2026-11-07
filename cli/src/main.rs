@@ -17,6 +17,8 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   extension-install --id ID | --path FILE.formpkg [--allow-unsigned]
   extension-remove --product P --id ID
   extension-enable --product P --id ID --enabled true|false
+                                  P: formvis formcut formwav formpdf formdeck formlit formmd formencoder
+                                  formvfx formmcp formtray formskills formportal; the app picks changes up live
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
   preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...]
