@@ -1366,15 +1366,12 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
   background: var(--control);
 }
 
-.ext .mark .ic {
-  display: none;
+.ext .mark {
+  background: none;
 }
 
-[data-product="formcut"] > .mark .ic-formcut,
-[data-product="formvis"] > .mark .ic-formvis,
-[data-product="formwav"] > .mark .ic-formwav,
-[data-product="formai"] > .mark .ic-formai {
-  display: block;
+.ext-seg {
+  flex-wrap: wrap;
 }
 
 .row-name-text {
@@ -1414,12 +1411,6 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 
 .ext[data-trust="sideload"] .ext-trust {
   color: var(--fault);
-}
-
-[data-pane="extensions"][data-filter="formcut"] .ext:not([data-product="formcut"]),
-[data-pane="extensions"][data-filter="formvis"] .ext:not([data-product="formvis"]),
-[data-pane="extensions"][data-filter="formwav"] .ext:not([data-product="formwav"]) {
-  display: none;
 }
 
 .list:empty {
@@ -2822,6 +2813,20 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
   background: none;
   color: var(--ink-soft);
   font-size: var(--fs-xs);
+  text-decoration: underline;
+}
+
+.toast:has(.toast-act) {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.toast-act {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--weight-strong);
   text-decoration: underline;
 }
 

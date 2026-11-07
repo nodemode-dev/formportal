@@ -74,6 +74,13 @@ export interface ExtensionEntry {
   permissions: string[];
   signature?: ExtensionSignature;
   support?: string;
+  homepage?: string;
+  api?: string;
+}
+
+export interface ExtensionContributes {
+  panels: { id: string; title: string; location: string }[];
+  commands: { id: string; title: string; panel?: string }[];
 }
 
 export interface SelfUpdate {
@@ -292,6 +299,9 @@ export interface InstalledExtension {
   native: boolean;
   permissions: string[];
   enabled: boolean;
+  description?: string;
+  api?: string;
+  contributes?: ExtensionContributes;
 }
 
 export interface ExtensionsView {

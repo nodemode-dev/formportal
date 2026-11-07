@@ -7,6 +7,13 @@ Last updated: 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; for
 
 ---
 
+## form.ext's hue {#formext-hue}
+- refers-to: design/app-hues.json :: formext
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+form.ext joins the products as `formext`; its hue is `#4f6bff` (indigo), the accent form.ext itself uses (`nodemode-dev/form.ext` `frontend/src/styles/tokens.css`), chosen there as the candidate farthest from every other app's hue. formai.studio's `design/tokens.css` keys the same value, so the hub, the site and the app agree.
+
 ## formcompiler is not an app {#formcompiler-not-app}
 - refers-to: app-hues.json
 - kind: decision

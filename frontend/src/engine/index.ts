@@ -2,7 +2,7 @@ import type { RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, 
 
 export interface EngineEvents {
   install: { key: string };
-  notice: { text: string; tone: "info" | "fault"; category: NoticeCategory };
+  notice: { text: string; tone: "info" | "fault"; category: NoticeCategory; action?: NoticeAction };
   learn: { view: LearnView };
   assistant: { agents: AssistantAgent[] };
   answer: { pending: boolean; answer: string | null; error: string | null };
@@ -28,6 +28,12 @@ export interface EngineEvents {
   shares: { view: SharesView };
   shareResult: { busy: boolean; text: string; url: string };
   filedrop: { paths: string[]; phase: "over" | "leave" | "drop" };
+}
+
+export interface NoticeAction {
+  label: string;
+  command: string;
+  arg?: unknown;
 }
 
 export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false };
@@ -169,8 +175,8 @@ export class Engine {
     this.emit("install", { key });
   }
 
-  setNotice(text: string, tone: "info" | "fault" = "fault", category: NoticeCategory = "system"): void {
-    this.emit("notice", { text, tone, category });
+  setNotice(text: string, tone: "info" | "fault" = "fault", category: NoticeCategory = "system", action?: NoticeAction): void {
+    this.emit("notice", { text, tone, category, action });
   }
 
   private names = new Map<string, string>();

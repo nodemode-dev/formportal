@@ -1,6 +1,7 @@
 import { pickBridge } from "./bridge/index.ts";
 import { Engine, versionNewer } from "./engine/index.ts";
-import type { Channel, NoticeCategory, Preferences, SyncReport } from "./engine/types.ts";
+import type { Channel, InstallRecord, NoticeCategory, Preferences, SyncReport } from "./engine/types.ts";
+import { HOSTS, MAKER, MAKER_PAGE, catalogueId } from "./engine/hosts.ts";
 import pkg from "../package.json";
 import registry from "../../catalog/products.json";
 import { apps } from "./extensions/apps/index.ts";
@@ -264,6 +265,15 @@ engine.command("link.open", (arg) => {
     void engine.dispatch("web.ask", url);
     return;
   }
+  if (/^extensions\/?(\?|$)/.test(link)) {
+    const query = new URLSearchParams(link.split("?")[1] ?? "");
+    const install = query.get("install") ?? "";
+    void engine.dispatch("route.go", "extensions");
+    void engine.dispatch("ext.filter", query.get("product") ?? "all");
+    if (/\.formpkg$/i.test(install) && /^(\/|[A-Za-z]:[\\/])/.test(install)) void engine.dispatch("ext.install", { path: install });
+    else if (install) engine.setNotice(t("That link does not point to a .formpkg file on this computer."), "fault", "installs");
+    return;
+  }
   const [head, id] = link.split("/");
   if (head === "app" && id) {
     void engine.dispatch("route.go", `app-${id}`);
@@ -274,6 +284,21 @@ engine.command("link.open", (arg) => {
     void engine.dispatch("route.go", head);
   }
 });
+
+const appInstall = (id: string) => {
+  let best: InstallRecord | null = null;
+  for (const record of engine.installs.values()) if (record.product === id && (!best || versionNewer(record.version, best.version))) best = record;
+  return best;
+};
+
+const extNotice = (product: string, live: string, later: string, extra = "") => {
+  const id = catalogueId(product);
+  const have = appInstall(id);
+  const host = HOSTS[product];
+  const old = have !== null && host !== undefined && versionNewer(host, have.version);
+  const action = have && !old ? { label: t("Open {app}", { app: engine.name(id) }), command: "app.open", arg: { product: id, channel: have.channel } } : undefined;
+  engine.setNotice(`${old ? later : live}${extra}`, "info", "installs", action);
+};
 
 const extRefresh = async () => {
   const view = await bridge.extensions();
@@ -291,18 +316,22 @@ engine.command("ext.install", (arg) =>
       await extRefresh();
     }
     const label = done.source === "sideload" ? ` ${t("It was installed from a file, not the catalogue.")}` : "";
-    engine.setNotice(`${t("{name} {version} is installed; {app} uses it the next time it starts.", { name: done.name, version: done.version, app: engine.name(done.product) })}${label}`, "info", "installs");
+    extNotice(done.product, t("{name} {version} is ready in {app}.", { name: done.name, version: done.version, app: engine.name(catalogueId(done.product)) }), t("{name} {version} is installed; {app} uses it the next time it starts.", { name: done.name, version: done.version, app: engine.name(catalogueId(done.product)) }), label);
   }, "installs"),
 );
 
 engine.command("ext.remove", (arg) =>
   guard(async () => {
     const { product, id } = arg as { product: string; id: string };
+    const had = engine.state.installedExtensions.find((e) => e.product === product && e.id === id);
     try {
       await bridge.removeExtension(product, id);
     } finally {
       await extRefresh();
     }
+    const app = engine.name(catalogueId(product));
+    const name = had?.name ?? id;
+    extNotice(product, t("{name} is removed from {app}.", { name, app }), t("{name} is removed; {app} lets it go the next time it starts.", { name, app }));
   }, "installs"),
 );
 
@@ -311,8 +340,18 @@ engine.command("ext.enable", (arg) =>
     const { product, id, enabled } = arg as { product: string; id: string; enabled: boolean };
     await bridge.enableExtension(product, id, enabled);
     await extRefresh();
+    const had = engine.state.installedExtensions.find((e) => e.product === product && e.id === id);
+    const vars = { name: had?.name ?? id, version: had?.version ?? "", app: engine.name(catalogueId(product)) };
+    if (enabled) extNotice(product, t("{name} {version} is ready in {app}.", vars), t("{name} {version} is on; {app} uses it the next time it starts.", vars));
+    else extNotice(product, t("{name} {version} is turned off in {app}.", vars), t("{name} {version} is off; {app} stops using it the next time it starts.", vars));
   }, "installs"),
 );
+
+engine.command("ext.make", () => {
+  const have = appInstall(MAKER);
+  if (have) void engine.dispatch("app.open", { product: MAKER, channel: have.channel });
+  else void engine.dispatch("web.open", MAKER_PAGE);
+});
 
 engine.command("self.check", async () => {
   engine.setSelf(t("Checking..."), false);

@@ -1,4 +1,5 @@
 import { versionNewer } from "../../engine/index.ts";
+import { EXT_PRODUCTS, catalogueId } from "../../engine/hosts.ts";
 import { t } from "../../i18n/index.ts";
 import type { ExtensionEntry, InstalledExtension } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
@@ -25,15 +26,29 @@ function fill(row: HTMLElement, entry: ExtensionEntry | null, have: InstalledExt
   };
   const product = entry?.product ?? have?.product ?? "";
   const permissions = entry?.permissions ?? have?.permissions ?? [];
-  attr("data-product", product);
+  attr("data-product", catalogueId(product));
+  const known = EXT_PRODUCTS.includes(product);
+  for (const img of Array.from(row.querySelectorAll<HTMLImageElement>("[data-ext-icon]"))) {
+    const src = known ? `/apps/${product}${img.dataset.extIcon === "light" ? "-light" : ""}.webp` : null;
+    if (src === null) {
+      if (img.hasAttribute("src")) img.removeAttribute("src");
+    } else if (img.getAttribute("src") !== src) img.setAttribute("src", src);
+  }
+  row.querySelector(".app-ic")?.classList.toggle("app-ic-none", !known);
   attr("data-listed", entry ? "" : null);
   attr("data-ext-state", !have ? "none" : entry && versionNewer(entry.version, have.version) ? "update" : "installed");
   attr("data-trust", have?.source === "sideload" ? "sideload" : entry?.signature || have?.signed_by ? "signed" : "unsigned");
   set("name", entry?.name ?? have?.name ?? "");
   const version = have && entry && have.version !== entry.version ? `version ${have.version} installed, ${entry.version} available` : `version ${have?.version ?? entry?.version ?? ""}`;
-  const app = label(product);
+  const app = label(catalogueId(product));
   set("meta", `For ${app}${entry ? `, by ${entry.author}` : ""}, ${version}`);
-  set("description", entry?.description ?? "Installed from a file; not in the catalogue.");
+  set("description", entry?.description ?? have?.description ?? "Installed from a file; not in the catalogue.");
+  set("app", app);
+  const adds = have?.contributes;
+  const later = t("Shown once it is installed");
+  set("panels", adds ? adds.panels.map((p) => `${p.title} (${p.location === "dialog" ? t("dialog") : t("docked")})`).join(", ") || t("none") : later);
+  set("commands", adds ? adds.commands.map((c) => c.title).join(", ") || t("none") : later);
+  set("api", have?.api ?? entry?.api ?? t("before API 1"));
   set("permissions", permissions.map((p) => PERMISSIONS[p] ?? p).join(", ") || "nothing");
   set("kind", (entry?.kind ?? have?.kind ?? "").replace(/-/g, " "));
   set("licence", entry?.licence ?? "");
@@ -77,6 +92,17 @@ export const library: Extension = {
         for (const other of filters) other.setAttribute("aria-pressed", String(other === button));
       });
     }
+    engine.command("ext.filter", (arg) => {
+      const want = catalogueId(String(arg ?? "all"));
+      const button = filters.find((b) => b.dataset.extFilter === want) ?? filters.find((b) => b.dataset.extFilter === "all");
+      if (!button) return;
+      if (pane?.getAttribute("data-filter") !== button.dataset.extFilter) pane?.setAttribute("data-filter", button.dataset.extFilter ?? "all");
+      for (const other of filters) {
+        const pressed = String(other === button);
+        if (other.getAttribute("aria-pressed") !== pressed) other.setAttribute("aria-pressed", pressed);
+      }
+    });
+    document.querySelector("[data-ext-make]")?.addEventListener("click", () => void engine.dispatch("ext.make"));
 
     const wire = (row: HTMLElement) => {
       const target = () => ({ product: row.dataset.product ?? "", id: row.dataset.ext ?? "" });

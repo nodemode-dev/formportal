@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { loadJson } from "../design/markers.ts";
+import { EXT_PRODUCTS, catalogueId } from "./src/engine/hosts.ts";
 
 export interface App {
   id: string;
@@ -182,6 +183,9 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
 
   const learn = apps.filter((p) => repo(p)).map((p) => `<li class="learn" data-product="${p.id}"${style(p)}>${icon(p.id, 40)}<div class="learn-text"><h3 class="learn-name">${name(p)}</h3><p class="links">${web(`${repo(p)}#readme`, "Guide and docs")}${web("https://formai.studio/download/", "Every release")}${web(`${repo(p)}/discussions`, "Ask the community")}</p></div></li>`);
 
+  const extIds = EXT_PRODUCTS.map(catalogueId).filter((id) => all.some((p) => p.id === id));
+  const extfilters = extIds.map((id) => `<button class="seg-item" type="button" data-ext-filter="${id}" data-product="${id}" aria-pressed="false">${esc(all.find((p) => p.id === id)?.name ?? id)}</button>`);
+
   const fileApps: Record<string, string> = { ...COMMON };
   for (const p of apps) {
     for (const ext of [...(p.project_extensions ?? []), ...(caps(p).project ? [caps(p).project as string] : [])]) fileApps[ext.replace(/^\./, "").toLowerCase()] = p.id;
@@ -198,6 +202,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     pages,
     autolist,
     learn,
+    extfilters,
     total: [String(apps.length)],
     fileapps: [esc(JSON.stringify(fileApps))],
   };
@@ -214,6 +219,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     `html[data-soon-more="0"] [data-soon-extra] { display: none; }`,
     ...Array.from({ length: MORE - 1 }, (_, k) => `html[data-soon-more="${k + 1}"] [data-soon-extra] .soon-tile:nth-child(n + ${k + 2}) { display: none; }`),
     `html[data-soon-left="0"][data-soon-more="0"] [data-soon] { display: none; }`,
+    ...extIds.map((id) => `[data-pane="extensions"][data-filter="${id}"] .ext:not([data-product="${id}"]) { display: none; }`),
     ...GROUPS.map(([g]) => {
       const none = apps.filter((p) => group(p) === g).map((p) => `:not([data-live~="${p.id}"])`).join("");
       return `html${none} [data-group-head="${g}"] { display: none; }`;

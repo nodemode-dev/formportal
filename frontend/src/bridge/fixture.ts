@@ -1,5 +1,6 @@
 import apps from "../../../catalog/fixtures/apps.json";
-import extensions from "../../../catalog/fixtures/extensions.json";
+import fixtureIndex from "../../../catalog/fixtures/extensions.json";
+import api1 from "./fixture-extensions.json";
 import registry from "../../../catalog/products.json";
 import schedule from "../../../catalog/schedule.json";
 import learnPortal from "../../../core/data/learn-portal.json";
@@ -7,7 +8,7 @@ import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import storeExtensions from "../../../core/data/store-extensions.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionContributes, ExtensionIndex, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -85,6 +86,10 @@ for (const seed of (new URLSearchParams(window.location.search).get("installed")
 }
 
 const extInstalled = new Map<string, InstalledExtension>();
+const extensions = { ...fixtureIndex, packages: [...fixtureIndex.packages, ...api1.packages] };
+const API1_ADDS = api1.contributes as Record<string, ExtensionContributes>;
+const HOST_NAMES: Record<string, string> = { formportal: "FormPortal", formdeck: "FormDeck" };
+const hostName = (product: string) => HOST_NAMES[product] ?? registry.products.find((p) => p.id === product)?.name ?? product;
 
 const SUPPORTER_FIXTURE_CODE = "d1.0.00000000000000000000000000000000.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
@@ -117,9 +122,13 @@ export const fixtureBridge: Bridge = {
     const entry = id ? index.packages.find((p) => p.id === id) : undefined;
     if (id && !entry) throw new Error(`${id} is not in the extension index`);
     const name = path ? path.split(/[\\/]/).pop()?.replace(/\.formpkg$/i, "") ?? "package" : "";
-    const record: InstalledExtension = entry
-      ? { id: entry.id, name: entry.name, product: entry.product, kind: entry.kind, version: entry.version, sha256: entry.sha256, source: "catalogue", signed_by: entry.signature?.publisher ?? null, native: entry.native, permissions: entry.permissions, enabled: true }
-      : { id: name, name, product: "formcut", kind: "preset", version: "0.1.0", sha256: "", source: "sideload", signed_by: null, native: false, permissions: [], enabled: true };
+    const file = path ? index.packages.find((p) => `${p.id}-${p.version}` === name) : undefined;
+    if (/api2/.test(name)) throw new Error(`${name}: it needs extension API 2; this ${hostName("formcut")} offers API 1`);
+    if (/native/.test(name)) throw new Error(`${name}: native extensions are not supported by ${hostName("formcut")}`);
+    const listed = entry ?? file;
+    const record: InstalledExtension = listed
+      ? { id: listed.id, name: listed.name, product: listed.product, kind: listed.kind, version: listed.version, sha256: listed.sha256, source: "catalogue", signed_by: listed.signature?.publisher ?? null, native: listed.native, permissions: listed.permissions, enabled: true, description: listed.description, api: listed.api, contributes: API1_ADDS[listed.id] ?? { panels: [], commands: [] } }
+      : { id: name, name, product: "formcut", kind: "preset", version: "0.1.0", sha256: "", source: "sideload", signed_by: null, native: false, permissions: [], enabled: true, contributes: { panels: [], commands: [] } };
     await pause(300);
     extInstalled.set(`${record.product}:${record.id}`, record);
     return record;
