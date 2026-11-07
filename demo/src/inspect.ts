@@ -5,7 +5,7 @@ import { extOf, current, keep, put, productFor, sidecar } from "./library.ts";
 import { signedCatalogue, verify } from "./catalogue.ts";
 import { trustedKeys } from "./store.ts";
 
-type Kind = "image" | "audio" | "font" | "zip" | "catalogue" | "json" | "text" | "binary";
+type Kind = "image" | "audio" | "sound" | "video" | "pdf" | "font" | "zip" | "catalogue" | "json" | "text" | "binary";
 
 interface Subject {
   name: string;
@@ -14,6 +14,7 @@ interface Subject {
   type: string;
   path: string | null;
   product: string | null;
+  poster?: Uint8Array;
 }
 
 let subject: Subject | null = null;
@@ -39,6 +40,11 @@ function kindOf(name: string, data: Uint8Array): Kind {
     if (tag === "WAVE") return "audio";
   }
   if (b.length > 4 && b[0] === 0x50 && b[1] === 0x4b && b[2] === 3 && b[3] === 4) return "zip";
+  if (b.length > 5 && decoder.decode(b.subarray(0, 5)) === "%PDF-") return "pdf";
+  if (b.length > 4 && decoder.decode(b.subarray(0, 4)) === "OggS") return "sound";
+  if (b.length > 3 && (decoder.decode(b.subarray(0, 3)) === "ID3" || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0))) return "sound";
+  if (b.length > 12 && decoder.decode(b.subarray(4, 8)) === "ftyp") return "video";
+  if (b.length > 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return "video";
   const head = (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
   if (head === 0x00010000 || head === 0x4f54544f || head === 0x74727565 || head === 0x774f4632) return "font";
   if (ext === "svg") return "image";
@@ -59,6 +65,9 @@ function mimeOf(name: string, data: Uint8Array, kind: Kind): string {
   const ext = extOf(name);
   if (kind === "image") return ext === "svg" ? "image/svg+xml" : data[0] === 0x89 ? "image/png" : data[0] === 0xff ? "image/jpeg" : data[0] === 0x47 ? "image/gif" : "image/webp";
   if (kind === "audio") return "audio/wav";
+  if (kind === "sound") return ext === "mp3" ? "audio/mpeg" : "audio/ogg";
+  if (kind === "video") return ext === "webm" ? "video/webm" : "video/mp4";
+  if (kind === "pdf") return "application/pdf";
   if (kind === "zip") return "application/zip";
   if (kind === "font") return "font/ttf";
   if (kind === "catalogue" || kind === "json") return "application/json";
@@ -172,6 +181,73 @@ function viewAudio(view: HTMLElement, s: Subject, extra: [string, string][]): vo
   audio.controls = true;
   audio.src = url(s.data, "audio/wav");
   view.append(canvas, audio);
+}
+
+async function viewVideo(view: HTMLElement, s: Subject, type: string, extra: [string, string][]): Promise<void> {
+  const video = document.createElement("video");
+  video.controls = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  if (s.poster) video.poster = url(s.poster, "image/webp");
+  const ready = new Promise<void>((done) => {
+    video.addEventListener("loadedmetadata", () => done(), { once: true });
+    video.addEventListener("error", () => done(), { once: true });
+    window.setTimeout(done, 4000);
+  });
+  video.src = url(s.data, type);
+  view.append(video);
+  await ready;
+  extra.push(["Video", video.videoWidth ? `${video.videoWidth} by ${video.videoHeight}, ${video.duration.toFixed(1)} s` : "not decodable here"]);
+}
+
+async function viewSound(view: HTMLElement, s: Subject, type: string, extra: [string, string][]): Promise<void> {
+  const canvas = document.createElement("canvas");
+  const width = 1200;
+  canvas.width = width;
+  canvas.height = 240;
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.preload = "metadata";
+  audio.src = url(s.data, type);
+  view.append(canvas, audio);
+  const decoded = await new OfflineAudioContext(1, 1, 44100).decodeAudioData(s.data.slice().buffer as ArrayBuffer).catch(() => null);
+  if (!decoded) {
+    extra.push(["Audio", "not decodable here"]);
+    return;
+  }
+  extra.push(["Audio", `${decoded.numberOfChannels} ch, ${decoded.sampleRate} Hz, ${decoded.duration.toFixed(1)} s`]);
+  const g = canvas.getContext("2d");
+  if (!g) return;
+  g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent-color").trim() || "#ff7a1a";
+  const samples = decoded.getChannelData(0);
+  const per = Math.max(1, Math.floor(samples.length / width));
+  for (let x = 0; x < width; x += 1) {
+    let lo = 0;
+    let hi = 0;
+    for (let i = 0; i < per; i += 1) {
+      const v = samples[x * per + i] ?? 0;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    }
+    g.fillRect(x, 120 - hi * 116, 1, Math.max(1, (hi - lo) * 116));
+  }
+}
+
+async function viewPdf(view: HTMLElement, s: Subject, extra: [string, string][]): Promise<void> {
+  const text = new TextDecoder("latin1").decode(s.data);
+  const counts = Array.from(text.matchAll(/\/Count\s+(\d+)/g), (m) => Number(m[1]));
+  const title = /\/Title\s*\(([^)]{1,120})\)/.exec(text)?.[1];
+  extra.push(["Pages", counts.length ? String(Math.max(...counts)) : "not stated"], ["Title", title ?? "none stated"], ["PDF version", text.slice(5, 8)]);
+  if (s.poster) {
+    const img = document.createElement("img");
+    img.alt = `${s.name}, first page`;
+    img.src = url(s.poster, "image/webp");
+    view.append(img);
+    await img.decode().catch(() => undefined);
+    extra.push(["Preview", "the first page, rendered when the demo was built"]);
+  } else viewHex(view, s);
 }
 
 async function viewFont(view: HTMLElement, s: Subject, extra: [string, string][]): Promise<void> {
@@ -293,6 +369,9 @@ async function render(s: Subject): Promise<void> {
     const type = mimeOf(s.name, s.data, kind);
     if (kind === "image") await viewImage(view, s, type, extra);
     else if (kind === "audio") viewAudio(view, s, extra);
+    else if (kind === "sound") await viewSound(view, s, type, extra);
+    else if (kind === "video") await viewVideo(view, s, type, extra);
+    else if (kind === "pdf") await viewPdf(view, s, extra);
     else if (kind === "font") await viewFont(view, s, extra);
     else if (kind === "zip") await viewZip(view, s, extra);
     else if (kind === "catalogue") await viewCatalogue(view, s, extra);
@@ -313,7 +392,7 @@ export async function inspectPath(path: string): Promise<boolean> {
   if (dialog.open && subject?.path === path) return true;
   const found = current(path);
   if (!found) return false;
-  await render({ name: found.name, label: path, data: found.data, type: found.type, path, product: found.product });
+  await render({ name: found.name, label: path, data: found.data, type: found.type, path, product: found.product, poster: found.poster });
   return true;
 }
 

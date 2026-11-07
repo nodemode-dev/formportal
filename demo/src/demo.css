@@ -1,7 +1,7 @@
-.demo-bench,
-.demo-inspect {
+dialog.prefs.demo-bench,
+dialog.prefs.demo-inspect {
   inline-size: min(680px, calc(100vw - 32px));
-  max-block-size: min(780px, 94vh);
+  max-block-size: min(820px, 94vh);
   overflow-y: auto;
 }
 
@@ -50,7 +50,7 @@
 .demo-view {
   display: grid;
   min-block-size: 220px;
-  max-block-size: 300px;
+  max-block-size: 340px;
   overflow: auto;
   border: 1px solid var(--fp-edge);
   border-radius: 10px;
@@ -61,7 +61,7 @@
 
 .demo-view img {
   inline-size: 100%;
-  block-size: 280px;
+  block-size: 314px;
   object-fit: contain;
 }
 
@@ -69,6 +69,13 @@
   inline-size: 100%;
   block-size: 120px;
   display: block;
+}
+
+.demo-view video {
+  inline-size: 100%;
+  block-size: 314px;
+  object-fit: contain;
+  background: var(--fp-pane);
 }
 
 .demo-view audio {

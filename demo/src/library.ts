@@ -13,13 +13,15 @@ interface Entry {
   modified: number;
   kept: Kept[];
   type: string;
+  poster?: Uint8Array;
 }
 
 const entries = new Map<string, Entry>();
 const folders = new Map<string, boolean>();
 let serial = 0;
 
-export const SAMPLES = "/Demo/Samples";
+export const SAMPLES = "/Demo/Northern coast";
+export const REFERENCE = "/Demo/Reference";
 export const YOURS = "/Demo/Your files";
 
 const extras: Record<string, string> = { json: "formai", zip: "formai", formpkg: "formai", ttf: "formai", otf: "formai", sig: "" };
@@ -53,7 +55,7 @@ export function removeFolder(path: string): boolean {
   return true;
 }
 
-export async function put(folder: string, name: string, data: Uint8Array, type: string, reason: string): Promise<string> {
+export async function put(folder: string, name: string, data: Uint8Array, type: string, reason: string, poster?: Uint8Array): Promise<string> {
   addFolder(folder);
   const path = `${folder}/${name}`;
   const at = Math.floor(Date.now() / 1000);
@@ -64,7 +66,7 @@ export async function put(folder: string, name: string, data: Uint8Array, type: 
     had.modified = at;
     return path;
   }
-  entries.set(path, { path, name, folder, product: productFor(name), modified: at, kept: [version], type });
+  entries.set(path, { path, name, folder, product: productFor(name), modified: at, kept: [version], type, poster });
   return path;
 }
 
@@ -72,11 +74,11 @@ export function has(path: string): boolean {
   return entries.has(path);
 }
 
-export function current(path: string): { data: Uint8Array; name: string; type: string; sha256: string; product: string | null } | null {
+export function current(path: string): { data: Uint8Array; name: string; type: string; sha256: string; product: string | null; poster?: Uint8Array } | null {
   const entry = entries.get(path);
   if (!entry) return null;
   const top = entry.kept[0];
-  return { data: top.data, name: entry.name, type: entry.type, sha256: top.sha256, product: entry.product };
+  return { data: top.data, name: entry.name, type: entry.type, sha256: top.sha256, product: entry.product, poster: entry.poster };
 }
 
 export function sidecar(path: string, suffix: string): Uint8Array | null {
@@ -101,7 +103,7 @@ function listed(): ProjectFile[] {
       bytes: e.kept[0].size,
       modified: e.modified,
       versions: e.kept.length,
-      preview: e.type.startsWith("image/") && e.type !== "image/svg+xml" ? `${e.path}.preview.webp` : null,
+      preview: e.poster || (e.type.startsWith("image/") && e.type !== "image/svg+xml") ? `${e.path}.preview.webp` : null,
     }));
 }
 
@@ -133,6 +135,7 @@ export async function revert(path: string, id: string | undefined): Promise<File
 export function previewUrl(path: string): string | null {
   const entry = entries.get(path);
   if (!entry) return null;
+  if (entry.poster) return URL.createObjectURL(new Blob([entry.poster as BlobPart], { type: "image/webp" }));
   return URL.createObjectURL(new Blob([entry.kept[0].data as BlobPart], { type: entry.type }));
 }
 

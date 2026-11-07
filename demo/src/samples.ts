@@ -1,7 +1,8 @@
 import { encoder } from "./util.ts";
 import { signedCatalogue, packageBytes } from "./catalogue.ts";
 import { fontBytes, fontsReady } from "./store.ts";
-import { SAMPLES, put } from "./library.ts";
+import { REFERENCE, SAMPLES, put } from "./library.ts";
+import { MEDIA, loadMedia } from "./media.ts";
 
 function poster(): Promise<Uint8Array> {
   const canvas = document.createElement("canvas");
@@ -80,11 +81,20 @@ export async function loadSamples(): Promise<void> {
   const made = await signedCatalogue();
   await fontsReady;
   const font = fontBytes("fonts/space-grotesk/SpaceGrotesk-Variable.ttf");
-  await put(SAMPLES, "launch-poster.png", await poster(), "image/png", "first seen");
-  await put(SAMPLES, "interview-tone.wav", tone(), "audio/wav", "first seen");
-  await put(SAMPLES, "release-notes.md", encoder.encode(NOTES), "text/markdown", "first seen");
-  await put(SAMPLES, "demo-catalogue.json", encoder.encode(made.body), "application/json", "first seen");
-  await put(SAMPLES, "demo-catalogue.json.sig", encoder.encode(made.signature), "text/plain", "first seen");
-  await put(SAMPLES, "formcut-2.6.2-demo.zip", packageBytes("formcut", "2.6.2", "formcut-2.6.2-demo.zip"), "application/zip", "first seen");
-  if (font) await put(SAMPLES, "sample-font.ttf", font, "font/ttf", "first seen");
+  const loaded = await Promise.all(MEDIA.map(async (m) => ({ m, got: await loadMedia(m.name) })));
+  let real = 0;
+  for (const { m, got } of loaded) {
+    if (!got) continue;
+    real += 1;
+    await put(m.folder === "coast" ? SAMPLES : REFERENCE, m.name, got.data, m.type, m.reason, got.poster);
+  }
+  if (!real) {
+    await put(SAMPLES, "launch-poster.png", await poster(), "image/png", "first seen");
+    await put(SAMPLES, "interview-tone.wav", tone(), "audio/wav", "first seen");
+  }
+  await put(REFERENCE, "release-notes.md", encoder.encode(NOTES), "text/markdown", "first seen");
+  await put(REFERENCE, "demo-catalogue.json", encoder.encode(made.body), "application/json", "first seen");
+  await put(REFERENCE, "demo-catalogue.json.sig", encoder.encode(made.signature), "text/plain", "first seen");
+  await put(REFERENCE, "formcut-2.6.2-demo.zip", packageBytes("formcut", "2.6.2", "formcut-2.6.2-demo.zip"), "application/zip", "first seen");
+  if (font) await put(REFERENCE, "space-grotesk.ttf", font, "font/ttf", "first seen");
 }
