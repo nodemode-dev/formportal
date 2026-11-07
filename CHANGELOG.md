@@ -2,6 +2,14 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.1 · 2026-11-07
+
+- Extensions come from form.ext-registry, the one place where Form extensions are reviewed, built and signed. FormPortal reads the registry's signed index and checks it with registry keys only; the app catalogue's keys never verify extensions. Until this build carries the registry's key, the Extensions page says "this build trusts no registry key yet"; while the registry is private it says "the registry is private or unreachable".
+- Every extension from the index must carry its publisher's signature; one without it installs only with the developer setting.
+- The registry's signed block list: a blocked extension or version cannot be installed, and one already installed is turned off at once, with a notice naming the reason, and stays off while it is blocked.
+- Each extension shows Verified and links its source in the registry. Make an extension still opens form.ext.
+- FormPortal no longer ships a starter list of extensions, and its browser preview no longer carries extension packages; developers point it at a test index with `?extindex=`.
+
 ## v0.63.0 · 2026-11-07
 
 - FormPortal is the hub for extensions in every Form app that loads them: FormVis, FormCut, FormWav, FormPDF, FormDeck, FormLit, form.md, FormEncoder, FormVFX, FormMCP, FormTray, FormSkills and FormPortal. The Extensions page has a filter per app, and an extension's details say which app it goes to and the panels and commands it adds.
