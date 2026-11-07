@@ -113,7 +113,10 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 
 ## Demo
 
-[`demo/index.html`](demo/index.html) runs the real interface offline in any browser, by double-click or from any static server: signed-catalogue installs that check the SHA-256, update and roll back, your own files with kept versions, and a viewer for what you drop. See [`demo/README.md`](demo/README.md).
+[`demo/index.html`](demo/index.html) runs the real interface offline in any browser, by double-click or from any static server: signed-catalogue installs that check the SHA-256, update and roll back, your own files with kept versions, and a viewer for what you drop. See [`demo/README.md`](demo/README.md). Two more demos open the same way and move between each other from the side panel:
+
+- [`demos/updates/index.html`](demos/updates/index.html): updates and trust. Update, go back, FormCut's beta beside stable, release notes, and a Trust page that runs every check step by step and refuses a tampered catalogue, download or package.
+- [`demos/library/index.html`](demos/library/index.html): fonts, stock and templates. Install open fonts, save stock with its credit line, apply a .cube look to a photograph, and read the Learn tutorials.
 
 ## Download
 

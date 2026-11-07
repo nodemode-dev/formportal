@@ -74,7 +74,9 @@ function portalPlugin(): Plugin {
         const tools = '<div class="top-tools" data-tauri-drag-region>';
         const bench = readFileSync(resolve(HERE, "src/bench.html"), "utf8");
         const button = '<button class="icon-btn demo-open" type="button" data-demo-open aria-label="Demo bench" title="Demo bench"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6M10 3.5v5.2L5.2 17a2 2 0 0 0 1.7 3h10.2a2 2 0 0 0 1.7-3L14 8.7V3.5M8 14h8"/></svg></button>';
-        return rendered.replace(tools, `${tools}${button}`).replace("</body>", `${bench}\n</body>`);
+        const links =
+          '<span class="nav-label">Help</span></a>\n            <p class="demo-links fine"><span>Demos</span><a href="./index.html" aria-current="page">Install and files</a><a href="../demos/updates/index.html">Updates and trust</a><a href="../demos/library/index.html">Fonts and stock</a></p>';
+        return rendered.replace(tools, `${tools}${button}`).replace('<span class="nav-label">Help</span></a>', links).replace("</body>", `${bench}\n</body>`);
       },
     },
   };

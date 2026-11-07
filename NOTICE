@@ -20,6 +20,10 @@ Third-party material:
 - Icons in design/icons.json carried from nodemode-ai/formcut_studio, GPL-3.0-only.
 - Sample photographs, a video clip, a piano recording and screenshots in the browser demo
   (demo/assets/media), with their authors, sources and licences in demo/CREDITS.md.
+- Release notes, app icons and an interface font in the updates demo (demos/updates), listed
+  in demos/updates/CREDITS.md.
+- Eight CC0 photographs, Form family looks and presets, and twelve open fonts in the library
+  demo (demos/library), with their authors, sources and licences in demos/library/CREDITS.md.
 
 Every dependency and what it obliges is listed in LICENSES.md.
 
