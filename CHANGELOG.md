@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.62.1 · 2026-11-07
+
+- The browser demo opens on real media instead of generated placeholders: four photographs, a golden-hour clip, a piano piece and a PDF of field notes under Files, plus screenshots of Form apps. Open plays the video and the music, shows a PDF's pages and title, and every file's source and licence is listed in `demo/CREDITS.md`. App pages in the demo show each app's icon instead of a window capture, because those captures contain photographs without a verifiable licence.
+
 ## v0.62.0 · 2026-11-07
 
 - A browser demo: open `demo/index.html` to run FormPortal offline. Installs check a signed catalogue and each download's SHA-256, updates keep the version they replace, your own files keep versions, and Open shows what is inside what you drop.

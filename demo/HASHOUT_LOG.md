@@ -2,8 +2,8 @@
 
 Living log for the browser demo. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.62.0
-Last updated: 2026-11-07 · v0.62.0 the offline browser demo
+Current build version: v0.62.1
+Last updated: 2026-11-07 · v0.62.1 real media in Files, viewers for video, compressed audio and PDF, no hero captures; 2026-11-07 · v0.62.0 the offline browser demo
 
 ## Why the real interface and a replaced bridge {#bridge}
 - refers-to: demo/vite.config.ts · demo/src/pickbridge.ts · frontend/src/bridge/
