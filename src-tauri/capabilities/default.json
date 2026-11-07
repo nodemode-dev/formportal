@@ -2,6 +2,6 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "The FormPortal window: core defaults, and receiving formai:// links. FormPortal's own commands are compiled in and need no plugin permission.",
-  "windows": ["main"],
+  "windows": ["splash", "main"],
   "permissions": ["core:default", "core:window:allow-start-dragging", "deep-link:default"]
 }

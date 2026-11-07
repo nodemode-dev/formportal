@@ -5,6 +5,13 @@ Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_
 Current build version: v0.62.1
 Last updated: 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
 
+## splash.css · the bar runs 2.6 s {#splash-parity}
+- refers-to: frontend/public/splash.css :: .fill · src-tauri/src/reveal.rs :: SPLASH_MIN
+- kind: decision
+- logged: v0.62.2 · 2026-11-07
+
+The splash bar's animation is 2.6 s again, matching formvis and the 2.6 s minimum in reveal.rs (it had followed the 700 ms minimum since v0.60.0). The card, icon, line and gradient already matched formvis; the light variant stays.
+
 ## formcompiler is not an app {#formcompiler-not-app}
 - refers-to: frontend/public/apps · frontend/markup.ts
 - kind: decision

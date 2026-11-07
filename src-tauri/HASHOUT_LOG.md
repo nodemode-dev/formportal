@@ -5,6 +5,22 @@ Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to fo
 Current build version: v0.60.0
 Last updated: 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
 
+## v0.62.2 · splash parity with formvis {#splash-parity}
+
+### reveal.rs · SPLASH_MIN
+- refers-to: src-tauri/src/reveal.rs :: SPLASH_MIN · frontend/public/splash.css
+- kind: decision
+- logged: v0.62.2 · 2026-11-07
+
+The owner asked for every Form desktop app to carry formvis's splash exactly, so the minimum is back to 2.6 s and the bar animation to 2.6 s (it had been 700 ms since v0.60.0). The rest of reveal.rs (BACKGROUND, BAR_FINISH, FALLBACK, BUILD_VISIBLE, conceal, app_ready, show_main, set_seen, round_splash with the 16 px masked content layer) already matched formvis and is unchanged. The page still calls app_ready two frames after its first content (frontend/src/bridge/reveal.ts).
+
+### capabilities/default.json · windows
+- refers-to: src-tauri/capabilities/default.json
+- kind: alignment
+- logged: v0.62.2 · 2026-11-07
+
+The capability lists the splash window beside main, as formvis does. The splash page runs no command; FormPortal keeps its light card variant (splash-theme.js), which formvis lacks.
+
 ## v0.60.0 · instant start and the store {#store}
 
 ### main.rs · catalog_kept, fetch_catalog, recent_catalog
