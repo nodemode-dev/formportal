@@ -18,6 +18,8 @@ Third-party material:
 - Form family names, marks and product facts, from the nodemode-ai repositories of the same names,
   GPL-3.0-only.
 - Icons in design/icons.json carried from nodemode-ai/formcut_studio, GPL-3.0-only.
+- Sample photographs, a video clip, a piano recording and screenshots in the browser demo
+  (demo/assets/media), with their authors, sources and licences in demo/CREDITS.md.
 
 Every dependency and what it obliges is listed in LICENSES.md.
 
