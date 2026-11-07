@@ -2,8 +2,8 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.62.3
-Last updated: 2026-11-07 · v0.62.3 no shell change (splash.css fix, see frontend/HASHOUT_LOG.md); 2026-11-07 · v0.62.2 splash parity with formvis (2.6 s minimum, splash in the capability); 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.62.4
+Last updated: 2026-11-07 · v0.62.4 no shell change; 2026-11-07 · v0.62.3 no shell change (splash.css fix, see frontend/HASHOUT_LOG.md); 2026-11-07 · v0.62.2 splash parity with formvis (2.6 s minimum, splash in the capability); 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
 
 ## v0.62.2 · splash parity with formvis {#splash-parity}
 

@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.62.4 · 2026-11-07
+
+- Two more browser demos open offline beside the first: `demos/updates` (updates, go back, a beta beside stable, release notes, and a Trust page that runs every check step by step and refuses a tampered catalogue, download or package) and `demos/library` (fonts, stock with credit lines, templates and Learn). The first demo links to both.
+
 ## v0.62.3 · 2026-11-07
 
 - The loading bar on the start-up card moves again; the last release left it stopped at the start.
