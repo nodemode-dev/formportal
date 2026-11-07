@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from "vite";
 import { fileURLToPath } from "node:url";
 import { resolve, join } from "node:path";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { loadJson, renderMarkers, type Facts, type IconSet } from "../design/markers.ts";
 import { buildPortal } from "../frontend/markup.ts";
@@ -21,12 +21,23 @@ const pkg = loadJson<{ version: string }>(resolve(FRONTEND, "package.json"));
 const icons = loadJson<IconSet>(resolve(DESIGN, "icons.json"));
 const facts: Facts = { version: pkg.version };
 const built = buildPortal(FRONTEND, CATALOG, DESIGN);
-const registry = loadJson<{ products: { id: string }[] }>(resolve(CATALOG, "products.json"));
+
+function plateHeroes(html: string): string {
+  return html.replace(/<header class="hero"[\s\S]*?<\/header>/g, (block) => {
+    const shot = /<div class="hero-shot"><img class="ic-dark" src="\/heroes\/[^"]*"[^>]*\/><img class="ic-light" src="\/heroes\/[^"]*"[^>]*\/><\/div>/.exec(block);
+    const mark = /<span class="app-ic app-ic-hero"[^>]*>[\s\S]*?<\/span>/.exec(block);
+    if (!shot || !mark) return block;
+    const plate = mark[0].replace("app-ic app-ic-hero", "app-ic").replace(/width="88" height="88"/g, 'width="120" height="120"');
+    return block.replace(shot[0], `<div class="hero-shot hero-plate" aria-hidden="true">${plate}</div>`);
+  });
+}
 
 function renderPortal(html: string): string {
-  return html
-    .replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (built.parts[which] ?? []).join("\n"))
-    .replace(/<html lang="en"/, `<html lang="en"${built.rootState}`);
+  return plateHeroes(
+    html
+      .replace(/<!-- @portal:([a-z-]+) -->/g, (_, which: string) => (built.parts[which] ?? []).join("\n"))
+      .replace(/<html lang="en"/, `<html lang="en"${built.rootState}`),
+  );
 }
 
 function walk(dir: string, base = ""): string[] {
@@ -88,12 +99,6 @@ function finishPlugin(): Plugin {
         this.emitFile({ type: "asset", fileName: rel, source: readFileSync(join(PUBLIC, rel)) });
       }
       for (const rel of walk(join(PUBLIC, "apps"))) this.emitFile({ type: "asset", fileName: `apps/${rel}`, source: readFileSync(join(PUBLIC, "apps", rel)) });
-      for (const product of registry.products) {
-        for (const suffix of ["", "-light"]) {
-          const rel = `heroes/${product.id}${suffix}.webp`;
-          if (existsSync(join(PUBLIC, rel))) this.emitFile({ type: "asset", fileName: rel, source: readFileSync(join(PUBLIC, rel)) });
-        }
-      }
       for (const rel of walk(join(PUBLIC, "store/thumbs"))) this.emitFile({ type: "asset", fileName: `store/thumbs/${rel}`, source: readFileSync(join(PUBLIC, "store/thumbs", rel)) });
 
       const fonts: Record<string, string> = {};
