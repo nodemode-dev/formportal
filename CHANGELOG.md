@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.62.2 · 2026-11-07
+
+- The start-up card matches the other Form apps: the same rounded card, icon and loading bar, held for 2.6 seconds before the window appears whole.
+
 ## v0.62.1 · 2026-11-07
 
 - The browser demo opens on real media instead of generated placeholders: four photographs, a golden-hour clip, a piano piece and a PDF of field notes under Files, plus screenshots of Form apps. Open plays the video and the music, shows a PDF's pages and title, and every file's source and licence is listed in `demo/CREDITS.md`. App pages in the demo show each app's icon instead of a window capture, because those captures contain photographs without a verifiable licence.

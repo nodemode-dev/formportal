@@ -66,7 +66,7 @@ function tone(): Uint8Array {
 
 const NOTES = `# Release notes
 
-FormPortal 0.62.1 ships this browser demo with real sample media.
+FormPortal 0.62.2 ships this browser demo with real sample media.
 
 ## What you can do
 
