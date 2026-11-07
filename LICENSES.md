@@ -26,6 +26,7 @@ FormPortal is GPL-3.0-only (LICENSE, NOTICE), as FormPromo, FormMCP and FormSkil
 | The Form app icons, v3 dark and light (the owner's own artwork) | 0.57.0 | the owner's, shipped as part of FormPortal | frontend/public/apps, frontend/public/favicon*.png, src-tauri/icons |
 | Vite, TypeScript, @types/node | as in frontend/package-lock.json | MIT, Apache-2.0, MIT | frontend, build time only |
 | Inter variable font | 4 | SIL OFL 1.1 | frontend/public/fonts, shipped with LICENSE-Inter.txt |
+| The browser demo (0.62.0): Vite, TypeScript and @types/node pinned as in frontend, and six starter-library font families and the nine stock files already listed under "Starter library", gzipped or encoded into demo/assets/store.js | as in demo/package-lock.json | MIT, Apache-2.0, MIT; the fonts SIL OFL 1.1 and the files CC0-1.0 or Apache-2.0 as listed below | demo, a static folder that is not part of the desktop bundle |
 | The system web view (WKWebView, WebView2, WebKitGTK) | the operating system's | the operating system's | never shipped |
 
 ## Crate audit

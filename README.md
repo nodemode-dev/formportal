@@ -111,6 +111,10 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 - **Built from a registry:** every app's row and card is written at build time from `catalog/products.json`.
 - **Tested:** 50 Rust tests (catalogue trust, install lifecycle, version order, extension trust, open links, CLI).
 
+## Demo
+
+[`demo/index.html`](demo/index.html) runs the real interface offline in any browser, by double-click or from any static server: signed-catalogue installs that check the SHA-256, update and roll back, your own files with kept versions, and a viewer for what you drop. See [`demo/README.md`](demo/README.md).
+
 ## Download
 
 | Platform | Download | Release |
