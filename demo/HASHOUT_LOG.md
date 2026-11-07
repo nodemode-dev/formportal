@@ -60,3 +60,24 @@ In v0.61.0 `.acts > .btn { display: none }` in `portal.css` hides the Open, Vers
 - logged: v0.62.0 · 2026-11-07
 
 `demo/` has its own package.json with the same pinned vite, typescript and @types/node as `frontend/`, so no new dependency enters the tree. The config roots at `frontend/`, writes into `demo/` without emptying it, sets `server.host: false` with port 3270 and preview port 3271. `npm run build` type-checks first.
+
+## Real media in Files {#media}
+- refers-to: demo/src/media.ts · demo/src/samples.ts · demo/assets/media/
+- kind: decision
+- logged: v0.62.1 · 2026-11-07
+
+Files opens on a curated "Northern coast" folder, not generated placeholders: four Pexels photographs, a 12 second golden-hour clip, a 75 second public-domain piano piece and a five-page PDF of field notes, with a Reference folder holding four real screenshots of Form apps from the sibling repositories. The PDF is typeset for the demo with ReportLab and Instrument Serif (SIL OFL, already in the repository) from the four photographs; NASA's Earth as Art on Commons was the first choice but Wikimedia rate-limited the shared build host for over half an hour, so it was dropped rather than waited for. Each file ships as its own classic script in `assets/media/` that sets one entry of `window.__FORMPORTAL_MEDIA__` to base64 data and a small preview, because file:// cannot read sibling files. `media.ts` injects the script tags on demand, `samples.ts` loads them in parallel before the first Files scan, and the rows appear in the page's own list, so nothing is rebuilt after it shows. The generated poster and tone stay only as the fallback when no pack loads. Provenance is in `CREDITS.md`.
+
+## Viewer kinds for real files {#viewer}
+- refers-to: demo/src/inspect.ts
+- kind: decision
+- logged: v0.62.1 · 2026-11-07
+
+Real files need real viewers. Video plays in a `video` element at a reserved 280 px height with its build-time poster. Compressed audio (Ogg or MP3) is decoded with an `OfflineAudioContext` for its length, channel count and waveform, and plays in an `audio` element. A PDF shows its page count and title read from the file and the first page as an image rendered when the demo was built: the demo does not embed a PDF engine, and the dialog says so. Files rows use the same preview image for thumbnails, so video, PDF and photographs have a tile on first paint.
+
+## Media sources and their limits {#sources}
+- refers-to: demo/CREDITS.md
+- kind: observation
+- logged: v0.62.1 · 2026-11-07
+
+freepd.com is closed, so the music is a Musopen recording on Wikimedia Commons whose page states the public domain. Pexels search pages disallow robots, so candidates came from web search results for individual photo and video pages, and each page was opened before its file was downloaded. Wikimedia's servers rate-limited the shared build host for several minutes; the downloads were retried with a pause rather than worked around. The page tool also could not fetch the music's Commons file page, so its description, author and licence text were read through the Commons API, which serves the same page data.
