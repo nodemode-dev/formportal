@@ -47,7 +47,8 @@ fn an_extension_with_a_plain_version_installs() {
 fn a_local_extension_index_must_be_signed() {
     let _env = env_lock();
     let key = signing_key(21);
-    std::env::set_var(KEY_ENV, public_key(&key));
+    std::env::remove_var(KEY_ENV);
+    std::env::set_var("FORMEXT_REGISTRY_PUBKEY", public_key(&key));
     std::env::remove_var(POLICY_ENV);
     let scratch = Scratch::new("ext-index");
     let body = br#"{"format":"formai-extensions","format_version":1,"name":"local"}"#;
@@ -59,6 +60,9 @@ fn a_local_extension_index_must_be_signed() {
     portal.extension_index(&path, true).unwrap();
     std::fs::write(scratch.path().join("extensions.json.sig"), sign(&key, body)).unwrap();
     portal.extension_index(&path, false).unwrap();
+    std::env::remove_var("FORMEXT_REGISTRY_PUBKEY");
+    std::env::set_var(KEY_ENV, public_key(&key));
+    assert!(portal.extension_index(&path, false).is_err(), "a catalogue key does not verify the extension index");
     std::env::remove_var(KEY_ENV);
 }
 

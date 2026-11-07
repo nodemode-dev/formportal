@@ -1,8 +1,0 @@
-{
-  "format": "formai-extensions",
-  "format_version": 1,
-  "name": "FormPortal starter extensions",
-  "description": "Extensions that ship inside FormPortal. The formai.studio store adds more.",
-  "publishers": [],
-  "packages": []
-}

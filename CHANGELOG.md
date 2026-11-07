@@ -2,6 +2,43 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.1 · 2026-11-07
+
+- Extensions come from form.ext-registry, the one place where Form extensions are reviewed, built and signed. FormPortal reads the registry's signed index and checks it with registry keys only; the app catalogue's keys never verify extensions. Until this build carries the registry's key, the Extensions page says "this build trusts no registry key yet"; while the registry is private it says "the registry is private or unreachable".
+- Every extension from the index must carry its publisher's signature; one without it installs only with the developer setting.
+- The registry's signed block list: a blocked extension or version cannot be installed, and one already installed is turned off at once, with a notice naming the reason, and stays off while it is blocked.
+- Each extension shows Verified and links its source in the registry. Make an extension still opens form.ext.
+- FormPortal no longer ships a starter list of extensions, and its browser preview no longer carries extension packages; developers point it at a test index with `?extindex=`.
+
+## v0.63.0 · 2026-11-07
+
+- FormPortal is the hub for extensions in every Form app that loads them: FormVis, FormCut, FormWav, FormPDF, FormDeck, FormLit, form.md, FormEncoder, FormVFX, FormMCP, FormTray, FormSkills and FormPortal. The Extensions page has a filter per app, and an extension's details say which app it goes to and the panels and commands it adds.
+- An app picks an install, a switch on or off, or a removal up while it runs: the notice says "{name} {version} is ready in {app}", with Open {app} when the app is installed. An app older than its first extension-aware release still uses the change the next time it starts.
+- Extensions made for a newer extension API, and native extensions, are refused with the reason.
+- `formai://extensions?product=...` opens the Extensions page for that app (each app's Manage in FormPortal), and `formai://extensions?install=...` installs a package file through the usual checks.
+- Make an extension opens form.ext, the new extension studio, or its page on formai.studio. form.ext is listed with the other apps.
+- The command line and the MCP tools name the thirteen apps and report live pickup.
+
+## v0.62.4 · 2026-11-07
+
+- Two more browser demos open offline beside the first: `demos/updates` (updates, go back, a beta beside stable, release notes, and a Trust page that runs every check step by step and refuses a tampered catalogue, download or package) and `demos/library` (fonts, stock with credit lines, templates and Learn). The first demo links to both.
+
+## v0.62.3 · 2026-11-07
+
+- The loading bar on the start-up card moves again; the last release left it stopped at the start.
+
+## v0.62.2 · 2026-11-07
+
+- The start-up card matches the other Form apps: the same rounded card, icon and loading bar, held for 2.6 seconds before the window appears whole.
+
+## v0.62.1 · 2026-11-07
+
+- The browser demo opens on real media instead of generated placeholders: four photographs, a golden-hour clip, a piano piece and a PDF of field notes under Files, plus screenshots of Form apps. Open plays the video and the music, shows a PDF's pages and title, and every file's source and licence is listed in `demo/CREDITS.md`. App pages in the demo show each app's icon instead of a window capture, because those captures contain photographs without a verifiable licence.
+
+## v0.62.0 · 2026-11-07
+
+- A browser demo: open `demo/index.html` to run FormPortal offline. Installs check a signed catalogue and each download's SHA-256, updates keep the version they replace, your own files keep versions, and Open shows what is inside what you drop.
+
 ## v0.61.0 · 2026-11-06
 
 - Every app shows its own new icon, in dark and light, following your theme.

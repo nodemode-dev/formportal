@@ -1,0 +1,55 @@
+[
+  {
+    "id": "portal-template-open",
+    "product": "formportal",
+    "title": "Open a template in its app",
+    "summary": "Pick a look or a preset in Stock and templates and have it copied and opened where it is used.",
+    "minutes": 2,
+    "level": "beginner",
+    "steps": [
+      { "title": "Show only templates", "body": "In Stock & templates, choose Templates beside the search box. Each template names the Form app that opens it.", "route": "stock" },
+      { "title": "Use template", "body": "Choose Use template on a card. FormPortal saves it in your Library with its credit line, copies it into your projects folder and opens its app." },
+      { "title": "Install the app first", "body": "If the app is not installed the template is still copied, and FormPortal says it did not open. Install the app from Apps and use the template again.", "route": "apps" }
+    ]
+  },
+  {
+    "id": "portal-own-font",
+    "product": "formportal",
+    "title": "Add a font you already own",
+    "summary": "Install your own TTF or OTF for yourself, after confirming you may use it.",
+    "minutes": 2,
+    "level": "beginner",
+    "steps": [
+      { "title": "Open Fonts", "body": "Your own fonts sit under the font library, with an Add a font file button.", "route": "fonts" },
+      { "title": "Confirm your right to use it", "body": "FormPortal asks you to confirm that you have the right to use the file on this computer before it installs anything." },
+      { "title": "Find it in the list", "body": "The font is listed under Your own fonts with the path it was installed to. Remove takes it off again." }
+    ]
+  },
+  {
+    "id": "portal-font-update",
+    "product": "formportal",
+    "title": "Keep your fonts current",
+    "summary": "See which installed fonts have a newer file in the font library and update them.",
+    "minutes": 2,
+    "level": "beginner",
+    "steps": [
+      { "title": "Look for Update available", "body": "A family with a newer file in the font library says Update available, and a notice tells you which one.", "route": "fonts" },
+      { "title": "Update the family", "body": "Choose Update. FormPortal checks the file's SHA-256 against the font index and replaces only the styles you have installed." },
+      { "title": "Restart the apps that use it", "body": "Apps see the new version after they restart." }
+    ]
+  },
+  {
+    "id": "formcut-look-lut",
+    "product": "formcut",
+    "title": "Give a clip a look with a LUT",
+    "summary": "Fetch a .cube look from Stock and templates and load it in FormCut's Creator tool.",
+    "minutes": 3,
+    "level": "intermediate",
+    "steps": [
+      { "title": "Get a look", "body": "In Stock & templates, choose Use template on a .cube look. It is copied into your projects folder and opens in FormCut.", "route": "stock" },
+      { "title": "Open the Creator tool", "body": "In the Creator tool list choose LUT, shader and expressions." },
+      { "title": "Load the .cube", "body": "Under 3D LUT, choose the file. Remove LUT puts the clip back as it was." },
+      { "title": "Try a shader", "body": "WGSL shader loads a .wgsl file the same way. The pulse shader in Stock and templates is a short example." }
+    ]
+  }
+]

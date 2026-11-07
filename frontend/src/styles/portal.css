@@ -810,7 +810,8 @@ html[data-rail="mini"] .side-app[data-install="busy"] .nav-item::after {
 [data-install="ready"] .hero-acts > .acts .drop-more,
 [data-install="update"] .hero-acts > .acts .drop-more,
 [data-history] > .acts .drop-more,
-[data-history] .hero-acts > .acts .drop-more {
+[data-history] .hero-acts > .acts .drop-more,
+.ext > .acts .drop-more {
   display: block;
 }
 

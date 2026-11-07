@@ -74,6 +74,32 @@ export interface ExtensionEntry {
   permissions: string[];
   signature?: ExtensionSignature;
   support?: string;
+  homepage?: string;
+  api?: string;
+  verified?: boolean;
+  source?: string;
+  registry_commit?: string;
+  blocked?: string;
+}
+
+export interface ExtensionBlocked {
+  id: string;
+  versions: string[];
+  reason: string;
+  date?: string;
+}
+
+export interface ExtensionTurnedOff {
+  id: string;
+  name: string;
+  product: string;
+  version: string;
+  reason: string;
+}
+
+export interface ExtensionContributes {
+  panels: { id: string; title: string; location: string }[];
+  commands: { id: string; title: string; panel?: string }[];
 }
 
 export interface SelfUpdate {
@@ -292,6 +318,10 @@ export interface InstalledExtension {
   native: boolean;
   permissions: string[];
   enabled: boolean;
+  description?: string;
+  api?: string;
+  contributes?: ExtensionContributes;
+  blocked?: string;
 }
 
 export interface ExtensionsView {
@@ -310,6 +340,8 @@ export interface ExtensionIndex {
   fixture?: boolean;
   publishers: { id: string; name: string; public_key: string; url?: string }[];
   packages: ExtensionEntry[];
+  blocked?: ExtensionBlocked[];
+  turned_off?: ExtensionTurnedOff[];
 }
 
 export interface Platform {

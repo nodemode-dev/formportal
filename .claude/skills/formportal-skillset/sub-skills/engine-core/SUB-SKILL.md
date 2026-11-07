@@ -14,7 +14,7 @@ description: Changes to formportal-core, FormPortal's Rust engine. Use for catal
 - `state.rs`: `installed.json`; `error.rs`: one readable sentence per failure.
 - `policy.rs`: the organisation's policy at the system path (or `FORMPORTAL_POLICY` for testing), what it allows and locks; `check` reads a file as FormPortal will. `mirror.rs`: the catalogue and its files copied for an internal server. `deploy.rs`: `package`, FormPortal's installer with the policy, sums and an install script in one folder (`org-package`).
 - `share.rs`: sharing through the person's GitHub account (private libraries, invitations, public links in `formportal-public`) and `write_portfolio`, that repository's README listing every public file. `github.rs`: sign-in and the API calls.
-- `extensions.rs`: the extension index and installed packages; an entry's `support` link is kept only when it is https.
+- `extensions.rs`: the extension index and installed packages; an entry's `support` and `source` links are kept only when https. The index is form.ext-registry's (`default_index`, or `FORMPORTAL_EXTENSIONS`), verified with registry keys only (`signature::registry_keys`: `core/registry_keys.txt` plus `FORMEXT_REGISTRY_PUBKEY`), never with catalogue keys; its signed `blocklist.json` refuses blocked installs and `enforce_blocklist` turns installed ones off. Every index entry needs a publisher signature unless `allow_unsigned`.
 
 ## Rules
 

@@ -13,10 +13,13 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   installs                        what is installed
   install <product> [--channel C] [--version V] [--source S] [--allow-unsigned]
   versions <product> [--channel C] [--source S]
-  extensions [--extensions-source S]
+  extensions [--extensions-source S]   form.ext-registry's signed index (or S, or FORMPORTAL_EXTENSIONS), checked
+                                  with registry keys (registry_keys.txt, FORMEXT_REGISTRY_PUBKEY) and its block list
   extension-install --id ID | --path FILE.formpkg [--allow-unsigned]
   extension-remove --product P --id ID
   extension-enable --product P --id ID --enabled true|false
+                                  P: formvis formcut formwav formpdf formdeck formlit formmd formencoder
+                                  formvfx formmcp formtray formskills formportal; the app picks changes up live
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
   preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...]

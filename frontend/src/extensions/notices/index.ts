@@ -1,4 +1,5 @@
 import type { NoticeCategory } from "../../engine/types.ts";
+import type { NoticeAction } from "../../engine/index.ts";
 import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 import hues from "../../../../design/app-hues.json";
@@ -51,7 +52,7 @@ export const notices: Extension = {
       return best?.id ?? null;
     };
 
-    const toast = (text: string, tone: "info" | "fault") => {
+    const toast = (text: string, tone: "info" | "fault", action?: NoticeAction) => {
       const item = document.createElement("div");
       item.className = "toast";
       item.dataset.tone = tone;
@@ -69,7 +70,19 @@ export const notices: Extension = {
       close.setAttribute("aria-label", t("Dismiss"));
       close.textContent = t("Dismiss");
       close.addEventListener("click", () => item.remove());
-      item.append(body, close);
+      item.append(body);
+      if (action) {
+        const act = document.createElement("button");
+        act.type = "button";
+        act.className = "toast-act";
+        act.textContent = action.label;
+        act.addEventListener("click", () => {
+          item.remove();
+          void engine.dispatch(action.command, action.arg);
+        });
+        item.append(act);
+      }
+      item.append(close);
       const showing = toasts.firstElementChild as HTMLElement | null;
       if (showing?.dataset.tone === "fault" && tone === "info") return;
       toasts.replaceChildren(item);
@@ -106,7 +119,7 @@ export const notices: Extension = {
       });
     }
 
-    engine.on("notice", ({ text, tone, category }) => {
+    engine.on("notice", ({ text, tone, category, action }) => {
       if (!text) return;
       const entry = document.createElement("li");
       entry.className = "bell-item";
@@ -123,7 +136,7 @@ export const notices: Extension = {
       list.prepend(entry);
       while (list.children.length > KEEP) list.lastElementChild?.remove();
       if (panel.hidden) root.setAttribute("data-unread", "");
-      if (tone === "fault" || !(engine.state.prefs.quiet ?? []).includes(category)) toast(text, tone);
+      if (tone === "fault" || !(engine.state.prefs.quiet ?? []).includes(category)) toast(text, tone, action);
     });
   },
 };

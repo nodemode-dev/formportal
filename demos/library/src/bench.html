@@ -1,0 +1,84 @@
+<dialog class="prefs versions demo-bench" data-demo-dialog aria-labelledby="h-demo">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-demo" class="prefs-title">Demo bench</h2><p class="fine">This is the real FormPortal interface running in your browser. Nothing is uploaded and nothing needs a network. Fonts, stock and templates all work on the files bundled here, or on yours.</p></header>
+    <dl class="demo-facts">
+      <div><dt>Fonts bundled</dt><dd data-lib-count-fonts></dd></div>
+      <div><dt>Stock and templates</dt><dd data-lib-count-media></dd></div>
+    </dl>
+    <p class="fine">Drop a TTF or OTF on the window to add it as your own font, or a photograph or a .cube look to try it in the look viewer. Anything else opens in the inspector.</p>
+    <p class="demo-say" data-demo-say aria-live="polite"></p>
+    <footer class="agent-acts agent-acts-wrap">
+      <button class="btn btn-primary" type="button" data-lib-look>Look viewer</button>
+      <button class="btn" type="button" data-lib-tester-open>Try your fonts</button>
+      <button class="btn" type="button" data-lib-download-open>Download Library</button>
+      <button class="btn" type="button" data-demo-inspect>Inspect a file</button>
+      <button class="btn" type="button" data-demo-reset>Reset the demo</button>
+      <button class="btn" type="button" data-demo-close>Close</button>
+    </footer>
+    <input type="file" data-demo-pick-inspect hidden />
+  </div>
+</dialog>
+
+<dialog class="prefs versions demo-look" data-look-dialog aria-labelledby="h-look">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-look" class="prefs-title" data-look-title>Look viewer</h2><p class="fine" data-look-sub>The demo's viewer stands in for the app that opens a look: it reads the .cube on this page and grades the photograph with it.</p></header>
+    <div class="look-stage" data-look-stage>
+      <canvas class="look-canvas" data-look-before width="960" height="640"></canvas>
+      <canvas class="look-canvas look-after" data-look-after width="960" height="640"></canvas>
+      <span class="look-line" aria-hidden="true"></span>
+      <span class="look-tag look-tag-before">Before</span>
+      <span class="look-tag look-tag-after">After</span>
+      <input class="look-split" type="range" min="0" max="100" value="50" data-look-split aria-label="Before and after" />
+    </div>
+    <div class="look-controls">
+      <label class="look-field"><span>Look</span><select data-look-pick aria-label="Look"></select></label>
+      <label class="look-field"><span>Intensity</span><input type="range" min="0" max="100" value="100" data-look-amount /><output data-look-out>100%</output></label>
+    </div>
+    <ul class="look-photos" data-look-photos aria-label="Photograph"></ul>
+    <p class="demo-say" data-look-say aria-live="polite"></p>
+    <footer class="agent-acts agent-acts-wrap">
+      <button class="btn btn-primary" type="button" data-look-save>Save graded photo</button>
+      <button class="btn" type="button" data-look-own>Open your photo</button>
+      <button class="btn" type="button" data-look-lut>Load a .cube</button>
+      <button class="btn" type="button" data-look-close>Close</button>
+    </footer>
+    <input type="file" accept="image/*" data-look-pick-photo hidden />
+    <input type="file" accept=".cube" data-look-pick-lut hidden />
+  </div>
+</dialog>
+
+<dialog class="prefs versions demo-tpl" data-tpl-dialog aria-labelledby="h-tpl">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-tpl" class="prefs-title" data-tpl-title>Template</h2><p class="fine" data-tpl-sub></p></header>
+    <div class="tpl-tools" data-tpl-tools>
+      <select data-tpl-group aria-label="Group"></select>
+      <input type="search" data-tpl-query placeholder="Search presets" aria-label="Search presets" autocomplete="off" spellcheck="false" />
+      <span class="block-note" data-tpl-count></span>
+    </div>
+    <div class="demo-view tpl-view" data-tpl-view></div>
+    <footer class="agent-acts agent-acts-wrap">
+      <button class="btn" type="button" data-tpl-download>Download the file</button>
+      <button class="btn" type="button" data-tpl-close>Close</button>
+    </footer>
+  </div>
+</dialog>
+
+<dialog class="prefs versions demo-type" data-type-dialog aria-labelledby="h-type">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-type" class="prefs-title">Your fonts in an app</h2><p class="fine">The demo's stand-in for a Form app's font menu. It lists what you installed in Fonts; the desktop apps see the same families after they restart, this page sees them at once.</p></header>
+    <div class="type-controls">
+      <label class="look-field"><span>Font</span><select data-type-family aria-label="Font"></select></label>
+      <label class="look-field"><span>Weight</span><select data-type-weight aria-label="Weight"></select></label>
+      <label class="look-field"><span>Size</span><input type="range" min="18" max="96" value="44" data-type-size /><output data-type-out>44 px</output></label>
+      <label class="menu-check type-italic"><span>Italic</span><input type="checkbox" class="switch" data-type-italic /></label>
+    </div>
+    <textarea class="type-text" data-type-text spellcheck="false" aria-label="Sample text" rows="4">Every Form app, installed, opened and kept up to date from one place.</textarea>
+    <p class="fine mono" data-type-line></p>
+    <p class="demo-say" data-type-say aria-live="polite"></p>
+    <footer class="agent-acts agent-acts-wrap">
+      <button class="btn btn-primary" type="button" data-type-save>Save specimen</button>
+      <button class="btn" type="button" data-type-fonts hidden>Go to Fonts</button>
+      <button class="btn" type="button" data-type-close>Close</button>
+    </footer>
+  </div>
+</dialog>

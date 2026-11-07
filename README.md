@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img alt="version 0.61.0" src="https://img.shields.io/badge/version-0.61.0-eef0f4?style=flat-square">
+  <img alt="version 0.63.1" src="https://img.shields.io/badge/version-0.63.1-eef0f4?style=flat-square">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-stable-B7410E?style=flat-square&logo=rust&logoColor=white">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24C8DB?style=flat-square">
   <img alt="macOS, Windows, Linux" src="https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-native-2f7bf5?style=flat-square">
@@ -80,6 +80,10 @@
   </tr>
 </table>
 
+## Extensions from form.ext-registry
+
+Extensions for the thirteen Form apps that host them come from one place, [form.ext-registry](https://github.com/nodemode-dev/form.ext-registry), where each is reviewed, built and signed. FormPortal reads the registry's signed index and block list, checks them with registry keys only (`core/registry_keys.txt`, plus `FORMEXT_REGISTRY_PUBKEY` for testing; the app catalogue's keys never verify extensions), and checks every package's SHA-256 and its publisher's signature before it installs. Each extension shows Verified and links its source in the registry. A blocked extension cannot be installed, and an installed one is turned off with a notice naming the reason. Until the owners add the registry key, a build refuses the index with "this build trusts no registry key yet"; while the registry is private, the page says "the registry is private or unreachable". Make an extension opens form.ext. See [Extensions Troubleshooting](.docs/wiki/Extensions-Troubleshooting.md).
+
 ## Everything in the box
 
 <table>
@@ -110,6 +114,13 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 - **Install record:** after each install FormPortal records every installed file's SHA-256, which FormMCP checks before it starts the app.
 - **Built from a registry:** every app's row and card is written at build time from `catalog/products.json`.
 - **Tested:** 50 Rust tests (catalogue trust, install lifecycle, version order, extension trust, open links, CLI).
+
+## Demo
+
+[`demo/index.html`](demo/index.html) runs the real interface offline in any browser, by double-click or from any static server: signed-catalogue installs that check the SHA-256, update and roll back, your own files with kept versions, and a viewer for what you drop. See [`demo/README.md`](demo/README.md). Two more demos open the same way and move between each other from the side panel:
+
+- [`demos/updates/index.html`](demos/updates/index.html): updates and trust. Update, go back, FormCut's beta beside stable, release notes, and a Trust page that runs every check step by step and refuses a tampered catalogue, download or package.
+- [`demos/library/index.html`](demos/library/index.html): fonts, stock and templates. Install open fonts, save stock with its credit line, apply a .cube look to a photograph, and read the Learn tutorials.
 
 ## Download
 

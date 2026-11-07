@@ -1,0 +1,20 @@
+{
+  "name": "formportal-demo",
+  "private": true,
+  "description": "FormPortal's offline browser demo, built from the real interface with a client-side bridge",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}

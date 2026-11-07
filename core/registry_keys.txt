@@ -1,0 +1,7 @@
+# Registry index public keys FormPortal trusts: one base64 Ed25519 public key per line, compiled in.
+# They verify form.ext-registry's signed index (extensions.json.sig) and block list (blocklist.json.sig), nothing else;
+# catalog_keys.txt keeps verifying the app catalogue only.
+# The owner adds the registry's public key on a line below, as form.ext-registry's KEYS.md describes
+# (tools/new_signing_key.py prints it; the private key stays in that repository's REGISTRY_SIGNING_KEY secret).
+# Until a key is here, FormPortal refuses the registry index with "this build trusts no registry key yet"
+# unless the developer setting allows unsigned indexes. FORMEXT_REGISTRY_PUBKEY (comma-separated) adds keys for testing.

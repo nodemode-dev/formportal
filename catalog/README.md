@@ -6,7 +6,9 @@ The one contract the site, the hub and any fork agree on. The site publishes the
 | --- | --- |
 | `schema/apps.schema.json` | The app catalogue: each product, its state, and per channel its version and artifacts with size and SHA-256 |
 | `schema/extensions.schema.json` | The extension index: packages by product and kind, each with a SHA-256, declared permissions and an optional publisher signature |
-| `schema/package.schema.json` | The manifest inside a `.formpkg`, a zip the apps install through their own loaders |
+| `schema/package.schema.json` | The manifest inside a `.formpkg`, a zip the apps install through their own loaders; with API 1 it may carry `api`, `description`, `entry` and `contributes` (panels and commands) |
+| `schema/enabled.schema.json` | `extensions/<product>/enabled.json`, written by FormPortal under its root: the extensions each app loads |
+| `schema/dev.schema.json` | `extensions/<product>/dev.json`, written by form.ext's Run in App: development extensions an app loads from a folder |
 | `fixtures/apps.json` | A sample catalogue for development. formcut is live with a stable (and two earlier stable releases in its `history`) and a beta, formvis is public with no release, formwav and the hub are prelaunch |
 | `fixtures/extensions.json` | A sample index |
 | `products.json` | The family registry: each product's id, name, kind, summary, identifier, repository, licence and project file. The site reads it to know which repositories to ask about. A new product is declared here |

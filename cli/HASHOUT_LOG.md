@@ -2,8 +2,26 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.58.0
-Last updated: 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Current build version: v0.63.1
+Last updated: 2026-11-07 · v0.63.1 the extension index is form.ext-registry's, verified, source, blocked and turned_off in extensions; 2026-11-07 · v0.63.0 extension notes say live pickup, product enums of the thirteen hosts, app, api and homepage in extensions; 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.63.1 · the registry's index {#registry}
+
+### ops.rs · mcp.rs · main.rs · ext_source, ext_index, extensions
+- refers-to: cli/src/ops.rs :: ext_source, ext_index, extensions · cli/src/mcp.rs :: extensions, extension_install, extension_enable descriptions · cli/src/main.rs :: USAGE · ../core/src/extensions.rs :: default_index
+- kind: decision
+- logged: v0.63.1 · 2026-11-07
+
+The index address is `extensions_source`, else `FORMPORTAL_EXTENSIONS`, else form.ext-registry's index (`default_index`); it is no longer derived from the catalogue address. `ext_index` passes the core's refusal through as it is (it was wrapped in `Unavailable`, whose text begins "the catalogue offers this computer nothing for"). `extensions` adds `verified`, `source` and `blocked` per package and `blocked` and `turned_off` at the top, and reads the installed list again after the index, since reading the index may turn a blocked extension off. The tool descriptions name the registry, its keys and the three refusals; `./formportal agents sync` regenerated `tools.md` (the CLI built in debug with the libdbus pkg-config shim and copied to `target/release/formportal-cli`).
+
+## v0.63.0 · extensions for thirteen apps, picked up live {#ext-api1}
+
+### ops.rs · mcp.rs · main.rs · extensions, extension_install, extension_remove, extension_enable
+- refers-to: cli/src/ops.rs :: EXT_PRODUCT, extensions, extension_install, extension_remove, extension_enable · cli/src/mcp.rs :: ext_product, the four extension tools · cli/src/main.rs :: USAGE · core/src/extensions.rs :: HOSTS, extension_note
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+`extensions` adds each package's `app` (its name), `api` and `homepage`; installed records carry `description`, `api` and `contributes`. The `note` after install, remove and enable is `Portal::extension_note` (live, or from the next start for an app older than its extension host release) instead of "the next time it starts". `extension_remove` and `extension_enable` take `product` as an enum of the thirteen contract ids (from `HOSTS`), described as the contract's (formdeck and formportal, not formslide and formai); the missing-product message lists them, and so does the usage text. After this change `./formportal agents sync` must regenerate the harness `references/tools.md`.
 
 ## v0.61.0 · no formcompiler app {#compiler}
 

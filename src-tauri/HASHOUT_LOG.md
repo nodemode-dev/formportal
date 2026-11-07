@@ -2,8 +2,33 @@
 
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.60.0
-Last updated: 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Current build version: v0.63.1
+Last updated: 2026-11-07 · v0.63.1 extensions and extension_install read form.ext-registry's index (default_index), index_error carries the refusal; 2026-11-07 · v0.63.0 no shell change (formai://extensions links go through the existing deep link path); 2026-11-07 · v0.62.4 no shell change; 2026-11-07 · v0.62.3 no shell change (splash.css fix, see frontend/HASHOUT_LOG.md); 2026-11-07 · v0.62.2 splash parity with formvis (2.6 s minimum, splash in the capability); 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.63.1 · the registry's index {#registry}
+
+### main.rs · extensions, extension_install
+- refers-to: src-tauri/src/main.rs :: extensions, extension_install, ExtensionsView · ../core/src/extensions.rs :: default_index
+- kind: decision
+- logged: v0.63.1 · 2026-11-07
+
+Both commands drop the `url` argument and the `index_url` helper (the index was `extensions.json` beside the catalogue) and read `default_index()`: form.ext-registry's index, or `FORMPORTAL_EXTENSIONS`. `index_error` now carries `shelf.missed` (it was always `None`, with the reason in `store_note`), and an install with no index names why. The shell crate was not compiled here (no GTK development files on this machine); the core and CLI that it calls were built and tested.
+
+## v0.62.2 · splash parity with formvis {#splash-parity}
+
+### reveal.rs · SPLASH_MIN
+- refers-to: src-tauri/src/reveal.rs :: SPLASH_MIN · frontend/public/splash.css
+- kind: decision
+- logged: v0.62.2 · 2026-11-07
+
+The owner asked for every Form desktop app to carry formvis's splash exactly, so the minimum is back to 2.6 s and the bar animation to 2.6 s (it had been 700 ms since v0.60.0). The rest of reveal.rs (BACKGROUND, BAR_FINISH, FALLBACK, BUILD_VISIBLE, conceal, app_ready, show_main, set_seen, round_splash with the 16 px masked content layer) already matched formvis and is unchanged. The page still calls app_ready two frames after its first content (frontend/src/bridge/reveal.ts).
+
+### capabilities/default.json · windows
+- refers-to: src-tauri/capabilities/default.json
+- kind: alignment
+- logged: v0.62.2 · 2026-11-07
+
+The capability lists the splash window beside main, as formvis does. The splash page runs no command; FormPortal keeps its light card variant (splash-theme.js), which formvis lacks.
 
 ## v0.60.0 · instant start and the store {#store}
 

@@ -28,6 +28,11 @@ fn target() -> Value {
     })
 }
 
+fn ext_product() -> Value {
+    let ids: Vec<&str> = formportal_core::extensions::HOSTS.iter().map(|(id, _, _)| *id).collect();
+    json!({ "type": "string", "enum": ids, "description": "The app the extension is for, by its extension product id (formdeck and formportal, not the catalogue's formslide and formai)." })
+}
+
 fn tools() -> Value {
     let only_target = |required: bool| json!({ "type": "object", "properties": target(), "required": if required { json!(["product"]) } else { json!([]) } });
     json!([
@@ -70,20 +75,20 @@ fn tools() -> Value {
               "per_app": { "type": "object", "additionalProperties": { "type": ["boolean", "null"] } } } },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "extensions", "title": "Extensions",
-          "description": "The open extension index (effects, looks, templates, presets, plugins for the Form apps) with each package's author, kind, permissions, whether it runs native code and is signed, its install state, and support, an https page where people can pay or sponsor its maker if it has one (the extension is free either way); plus every installed extension, including sideloaded ones (source sideload). The index is read from extensions_source, FORMPORTAL_EXTENSIONS, or extensions.json beside the catalogue.",
+          "description": "The open extension index (effects, looks, templates, presets, plugins for the thirteen Form apps that load extensions: formvis, formcut, formwav, formpdf, formdeck, formlit, formmd, formencoder, formvfx, formmcp, formtray, formskills, formportal) with each package's app, author, kind, permissions, extension API, homepage, whether it is signed, verified (reviewed and published by form.ext-registry), source (its folder in the registry), blocked (the block list's reason, if any), its install state, and support, an https page where people can pay or sponsor its maker if it has one (the extension is free either way); plus every installed extension, including sideloaded ones (source sideload), the block list (blocked) and any installed extension the block list just turned off (turned_off, with the reason). The index is form.ext-registry's signed index (https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json, verified with registry keys only), or extensions_source, or FORMPORTAL_EXTENSIONS. index_error says when it was refused (this build trusts no registry key yet, a signature that does not match) or when the registry is private or unreachable.",
           "inputSchema": { "type": "object", "properties": props(json!({ "extensions_source": { "type": "string", "description": "Extension index address or file." } })) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "extension_install", "title": "Install an extension",
-          "description": "Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package that runs native code must be signed unless the person set FORMPORTAL_ALLOW_UNSIGNED for development. The app picks it up the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for.",
+          "description": "Installs a package from the index by id (download, SHA-256 check, publisher signature check, manifest check against the index), or a local .formpkg file by path (sideloaded and labelled so unless the index lists the same file). A package whose manifest asks for an extension API other than \"1\", that runs native code, that is on the registry's block list, or (from the index) that carries no publisher signature without allow_unsigned, is refused. The app picks it up while it runs (it watches FormPortal's enabled.json); note says so, or that an older installed app uses it the next time it starts. Changes the person's computer: confirm first, and name the permissions it asks for.",
           "inputSchema": { "type": "object", "properties": props(json!({ "id": { "type": "string" }, "path": { "type": "string", "description": "Absolute path of a .formpkg file." }, "extensions_source": { "type": "string" } })) },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true } },
         { "name": "extension_remove", "title": "Remove an extension",
-          "description": "Removes an installed extension and its files. Confirm first.",
-          "inputSchema": { "type": "object", "properties": { "product": { "type": "string" }, "id": { "type": "string" } }, "required": ["product", "id"] },
+          "description": "Removes an installed extension and its files; the app drops it while it runs. Confirm first.",
+          "inputSchema": { "type": "object", "properties": { "product": ext_product(), "id": { "type": "string" } }, "required": ["product", "id"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": true, "openWorldHint": false } },
         { "name": "extension_enable", "title": "Turn an extension on or off",
-          "description": "Turns an installed extension on or off without removing it; the app sees the change the next time it starts.",
-          "inputSchema": { "type": "object", "properties": { "product": { "type": "string" }, "id": { "type": "string" }, "enabled": { "type": "boolean" } }, "required": ["product", "id", "enabled"] },
+          "description": "Turns an installed extension on or off without removing it; the app sees the change while it runs (an app older than its extension host release sees it the next time it starts). An extension on the registry's block list stays off.",
+          "inputSchema": { "type": "object", "properties": { "product": ext_product(), "id": { "type": "string" }, "enabled": { "type": "boolean" } }, "required": ["product", "id", "enabled"] },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "account", "title": "GitHub sign-in",
           "description": "Whether the person has signed in to GitHub in FormPortal (optional: installing and updating never need it), as whom, and which access they granted (scopes). configured false means this FormPortal has no GitHub app set up. Signing in and out is the person's own step in FormPortal's Preferences or with formportal-cli sign-in; this tool never starts it.",

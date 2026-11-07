@@ -1,0 +1,50 @@
+(function () {
+  var d = document.documentElement;
+  d.setAttribute("data-parsing", "");
+  var started = false;
+  document.addEventListener("readystatechange", function () {
+    if (document.readyState === "loading" || started) return;
+    started = true;
+    var inter = null;
+    if (document.fonts) {
+      document.fonts.forEach(function (face) {
+        if (face.family.replace(/"/g, "") === "Inter") inter = face;
+      });
+    }
+    var done = false;
+    var show = function () {
+      if (done) return;
+      done = true;
+      if (!inter || inter.status !== "loaded") d.setAttribute("data-font", "fallback");
+      d.removeAttribute("data-parsing");
+    };
+    if (!inter || inter.status === "loaded" || inter.status === "error") return show();
+    inter.load().then(show, show);
+    setTimeout(show, 100);
+  });
+  try {
+    var mode = localStorage.getItem("formportal-theme");
+    var sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    if (mode === "light" || (mode === "system" && sys)) d.setAttribute("data-theme", "light");
+  } catch (e) {}
+  try {
+    var shared = JSON.parse(localStorage.getItem("nodemode_ui_settings") || "null");
+    var tint = shared && typeof shared.accentColor === "string" ? shared.accentColor : "";
+    if (/^#[0-9a-fA-F]{6}$/.test(tint)) {
+      d.style.setProperty("--accent-color", tint);
+      d.style.setProperty("--accent-color-dim", tint + "33");
+      d.style.setProperty("--accent-color-hover", "color-mix(in srgb, " + tint + " 82%, #ffffff)");
+    }
+  } catch (e) {}
+  if ("__TAURI_INTERNALS__" in window && navigator.userAgent.indexOf("Mac") >= 0) d.classList.add("has-overlay-titlebar");
+  try {
+    var side = Number(localStorage.getItem("formportal.side"));
+    if (side >= 180 && side <= 360) d.style.setProperty("--side-w", Math.round(side) + "px");
+    if (localStorage.getItem("formportal.rail") === "mini") d.setAttribute("data-rail", "mini");
+  } catch (e) {}
+  try {
+    var last = localStorage.getItem("formportal-last");
+    var places = ["apps", "updates", "files", "fonts", "stock", "extensions", "learn"];
+    if (localStorage.getItem("formportal-open") === "last" && places.indexOf(last) >= 0 && !/[?&]link=/.test(location.search)) d.setAttribute("data-launch", last);
+  } catch (e) {}
+})();

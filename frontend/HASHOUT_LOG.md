@@ -2,8 +2,74 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.61.0
-Last updated: 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.63.1
+Last updated: 2026-11-07 · v0.63.1 extensions from form.ext-registry: Verified mark, source link, blocked rows and the turned-off notice, the registry note, the browser fixture reads a test index (`?extindex=`) and no longer carries the first-party packages; 2026-11-07 · v0.63.0 the Extensions page as the hub: a filter per app, panels and commands, ready in the app notices, deep links, Make an extension, the twelve real packages in the fixture; 2026-11-07 · v0.62.4 two more demos in demos/ (no change here, see demos/updates/HASHOUT_LOG.md); 2026-11-07 · v0.62.3 the splash animation shorthand fixed; 2026-11-07 · v0.62.2 the splash bar runs 2.6 s; 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.63.1 · extensions from form.ext-registry {#registry}
+
+### index.html, extensions/library, styles/main.css · Verified, source, blocked
+- refers-to: index.html :: `[data-pane='extensions']` intro, toolbar note, empty text, `#ext-row` `[data-ext-verified]`, `[data-ext-source]` · src/extensions/library :: fill (verified, source, data-blocked, trust, disabled switch), the registry note · src/styles/main.css :: `.ext-verified`, `.ext[data-blocked]` · src/engine/types.ts :: ExtensionEntry (verified, source, registry_commit, blocked), ExtensionBlocked, ExtensionTurnedOff, ExtensionIndex (blocked, turned_off), InstalledExtension (blocked) · src/i18n/es.json
+- kind: decision
+- logged: v0.63.1 · 2026-11-07
+
+Each row shows Verified (the `shield` icon, `--fp-ok`) when the index entry says `verified: true` and the copy is not a sideload, and its details menu has Source in form.ext-registry linking the entry's https `source`. A blocked entry or installed record gets `data-blocked`: the trust text becomes "Blocked by the registry: <reason>" in `--fault`, Install is hidden (the selector carries `[data-ext-state]` so it outranks the `none`/`update` show rules) and the on switch is disabled. Every change is an attribute or text compared before it is set, so nothing re-renders. The store note line now says where extensions come from ("Extensions from form.ext-registry: reviewed, signed by their publisher and checked against the block list.", green dot) or, grey, "The registry's extensions could not be listed: <why>", which is how "this build trusts no registry key yet" and "the registry is private or unreachable" reach the person (the page did not show `index_error` before). `storeNote` stays for Fonts and Stock. Make an extension is unchanged: form.ext when installed, else its page.
+
+### main.ts · extRefresh · the turned-off notice
+- refers-to: src/main.ts :: extRefresh
+- kind: decision
+- logged: v0.63.1 · 2026-11-07
+
+When a read of the index turned an installed extension off (`index.turned_off`), a fault notice names each one, its app and the registry's reason.
+
+### bridge/tauri.ts, bridge/fixture.ts · the index address, the test index
+- refers-to: src/bridge/tauri.ts :: extensions, installExtension · src/bridge/fixture.ts :: REGISTRY_INDEX, readIndex, blockedFor, extensions, installExtension, enableExtension · src/bridge/fixture-extensions.json (removed)
+- kind: decision
+- logged: v0.63.1 · 2026-11-07
+
+The shell picks the index address itself (`default_index`), so the bridge no longer passes the catalogue address. The browser fixture no longer carries the twelve first-party packages (they live only in form.ext-registry): `?extindex=<address>` fetches a test index and the `blocklist.json` beside it (same origin, or a server that allows it), `?extfixture` keeps the catalogue's two sample entries, and with neither the page shows the registry error, as a build with no reachable registry does. The fixture refuses blocked and unsigned entries and turns blocked installs off on the next read, like the core. Checked in headless Chrome on the built interface served beside the registry agent's test index: 12 rows (FormEncoder's row hidden by the unreleased-app rule of the fixture catalogue, as before), each Verified with its registry source link, no layout shift; installing Shot List then switching to a signed test block list turned it off with the notice, the row blocked with its switch disabled and Install hidden; Make an extension opened form.ext's page.
+
+## v0.63.0 · Extensions is the hub for thirteen apps {#ext-api1}
+
+### engine/hosts.ts, markup.ts, index.html, extensions/library · products, filters and icons
+- refers-to: src/engine/hosts.ts :: HOSTS, EXT_PRODUCTS, catalogueId, contractId, MAKER, MAKER_PAGE · markup.ts :: extIds, extfilters, liveRules (filter rules) · index.html :: `[data-pane='extensions']` toolbar, `.ext-seg`, `[data-ext-make]`, `#ext-row` mark and facts · src/extensions/library :: fill, ext.filter · src/styles/main.css :: `.ext .mark`, `.ext-seg` · public/apps/formext*.webp
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+Extension packages name the contract's thirteen product ids; the catalogue names FormPortal `formai` and FormDeck `formslide`. `hosts.ts` holds the thirteen with each extension host release and maps the two that differ. Rows carry the catalogue id in `data-product`, so the live rules hide an extension whose app is not shown, exactly as the apps' own rows (the v0.56.0 rule), and filters use the same id. The build writes one filter button per product (`<!-- @portal:extfilters -->`, each with `data-product` so it hides with its app) and one filter rule per product into `live.css`; the three hand-written buttons and rules are gone. The seg wraps (`.ext-seg`).
+
+The mark is the app's own icon (`/apps/<contract id>.webp`, which is already how the icon pack names formportal and formdeck), two `img` elements with fixed size in the template whose `src` `fill` sets before the row is appended; an unknown product shows the empty `app-ic-none` tile. The details panel adds Goes to (the app), Panels (title and docked or dialog), Commands and API, from the installed manifest (`contributes`); before install they say "Shown once it is installed", because the index carries no `contributes`. The panel is a dropdown, so nothing in the row grows when it fills. Its button had been hidden since v0.59.0 (`portal.css` `.acts .drop-more { display: none }` outranks `main.css` `.ext .drop-more`); `.ext > .acts .drop-more` now joins portal.css's list that shows it.
+
+Make an extension opens form.ext (`app.open`) when an install of `formext` is recorded, otherwise its formai.studio page. form.ext is a product in `catalog/products.json` (group other, kind extensions, in development), so it gets its slot, page and icon like any app and shows once it has a release; its icon is form.ext's own `src-tauri/icons/icon.png` scaled to 256 px (same file for light, it has one variant).
+
+### main.ts, engine, extensions/notices · ready in the app, deep links
+- refers-to: src/main.ts :: appInstall, extNotice, ext.install, ext.remove, ext.enable, ext.make, link.open (extensions) · src/engine/index.ts :: NoticeAction, setNotice · src/extensions/notices :: toast (toast-act) · src/styles/main.css :: `.toast:has(.toast-act)`, `.toast-act` · src/i18n/es.json
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+Apps watch `enabled.json`, so after install, enable, disable and remove the notice says "{name} {version} is ready in {app}." (or "is turned off in", "is removed from") with an Open {app} action (`setNotice`'s optional `action`, a button in the toast that dispatches an engine command) when the app is installed. Only when the newest installed copy of the app is older than its host release does it keep the old sentence ("uses it the next time it starts"). The toast is the existing dynamic element; the action is one more button in it.
+
+`formai://extensions?product=P` (each app's Manage in FormPortal; the shell passes `extensions?product=P` or `extensions/?product=P`) opens Extensions and runs `ext.filter`, which maps P to the catalogue id and presses that filter (All for an unknown id). `formai://extensions?install=PATH` accepts only an absolute path ending in `.formpkg` and sends it through `ext.install {path}`, the same path as opening or dropping a file, with the engine's checks; anything else is a fault notice.
+
+### bridge/fixture.ts, bridge/fixture-extensions.json · real packages in browser mode
+- refers-to: src/bridge/fixture.ts :: extensions, API1_ADDS, hostName, installExtension · src/bridge/fixture-extensions.json
+- kind: decision
+- logged: v0.63.0 · 2026-11-07
+
+`?extfixture` now lists the catalogue fixture plus the twelve API 1 packages built this round, one per app (halftone-separations, shot-list, podcast-chapters, mail-merge, rehearsal-coach, golden-hour, citations, scrub-thumbnails, handwriting-reveal, tool-diff, focus-timer, trigger-tester), each at the version formai.studio houses, with its real SHA-256, size, `minimum_app` and its manifest's `contributes`, generated from the packages themselves. A fixture install by path matches `<id>-<version>.formpkg` to them; a file name containing `api2` or `native` is refused with the engine's two new sentences, to check the messages in the browser.
+
+## splash.css · the animation shorthand lost a space {#splash-space}
+- refers-to: frontend/public/splash.css :: .fill
+- kind: fix
+- logged: v0.62.3 · 2026-11-07
+
+The v0.62.2 edit left `animation: load 2.6scubic-bezier(...)`, an invalid declaration, so the bar stayed at 4 percent in both themes. It reads `animation: load 2.6s cubic-bezier(0.25, 0.6, 0.35, 1) forwards;` like formvis. Sampled in Chrome at 360x200: the fill's scaleX is about 0.43 at 0.5 s and 0.90 at 2 s, dark and light.
+
+## splash.css · the bar runs 2.6 s {#splash-parity}
+- refers-to: frontend/public/splash.css :: .fill · src-tauri/src/reveal.rs :: SPLASH_MIN
+- kind: decision
+- logged: v0.62.2 · 2026-11-07
+
+The splash bar's animation is 2.6 s again, matching formvis and the 2.6 s minimum in reveal.rs (it had followed the 700 ms minimum since v0.60.0). The card, icon, line and gradient already matched formvis; the light variant stays.
 
 ## formcompiler is not an app {#formcompiler-not-app}
 - refers-to: frontend/public/apps · frontend/markup.ts
