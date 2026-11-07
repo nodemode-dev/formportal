@@ -1,0 +1,36 @@
+<dialog class="prefs versions demo-bench" data-demo-dialog aria-labelledby="h-demo">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-demo" class="prefs-title">Demo bench</h2><p class="fine">This is the real FormPortal interface running in your browser. Nothing is uploaded and nothing needs a network.</p></header>
+    <dl class="demo-facts">
+      <div><dt>Catalogue</dt><dd data-demo-sig>Signing</dd></div>
+      <div><dt>Signing key</dt><dd class="mono" data-demo-key></dd></div>
+    </dl>
+    <p class="fine">The catalogue is signed with an Ed25519 key made when this page loaded. Every install checks that signature, then the package's SHA-256, then each entry's CRC-32.</p>
+    <label class="menu-check"><span>Corrupt the next download</span><input type="checkbox" class="switch" data-demo-corrupt /></label>
+    <label class="menu-check"><span>Tamper with the catalogue</span><input type="checkbox" class="switch" data-demo-tamper /></label>
+    <p class="demo-say" data-demo-say aria-live="polite"></p>
+    <footer class="agent-acts">
+      <button class="btn btn-primary" type="button" data-demo-inspect>Inspect a file</button>
+      <button class="btn" type="button" data-demo-add>Add files to Files</button>
+      <button class="btn" type="button" data-demo-reset>Reset the demo</button>
+      <button class="btn" type="button" data-demo-close>Close</button>
+    </footer>
+    <input type="file" data-demo-pick-inspect hidden />
+    <input type="file" data-demo-pick-add multiple hidden />
+  </div>
+</dialog>
+
+<dialog class="prefs versions demo-inspect" data-inspect-dialog aria-labelledby="h-inspect">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-inspect" class="prefs-title" data-inspect-title>Inspector</h2><p class="fine mono" data-inspect-path></p></header>
+    <p class="fine">The demo's viewer stands in for the Form app that opens this file. It reads the file on this page and sends nothing anywhere.</p>
+    <dl class="demo-facts" data-inspect-facts></dl>
+    <div class="demo-view" data-inspect-view></div>
+    <p class="demo-say" data-inspect-say aria-live="polite"></p>
+    <footer class="agent-acts">
+      <button class="btn btn-primary" type="button" data-inspect-save hidden>Keep as a new version</button>
+      <button class="btn" type="button" data-inspect-download>Download</button>
+      <button class="btn" type="button" data-inspect-close>Close</button>
+    </footer>
+  </div>
+</dialog>
