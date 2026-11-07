@@ -1,0 +1,92 @@
+<section class="pane" data-pane="trust" data-title="Trust" aria-label="Trust">
+  <div class="page tr-page">
+    <header class="page-head">
+      <div><h1 class="h1">Trust</h1><p class="sub">What FormPortal checks before it installs anything: a signed catalogue, a download that matches it, and an unpack that stays in its folder. Break each check and see which one stops it.</p></div>
+      <button class="btn btn-primary" type="button" data-trust-check>Check for updates now</button>
+    </header>
+
+    <div class="tr-cols">
+      <section class="block tr-cases-block">
+        <header class="block-head"><h2 class="block-title">Try to break it</h2><span class="block-note">Each case runs once, on the real checks</span></header>
+        <div class="tr-target">
+          <label class="tr-field"><span class="fine">For the download cases, use</span><select class="field" data-trust-target aria-label="App to install"></select></label>
+          <label class="menu-check tr-pause"><span>Pause at each check</span><input type="checkbox" class="switch" data-trust-pause /></label>
+        </div>
+        <ul class="tr-list" data-trust-cases></ul>
+      </section>
+
+      <section class="block tr-last-block">
+        <header class="block-head"><h2 class="block-title">Last check</h2><span class="block-note" data-trust-last-note>Nothing has run yet</span></header>
+        <div class="tr-last" data-trust-last data-outcome="idle">
+          <header class="tr-last-head"><span class="tr-badge" data-trust-last-badge>Waiting</span><div><h3 class="tr-last-title" data-trust-last-title>Start with a case, or press Update on the Updates page</h3><p class="fine" data-trust-last-sub>Every step lands here with the numbers behind it.</p></div></header>
+          <ol class="tr-steps tr-steps-full" data-trust-last-steps></ol>
+          <p class="tr-say" data-trust-last-say aria-live="polite"></p>
+          <div class="tr-foot" data-trust-last-foot><button class="btn btn-primary btn-small" type="button" data-trust-next hidden>Next check</button></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="tr-cols tr-cols-low">
+      <section class="block">
+        <header class="block-head"><h2 class="block-title">The catalogue</h2><span class="block-note" data-trust-sigstate>Signing</span></header>
+        <dl class="tr-facts">
+          <div><dt>Generated</dt><dd data-trust-generated></dd></div>
+          <div><dt>Products</dt><dd data-trust-products></dd></div>
+          <div><dt>Key compiled into this build</dt><dd class="mono" data-trust-realkey></dd></div>
+          <div><dt>Key this page signed with</dt><dd class="mono" data-trust-demokey></dd></div>
+        </dl>
+        <p class="fine">The compiled-in key belongs to the real publisher and cannot sign this page's catalogue, so the page signs with its own key and trusts it for this session. Save the three files below and check the signature yourself, outside the browser.</p>
+        <div class="agent-acts">
+          <button class="btn" type="button" data-trust-save="catalogue">Save apps.json</button>
+          <button class="btn" type="button" data-trust-save="signature">Save apps.json.sig</button>
+          <button class="btn" type="button" data-trust-save="key">Save demo-key.pem</button>
+        </div>
+        <p class="fine mono tr-cmd">base64 -d apps.json.sig &gt; sig.bin &amp;&amp; openssl pkeyutl -verify -pubin -inkey demo-key.pem -rawin -in apps.json -sigfile sig.bin</p>
+      </section>
+
+      <section class="block">
+        <header class="block-head"><h2 class="block-title">Check a file you have</h2><span class="block-note">Never leaves this page</span></header>
+        <div class="tr-drop" data-trust-drop tabindex="0" role="button" aria-label="Choose or drop a file to check">
+          <p class="tr-drop-main" data-trust-drop-main>Drop a file here, or choose one</p>
+          <p class="fine" data-trust-drop-sub>FormPortal compares its SHA-256 with the catalogue, then looks inside a zip.</p>
+        </div>
+        <div class="agent-acts">
+          <button class="btn" type="button" data-trust-choose>Choose a file</button>
+          <button class="btn" type="button" data-trust-package="clean">Save a stand-in package</button>
+          <button class="btn" type="button" data-trust-package="flip">Save one with a byte changed</button>
+        </div>
+        <p class="tr-verdict" data-trust-verdict aria-live="polite"></p>
+        <input type="file" data-trust-file hidden />
+      </section>
+
+      <section class="block">
+        <header class="block-head"><h2 class="block-title">Open on this computer</h2><span class="block-note">Updates never replace what runs</span></header>
+        <ul class="tr-list" data-trust-open></ul>
+        <label class="menu-check tr-policy"><span>Pretend an organisation manages this computer</span><input type="checkbox" class="switch" data-trust-policy /></label>
+        <p class="fine">With a policy on, beta builds are not allowed and two Preferences are locked. Turn it on, then watch the Apps and Updates pages.</p>
+        <div class="agent-acts"><button class="btn" type="button" data-trust-reset>Reset the demo</button></div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<aside class="tr-card" data-trail hidden aria-live="polite" aria-label="Checks" data-outcome="run">
+  <header class="tr-card-head">
+    <span class="tr-badge" data-trail-badge>Checking</span>
+    <div class="tr-card-id"><h2 class="tr-card-title" data-trail-title></h2><p class="fine" data-trail-sub></p></div>
+    <button class="icon-btn" type="button" data-trail-close aria-label="Close the checks"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+  </header>
+  <ol class="tr-steps" data-trail-steps></ol>
+  <p class="tr-say" data-trail-say></p>
+  <footer class="tr-foot"><button class="btn btn-small" type="button" data-trail-more>All the numbers</button><button class="btn btn-primary btn-small" type="button" data-trail-next hidden>Next check</button></footer>
+</aside>
+
+<dialog class="prefs versions tr-open" data-open-dialog aria-labelledby="h-open">
+  <div class="versions-frame">
+    <header class="versions-head"><h2 id="h-open" class="prefs-title" data-open-title>Installed files</h2><p class="fine" data-open-sub></p></header>
+    <p class="fine">This demo has no app to start. Open shows what FormPortal placed and checks it against the catalogue again.</p>
+    <div class="tr-open-list" data-open-list></div>
+    <p class="tr-say" data-open-say></p>
+    <footer class="agent-acts"><button class="btn" type="button" data-open-close>Close</button></footer>
+  </div>
+</dialog>
