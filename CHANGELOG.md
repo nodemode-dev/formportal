@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.2 · 2026-11-08
+
+- form.ext, the extension studio, is listed as available like the other apps, now that FormCompiler builds and signs it.
+- form.ext's licence is shown as GPL-3.0-only, as its repository says; it was listed as Apache-2.0.
+
 ## v0.63.1 · 2026-11-07
 
 - Extensions come from form.ext-registry, the one place where Form extensions are reviewed, built and signed. FormPortal reads the registry's signed index and checks it with registry keys only; the app catalogue's keys never verify extensions. Until this build carries the registry's key, the Extensions page says "this build trusts no registry key yet"; while the registry is private it says "the registry is private or unreachable".
