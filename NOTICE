@@ -20,7 +20,7 @@ Third-party material:
 - Icons in design/icons.json carried from nodemode-ai/formcut_studio, GPL-3.0-only.
 - Form Extension Contract kit, Apache-2.0, nodemode: catalog/schema/package.schema.json,
   extensions.schema.json, enabled.schema.json and dev.schema.json are unedited copies of its schema/.
-- The form.ext icon (frontend/public/apps/formext*.webp), from nodemode-dev/form.ext, Apache-2.0.
+- The form.ext icon (frontend/public/apps/formext*.webp), from nodemode-dev/form.ext, GPL-3.0-only.
 - Sample photographs, a video clip, a piano recording and screenshots in the browser demo
   (demo/assets/media), with their authors, sources and licences in demo/CREDITS.md.
 - Release notes, app icons and an interface font in the updates demo (demos/updates), listed

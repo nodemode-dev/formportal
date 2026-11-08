@@ -308,12 +308,12 @@
       "alt_of": "",
       "note": "Make extensions for every Form app",
       "group": "other",
-      "status": "in-development",
+      "status": "available",
       "kind": "extensions",
       "summary": "The extension studio: make, preview, check, package and publish extensions for every Form app.",
       "identifier": "ai.nodemode.formext",
       "repository": "https://github.com/nodemode-dev/form.ext",
-      "licence": "Apache-2.0"
+      "licence": "GPL-3.0-only"
     },
     {
       "id": "formsculpt",
