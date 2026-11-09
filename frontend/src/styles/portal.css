@@ -1108,6 +1108,135 @@ html[data-offline] .offline-say {
   margin: 0;
 }
 
+.dcards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dcard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--fp-edge);
+  border-radius: 14px;
+  background: var(--fp-pane);
+}
+
+.dcard-art {
+  display: grid;
+  place-items: center;
+  block-size: 88px;
+  padding: 0;
+  border: 0;
+  border-block-end: 1px solid var(--fp-edge);
+  background:
+    radial-gradient(80% 120% at 50% 110%, color-mix(in oklab, var(--accent-color) 26%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in oklab, var(--accent-color) 8%, var(--fp-pane)), var(--fp-pane));
+  color: var(--fp-ink);
+  cursor: pointer;
+}
+
+.dcard-art .ic {
+  inline-size: 36px;
+  block-size: 36px;
+  transition: transform 180ms var(--ease-out, ease);
+}
+
+.dcard:hover .dcard-art .ic {
+  transform: translateY(-2px);
+}
+
+.dcard-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px 14px;
+}
+
+.dcard-name {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+}
+
+.dcard-body .sub {
+  margin: 0;
+}
+
+.demo-help .fine {
+  margin-inline-end: var(--sp-2);
+}
+
+.demo-stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--fp-main);
+}
+
+.demo-stage[hidden] {
+  display: none;
+}
+
+.demo-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-block-size: 40px;
+  padding: var(--sp-2) var(--sp-4);
+  border-block-end: 1px solid var(--fp-edge);
+  background: var(--fp-pane);
+}
+
+html.has-overlay-titlebar .demo-bar {
+  padding-inline-start: 84px;
+}
+
+.demo-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent-color) 22%, transparent);
+  color: var(--fp-ink);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.demo-name {
+  color: var(--fp-ink);
+  font-size: var(--fs-s);
+  white-space: nowrap;
+}
+
+.demo-say {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demo-frame {
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  background: var(--fp-main);
+}
+
 .ucard-body > .acts {
   margin-block-start: auto;
 }

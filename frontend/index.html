@@ -111,6 +111,15 @@
                 <p class="sub gtiles-done">Every Form app that is out is installed.</p>
               </section>
 
+              <section class="block demos-block" aria-labelledby="h-demos">
+                <header class="block-head"><h2 class="h2" id="h-demos">Demos</h2><span class="fine">Sample apps and files. Your own installs and files are not touched.</span></header>
+                <ul class="dcards">
+                  <li class="dcard"><button class="dcard-art" type="button" data-demo-go="install" tabindex="-1" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M8 10l4 4 4-4M5 16v2.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V16"/></svg></button><div class="dcard-body"><button class="dcard-name" type="button" data-demo-go="install">Installs and files</button><p class="sub">Signed installs that refuse a bad download, and your files with their versions.</p></div></li>
+                  <li class="dcard"><button class="dcard-art" type="button" data-demo-go="updates" tabindex="-1" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 5 6v5.6c0 4.2 2.8 7.4 7 8.9 4.2-1.5 7-4.7 7-8.9V6z"/><path d="m9 12 2.3 2.3L15.3 10"/></svg></button><div class="dcard-body"><button class="dcard-name" type="button" data-demo-go="updates">Updates and trust</button><p class="sub">Four updates waiting, a beta beside stable, and every check run step by step.</p></div></li>
+                  <li class="dcard"><button class="dcard-art" type="button" data-demo-go="library" tabindex="-1" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 9.5 5h1L16 19M6.2 14h7.6M19.7 12.5V19"/><circle cx="17.5" cy="15.8" r="2.2"/></svg></button><div class="dcard-body"><button class="dcard-name" type="button" data-demo-go="library">Fonts, stock and templates</button><p class="sub">Open fonts in their own faces, credited stock, looks and presets, and Learn.</p></div></li>
+                </ul>
+              </section>
+
               <section class="block soon" data-soon aria-labelledby="h-soon">
                 <header class="block-head"><h2 class="h2" id="h-soon">On the way</h2><a class="link" href="https://formai.studio/support/" data-web>Supporters see the names</a></header>
                 <ul class="waves">
@@ -547,6 +556,7 @@
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Help</h3>
               <p class="links"><a class="link" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-dev/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-dev/formportal/discussions" data-web>Ask the community</a></p>
+              <p class="links demo-help"><span class="fine">Demos</span><button class="link-btn" type="button" data-demo-go="install">Installs and files</button><button class="link-btn" type="button" data-demo-go="updates">Updates and trust</button><button class="link-btn" type="button" data-demo-go="library">Fonts, stock and templates</button></p>
             </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Licence</h3>
@@ -635,6 +645,11 @@
         <div class="ask-answer" data-ask-answer aria-live="polite"></div>
       </div>
     </dialog>
+
+    <div class="demo-stage" data-demo-stage hidden>
+      <header class="demo-bar"><span class="demo-tag">Demo</span><b class="demo-name" data-demo-name></b><span class="fine demo-say">Sample apps and files only. Nothing here installs, changes or removes your apps, settings or files.</span><button class="btn btn-small" type="button" data-demo-reset>Start over</button><button class="btn btn-small btn-primary" type="button" data-demo-end>End demo</button></header>
+      <iframe class="demo-frame" data-demo-frame title="FormPortal demo"></iframe>
+    </div>
 
     <div id="toast-root" class="toasts" aria-live="polite"></div>
   </body>

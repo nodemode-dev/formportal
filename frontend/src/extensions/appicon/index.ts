@@ -7,7 +7,7 @@ interface TauriGlobal {
 export const appIcon: Extension = {
   id: "app-icon",
   setup(engine) {
-    if (!("__TAURI_INTERNALS__" in window)) return;
+    if (!("__TAURI_INTERNALS__" in window) || window.parent !== window) return;
     const tauri = (window as unknown as { __TAURI__?: TauriGlobal }).__TAURI__;
     if (!tauri) return;
     let last: boolean | null = null;
