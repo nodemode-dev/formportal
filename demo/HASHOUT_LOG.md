@@ -2,7 +2,7 @@
 
 Living log for the browser demo. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.63.4
+Current build version: v0.63.5
 Last updated: 2026-11-07 · v0.62.1 real media in Files, viewers for video, compressed audio and PDF, no hero captures; 2026-11-07 · v0.62.0 the offline browser demo
 
 ## Why the real interface and a replaced bridge {#bridge}
