@@ -534,7 +534,11 @@ pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> R
     let still_open: Vec<u32> = ctx.portal.running(&id, ch).iter().filter(|r| !r.path.starts_with(&done.current.path)).map(|r| r.pid).collect();
     let note = if still_open.is_empty() { None } else { Some(format!("an earlier copy is still open (process {}); it keeps running untouched, and {version} opens next time", still_open.iter().map(|p| p.to_string()).collect::<Vec<_>>().join(", "))) };
     let held_note = held.then(|| format!("automatic updates for {id} were turned off so {version} stays; turn them back on with preferences per_app {{\"{id}\": null}}"));
-    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note, "automatic_updates_held": held_note }))
+    let translated = platform.translated(artifact).then(|| match platform.os {
+        formportal_core::Os::Macos => format!("{id} {version} has no Apple silicon build, so its Intel build was installed; it runs under Rosetta"),
+        _ => format!("{id} {version} has no ARM64 build, so its x64 build was installed; it runs under emulation"),
+    });
+    Ok(json!({ "installed": done, "opens": opens, "verified_sha256": artifact.sha256, "still_open": still_open, "note": note, "automatic_updates_held": held_note, "translated": translated }))
 }
 
 pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {

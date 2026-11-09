@@ -77,7 +77,7 @@ export const apps: Extension = {
       field("date", release ? release.published.slice(0, 10) : "");
       field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
-      const all = release ? [release, ...(release.history ?? [])].filter((r) => r.artifacts.some((a) => a.platform === engine.state.platform.os)) : [];
+      const all = release ? [release, ...(release.history ?? [])].filter((r) => engine.artifactFor(r) !== null) : [];
       const label = (r: (typeof all)[number]) => `${r.version} · ${r.published.slice(0, 10)}${r.version === record?.version ? ` ${t("(installed)")}` : ""}`;
       const list = all.map(label).join("|");
       if (picker && picker.dataset.list !== list) {
@@ -90,7 +90,10 @@ export const apps: Extension = {
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       const on = engine.automatic(product, channel);
       if (auto && auto.checked !== on) auto.checked = on;
-      field("file", view.artifact?.file ?? "");
+      const { os, arch } = engine.state.platform;
+      const translated = Boolean(view.artifact && view.artifact.arch !== arch);
+      const under = os === "macos" ? "{file}, an Intel build that runs under Rosetta" : "{file}, an x64 build that runs under emulation";
+      field("file", view.artifact ? (translated ? t(under, { file: view.artifact.file }) : view.artifact.file) : "");
       field("minimum", view.artifact?.minimum_os ?? "");
       field("sha256", view.artifact?.sha256 ?? "");
       field("project", info?.project_extensions?.join(", ") ?? "");

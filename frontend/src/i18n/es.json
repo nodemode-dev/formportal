@@ -81,6 +81,8 @@
     "Not released yet": "Aún no publicada",
     "No release yet": "Sin versión todavía",
     "Not built for this computer yet": "Aún no compilada para este ordenador",
+    "{file}, an Intel build that runs under Rosetta": "{file}, una versión para Intel que funciona con Rosetta",
+    "{file}, an x64 build that runs under emulation": "{file}, una versión x64 que funciona por emulación",
     "Not allowed by your organisation": "Tu organización no la permite",
     "Beta available": "Beta disponible",
     "Nightly available": "Nightly disponible",
