@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.4 · 2026-11-09
+
+- Extensions from form.ext-registry load: this build trusts the registry's index key (`core/registry_keys.txt`), so the signed extension index and block list are read instead of refused with "this build trusts no registry key yet".
+
 ## v0.63.3 · 2026-11-09
 
 - form.ext shows its real icon, the tilted puzzle piece, in the family row, Apps, the sidebar and Details, on a dark tile in dark themes and a light tile in light ones. FormPortal had kept an early placeholder, a flat upright piece, and the same dark picture for light themes.
