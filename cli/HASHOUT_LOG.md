@@ -5,6 +5,13 @@ Living log for `formportal-cli`, FormPortal's command line and MCP server. Sourc
 Current build version: v0.63.4
 Last updated: 2026-11-07 · v0.63.1 the extension index is form.ext-registry's, verified, source, blocked and turned_off in extensions; 2026-11-07 · v0.63.0 extension notes say live pickup, product enums of the thirteen hosts, app, api and homepage in extensions; 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
+## v0.64.0 · the demo tool {#demo}
+- refers-to: src/ops.rs :: DEMOS, demo · src/mcp.rs :: tools (demo), call
+- kind: decision
+- logged: v0.64.0 · 2026-11-09
+
+The window opens FormPortal's three demos in place (frontend/HASHOUT_LOG.md#in-app-demos), so agents get the same: `demo` with no id lists them (id, title, what it shows, its `formai://demo/<id>` link); with an id it asks the operating system to open that link (`open`, `cmd /C start`, `xdg-open`), which starts or focuses FormPortal through its deep link and single instance and shows the demo over the window. The tool changes nothing of the person's: it is not read-only only because it opens a window, so a `--read-only` server does not list it. Unknown ids are refused with the three names.
+
 ## v0.63.1 · the registry's index {#registry}
 
 ### ops.rs · mcp.rs · main.rs · ext_source, ext_index, extensions
