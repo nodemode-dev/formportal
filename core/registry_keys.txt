@@ -5,3 +5,4 @@
 # (tools/new_signing_key.py prints it; the private key stays in that repository's REGISTRY_SIGNING_KEY secret).
 # Until a key is here, FormPortal refuses the registry index with "this build trusts no registry key yet"
 # unless the developer setting allows unsigned indexes. FORMEXT_REGISTRY_PUBKEY (comma-separated) adds keys for testing.
+nZZlZeUG04DgMZtqxkZXvZArdOUHpkfRR3rDPtnQ9pA=
