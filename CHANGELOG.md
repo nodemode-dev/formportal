@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.3 · 2026-11-09
+
+- form.ext shows its real icon, the tilted puzzle piece, in the family row, Apps, the sidebar and Details, on a dark tile in dark themes and a light tile in light ones. FormPortal had kept an early placeholder, a flat upright piece, and the same dark picture for light themes.
+
 ## v0.63.2 · 2026-11-08
 
 - form.ext, the extension studio, is listed as available like the other apps, now that FormCompiler builds and signs it.

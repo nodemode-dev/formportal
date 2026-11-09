@@ -2,8 +2,17 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.63.2
-Last updated: 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+Current build version: v0.63.3
+Last updated: 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#formext-icon); 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+
+---
+
+## form.ext's icon {#formext-icon}
+- refers-to: frontend/public/apps/formext.webp, formext-light.webp; LICENSES.md :: the form.ext icon row
+- kind: fix
+- logged: v0.63.3 · 2026-11-09
+
+v0.63.0 took form.ext's icon from its `src-tauri/icons/icon.png` when that file still held the placeholder (a flat, upright puzzle piece on a dark tile), and used the same dark picture for `formext-light.webp`, so the family row, Apps and the sidebar showed a form.ext no other place shows. Both files are now the owner's artwork that form.ext ships (its README and `assets/app-icon/`): the tilted puzzle piece, on the dark tile for `formext.webp` and on the light tile for `formext-light.webp`, from the 1024 px originals scaled to 256 px RGBA WebP like every other `apps/` icon (6.5 and 7.7 KB beside formvis's 6.6 KB). Nothing reads the files differently.
 
 ---
 
