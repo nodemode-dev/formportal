@@ -2,8 +2,8 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.63.4
-Last updated: 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#formext-icon); 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+Current build version: v0.64.0
+Last updated: 2026-11-09 · v0.64.0 no token or icon change (the version only); 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#formext-icon); 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
 
 ---
 

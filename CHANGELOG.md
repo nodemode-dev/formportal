@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.64.0 · 2026-11-09
+
+- FormPortal's three demos open inside the app: Installs and files, Updates and trust, and Fonts, stock and templates. Home has a Demos section with a card for each, and Preferences has them under Help.
+- A demo shows FormPortal in a prepared state, with sample apps and files, under a bar that says it is a demo. Nothing in it installs, changes or removes your apps, settings or files. Start over resets the demo; End demo returns to where you were.
+- Agents can open a demo with the new `demo` tool, and `formai://demo/install`, `formai://demo/updates` and `formai://demo/library` open one from a link.
+
 ## v0.63.4 · 2026-11-09
 
 - Extensions from form.ext-registry load: this build trusts the registry's index key (`core/registry_keys.txt`), so the signed extension index and block list are read instead of refused with "this build trusts no registry key yet".
