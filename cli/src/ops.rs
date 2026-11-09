@@ -869,3 +869,31 @@ pub fn remove(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     ctx.portal.uninstall(&id, ch)?;
     Ok(json!({ "removed": id, "channel": formportal_core::portal::channel_name(ch) }))
 }
+
+pub const DEMOS: [(&str, &str, &str); 3] = [
+    ("install", "Installs and files", "Signed installs that refuse a bad download, and files with their versions."),
+    ("updates", "Updates and trust", "Four updates waiting, a beta beside stable, and every check run step by step."),
+    ("library", "Fonts, stock and templates", "Open fonts in their own faces, credited stock, looks and presets, and Learn."),
+];
+
+pub fn demo(args: &Value) -> Result<Value, CoreError> {
+    let list: Vec<Value> = DEMOS.iter().map(|(id, title, shows)| json!({ "id": id, "title": title, "shows": shows, "link": format!("formai://demo/{id}") })).collect();
+    let Some(id) = text(args, "id") else {
+        return Ok(json!({ "demos": list }));
+    };
+    if !DEMOS.iter().any(|(known, _, _)| *known == id) {
+        return Err(fail(format!("there is no demo {id:?}; the demos are install, updates and library")));
+    }
+    let link = format!("formai://demo/{id}");
+    let mut command = if cfg!(target_os = "macos") {
+        std::process::Command::new("open")
+    } else if cfg!(windows) {
+        let mut c = std::process::Command::new("cmd");
+        c.args(["/C", "start", ""]);
+        c
+    } else {
+        std::process::Command::new("xdg-open")
+    };
+    command.arg(&link).spawn()?;
+    Ok(json!({ "opened": link, "note": "FormPortal shows the demo over its window as a labelled sample; the person's apps, settings and files are not touched." }))
+}
