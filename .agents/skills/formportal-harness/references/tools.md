@@ -44,6 +44,7 @@ Generated from the FormPortal MCP server by `./formportal agents sync`; do not e
 | `media_save` | yes | Saves an item from the media index into the person's Library (Documents/Form/Library by default, or FORMPORTAL_LIBRARY), checking its SHA-256 and writing its credit line beside it and into credits.json. With use true on a template, also copies it into the first projects folder (or folder) and opens it in its app. Confirm first. |
 | `media_remove` | yes, destructive | Removes an item FormPortal saved into the Library, with its credit file. Copies of templates already in projects folders are not touched. Confirm first. |
 | `repair` | yes, destructive | Checks every install record (its folder is there, it has something to open, the kept earlier version is there) and FormPortal's own folders (versions no record points to, unfinished installs, old downloads). Without fix it only reports, which is safe to run any time. With fix true it reinstalls a broken app's same version when the catalogue still offers that exact file (same SHA-256), otherwise forgets the record, forgets missing earlier versions, and deletes leftovers. It never touches anything outside FormPortal's folder, folders younger than ten minutes, or a running app. Confirm before fix. |
+| `demo` | yes | Lists FormPortal's three demos (install: installs and files; updates: updates and trust; library: fonts, stock and templates). With id, opens formai://demo/<id>, so the FormPortal window shows that demo over itself, clearly labelled, with sample apps and files that never touch the person's real installs, settings or files; End demo returns. |
 | `learn` | no | Tutorials: FormPortal's own six (installing, betas, going back, files, fonts and stock, agents) plus the Form apps' tutorials from the signed tutorial index (learn.json beside the catalogue, or learn_source or FORMPORTAL_LEARN). Each has its steps (some name the FormPortal screen they happen on), minutes, level, and the steps this person has finished (numbered from 1), kept on this computer only. product and query filter. |
 | `learn_progress` | yes | Marks a tutorial step finished (done true, the default) or not (done false), steps numbered from 1; or with reset true clears the tutorial's progress. Progress is kept on this computer only. |
 | `app_agents` | no | Whether an installed Form app ships its own MCP server (declared in the app's form-app.json), the server name FormPortal uses for it (the product id, with -beta for a beta), and for Claude Code, Codex and Cursor whether it is connected, not connected, taken by another server of the same name, or the client is not installed. manifest is the install's form-app.json as read (format_version 1 or 2): whether the app has an MCP server and, for format_version 2, its skills archive and each skill's name and description. |
@@ -228,6 +229,10 @@ No parameters.
 
 - `fix` (optional): boolean. 
 - `source` (optional): string. Catalogue address (https) or a local catalogue file with its .sig beside it. Defaults to FORMPORTAL_CATALOG or https://dl.formai.studio/catalog/apps.json.
+
+### demo
+
+- `id` (optional): install|updates|library. The demo to open. Leave out to list them.
 
 ### learn
 
