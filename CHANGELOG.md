@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.6 · 2026-11-10
+
+- On Windows, `formportal.bat mcp`, `cli` and `agents` now pass on the real exit code of what they ran. They used to exit 0 even when the command line, the MCP server or the agents setup failed, so a script or an agent host could not tell.
+
 ## v0.63.5 · 2026-11-09
 
 - FormPortal installs the build made for your Mac's chip. It used to go by how FormPortal itself was built, so an Intel copy of FormPortal running under Rosetta on Apple silicon installed Intel builds of some apps and Apple silicon builds of others. It now asks the Mac. An Apple silicon Mac takes an Intel build only when an app has no Apple silicon build, and Details says it runs under Rosetta; an Intel Mac is never given an Apple silicon build and the app reads "Not built for this computer yet". Windows follows the same rule; Linux never mixes architectures.
