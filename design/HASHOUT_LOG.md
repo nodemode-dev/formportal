@@ -7,6 +7,15 @@ Last updated: 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#for
 
 ---
 
+## FormRec's icon and hue {#formrec}
+- refers-to: frontend/public/apps/formrec.webp, formrec-light.webp; design/app-hues.json :: formrec; LICENSES.md :: the FormRec icon row
+- kind: decision
+- logged: v0.63.6 · 2026-11-10
+
+FormRec joins the products as `formrec`, in development. Its icons are the owner's FormRec app tiles (`formrec_icon_dark.png` on the dark tile, `formrec_icon_light.png` on the light tile), scaled from 1024 px to 256 px RGBA WebP like every other `apps/` icon (5.4 and 6.5 KB). Its hue is `#ae75ec`, the violet of the waveform in its own tile, sampled from the dark icon. formai.studio's `design/tokens.css` should key the same value so the hub, the site and the app agree.
+
+---
+
 ## form.ext's icon {#formext-icon}
 - refers-to: frontend/public/apps/formext.webp, formext-light.webp; LICENSES.md :: the form.ext icon row
 - kind: fix

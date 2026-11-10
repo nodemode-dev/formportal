@@ -375,6 +375,24 @@
       }
     },
     {
+      "id": "formrec",
+      "name": "FormRec",
+      "alt_of": "",
+      "note": "Record walkthroughs, podcasts, messages and live feeds",
+      "group": "other",
+      "status": "in-development",
+      "kind": "recording",
+      "summary": "Recording for walkthroughs, podcasts, corporate messages and live feeds, by a person or by an agent.",
+      "identifier": "ai.nodemode.formrec",
+      "repository": "https://github.com/nodemode-dev/formREC",
+      "licence": "Apache-2.0",
+      "minimum_os": {
+        "macos": "macOS 14",
+        "windows": "Windows 10",
+        "linux": "glibc 2.35"
+      }
+    },
+    {
       "id": "formcad",
       "name": "FormCAD",
       "alt_of": "SolidWorks",
