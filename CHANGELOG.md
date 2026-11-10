@@ -2,6 +2,10 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.6 · 2026-11-10
+
+- FormRec, the recorder for walkthroughs, podcasts, corporate messages and live feeds, is in the catalogue as in development, with its own icon on the dark and the light tile and its own hue. It appears in FormPortal once its first release is in the catalogue, as formcompiler now builds it.
+
 ## v0.63.5 · 2026-11-09
 
 - FormPortal installs the build made for your Mac's chip. It used to go by how FormPortal itself was built, so an Intel copy of FormPortal running under Rosetta on Apple silicon installed Intel builds of some apps and Apple silicon builds of others. It now asks the Mac. An Apple silicon Mac takes an Intel build only when an app has no Apple silicon build, and Details says it runs under Rosetta; an Intel Mac is never given an Apple silicon build and the app reads "Not built for this computer yet". Windows follows the same rule; Linux never mixes architectures.
