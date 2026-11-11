@@ -28,9 +28,13 @@ exit /b %errorlevel%
 
 :cli
 cargo build -q --release --locked -p formportal-cli 1>&2 || exit /b 1
-"%~dp0target\release\formportal-cli.exe" %2 %3 %4 %5 %6 %7 %8 %9
+set "FP_ARGS=%*"
+call set "FP_ARGS=%%FP_ARGS:*%1=%%"
+"%~dp0target\release\formportal-cli.exe" %FP_ARGS%
 exit /b %errorlevel%
 
 :agents
-python "%~dp0setup\agents.py" %2 %3 %4
+set "FP_ARGS=%*"
+call set "FP_ARGS=%%FP_ARGS:*%1=%%"
+python "%~dp0setup\agents.py" %FP_ARGS%
 exit /b %errorlevel%
