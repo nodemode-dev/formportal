@@ -2,6 +2,24 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.63.7 · 2026-11-10
+
+- On a Mac that had apps installed before FormPortal's data folder moved (v0.58.0), Check and repair no longer calls the installed apps leftovers and deletes them, and updating an app no longer deletes the earlier version kept for Go back.
+- Removing an extension and turning it on or off now work for FormDeck's and FormPortal's own extensions. Both used to fail with "not installed".
+- Going back to the oldest of a file's 20 kept versions restores it. It used to delete that version and fail.
+- Sharing a second folder with the same name as one already shared now makes its own private repository. Its files used to go into the first folder's repository, where the people invited to the first folder could read them.
+- Publishing a changed file again now removes the earlier copy from your public repository, so Unpublish leaves nothing behind.
+- Updates now treats beta.10 as newer than beta.9, as automatic updates already did, so the update is shown, counted and included in Update all.
+- Pressing Install every released app or Update all a second time while they run no longer starts a second install of the app already downloading.
+- On Windows, apps that come as an NSIS or MSI installer now install into FormPortal's folder when your user folder's name has a space. They used to land in their default folder and could not be opened from FormPortal.
+- On Windows, Ask your agent and connecting Claude Code or Codex work when they were installed with npm.
+- On Windows, `formportal.bat cli` and `agents` pass on lists with commas, values with `=` and more than eight arguments as typed.
+- `./formportal mcp` and `./formportal cli` rebuild when the release schedule changes, so `apps` reports the current dates.
+- Learn no longer lists tutorials for apps that are not out yet.
+- When turning an extension on or off fails, its switch goes back to where it was.
+- Storage lists each project folder, also when two of them have the same name.
+- The updates demo's development server uses its own port, so it runs beside the first demo's preview.
+
 ## v0.63.6 · 2026-11-10
 
 - On Windows, `formportal.bat mcp`, `cli` and `agents` now pass on the real exit code of what they ran. They used to exit 0 even when the command line, the MCP server or the agents setup failed, so a script or an agent host could not tell.
