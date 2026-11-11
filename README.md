@@ -88,7 +88,7 @@ Extensions for the thirteen Form apps that host them come from one place, [form.
 
 <table>
   <tr>
-    <td width="33%" valign="top"><h4>39 MCP tools</h4>status · apps · install · update · rollback · remove · open · files · fonts · media · learn · repair · policy</td>
+    <td width="33%" valign="top"><h4>40 MCP tools</h4>status · apps · install · update · rollback · remove · open · files · fonts · media · learn · repair · policy</td>
     <td width="33%" valign="top"><h4>In the window</h4>Home · Apps · Updates · Files · Fonts · Stock &amp; templates · Extensions · Learn, and a page for every Form app</td>
     <td width="33%" valign="top"><h4>Install formats</h4>zip · AppImage · deb · rpm · dmg · msi · NSIS, per user, with no administrator</td>
   </tr>
