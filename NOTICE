@@ -28,6 +28,9 @@ Third-party material:
   in demos/updates/CREDITS.md.
 - Eight CC0 photographs, Form family looks and presets, and twelve open fonts in the library
   demo (demos/library), with their authors, sources and licences in demos/library/CREDITS.md.
+- Since 0.64.0 the desktop app carries the three demos above unchanged, each beside its own
+  CREDITS.md (demo/, demos/updates/, demos/library/ in the built interface), to open them inside
+  FormPortal. No other media is added.
 
 Every dependency and what it obliges is listed in LICENSES.md.
 

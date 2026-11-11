@@ -29,6 +29,7 @@ import { live, liveNow } from "./extensions/live/index.ts";
 import { appIcon } from "./extensions/appicon/index.ts";
 import { side } from "./extensions/side/index.ts";
 import { home } from "./extensions/home/index.ts";
+import { demos } from "./extensions/demos/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 
 const revealLate = window.setTimeout(revealApp, 900);
@@ -39,7 +40,7 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter].forEach(register);
+[live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos].forEach(register);
 activateAll(engine);
 
 interface Target {
@@ -287,6 +288,8 @@ engine.command("link.open", (arg) => {
   if (head === "app" && id) {
     void engine.dispatch("route.go", `app-${id}`);
     if (engine.state.route !== `app-${id}`) void engine.dispatch("route.go", "apps");
+  } else if (head === "demo") {
+    void engine.dispatch("demo.open", (id ?? "install").split("?")[0] || "install");
   } else if (head === "settings" || head === "preferences") {
     void engine.dispatch("prefs.open", id);
   } else {
