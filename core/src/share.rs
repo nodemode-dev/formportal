@@ -427,6 +427,14 @@ impl Portal {
         let url = v.pointer("/content/html_url").and_then(Value::as_str).map(str::to_string).unwrap_or_else(|| format!("https://github.com/{repo}/blob/{branch}/{}", encode(&path)));
         let published = Published { file: file.to_path_buf(), repo, path, sha, url };
         let mut state = self.share_state()?;
+        if let Some(old) = state.published.iter().find(|p| p.file == published.file && (p.repo != published.repo || p.path != published.path)) {
+            if !state.published.iter().any(|p| p.file != old.file && p.repo == old.repo && p.path == old.path) {
+                let (status, v) = s.call("DELETE", &format!("/repos/{}/contents/{}", old.repo, encode(&old.path)), Some(&json!({ "message": format!("FormPortal: unpublish {}", old.path), "sha": old.sha })))?;
+                if status != 200 && status != 404 {
+                    return Err(refused("remove the earlier public link", status, &v));
+                }
+            }
+        }
         state.published.retain(|p| p.file != published.file);
         state.published.push(published.clone());
         self.share_save(&state)?;
