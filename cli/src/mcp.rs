@@ -256,7 +256,7 @@ fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
         "demo" => ops::demo(args),
         "learn_progress" => ops::learn_progress(ctx, args),
         "repair" => ops::repair(ctx, args, &mut |_, _| {}),
-        other => return Err(format!("no tool named {other:?}; tools/list has the thirty-three tools")),
+        other => return Err(format!("no tool named {other:?}; tools/list names every tool")),
     };
     out.map_err(|e| e.to_string())
 }

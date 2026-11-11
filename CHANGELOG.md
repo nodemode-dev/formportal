@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.64.1 · 2026-11-11
+
+- Asking FormPortal's MCP server for a tool it does not have now says that tools/list names every tool, instead of claiming there are thirty-three (there are forty). A test now holds that message.
+- The three browser demos' Preferences say FormPortal 0.64.1.
+
 ## v0.64.0 · 2026-11-09
 
 - FormPortal's three demos open inside the app: Installs and files, Updates and trust, and Fonts, stock and templates. Home has a Demos section with a card for each, and Preferences has them under Help.
