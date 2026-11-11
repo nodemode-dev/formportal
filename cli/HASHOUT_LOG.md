@@ -3,7 +3,7 @@
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
 Current build version: v0.64.0
-Last updated: 2026-11-09 · v0.64.0 the demo tool opens formai://demo/<id> (#demo); 2026-11-07 · v0.63.1 the extension index is form.ext-registry's, verified, source, blocked and turned_off in extensions; 2026-11-07 · v0.63.0 extension notes say live pickup, product enums of the thirteen hosts, app, api and homepage in extensions; 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+Last updated: 2026-11-09 · v0.64.0 the demo tool opens formai://demo/<id> (#demo); 2026-11-10 · v0.63.7 ./formportal rebuilds when catalog/schedule.json changes (#schedule-rebuild); 2026-11-10 · v0.63.7 formportal.bat cli and agents pass the rest of the line as typed (#bat-args); 2026-11-10 · v0.63.6 formportal.bat exits with the real errorlevel (mcp, cli, agents labels); 2026-11-09 · v0.63.5 install reports a translated build; status shows the machine's architecture; 2026-11-07 · v0.63.1 the extension index is form.ext-registry's, verified, source, blocked and turned_off in extensions; 2026-11-07 · v0.63.0 extension notes say live pickup, product enums of the thirteen hosts, app, api and homepage in extensions; 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
 
 ## v0.64.0 · the demo tool {#demo}
 - refers-to: src/ops.rs :: DEMOS, demo · src/mcp.rs :: tools (demo), call
@@ -11,6 +11,43 @@ Last updated: 2026-11-09 · v0.64.0 the demo tool opens formai://demo/<id> (#dem
 - logged: v0.64.0 · 2026-11-09
 
 The window opens FormPortal's three demos in place (frontend/HASHOUT_LOG.md#in-app-demos), so agents get the same: `demo` with no id lists them (id, title, what it shows, its `formai://demo/<id>` link); with an id it asks the operating system to open that link (`open`, `cmd /C start`, `xdg-open`), which starts or focuses FormPortal through its deep link and single instance and shows the demo over the window. The tool changes nothing of the person's: it is not read-only only because it opens a window, so a `--read-only` server does not list it. Unknown ids are refused with the three names.
+
+## v0.63.7 · the launcher rebuilds for schedule.json {#schedule-rebuild}
+
+### formportal · mcp, cli freshness check
+- refers-to: formportal :: the `find` list of the mcp|cli branch · cli/src/ops.rs :: SCHEDULE
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`ops.rs` embeds `catalog/schedule.json` with `include_str!`, but the launcher's rebuild check listed only `cli`, `core`, `catalog/products.json` and `Cargo.lock`, so after the release groups changed `./formportal mcp` and `./formportal cli` kept running the old binary and `apps` reported the old `on_the_way` groups and dates. The file is now in the `find` list. Checked with `bash -n` and by running the `find` line against a reference file older than a freshly touched `catalog/schedule.json`: the new list names it, the old one printed nothing.
+
+## v0.63.7 · formportal.bat passes the arguments as typed {#bat-args}
+
+### formportal.bat · :cli, :agents
+- refers-to: formportal.bat :: :cli, :agents
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`:cli` ran the command line with `%2 %3 ... %9` and `:agents` with `%2 %3 %4`. cmd splits positional parameters at commas, semicolons and equals signs as well as spaces and stops at `%9`, so `--platforms macos,windows` arrived as two words (only macOS was mirrored), a URL with `=` in its query was cut, and the documented mirror example lost `--channels stable --history` past the eighth argument, all while the command reported success. Both labels now copy `%*` into `FP_ARGS`, drop everything up to and including the first word with `call set "FP_ARGS=%%FP_ARGS:*%1=%%"` (the `call` gives the second expansion the substring replacement needs, and `%1` is the first word as typed; the match ignores case), and pass `%FP_ARGS%`, so the program receives the rest of the line unchanged and splits it on spaces only. CRLF line endings kept. Not run on Windows; traced from cmd's documented parameter and substring rules (`help set`, `help call`).
+
+## v0.63.6 · formportal.bat reports the real exit code {#bat-exit}
+
+### formportal.bat · mcp, cli, agents labels
+- refers-to: formportal.bat :: :mcp, :cli, :agents, the main flow
+- kind: fix
+- logged: v0.63.6 · 2026-11-10
+
+The `mcp`, `cli` and `agents` branches were parenthesised blocks ending in `exit /b %errorlevel%`. cmd expands `%errorlevel%` when it parses the whole block, before any command in it runs, so each branch exited with the value from before the block (0, from `where cargo`) and a failing command line or MCP run reported success. The `if` lines now `goto` labels placed after the main flow, where each line is parsed when it runs and `%errorlevel%` is current; the arguments are unchanged. The main flow ends with `exit /b %status%` so it cannot fall into the labels; the code of `cargo run` is kept in `status` first because the `taskkill` after it would overwrite it. Found by tracing the parse-time expansion (Raymond Chen, The Old New Thing, 2006-08-23; gitlab-runner MR 1260), not run on Windows.
+
+## v0.63.5 · install says when a build runs translated {#mac-arch}
+
+### ops.rs · install
+- refers-to: cli/src/ops.rs :: install · ../core/HASHOUT_LOG.md#mac-arch
+- kind: fix
+- logged: v0.63.5 · 2026-11-09
+
+`install` returns `translated`: null, or a sentence when the build installed is not the machine's architecture ("... has no Apple silicon build, so its Intel build was installed; it runs under Rosetta", or the x64 and emulation wording elsewhere). The platform in `status` is now the machine's, not FormPortal's compile target.
+
 
 ## v0.63.1 · the registry's index {#registry}
 

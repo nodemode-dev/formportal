@@ -485,11 +485,11 @@ impl Portal {
     }
 
     fn sweep(&self, base: &Path, install: &Install) {
-        let keep: Vec<&Path> = std::iter::once(install.current.path.as_path()).chain(install.previous.as_ref().map(|p| p.path.as_path())).collect();
+        let keep: Vec<PathBuf> = std::iter::once(&install.current).chain(install.previous.as_ref()).flat_map(|v| [v.path.clone(), base.join(&v.version)]).collect();
         let Ok(entries) = fs::read_dir(base) else { return };
         for entry in entries.flatten() {
             let path = entry.path();
-            if path.is_dir() && !keep.contains(&path.as_path()) && process::under(&path).is_empty() {
+            if path.is_dir() && !keep.contains(&path) && process::under(&path).is_empty() {
                 let _ = fs::remove_dir_all(&path);
             }
         }

@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { loadJson, renderMarkers } from "../../design/markers.ts";
 import { buildPortal } from "../../frontend/markup.ts";
 
-const PORT = 3271;
+const PORT = 3272;
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = resolve(HERE, "../..");
 const FRONTEND = resolve(ROOT, "frontend");

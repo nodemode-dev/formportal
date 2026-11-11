@@ -8,6 +8,33 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 - A demo shows FormPortal in a prepared state, with sample apps and files, under a bar that says it is a demo. Nothing in it installs, changes or removes your apps, settings or files. Start over resets the demo; End demo returns to where you were.
 - Agents can open a demo with the new `demo` tool, and `formai://demo/install`, `formai://demo/updates` and `formai://demo/library` open one from a link.
 
+## v0.63.7 · 2026-11-10
+
+- On a Mac that had apps installed before FormPortal's data folder moved (v0.58.0), Check and repair no longer calls the installed apps leftovers and deletes them, and updating an app no longer deletes the earlier version kept for Go back.
+- Removing an extension and turning it on or off now work for FormDeck's and FormPortal's own extensions. Both used to fail with "not installed".
+- Going back to the oldest of a file's 20 kept versions restores it. It used to delete that version and fail.
+- Sharing a second folder with the same name as one already shared now makes its own private repository. Its files used to go into the first folder's repository, where the people invited to the first folder could read them.
+- Publishing a changed file again now removes the earlier copy from your public repository, so Unpublish leaves nothing behind.
+- Updates now treats beta.10 as newer than beta.9, as automatic updates already did, so the update is shown, counted and included in Update all.
+- Pressing Install every released app or Update all a second time while they run no longer starts a second install of the app already downloading.
+- On Windows, apps that come as an NSIS or MSI installer now install into FormPortal's folder when your user folder's name has a space. They used to land in their default folder and could not be opened from FormPortal.
+- On Windows, Ask your agent and connecting Claude Code or Codex work when they were installed with npm.
+- On Windows, `formportal.bat cli` and `agents` pass on lists with commas, values with `=` and more than eight arguments as typed.
+- `./formportal mcp` and `./formportal cli` rebuild when the release schedule changes, so `apps` reports the current dates.
+- Learn no longer lists tutorials for apps that are not out yet.
+- When turning an extension on or off fails, its switch goes back to where it was.
+- Storage lists each project folder, also when two of them have the same name.
+- The updates demo's development server uses its own port, so it runs beside the first demo's preview.
+
+## v0.63.6 · 2026-11-10
+
+- On Windows, `formportal.bat mcp`, `cli` and `agents` now pass on the real exit code of what they ran. They used to exit 0 even when the command line, the MCP server or the agents setup failed, so a script or an agent host could not tell.
+- FormRec, the recorder for walkthroughs, podcasts, corporate messages and live feeds, is in the catalogue as in development, with its own icon on the dark and the light tile and its own hue. It appears in FormPortal once its first release is in the catalogue, as formcompiler now builds it.
+
+## v0.63.5 · 2026-11-09
+
+- FormPortal installs the build made for your Mac's chip. It used to go by how FormPortal itself was built, so an Intel copy of FormPortal running under Rosetta on Apple silicon installed Intel builds of some apps and Apple silicon builds of others. It now asks the Mac. An Apple silicon Mac takes an Intel build only when an app has no Apple silicon build, and Details says it runs under Rosetta; an Intel Mac is never given an Apple silicon build and the app reads "Not built for this computer yet". Windows follows the same rule; Linux never mixes architectures.
+
 ## v0.63.4 · 2026-11-09
 
 - Extensions from form.ext-registry load: this build trusts the registry's index key (`core/registry_keys.txt`), so the signed extension index and block list are read instead of refused with "this build trusts no registry key yet".

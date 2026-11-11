@@ -290,28 +290,48 @@ impl std::error::Error for CatalogError {
     }
 }
 
+fn sysctl(key: &str) -> Option<String> {
+    let out = std::process::Command::new("/usr/sbin/sysctl").args(["-n", key]).output().ok()?;
+    out.status.success().then(|| String::from_utf8_lossy(&out.stdout).trim().to_string())
+}
+
 impl Platform {
     pub fn current() -> Self {
-        let os = if cfg!(target_os = "macos") {
-            Os::Macos
-        } else if cfg!(target_os = "windows") {
-            Os::Windows
-        } else if cfg!(target_os = "linux") {
-            Os::Linux
-        } else {
-            Os::Other
-        };
-        let arch = if cfg!(target_arch = "aarch64") { Arch::Arm64 } else { Arch::X86_64 };
+        static CURRENT: std::sync::OnceLock<Platform> = std::sync::OnceLock::new();
+        *CURRENT.get_or_init(|| {
+            let os = if cfg!(target_os = "macos") {
+                Os::Macos
+            } else if cfg!(target_os = "windows") {
+                Os::Windows
+            } else if cfg!(target_os = "linux") {
+                Os::Linux
+            } else {
+                Os::Other
+            };
+            let built = if cfg!(target_arch = "aarch64") { Arch::Arm64 } else { Arch::X86_64 };
+            Platform::detect(os, built, &sysctl)
+        })
+    }
+
+    pub fn detect(os: Os, built: Arch, sysctl: &dyn Fn(&str) -> Option<String>) -> Self {
+        let set = |key: &str| sysctl(key).is_some_and(|v| v.trim() == "1");
+        let arch = if os == Os::Macos && built == Arch::X86_64 && (set("hw.optional.arm64") || set("sysctl.proc_translated")) { Arch::Arm64 } else { built };
         Platform { os, arch }
+    }
+
+    pub fn fallback(&self) -> Option<Arch> {
+        (self.arch == Arch::Arm64 && matches!(self.os, Os::Macos | Os::Windows)).then_some(Arch::X86_64)
+    }
+
+    pub fn translated(&self, artifact: &Artifact) -> bool {
+        artifact.arch != self.arch
     }
 }
 
 impl Release {
     pub fn artifact_for(&self, platform: Platform) -> Option<&Artifact> {
-        self.artifacts
-            .iter()
-            .find(|a| a.platform == platform.os && a.arch == platform.arch)
-            .or_else(|| self.artifacts.iter().find(|a| a.platform == platform.os))
+        let built_for = |arch: Arch| self.artifacts.iter().find(|a| a.platform == platform.os && a.arch == arch);
+        built_for(platform.arch).or_else(|| platform.fallback().and_then(built_for))
     }
 }
 

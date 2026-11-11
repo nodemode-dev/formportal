@@ -56,7 +56,9 @@ impl Portal {
         let mut known: BTreeSet<PathBuf> = BTreeSet::new();
 
         for install in &state.installs {
+            let base = self.root().join("apps").join(&install.product).join(channel_name(install.channel));
             known.insert(install.current.path.clone());
+            known.insert(base.join(&install.current.version));
             let name = format!("{} {}{}", install.product, install.current.version, if install.channel == Channel::Stable { String::new() } else { format!(" ({})", channel_name(install.channel)) });
             let release = catalog.and_then(|c| c.release_of(&install.product, install.channel, &install.current.version));
             let artifact = release.and_then(|r| r.artifact_for(platform)).filter(|a| a.sha256 == install.current.sha256);
@@ -68,6 +70,7 @@ impl Portal {
             }
             if let Some(previous) = &install.previous {
                 known.insert(previous.path.clone());
+                known.insert(base.join(&previous.version));
                 if !previous.path.exists() {
                     findings.push(finding("previous", Some(&install.product), Some(install.channel), &previous.path, format!("the kept earlier version of {} ({}) is gone", install.product, previous.version), "forget it, so Go back is not offered for a version that is not there".to_string()));
                 }

@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode, SharesView } from "./types.ts";
+import type { Artifact, Release, RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode, SharesView } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -40,7 +40,7 @@ export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta:
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {
-    const [core, ...pre] = v.trim().replace(/^v/, "").split("-");
+    const [core, ...pre] = v.trim().replace(/^v/, "").split("+")[0].split("-");
     return [core.split(".").map((n) => Number.parseInt(n, 10) || 0), pre.length ? pre.join("-") : null];
   };
   const [a, ap] = split(candidate);
@@ -51,7 +51,26 @@ export function versionNewer(candidate: string, current: string): boolean {
     if (x !== y) return x > y;
   }
   if (ap === null) return bp !== null;
-  return bp !== null && ap > bp;
+  if (bp === null) return false;
+  const numeric = (part: string) => /^[0-9]+$/.test(part);
+  const xs = ap.split(".");
+  const ys = bp.split(".");
+  for (let i = 0; ; i += 1) {
+    const x = xs[i];
+    const y = ys[i];
+    if (x === undefined) return false;
+    if (y === undefined) return true;
+    if (numeric(x) && numeric(y)) {
+      const p = x.replace(/^0+/, "");
+      const q = y.replace(/^0+/, "");
+      if (p.length !== q.length) return p.length > q.length;
+      if (p !== q) return p > q;
+    } else if (numeric(x) !== numeric(y)) {
+      return !numeric(x);
+    } else if (x !== y) {
+      return x > y;
+    }
+  }
 }
 
 export interface HubState {
@@ -225,17 +244,20 @@ export class Engine {
     return this.state.catalog?.products.find((p) => p.id === id) ?? null;
   }
 
+  artifactFor(release: Release): Artifact | null {
+    const { os, arch } = this.state.platform;
+    const builtFor = (want: string) => release.artifacts.find((a) => a.platform === os && a.arch === want);
+    const translates = arch === "arm64" && (os === "macos" || os === "windows");
+    return builtFor(arch) ?? (translates ? builtFor("x86_64") : undefined) ?? null;
+  }
+
   view(id: string, channel: Channel): ChannelView {
     const product = this.product(id);
     const base = { product: id, channel, version: null, artifact: null };
     if (!product || (product.state === "prelaunch" && Object.keys(product.channels).length === 0)) return { ...base, availability: "unreleased" };
     const release = product.channels[channel];
     if (!release) return { ...base, availability: "no-release" };
-    const { os, arch } = this.state.platform;
-    const artifact =
-      release.artifacts.find((a) => a.platform === os && a.arch === arch) ??
-      release.artifacts.find((a) => a.platform === os) ??
-      null;
+    const artifact = this.artifactFor(release);
     return { product: id, channel, version: release.version, artifact, availability: artifact ? "available" : "other-platform" };
   }
 }

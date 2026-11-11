@@ -3,7 +3,7 @@
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
 Current build version: v0.64.0
-Last updated: 2026-11-09 · v0.64.0 the three demos open inside FormPortal from Home and Preferences > Help, sandboxed in a labelled stage (#in-app-demos); 2026-11-08 · v0.63.2 form.ext is available in catalog/products.json (formcompiler builds it from v0.12.0) and its licence is GPL-3.0-only, as its repository says; 2026-11-07 · v0.63.1 extensions from form.ext-registry: Verified mark, source link, blocked rows and the turned-off notice, the registry note, the browser fixture reads a test index (`?extindex=`) and no longer carries the first-party packages; 2026-11-07 · v0.63.0 the Extensions page as the hub: a filter per app, panels and commands, ready in the app notices, deep links, Make an extension, the twelve real packages in the fixture; 2026-11-07 · v0.62.4 two more demos in demos/ (no change here, see demos/updates/HASHOUT_LOG.md); 2026-11-07 · v0.62.3 the splash animation shorthand fixed; 2026-11-07 · v0.62.2 the splash bar runs 2.6 s; 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Last updated: 2026-11-09 · v0.64.0 the three demos open inside FormPortal from Home and Preferences > Help, sandboxed in a labelled stage (#in-app-demos); 2026-11-10 · v0.63.7 Storage lists two project folders with the same last name (#storage-rows); 2026-11-10 · v0.63.7 a failed extension on/off puts the switch back (#ext-switch-back); 2026-11-10 · v0.63.7 Learn keeps tutorials of apps not out yet hidden under every filter (#learn-unlisted); 2026-11-10 · v0.63.7 Install every released app and Update all run once at a time and skip apps already installing (#install-all-once); 2026-11-10 · v0.63.7 versionNewer orders pre-release tags as the core does (#prerelease-order); 2026-11-10 · v0.63.7 Remove and the On switch send the extension's contract id (#ext-contract-id); 2026-11-10 · v0.63.6 FormRec is in catalog/products.json as in development (formcompiler 0.13.0 registers it); 2026-11-09 · v0.63.5 the build offered follows the machine's architecture; the Download fact says when it runs under Rosetta; 2026-11-08 · v0.63.2 form.ext is available in catalog/products.json (formcompiler builds it from v0.12.0) and its licence is GPL-3.0-only, as its repository says; 2026-11-07 · v0.63.1 extensions from form.ext-registry: Verified mark, source link, blocked rows and the turned-off notice, the registry note, the browser fixture reads a test index (`?extindex=`) and no longer carries the first-party packages; 2026-11-07 · v0.63.0 the Extensions page as the hub: a filter per app, panels and commands, ready in the app notices, deep links, Make an extension, the twelve real packages in the fixture; 2026-11-07 · v0.62.4 two more demos in demos/ (no change here, see demos/updates/HASHOUT_LOG.md); 2026-11-07 · v0.62.3 the splash animation shorthand fixed; 2026-11-07 · v0.62.2 the splash bar runs 2.6 s; 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
 
 ## v0.64.0 · the three demos open inside FormPortal {#in-app-demos}
 
@@ -31,6 +31,70 @@ The demo builds are made from this same interface, so they carry the Demos block
 - logged: v0.64.0 · 2026-11-09
 
 The demos play their video and audio, show photographs and register fonts from `blob:` URLs they make from their packed media, and run in a same-origin frame. The policy adds `blob:` to img-src and font-src, `media-src 'self' blob:` and `frame-src 'self'`; scripts, styles and connections are unchanged. Not exercised in a Tauri window in this round (checked in Chromium on the built interface).
+
+## v0.63.7 · Storage rows for folders with the same last name {#storage-rows}
+
+### extensions/files · the storage handler
+- refers-to: src/extensions/files/index.ts :: storageRows, the `storage` handler, place
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`storageRows` was keyed by the row's label, and a project folder's label is "Projects in <last name>", so `/Users/a/Work/Form` and `/Volumes/B/Form` mapped to the same `<li>`: Storage showed one line with the second folder's size and the first folder's usage vanished. The map is now keyed by label and path together, so each folder keeps its own row and FormPortal's own parts keep theirs. Checked with `tsc --noEmit`; not run in a browser.
+
+## v0.63.7 · a failed extension on/off puts the switch back {#ext-switch-back}
+
+### main.ts · ext.enable
+- refers-to: src/main.ts :: ext.enable · src/extensions/library/index.ts :: fill (the switch)
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+Unlike `ext.install` and `ext.remove`, `ext.enable` refreshed the extensions only after `enableExtension` succeeded, so when it failed the fault notice showed but the switch kept the position the person had flipped it to, and the page claimed On or Off while the extension was in the other state until the page was reopened. The call is now wrapped in `try { ... } finally { await extRefresh(); }` as in `ext.remove`; `fill` runs on every refresh and sets the switch from the installed record. Checked with `tsc --noEmit`; not run in a browser.
+
+## v0.63.7 · Learn hides tutorials of apps not out yet {#learn-unlisted}
+
+### extensions/learn · row, filter
+- refers-to: src/extensions/learn/index.ts :: row, filter
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`row()` hid a tutorial whose app is not live (no release, not installed) by setting `hidden`, but the `learn` handler then ran `filter()`, which overwrote `hidden` with the Started/Finished filter alone, so under All the tutorial showed the unreleased app's real name that the rest of the window keeps as "a Form app". `row()` now records the live check as a `data-unlisted` attribute and `filter()` hides a row when it carries that attribute or does not match the filter. Checked with `tsc --noEmit`; not run in a browser.
+
+## v0.63.7 · Install every released app and Update all run once {#install-all-once}
+
+### extensions/home · installable, paintAll, the Install all click; main.ts · app.updateAll
+- refers-to: src/extensions/home/index.ts :: installable, paintAll, allButton click · src/main.ts :: app.updateAll
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`paintAll` runs on every `install` event, progress ticks included, and re-enabled "Install every released app" whenever `installable()` was not empty; `installable()` did not leave out apps already downloading. A second press during the run started a second install of the app in progress, and when the first finished it cleared that row's progress while the second was still running. `app.updateAll` had no guard, and a record stays "older" until its install finishes, so a second Update all press did the same. Home now keeps a `running` flag for its loop (the button stays disabled while it is set, a second click returns at once, the flag is cleared in `finally`), and `installable()` skips products with progress. `app.updateAll` keeps a module-level `updatingAll` flag the same way and skips records whose product and channel have progress. Checked with `tsc --noEmit`; not run in a browser.
+
+## v0.63.7 · pre-release order as in the core {#prerelease-order}
+
+### engine/index.ts · versionNewer
+- refers-to: src/engine/index.ts :: versionNewer · ../core/src/lib.rs :: version_newer, prerelease_newer
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+`versionNewer` compared the whole pre-release tag as one string, so `2.7.0-beta.10` was older than `2.7.0-beta.9`: Updates said Installed, the update count and Update all skipped it, and an extension at `beta.10` showed no Update, while the core's `version_newer` did see the update and installed it automatically. Build metadata was not stripped either, so `1.0.0-rc.1+b` counted as newer than `1.0.0-rc.1`. It now drops everything after `+` and compares pre-release identifiers split on `.` the way `prerelease_newer` does: numeric by value (leading zeros ignored), numeric below alphanumeric, alphanumeric as strings, more identifiers newer when the shared ones are equal. Checked with `tsc --noEmit` and a scratch run of this function under node beside a scratch copy of the core's function under rustc on 18 pairs (beta.10/beta.9, rc against release, alpha/alpha.1, alpha.beta/alpha.1, leading zeros, build metadata, a `v` prefix, a hyphen inside the tag): the same answer for every pair.
+
+## v0.63.7 · Remove and the On switch name the extension's host by its contract id {#ext-contract-id}
+
+### extensions/library · wire, target
+- refers-to: src/extensions/library/index.ts :: wire (target) · src/engine/hosts.ts :: contractId · src/main.ts :: ext.remove, ext.enable
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+Since v0.63.0 `fill` writes each row's `data-product` as the catalogue id (`catalogueId`, so FormDeck's extensions carry `formslide` and FormPortal's `formai`), and `target()` passed that attribute straight to `ext.remove` and `ext.enable`. The core keys installed extensions by the contract id (`formdeck`, `formportal`), so Remove and the On switch failed with "the extension ... for formslide is not installed" for every FormDeck and FormPortal extension, and `main.ts` found no record for the notice. `target()` now maps the attribute back with `contractId`, which leaves every other host's id as it is; the attribute itself stays the catalogue id that the filters and icons read. Checked with `tsc --noEmit`; not run in a browser.
+
+## v0.63.5 · the machine's own architecture {#mac-arch}
+
+### engine/index.ts · artifactFor; extensions/apps · the Download fact and the version picker
+- refers-to: frontend/src/engine/index.ts :: Engine.artifactFor, Engine.view · frontend/src/extensions/apps/index.ts :: patch · frontend/src/i18n/es.json · ../core/HASHOUT_LOG.md#mac-arch
+- kind: fix
+- logged: v0.63.5 · 2026-11-09
+
+`view` repeated the engine's old choice (exact architecture, else any build of the system), so the window could offer what the core would no longer install. `artifactFor` follows `Release::artifact_for`: the platform's architecture, then x86_64 only for arm64 on macOS or Windows. The version picker lists only releases `artifactFor` accepts (it listed any release with a build for the system). When the chosen build is not the machine's architecture the Download fact reads "{file}, an Intel build that runs under Rosetta" (macOS) or "{file}, an x64 build that runs under emulation", written into the existing keyed `data-field='file'` node, so nothing new is drawn.
+
 
 ## v0.63.1 · extensions from form.ext-registry {#registry}
 
