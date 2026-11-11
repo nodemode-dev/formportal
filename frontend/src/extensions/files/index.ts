@@ -152,12 +152,12 @@ export const files: Extension = {
     const storageRows = new Map<string, HTMLElement>();
     engine.on("storage", ({ view }) => {
       const rows = [...view.formportal.map((p) => [p.what, p.path, p.bytes] as const), ...view.folders.map((f) => [`Projects in ${f.path.split(/[\\/]/).pop() || f.path}`, f.path, f.bytes] as const)].map(([what, path, bytes]) => {
-        let row = storageRows.get(what);
+        let row = storageRows.get(`${what}\n${path}`);
         if (!row) {
           row = document.createElement("li");
           row.className = "store";
           row.innerHTML = '<span class="store-what"></span><span class="store-path mono"></span><span class="store-bytes"></span>';
-          storageRows.set(what, row);
+          storageRows.set(`${what}\n${path}`, row);
         }
         const [w, p, b] = Array.from(row.children) as HTMLElement[];
         if (w.textContent !== what) w.textContent = what;
