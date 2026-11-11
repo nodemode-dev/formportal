@@ -2,8 +2,62 @@
 
 Living log for `formportal-core`, FormPortal's engine in Rust (named `formai-core` and kept in formai_dev's `hub/core` up to formai_dev 0.26.0; entries below that date use the old names and paths). Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.63.5
-Last updated: 2026-11-09 · v0.63.5 the machine's own architecture (Platform::detect under Rosetta, no cross-architecture fallback); 2026-11-07 · v0.63.1 extensions from form.ext-registry: registry keys (registry_keys.txt, FORMEXT_REGISTRY_PUBKEY), the signed block list, publisher signatures required, the starter extension index removed; 2026-11-07 · v0.63.0 the extension hub: thirteen hosts, API 1 manifests and refusals, contributes, enabled.json written atomically, live pickup notes; 2026-11-06 · v0.61.0 FormBench's product id is formbench as in the signed catalogue, the release waves from the owner's plan, formcompiler removed as a product (no engine code change); 2026-11-06 · v0.60.0 the kept catalogue first (catalog_kept, releases::apply_kept), one pooled agent with timeouts, release files sized at once, the starter library and the store (store.rs, bundled: downloads); 2026-11-06 · v0.59.0 disk images with a licence install (installers.rs, deploy.rs), the catalogue is formai.studio's again (35 products, every cap), open_links reads markup.ts; 2026-11-06 · v0.58.0 the identifier studio.formai.portal and the data-root move, the site client (upcoming, supporter check), the unannounced caps removed, releases.rs refactor; 2026-11-06 · v0.56.0 formai.dev removed from the links, the schemas and the fixtures, the support page allowed, formai_dev's schedule and app caps copied into catalog/; 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+Current build version: v0.63.7
+Last updated: 2026-11-10 · v0.63.7 which() skips npm's extensionless shim on Windows (#win-which); 2026-11-10 · v0.63.7 NSIS and MSI target folders with spaces passed unquoted on Windows (#win-install-dir); 2026-11-10 · v0.63.7 publishing a changed file again removes the earlier public copy (#republish); 2026-11-10 · v0.63.7 a second shared folder with the same name gets its own repository (#share-same-name); 2026-11-10 · v0.63.7 going back to the oldest kept version copies it before the safety copy (#revert-oldest); 2026-11-10 · v0.63.7 Repair and the update sweep keep installs recorded under the old macOS data root (#root-move-keep); 2026-11-09 · v0.63.5 the machine's own architecture (Platform::detect under Rosetta, no cross-architecture fallback); 2026-11-07 · v0.63.1 extensions from form.ext-registry: registry keys (registry_keys.txt, FORMEXT_REGISTRY_PUBKEY), the signed block list, publisher signatures required, the starter extension index removed; 2026-11-07 · v0.63.0 the extension hub: thirteen hosts, API 1 manifests and refusals, contributes, enabled.json written atomically, live pickup notes; 2026-11-06 · v0.61.0 FormBench's product id is formbench as in the signed catalogue, the release waves from the owner's plan, formcompiler removed as a product (no engine code change); 2026-11-06 · v0.60.0 the kept catalogue first (catalog_kept, releases::apply_kept), one pooled agent with timeouts, release files sized at once, the starter library and the store (store.rs, bundled: downloads); 2026-11-06 · v0.59.0 disk images with a licence install (installers.rs, deploy.rs), the catalogue is formai.studio's again (35 products, every cap), open_links reads markup.ts; 2026-11-06 · v0.58.0 the identifier studio.formai.portal and the data-root move, the site client (upcoming, supporter check), the unannounced caps removed, releases.rs refactor; 2026-11-06 · v0.56.0 formai.dev removed from the links, the schemas and the fixtures, the support page allowed, formai_dev's schedule and app caps copied into catalog/; 2026-11-06 · releases read from each app's GitHub release (releases.rs), formcompiler's catalogue copy when the store cannot be reached, prelaunch apps with a release, the policy's github_releases; 2026-11-02 · the links FormPortal opens; 2026-10-26 · the test suite (core/tests); 2026-10-25 · the release's form-app.json in each install, the MCP program by name, every file's digest (merged from the v0.46.0-mcp branch); the managed package (deploy.rs, policy::check); the portfolio page and extension support links; sharing through the person's GitHub account (share.rs); the optional GitHub sign-in (github.rs, keyring, CoreError::Account); the login item (login.rs, open_at_login); Claude Code counted at user scope only, formMCP and formskills in the registry; form-app.json format_version 2, catalogue agents fields
+
+## v0.63.7 · which() on Windows {#win-which}
+
+### agents.rs · which
+- refers-to: core/src/agents.rs :: which · core/src/assistant.rs :: assistant_agents, ask_agent · core/src/agents.rs :: client_state, write, remove
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+npm installs Claude Code and Codex on Windows as three files side by side in `%APPDATA%\npm`: `claude` (a sh script), `claude.cmd` and `claude.ps1`. `which` tried the bare name first and returned the sh script, which Windows cannot start (OS error 193), so Ask your agent reported an I/O error, connecting the FormPortal server failed and its state read Not connected. On Windows `which` now tries only `<name>.exe` and `<name>.cmd`; elsewhere only the bare name, which is what was found there before. Checked: `cargo check --target x86_64-pc-windows-gnu -p formportal-core` compiles and the Linux tests pass; not run on Windows.
+
+## v0.63.7 · NSIS and MSI install folders with spaces {#win-install-dir}
+
+### installers.rs · nsis, msi
+- refers-to: core/src/installers.rs :: nsis, msi
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+On Windows `Command::arg` quotes any argument with a space as a whole, so a staging folder under a profile like `C:\Users\Ana Maria\...` reached the installer as `"/D=C:\Users\Ana Maria\...\1.2.3.tmp"`. NSIS reads `/D=` only unquoted and last on the line (its own documented rule), so it ignored the switch and installed into its default folder, leaving the staging folder empty and the install with nothing to open; msiexec expects `TARGETDIR="C:\..."` and refuses the whole-quoted property. On Windows both now append that argument with `CommandExt::raw_arg`: `/D=<path>` unquoted and last for NSIS, `TARGETDIR="<path>"` for msiexec; the package path keeps `arg`. Other systems keep `arg` (these two kinds are not installed there). Checked: `cargo check --target x86_64-pc-windows-gnu -p formportal-core` compiles; not run on Windows.
+
+## v0.63.7 · publishing a changed file again {#republish}
+
+### share.rs · Portal::publish
+- refers-to: core/src/share.rs :: Portal::publish, Portal::unpublish
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+A published file is stored at `<first 12 of its blob sha>/<name>` in `formportal-public`. Publishing it again after an edit stored the new bytes at a new path and dropped the record of the first upload without deleting it, so the earlier version stayed at a public URL that the portfolio no longer listed and Unpublish (which deletes only the recorded path) could never remove. `publish` now sends the same DELETE as `unpublish` for the earlier path (404 is fine) before it replaces the record, unless another published file's record names that same path (same name and content). If GitHub refuses the delete, publish stops with the error before changing the record, so a retry tries again. Built; not run against GitHub (needs a signed-in account).
+
+## v0.63.7 · two shared folders with the same name {#share-same-name}
+
+### share.rs · Portal::share_folder
+- refers-to: core/src/share.rs :: Portal::share_folder, ensure_repo
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+The shared repository's name came only from the folder's last name (`formportal-library-<slug>`) and `ensure_repo` reused any repository of that name. Sharing `D:\Clients\Acme\Projects` with one person and then `C:\Users\me\Projects` uploaded the second folder's files into the first folder's repository, so the person invited only to the first could read them. `share_folder` now reuses the repository already recorded for the same folder; for a folder not yet shared it takes the first of `<slug>`, `<slug>-2`, `<slug>-3`, ... that no other shared folder records and that GitHub does not report as existing (a GET on `/repos/<login>/<name>` that is not 200). A folder whose record was lost therefore gets a fresh repository rather than one it cannot be sure is its own. Built; not run against GitHub (needs a signed-in account).
+
+## v0.63.7 · going back to the oldest kept version {#revert-oldest}
+
+### files.rs · Portal::revert_file
+- refers-to: core/src/files.rs :: Portal::revert_file, Portal::keep_version
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+With 20 kept versions (`KEEP_VERSIONS`) and a file that changed since the last one, going back to the oldest version first kept the current file "before going back"; that made the list 21 long and evicted index 0, the very version being restored, deleting its stored copy before it was read. The revert failed with a file-not-found error and the version was lost for good. `revert_file` now checks the stored copy's SHA-256 and copies it to the staging file first, then keeps the safety version (removing the staging file if that fails), then renames the staging file over the file. Checked with `formportal-cli`: 20 saves of different content, one more unsaved edit, revert to the oldest id: the file holds the oldest content.
+
+## v0.63.7 · installs recorded under the old data root are kept {#root-move-keep}
+
+### repair.rs · Portal::repair; portal.rs · Portal::sweep
+- refers-to: core/src/repair.rs :: Portal::repair (the `known` set) · core/src/portal.rs :: Portal::sweep (the `keep` list)
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+On a Mac that installed apps before v0.58.0, `moved_root` renames `dev.formai.portal` to `studio.formai.portal` and leaves a link, but `installed.json` still records every `current.path` and `previous.path` under the old name. Repair compared the folders it found under the new root with those recorded paths as text, so every installed version older than ten minutes was listed as a `leftover` and `repair --fix` deleted it; and the sweep after an update deleted the kept earlier version for the same reason, so Go back failed right after. Both now also count the folder an install's version must live in, `<root>/apps/<product>/<channel>/<version>` (the only place `install_with` puts it), as known, next to the recorded path, so a version a record names is never a leftover whichever name its path was written with. The recorded paths are not rewritten; they still resolve through the link. Checked with a scratch root reached through a link, a record written with the link's paths, versions 1.0.0 (current), 0.9.0 (previous) and 0.8.0 (no record) back-dated two hours: `formportal-cli repair` lists only 0.8.0.
 
 ## v0.63.5 · the machine's own architecture {#mac-arch}
 

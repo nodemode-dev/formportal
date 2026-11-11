@@ -298,7 +298,23 @@ impl Portal {
         }
         let s = signed_in(Some(SHARE_SCOPE))?;
         let label = folder.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "Library".to_string());
-        let (repo, branch, url) = ensure_repo(&s, &format!("{PREFIX}{}", slug(&label)), true, &format!("Shared from FormPortal: {label}"))?;
+        let known = self.share_state()?;
+        let base = format!("{PREFIX}{}", slug(&label));
+        let name = match known.shared.iter().find(|x| x.folder == folder) {
+            Some(x) => x.repo.rsplit('/').next().unwrap_or(&base).to_string(),
+            None => {
+                let mut n = 1;
+                loop {
+                    let name = if n == 1 { base.clone() } else { format!("{base}-{n}") };
+                    let full = format!("{}/{name}", s.account.login);
+                    if !known.shared.iter().any(|x| x.repo == full) && s.call("GET", &format!("/repos/{full}"), None)?.0 != 200 {
+                        break name;
+                    }
+                    n += 1;
+                }
+            }
+        };
+        let (repo, branch, url) = ensure_repo(&s, &name, true, &format!("Shared from FormPortal: {label}"))?;
         let mut report = SyncReport { repo: repo.clone(), url: url.clone(), folder: folder.to_path_buf(), ..SyncReport::default() };
         send(&s, &repo, &branch, folder, &mut report)?;
         for who in invite.iter().map(|w| w.trim().trim_start_matches('@')).filter(|w| !w.is_empty()) {
@@ -411,6 +427,14 @@ impl Portal {
         let url = v.pointer("/content/html_url").and_then(Value::as_str).map(str::to_string).unwrap_or_else(|| format!("https://github.com/{repo}/blob/{branch}/{}", encode(&path)));
         let published = Published { file: file.to_path_buf(), repo, path, sha, url };
         let mut state = self.share_state()?;
+        if let Some(old) = state.published.iter().find(|p| p.file == published.file && (p.repo != published.repo || p.path != published.path)) {
+            if !state.published.iter().any(|p| p.file != old.file && p.repo == old.repo && p.path == old.path) {
+                let (status, v) = s.call("DELETE", &format!("/repos/{}/contents/{}", old.repo, encode(&old.path)), Some(&json!({ "message": format!("FormPortal: unpublish {}", old.path), "sha": old.sha })))?;
+                if status != 200 && status != 404 {
+                    return Err(refused("remove the earlier public link", status, &v));
+                }
+            }
+        }
         state.published.retain(|p| p.file != published.file);
         state.published.push(published.clone());
         self.share_save(&state)?;

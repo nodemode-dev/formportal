@@ -381,15 +381,18 @@ impl Portal {
         self.check_tracked(path)?;
         let mut history = self.history()?;
         let target = history.files.get(&key(path)).and_then(|l| l.iter().find(|v| v.id == id)).cloned().ok_or_else(|| CoreError::Invalid(format!("{id} is not a version of {}", path.display())))?;
-        if path.exists() {
-            self.keep_version(&mut history, path, "before going back")?;
-        }
         let stored = self.history_dir().join(folder_id(path)).join(&target.id);
         if sha256_file(&stored)? != target.sha256 {
             return Err(CoreError::Invalid(format!("the kept copy of {} does not match its record; nothing was changed", path.display())));
         }
         let staging = path.with_file_name(format!(".{}.formportal-revert", path.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default()));
         fs::copy(&stored, &staging)?;
+        if path.exists() {
+            if let Err(e) = self.keep_version(&mut history, path, "before going back") {
+                let _ = fs::remove_file(&staging);
+                return Err(e);
+            }
+        }
         fs::rename(&staging, path)?;
         let after = self.keep_version(&mut history, path, "went back to an earlier version")?;
         self.history_save(&history)?;

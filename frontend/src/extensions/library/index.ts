@@ -1,5 +1,5 @@
 import { versionNewer } from "../../engine/index.ts";
-import { EXT_PRODUCTS, catalogueId } from "../../engine/hosts.ts";
+import { EXT_PRODUCTS, catalogueId, contractId } from "../../engine/hosts.ts";
 import { t } from "../../i18n/index.ts";
 import type { ExtensionEntry, InstalledExtension } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
@@ -119,7 +119,7 @@ export const library: Extension = {
     document.querySelector("[data-ext-make]")?.addEventListener("click", () => void engine.dispatch("ext.make"));
 
     const wire = (row: HTMLElement) => {
-      const target = () => ({ product: row.dataset.product ?? "", id: row.dataset.ext ?? "" });
+      const target = () => ({ product: contractId(row.dataset.product ?? ""), id: row.dataset.ext ?? "" });
       row.querySelector("[data-ext-act='install']")?.addEventListener("click", () => {
         row.setAttribute("data-ext-state", "busy");
         void engine.dispatch("ext.install", { id: target().id });

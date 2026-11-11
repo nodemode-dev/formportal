@@ -65,7 +65,7 @@ export const learn: Extension = {
       }
       const name = t.product === "formportal" ? "FormPortal" : engine.name(t.product);
       const listed = t.product === "formportal" || t.product === "formai" || liveNow(t.product);
-      if (r.hidden === listed) r.hidden = !listed;
+      if (r.hasAttribute("data-unlisted") === listed) r.toggleAttribute("data-unlisted", !listed);
       setText(r.querySelector(".tutorial-app"), name);
       setText(r.querySelector(".tutorial-title"), t.title);
       setText(r.querySelector(".tutorial-sum"), t.summary);
@@ -115,7 +115,7 @@ export const learn: Extension = {
 
     const filter = () => {
       for (const r of rows.values()) {
-        const hide = show !== "all" && r.dataset.state !== show;
+        const hide = r.hasAttribute("data-unlisted") || (show !== "all" && r.dataset.state !== show);
         if (r.hidden !== hide) r.hidden = hide;
       }
     };

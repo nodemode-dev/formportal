@@ -67,17 +67,24 @@ export const home: Extension = {
     const installable = () =>
       slots
         .map((s) => s.dataset.slot ?? "")
-        .filter((id) => liveNow(id) && engine.view(id, "stable").availability === "available" && !engine.installs.has(engine.key(id, "stable")) && !engine.blocked(id, "stable"));
+        .filter((id) => liveNow(id) && engine.view(id, "stable").availability === "available" && !engine.installs.has(engine.key(id, "stable")) && !engine.progress.has(engine.key(id, "stable")) && !engine.blocked(id, "stable"));
+    let running = false;
     const paintAll = () => {
       if (!allButton) return;
-      const none = installable().length === 0;
+      const none = running || installable().length === 0;
       if (allButton.disabled !== none) allButton.disabled = none;
     };
     engine.on("install", paintAll);
     engine.on("source", paintAll);
     allButton?.addEventListener("click", async () => {
+      if (running) return;
+      running = true;
       allButton.disabled = true;
-      for (const product of installable()) await engine.dispatch("app.install", { product, channel: "stable" as Channel });
+      try {
+        for (const product of installable()) await engine.dispatch("app.install", { product, channel: "stable" as Channel });
+      } finally {
+        running = false;
+      }
       paintAll();
     });
 

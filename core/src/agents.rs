@@ -326,7 +326,8 @@ fn cursor_config() -> PathBuf {
 pub(crate) fn which(program: &str) -> Option<PathBuf> {
     let paths = std::env::var_os("PATH")?;
     for dir in std::env::split_paths(&paths) {
-        for name in [program.to_string(), format!("{program}.exe"), format!("{program}.cmd")] {
+        let names = if cfg!(windows) { vec![format!("{program}.exe"), format!("{program}.cmd")] } else { vec![program.to_string()] };
+        for name in names {
             let candidate = dir.join(&name);
             if candidate.is_file() {
                 return Some(candidate);

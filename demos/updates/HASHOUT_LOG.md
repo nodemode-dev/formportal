@@ -57,3 +57,10 @@ Files, Fonts, Stock, Extensions and Learn are left out: demo 1 and demos/library
 - kind: decision
 
 Notes are the apps' own change log lines, shortened, so a visitor reads real release history for FormVis, FormLit and FormSkills. The fold is added to each Updates row at build time and filled by the app's own `[data-field=notes]` patching.
+
+## Dev server port {#port}
+- refers-to: demos/updates/vite.config.mjs :: PORT · demo/vite.config.ts :: DEMO_PORT, preview.port
+- kind: fix
+- logged: v0.63.7 · 2026-11-10
+
+This dev server used port 3271, which demo 1's `vite preview` also claims (`DEMO_PORT + 1`); both set `strictPort`, so whichever started second failed. It now uses 3272, which no other config in the tree names (demo 1 3270 and 3271, demos/library 3280, the interface 3250 and 3251). Checked by searching the tree for the port numbers; the server was not started.

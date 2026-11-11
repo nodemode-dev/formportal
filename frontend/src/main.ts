@@ -233,12 +233,21 @@ engine.command("web.fetch", (arg) =>
   }, "library"),
 );
 
+let updatingAll = false;
+
 engine.command("app.updateAll", async () => {
-  for (const record of Array.from(engine.installs.values())) {
-    const view = engine.view(record.product, record.channel);
-    if (view.availability === "available" && view.version && versionNewer(view.version, record.version)) {
-      await engine.dispatch("app.install", { product: record.product, channel: record.channel });
+  if (updatingAll) return;
+  updatingAll = true;
+  try {
+    for (const record of Array.from(engine.installs.values())) {
+      const view = engine.view(record.product, record.channel);
+      if (engine.progress.has(engine.key(record.product, record.channel))) continue;
+      if (view.availability === "available" && view.version && versionNewer(view.version, record.version)) {
+        await engine.dispatch("app.install", { product: record.product, channel: record.channel });
+      }
     }
+  } finally {
+    updatingAll = false;
   }
 });
 
@@ -343,8 +352,11 @@ engine.command("ext.remove", (arg) =>
 engine.command("ext.enable", (arg) =>
   guard(async () => {
     const { product, id, enabled } = arg as { product: string; id: string; enabled: boolean };
-    await bridge.enableExtension(product, id, enabled);
-    await extRefresh();
+    try {
+      await bridge.enableExtension(product, id, enabled);
+    } finally {
+      await extRefresh();
+    }
     const had = engine.state.installedExtensions.find((e) => e.product === product && e.id === id);
     const vars = { name: had?.name ?? id, version: had?.version ?? "", app: engine.name(catalogueId(product)) };
     if (enabled) extNotice(product, t("{name} {version} is ready in {app}.", vars), t("{name} {version} is on; {app} uses it the next time it starts.", vars));

@@ -90,10 +90,22 @@ pub fn dmg(file: &Path, into: &Path) -> Result<()> {
 
 pub fn msi(file: &Path, into: &Path) -> Result<()> {
     let target = absolute(into)?;
-    run(Command::new("msiexec").arg("/a").arg(absolute(file)?).arg("/qn").arg(format!("TARGETDIR={}", target.display())), "msi package", "msiexec")
+    let mut command = Command::new("msiexec");
+    command.arg("/a").arg(absolute(file)?).arg("/qn");
+    #[cfg(windows)]
+    std::os::windows::process::CommandExt::raw_arg(&mut command, format!("TARGETDIR=\"{}\"", target.display()));
+    #[cfg(not(windows))]
+    command.arg(format!("TARGETDIR={}", target.display()));
+    run(&mut command, "msi package", "msiexec")
 }
 
 pub fn nsis(file: &Path, into: &Path) -> Result<()> {
     let target = absolute(into)?;
-    run(Command::new(absolute(file)?).arg("/S").arg(format!("/D={}", target.display())), "installer", "the installer itself")
+    let mut command = Command::new(absolute(file)?);
+    command.arg("/S");
+    #[cfg(windows)]
+    std::os::windows::process::CommandExt::raw_arg(&mut command, format!("/D={}", target.display()));
+    #[cfg(not(windows))]
+    command.arg(format!("/D={}", target.display()));
+    run(&mut command, "installer", "the installer itself")
 }

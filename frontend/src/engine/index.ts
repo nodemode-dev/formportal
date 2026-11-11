@@ -40,7 +40,7 @@ export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta:
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {
-    const [core, ...pre] = v.trim().replace(/^v/, "").split("-");
+    const [core, ...pre] = v.trim().replace(/^v/, "").split("+")[0].split("-");
     return [core.split(".").map((n) => Number.parseInt(n, 10) || 0), pre.length ? pre.join("-") : null];
   };
   const [a, ap] = split(candidate);
@@ -51,7 +51,26 @@ export function versionNewer(candidate: string, current: string): boolean {
     if (x !== y) return x > y;
   }
   if (ap === null) return bp !== null;
-  return bp !== null && ap > bp;
+  if (bp === null) return false;
+  const numeric = (part: string) => /^[0-9]+$/.test(part);
+  const xs = ap.split(".");
+  const ys = bp.split(".");
+  for (let i = 0; ; i += 1) {
+    const x = xs[i];
+    const y = ys[i];
+    if (x === undefined) return false;
+    if (y === undefined) return true;
+    if (numeric(x) && numeric(y)) {
+      const p = x.replace(/^0+/, "");
+      const q = y.replace(/^0+/, "");
+      if (p.length !== q.length) return p.length > q.length;
+      if (p !== q) return p > q;
+    } else if (numeric(x) !== numeric(y)) {
+      return !numeric(x);
+    } else if (x !== y) {
+      return x > y;
+    }
+  }
 }
 
 export interface HubState {
