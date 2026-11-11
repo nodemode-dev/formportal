@@ -5,6 +5,7 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 ## v0.63.6 · 2026-11-10
 
 - On Windows, `formportal.bat mcp`, `cli` and `agents` now pass on the real exit code of what they ran. They used to exit 0 even when the command line, the MCP server or the agents setup failed, so a script or an agent host could not tell.
+- FormRec, the recorder for walkthroughs, podcasts, corporate messages and live feeds, is in the catalogue as in development, with its own icon on the dark and the light tile and its own hue. It appears in FormPortal once its first release is in the catalogue, as formcompiler now builds it.
 
 ## v0.63.5 · 2026-11-09
 
