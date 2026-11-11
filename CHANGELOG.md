@@ -4,7 +4,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 
 ## v0.64.1 · 2026-11-11
 
-- Asking FormPortal's MCP server for a tool it does not have now says that tools/list names every tool, instead of claiming there are thirty-three (there are forty).
+- Asking FormPortal's MCP server for a tool it does not have now says that tools/list names every tool, instead of claiming there are thirty-three (there are forty). A test now holds that message.
+- The three browser demos' Preferences say FormPortal 0.64.1.
 
 ## v0.64.0 · 2026-11-09
 

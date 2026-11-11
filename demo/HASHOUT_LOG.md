@@ -3,7 +3,7 @@
 Living log for the browser demo. Source files stay comment-free; what they would have said lives here.
 
 Current build version: v0.64.1
-Last updated: 2026-11-09 · v0.64.0 rebuilt; FormPortal now opens this build and the two in demos/ inside the app (frontend/HASHOUT_LOG.md#in-app-demos), and the Demos cards on Home move between the demos; 2026-11-07 · v0.62.1 real media in Files, viewers for video, compressed audio and PDF, no hero captures; 2026-11-07 · v0.62.0 the offline browser demo
+Last updated: 2026-11-11 · v0.64.1 not rebuilt: the Preferences line "FormPortal 0.64.0" in this index.html and in demos/library and demos/updates was edited by hand to 0.64.1; the bundled package version inside each assets/*.js still reads 0.64.0 until the next rebuild; 2026-11-09 · v0.64.0 rebuilt; FormPortal now opens this build and the two in demos/ inside the app (frontend/HASHOUT_LOG.md#in-app-demos), and the Demos cards on Home move between the demos; 2026-11-07 · v0.62.1 real media in Files, viewers for video, compressed audio and PDF, no hero captures; 2026-11-07 · v0.62.0 the offline browser demo
 
 ## Why the real interface and a replaced bridge {#bridge}
 - refers-to: demo/vite.config.ts · demo/src/pickbridge.ts · frontend/src/bridge/

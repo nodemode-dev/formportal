@@ -10,7 +10,7 @@ Last updated: 2026-11-11 · v0.64.1 the unknown-tool error names no tool count (
 - kind: fix
 - logged: v0.64.1 · 2026-11-11
 
-`call` refused an unknown tool with "tools/list has the thirty-three tools", a count left from an older release while `tools()` lists 40. The message now says "tools/list names every tool", so it cannot go stale again; tools/list is the one place the count is true. No test counts the tools, so none had to derive it. Found by QA on 2026-11-11.
+`call` refused an unknown tool with "tools/list has the thirty-three tools", a count left from an older release while `tools()` lists 40. The message now says "tools/list names every tool", so it cannot go stale again; tools/list is the one place the count is true. No test counts the tools, so none had to derive it. Found by QA on 2026-11-11. Review follow-up: `tests/mcp_unknown_tool.rs` runs `formportal-cli mcp`, calls `no_such_tool` and checks the error names the tool, says "tools/list names every tool" and holds no digit or number word; it fails on the 0.64.0 message.
 
 ## v0.64.0 · the README's tool count {#tool-count}
 - refers-to: ../README.md :: the "MCP tools" cell · src/mcp.rs :: tools
