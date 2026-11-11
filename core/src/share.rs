@@ -298,7 +298,23 @@ impl Portal {
         }
         let s = signed_in(Some(SHARE_SCOPE))?;
         let label = folder.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "Library".to_string());
-        let (repo, branch, url) = ensure_repo(&s, &format!("{PREFIX}{}", slug(&label)), true, &format!("Shared from FormPortal: {label}"))?;
+        let known = self.share_state()?;
+        let base = format!("{PREFIX}{}", slug(&label));
+        let name = match known.shared.iter().find(|x| x.folder == folder) {
+            Some(x) => x.repo.rsplit('/').next().unwrap_or(&base).to_string(),
+            None => {
+                let mut n = 1;
+                loop {
+                    let name = if n == 1 { base.clone() } else { format!("{base}-{n}") };
+                    let full = format!("{}/{name}", s.account.login);
+                    if !known.shared.iter().any(|x| x.repo == full) && s.call("GET", &format!("/repos/{full}"), None)?.0 != 200 {
+                        break name;
+                    }
+                    n += 1;
+                }
+            }
+        };
+        let (repo, branch, url) = ensure_repo(&s, &name, true, &format!("Shared from FormPortal: {label}"))?;
         let mut report = SyncReport { repo: repo.clone(), url: url.clone(), folder: folder.to_path_buf(), ..SyncReport::default() };
         send(&s, &repo, &branch, folder, &mut report)?;
         for who in invite.iter().map(|w| w.trim().trim_start_matches('@')).filter(|w| !w.is_empty()) {
