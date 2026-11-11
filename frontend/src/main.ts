@@ -233,12 +233,21 @@ engine.command("web.fetch", (arg) =>
   }, "library"),
 );
 
+let updatingAll = false;
+
 engine.command("app.updateAll", async () => {
-  for (const record of Array.from(engine.installs.values())) {
-    const view = engine.view(record.product, record.channel);
-    if (view.availability === "available" && view.version && versionNewer(view.version, record.version)) {
-      await engine.dispatch("app.install", { product: record.product, channel: record.channel });
+  if (updatingAll) return;
+  updatingAll = true;
+  try {
+    for (const record of Array.from(engine.installs.values())) {
+      const view = engine.view(record.product, record.channel);
+      if (engine.progress.has(engine.key(record.product, record.channel))) continue;
+      if (view.availability === "available" && view.version && versionNewer(view.version, record.version)) {
+        await engine.dispatch("app.install", { product: record.product, channel: record.channel });
+      }
     }
+  } finally {
+    updatingAll = false;
   }
 });
 
