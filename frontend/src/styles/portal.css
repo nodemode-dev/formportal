@@ -1899,6 +1899,115 @@ html:not([data-installed]) .list-updates {
   visibility: hidden;
 }
 
+.vers > .h3 {
+  margin: 0;
+}
+
+.ver-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ver-list:empty {
+  display: none;
+}
+
+.ver {
+  padding: 10px 0;
+  border-block-start: 1px solid var(--fp-edge);
+}
+
+.ver-head {
+  display: grid;
+  grid-template-columns: 11ch 10ch 7ch minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ver-num {
+  color: var(--fp-ink);
+}
+
+.ver-date,
+.ver-size,
+.ver-mark {
+  color: var(--fp-ink-3);
+  font-size: 12px;
+}
+
+.ver[data-installed] .ver-mark {
+  color: var(--fp-ink);
+}
+
+.ver-head > .btn {
+  min-inline-size: 72px;
+  justify-content: center;
+}
+
+.ver[data-installed] .ver-head > .btn,
+.ver:not([data-file]) .ver-head > .btn {
+  visibility: hidden;
+}
+
+.ver-head > .btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.fold {
+  margin-block-start: 4px;
+}
+
+.ver:not([data-notes]) > .fold {
+  display: none;
+}
+
+.fold-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 22px;
+  color: var(--fp-ink-2);
+  font-size: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.fold-head::-webkit-details-marker {
+  display: none;
+}
+
+.fold-head::before {
+  content: "";
+  inline-size: 5px;
+  block-size: 5px;
+  border-block-end: 1.5px solid currentColor;
+  border-inline-end: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+.fold[open] > .fold-head::before {
+  transform: rotate(45deg);
+}
+
+.fold > .notes-text {
+  max-inline-size: 72ch;
+  margin-block-start: 6px;
+}
+
+.fold > .notes-text:empty::before {
+  content: none;
+}
+
+.menu-pick .drop-go:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .beta-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

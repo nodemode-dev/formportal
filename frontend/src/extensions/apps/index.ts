@@ -87,8 +87,13 @@ export const apps: Extension = {
         picker.dataset.list = list;
         const wanted = picker.value;
         picker.replaceChildren(...all.map((r) => new Option(label(r), r.version)));
-        if (all.some((r) => r.version === wanted)) picker.value = wanted;
+        const other = all.find((r) => r.version !== record?.version);
+        if (wanted !== record?.version && all.some((r) => r.version === wanted)) picker.value = wanted;
+        else if (other) picker.value = other.version;
       }
+      const go = row.querySelector<HTMLButtonElement>("[data-version-go]");
+      const same = !picker?.value || picker.value === record?.version;
+      if (go && go.disabled !== same) go.disabled = same;
       row.toggleAttribute("data-history", all.length > 1);
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       const on = engine.automatic(product, channel);
@@ -137,8 +142,13 @@ export const apps: Extension = {
     engine.on("policy", () => rows.forEach(patch));
     for (const row of rows) {
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
-      row.querySelector<HTMLButtonElement>("[data-version-go]")?.addEventListener("click", () => {
+      const go = row.querySelector<HTMLButtonElement>("[data-version-go]");
+      go?.addEventListener("click", () => {
         if (picker?.value) void engine.dispatch("app.install", { ...target(row), version: picker.value });
+      });
+      picker?.addEventListener("change", () => {
+        const { product, channel } = target(row);
+        if (go) go.disabled = picker.value === engine.installs.get(engine.key(product, channel))?.version;
       });
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       auto?.addEventListener("change", () => {
