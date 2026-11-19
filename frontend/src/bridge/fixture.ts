@@ -211,7 +211,12 @@ export const fixtureBridge: Bridge = {
       handler([path]);
     }, 6000);
   },
-  installs: async () => Array.from(installed.values()),
+  installs: async () =>
+    Array.from(installed.values()).map((r) => {
+      const latest = catalog.products.find((p) => p.id === r.product)?.channels[r.channel];
+      const release = [latest, ...(latest?.history ?? [])].find((x) => x?.version === r.version);
+      return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: release?.artifacts[0]?.sha256 ?? "0".repeat(64) };
+    }),
   install: async (product, channel, progress, version) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
     const release = version ? [latest, ...(latest?.history ?? [])].find((r) => r?.version === version) : latest;

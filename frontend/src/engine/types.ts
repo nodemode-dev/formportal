@@ -445,6 +445,8 @@ export interface InstallRecord {
   channel: Channel;
   version: string;
   previous: string | null;
+  path?: string | null;
+  sha256?: string | null;
 }
 
 export interface ChannelView {

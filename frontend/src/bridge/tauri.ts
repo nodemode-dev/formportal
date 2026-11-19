@@ -9,7 +9,7 @@ interface TauriGlobal {
 interface RawInstall {
   product: string;
   channel: Channel;
-  current: { version: string };
+  current: { version: string; path?: string; sha256?: string };
   previous?: { version: string } | null;
 }
 
@@ -42,6 +42,8 @@ const record = (raw: RawInstall): InstallRecord => ({
   channel: raw.channel,
   version: raw.current.version,
   previous: raw.previous?.version ?? null,
+  path: raw.current.path ?? null,
+  sha256: raw.current.sha256 ?? null,
 });
 
 export const tauriBridge: Bridge = {

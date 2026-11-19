@@ -1879,6 +1879,14 @@ html:not([data-installed]) .list-updates {
   font-size: 10.5px;
 }
 
+.facts-path,
+.facts-own {
+  min-block-size: 48px;
+  line-height: 16px;
+  user-select: text;
+  cursor: text;
+}
+
 .facts-skills .skills-yes,
 .facts-skills[data-has="yes"] .skills-no {
   display: none;

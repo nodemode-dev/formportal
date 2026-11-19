@@ -107,6 +107,8 @@ export const apps: Extension = {
       field("file", view.artifact ? (translated ? t(under, { file: view.artifact.file }) : view.artifact.file) : "");
       field("minimum", view.artifact?.minimum_os ?? "");
       field("sha256", view.artifact?.sha256 ?? "");
+      field("path", record?.path ?? "");
+      field("installed-sha256", record?.sha256 ?? "");
       field("project", info?.project_extensions?.join(", ") ?? "");
       field("licence", info?.licence ?? "");
       const skills = row.querySelector<HTMLElement>("[data-skills]");
