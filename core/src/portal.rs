@@ -448,11 +448,17 @@ impl Portal {
                 let _ = fs::remove_dir_all(&staging);
                 return Err(CoreError::Running { what: format!("{product} {version}"), pids: open.iter().map(|r| r.pid).collect() });
             }
+        }
+        let record = agents::files_record_path(&base, version);
+        if let Err(e) = agents::write_files_record(&staging, &record, product, channel, version) {
+            let _ = fs::remove_dir_all(&staging);
+            return Err(CoreError::Invalid(format!("the record of {product} {version}'s files could not be written ({e}), so it was not installed")));
+        }
+        if target.exists() {
             fs::remove_dir_all(&target)?;
         }
         fs::rename(&staging, &target)?;
-        let record = agents::files_record_path(&base, version);
-        let files = agents::write_files_record(&target, &record, product, channel, version).ok().map(|()| record);
+        let files = Some(record);
         let fresh = InstalledVersion { version: version.to_string(), path: target, sha256: artifact.sha256.clone(), installed_at: now(), files };
         let mut state = self.state()?;
         let install = match state.position(product, channel) {
