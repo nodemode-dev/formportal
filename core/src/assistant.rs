@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 use std::time::{Duration, Instant};
 
 use serde::{Deserialize, Serialize};
@@ -29,10 +29,21 @@ pub struct Server {
 }
 
 pub fn assistant_agents() -> Vec<AgentCli> {
-    [("claude", "Claude Code"), ("codex", "Codex")]
-        .iter()
-        .map(|(client, label)| AgentCli { client: client.to_string(), label: label.to_string(), path: which(client) })
-        .collect()
+    AGENTS.iter().map(|(client, label, program)| AgentCli { client: client.to_string(), label: label.to_string(), path: which(program) }).collect()
+}
+
+pub const AGENTS: &[(&str, &str, &str)] = &[("claude", "Claude Code", "claude"), ("codex", "Codex", "codex"), ("cursor", "Cursor", "cursor-agent")];
+pub const NONE_FOUND: &str = "FormPortal did not find Claude Code, Codex or Cursor's agent on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders.";
+
+fn cursor_args(prompt: &str, server: &Server, workdir: &Path) -> Result<Vec<String>> {
+    let entry = serde_json::json!({ "mcpServers": { "formportal": {
+        "command": server.command.to_string_lossy(),
+        "args": server.args,
+        "env": server.env.iter().map(|(k, v)| (k.clone(), serde_json::Value::String(v.clone()))).collect::<serde_json::Map<String, serde_json::Value>>(),
+    } } });
+    fs::create_dir_all(workdir.join(".cursor"))?;
+    fs::write(workdir.join(".cursor").join("mcp.json"), serde_json::to_string_pretty(&entry).map_err(|e| CoreError::State(e.to_string()))?)?;
+    Ok(vec!["-p".to_string(), "--output-format".to_string(), "text".to_string(), "--approve-mcps".to_string(), format!("{GUIDE}\n\n{prompt}")])
 }
 
 fn claude_args(prompt: &str, server: &Server) -> Vec<String> {
@@ -69,10 +80,21 @@ pub fn ask_agent(client: &str, prompt: &str, server: &Server, workdir: &Path) ->
         return Err(CoreError::Invalid(format!("the question is longer than {PROMPT_LIMIT} characters")));
     }
     let agent = assistant_agents().into_iter().find(|a| a.client == client).ok_or_else(|| CoreError::Invalid(format!("{client} is not an agent FormPortal can ask")))?;
-    let exe = agent.path.ok_or_else(|| CoreError::Invalid(format!("{} is not installed on this computer (it is not on PATH)", agent.label)))?;
-    let args = if client == "claude" { claude_args(prompt, server) } else { codex_args(prompt, server) };
+    let exe = agent.path.ok_or_else(|| CoreError::Invalid(format!("FormPortal did not find {} on this computer: it looked on your PATH, in the PATH your shell reports and in the usual install folders", agent.label)))?;
     fs::create_dir_all(workdir)?;
-    let mut child = Command::new(&exe).args(&args).current_dir(workdir).stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn()?;
+    let args = match client {
+        "claude" => claude_args(prompt, server),
+        "codex" => codex_args(prompt, server),
+        _ => cursor_args(prompt, server, workdir)?,
+    };
+    let mut child = crate::programs::command(&exe)
+        .args(&args)
+        .current_dir(workdir)
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| CoreError::Invalid(format!("{} at {} could not be started: {e}", agent.label, exe.display())))?;
     let mut out = child.stdout.take().ok_or_else(|| CoreError::State("no output from the agent".to_string()))?;
     let mut err = child.stderr.take().ok_or_else(|| CoreError::State("no output from the agent".to_string()))?;
     let reader = std::thread::spawn(move || {

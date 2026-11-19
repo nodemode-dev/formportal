@@ -451,7 +451,7 @@ pub fn learn_progress(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 pub fn ask(ctx: &Ctx, args: &Value, command: std::path::PathBuf, prefix: Vec<String>, tools: Vec<String>) -> Result<Value, CoreError> {
     let question = text(args, "question").or_else(|| text(args, "product")).ok_or_else(|| fail("give the question"))?;
     let agents = formportal_core::assistant::assistant_agents();
-    let client = text(args, "client").or_else(|| agents.iter().find(|a| a.path.is_some()).map(|a| a.client.clone())).ok_or_else(|| fail("neither Claude Code nor Codex is installed on this computer (neither is on PATH)"))?;
+    let client = text(args, "client").or_else(|| agents.iter().find(|a| a.path.is_some()).map(|a| a.client.clone())).ok_or_else(|| fail(formportal_core::assistant::NONE_FOUND))?;
     let mut env = vec![("FORMPORTAL_ROOT".to_string(), ctx.portal.root().to_string_lossy().to_string()), ("FORMPORTAL_CATALOG".to_string(), ctx.source.clone())];
     if ctx.allow_unsigned {
         env.push(("FORMPORTAL_ALLOW_UNSIGNED".to_string(), "1".to_string()));

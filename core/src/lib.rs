@@ -25,6 +25,7 @@ pub mod policy;
 pub mod portal;
 pub mod prefs;
 pub mod process;
+pub mod programs;
 pub mod releases;
 pub mod repair;
 pub mod share;
