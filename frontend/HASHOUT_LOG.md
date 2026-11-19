@@ -18,6 +18,15 @@ The "Ask your agent" dialog's sentence for no agent is set by its handler to nam
 
 Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
 
+## after v0.65.0 · the list of apps in the side panel goes round {#side-wrap}
+- refers-to: src/extensions/side/index.ts :: turn, wrap, settle
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+The owner asked for the list of apps to wrap around when scrolled. `wrap` runs on the list's scroll and on a ResizeObserver of the list and its rows. Only when the list overflows by more than one row plus 8 px does it set `data-wrap`; a shorter list keeps its plain scroll, no attribute and no inline style. In wrap, the first `turned` shown rows get the inline style `order: 1`, which draws them after the others in the flex column, so the drawn order is a rotation of the list while the nodes stay where they are in the document: no row is created, moved or removed (a MutationObserver on the list saw no child change over 80 wheel steps, and the children were the same nodes in the same order afterwards), Tab and Shift+Tab walk the apps once in catalogue order, and a screen reader reads the same single list. When the scroll comes within one row of either end, the rotation is advanced by the number of rows that puts the scroll back at the middle and `scrollTop` is corrected by the same distance in the same task, so what is drawn does not move and there is always room to keep scrolling either way. At rest the last app shows as a faded strip of `--sp-5` above the first.
+
+Seen in Chromium with 22 apps at 1440x900 (expanded and rail, under 4x CPU, a slow network and no cache), 1100x700 and 880x600: scrolling down passes the last app and continues with the first, and up likewise; across about 400 recorded frames no frame was without a row, the rows visible in two consecutive frames always moved by the same distance, and all 22 apps were seen. With 3 apps nothing changes. What differs from an ideal endless list: a list that overflows by less than a row and 8 px does not wrap; when an app is installed or removed while the list is turned, the rotation is kept by count, so the row at the top can change by one; momentum scrolling in the desktop webviews (WKWebView, WebKitGTK, WebView2) was not available here and is not verified.
+
 ## after v0.65.0 · Files rows show Open, Versions and Public link {#file-acts}
 - refers-to: src/styles/portal.css :: `.acts-files > .btn` (in the one-state-at-a-time list) · index.html :: template `file-row`
 - kind: fix
