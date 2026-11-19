@@ -246,6 +246,7 @@
     {
       "id": "formcel",
       "name": "FormCel",
+      "alt_of": "Excel and Google Sheets",
       "group": "other",
       "status": "available",
       "kind": "spreadsheet",
@@ -272,6 +273,7 @@
     {
       "id": "formtxt",
       "name": "FormTxt",
+      "alt_of": "Microsoft Word and Google Docs",
       "group": "other",
       "status": "available",
       "kind": "document",
@@ -283,6 +285,7 @@
     {
       "id": "formref",
       "name": "FormRef",
+      "alt_of": "PureRef and Milanote",
       "group": "other",
       "status": "available",
       "kind": "reference",
@@ -294,6 +297,7 @@
     {
       "id": "formtray",
       "name": "FormTray",
+      "note": "One dock icon to switch, launch and arrange every Form app",
       "group": "other",
       "status": "available",
       "kind": "launcher",
@@ -318,6 +322,7 @@
     {
       "id": "formsculpt",
       "name": "FormSculpt",
+      "alt_of": "ZBrush",
       "group": "other",
       "status": "available",
       "kind": "sculpt",

@@ -90,7 +90,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const group = (p: App) => (p.group === "adobe" ? "adobe" : "other");
   const hue = (p: App | string) => hues[typeof p === "string" ? p : p.id] ?? "#f3ebe3";
   const has = (dir: string, id: string) => existsSync(resolve(root, "public", dir, `${id}.webp`));
-  const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""));
+  const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note || p.summary));
   const name = (p: App, cls = "nm") => {
     const m = /^Form(.+)$/.exec(p.name);
     return m ? `<span class="${cls}"><span class="nm-f">Form</span><span class="nm-s">${esc(m[1])}</span></span>` : `<span class="${cls}"><span class="nm-f">${esc(p.name)}</span></span>`;
