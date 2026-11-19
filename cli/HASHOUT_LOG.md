@@ -12,6 +12,13 @@ Last updated: 2026-11-11 · v0.64.1 the unknown-tool error names no tool count (
 
 The MCP tools install, update, rollback and remove ran as soon as an agent called them; only the instructions text asked for a go-ahead. They now pass `formportal_core::access::gate` first (core/HASHOUT_LOG.md#agent-access), and so do the same commands on the command line (`later` counts as update), which is treated as an outside agent: it follows the stored choice and has no way to change it. `status` reports `outside_agents` (the choice in force, the stored one, the seal state). Run with a fresh HOME and FORMPORTAL_ROOT under /tmp, through `formportal-cli mcp` on stdio and `formportal-cli remove`: default, ask, blocked and allowed (sealed with a stand-in key), a hand edit from blocked to allowed, an unsealed allowed, a missing key, a broken file, and allowed and blocked with no keychain; every case behaved as described and the file was never changed by the command line.
 
+## v0.65.0 · no hand-typed counts {#counts-from-source}
+- refers-to: src/mcp.rs :: tools (extensions) · ../setup/agents.py :: readme_count, sync · ../README.md (Everything in the box, Extensions)
+- kind: decision
+- logged: v0.65.0 · 2026-11-19
+
+The owner's rule: counts are not typed by hand. FormPortal's own tool count (40 from `tools/list`) is the one number README.md keeps, and `./formportal agents sync` now writes it into the `<h4>N MCP tools</h4>` heading and `--check` reports it as drift, beside references/tools.md. How many Form apps load extensions is a family number, so the extensions tool and README.md name no count; the tool still lists the ids. How many apps the family has is not stated in any live document here; the catalogue is the source. catalog/ is formai_dev's copy and was left as it is (its formportal.json still says 39 tools).
+
 ## v0.65.0 · tests for the gate on the command line and MCP {#agent-access-tests}
 - refers-to: cli/tests/agent_access.rs
 - kind: test

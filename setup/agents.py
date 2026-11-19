@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """./formportal agents: Claude Code, Codex and Cursor driving FormPortal.
 
-  sync [--check]    regenerate the formportal-harness skill's references/tools.md from the MCP server itself and
-                    mirror .claude/skills/formportal-harness to .agents/skills; --check exits 1 when anything drifted
+  sync [--check]    regenerate the formportal-harness skill's references/tools.md and the MCP tool count in README.md
+                    from the MCP server itself and mirror .claude/skills/formportal-harness to .agents/skills;
+                    --check exits 1 when anything drifted
   install [--dry-run] [claude|codex|cursor ...]
                     set the clients up for this user account: the MCP server and the skill (all three by default)
   status            which clients are on this computer and whether the skill is in step
@@ -84,6 +85,12 @@ def _files(folder: Path) -> dict:
     return {str(p.relative_to(folder)): p.read_bytes() for p in sorted(folder.rglob("*")) if p.is_file()}
 
 
+def readme_count(listed: list[dict]) -> tuple[str, str]:
+    readme = ROOT / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    return text, re.sub(r"<h4>\d+ MCP tools</h4>", f"<h4>{len(listed)} MCP tools</h4>", text)
+
+
 def sync(check: bool) -> int:
     drift = []
     ref = SKILL / "references" / "tools.md"
@@ -93,6 +100,11 @@ def sync(check: bool) -> int:
         if not check:
             ref.parent.mkdir(parents=True, exist_ok=True)
             ref.write_text(text, encoding="utf-8")
+    was, now = readme_count(tools())
+    if was != now:
+        drift.append("README.md (MCP tool count)")
+        if not check:
+            (ROOT / "README.md").write_text(now, encoding="utf-8")
     if not MIRROR.exists() or _files(MIRROR) != _files(SKILL):
         drift.append(str(MIRROR.relative_to(ROOT)))
         if not check:
