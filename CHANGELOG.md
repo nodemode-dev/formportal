@@ -2,6 +2,21 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.65.0 · 2026-11-19
+
+- On Windows, Open now starts the app's own program. Before, for 14 of the 23 apps (FormVis, FormLit, FormRef and others) it started the app's helper in a console window and the app never appeared. Apps already installed are fixed without reinstalling.
+- FormPortal never opens a console window when it starts an app or looks at running programs.
+- A helper left running by the earlier Open, which kept the app from starting, is stopped when you press Open, as long as the app itself is not open.
+- If an app closes right after starting, FormPortal says so, with the exit code, instead of showing nothing.
+- If FormPortal cannot tell for certain which program opens an app, it says so and names the folder, and starts nothing.
+- An app's package can name its program for Windows in form-app.json (`launch.windows`); FormPortal uses it when it is a program inside the app's own folder.
+- Installing, updating, rolling back and removing apps through FormPortal's MCP server or command line follow the person's choice for outside agents (Ask, the default; Allowed; Blocked), set only in the window under Preferences, Apps, Outside agents. Under Ask the request is refused and the agent is told to ask the person to do it in the window. The saved choice is sealed, and a choice changed outside FormPortal goes back to Ask. `status` reports it as `outside_agents`.
+- An install whose record of files cannot be written now fails with a message instead of being reported as done without the record.
+- New theme: AMOLED Black, a true-black theme for OLED screens, in Preferences, Interface, Appearance. The window opens in it with no other theme shown first.
+- FormPortal writes agents/manifest.json (its MCP tools and which only read, its skills), kept in step with the server by `./formportal agents sync`; the README's MCP tool count is generated, and documents no longer state how many Form apps load extensions.
+- The documents describe the outside-agents choice (README, wiki Agents, the harness skill), AMOLED Black (wiki), and the supported-versions table in SECURITY.md.
+- The three browser demos' Preferences say FormPortal 0.65.0.
+
 ## v0.64.1 · 2026-11-11
 
 - Asking FormPortal's MCP server for a tool it does not have now says that tools/list names every tool, instead of claiming there are thirty-three (there are forty). A test now holds that message.
