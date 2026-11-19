@@ -1,5 +1,6 @@
 import { versionNewer } from "../../engine/index.ts";
 import { t } from "../../i18n/index.ts";
+import { sizeText } from "../versions/index.ts";
 import type { Channel, ChannelView } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -71,12 +72,14 @@ export const apps: Extension = {
               : t(WORDS[channel][view.availability]);
       write(row.querySelector<HTMLElement>("[data-field='status']"), words);
       write(row.querySelector<HTMLElement>("[data-field='version']"), record?.version ?? view.version ?? "");
-      const bytes = view.artifact && state !== "ready" ? view.artifact.bytes : 0;
-      const size = bytes >= 1_000_000 ? `${Math.round(bytes / 1_000_000)} MB` : bytes > 0 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : "";
-      write(row.querySelector<HTMLElement>("[data-field='size']"), size);
       const info = engine.product(product);
       const release = info?.channels[channel];
       const field = (name: string, text: string) => write(row.querySelector<HTMLElement>(`[data-field='${name}']`), text);
+      const mine = record && release ? [release, ...(release.history ?? [])].find((r) => r.version === record.version) : undefined;
+      const own = mine ? engine.artifactFor(mine) : null;
+      field("size", sizeText((own ?? view.artifact)?.bytes ?? 0));
+      field("update-size", state === "update" && view.artifact ? sizeText(view.artifact.bytes) : "");
+      row.toggleAttribute("data-notes", Boolean(release?.notes));
       field("date", release ? release.published.slice(0, 10) : "");
       field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
@@ -169,6 +172,11 @@ export const apps: Extension = {
           const act = button.dataset.act === "update" ? "install" : button.dataset.act;
           void engine.dispatch(`app.${act}`, target(row));
         });
+      });
+      const notes = row.querySelector<HTMLButtonElement>("[data-notes-toggle]");
+      notes?.addEventListener("click", () => {
+        const open = row.toggleAttribute("data-notes-open");
+        notes.setAttribute("aria-expanded", String(open));
       });
       row.querySelectorAll<HTMLButtonElement>("[data-later]").forEach((button) => {
         button.addEventListener("click", () => void engine.dispatch("app.later", { ...target(row), on: button.dataset.later === "on" }));

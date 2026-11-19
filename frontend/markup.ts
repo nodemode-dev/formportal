@@ -145,13 +145,14 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     `<li class="wave soon-group" data-soon-extra><p class="wave-head"><b class="soon-date">Date to come</b><span class="wave-n" data-wave-n></span></p><ul class="wave-tiles soon-tiles">${Array.from({ length: MORE }, () => sealTile).join("")}</ul></li>`,
   ];
 
-  const rows = (p: App, channel: "stable" | "beta") =>
-    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${group(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub">${line(p)}</p></div><p class="row-sum">${esc(p.summary)}</p><p class="row-state">${state}${bar}</p>${acts(true)}</li>`;
+  const changed = '<span class="st-more"><span class="mono" data-field="update-size"></span><button class="fold-head" type="button" data-notes-toggle aria-expanded="false">What changed</button></span>';
+  const rows = (p: App, channel: "stable" | "beta", waiting = false) =>
+    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${group(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub">${line(p)}</p></div><p class="row-sum">${esc(p.summary)}</p><p class="row-state">${state}${waiting ? changed : ""}${bar}</p>${acts(true)}${waiting ? '<div class="row-notes notes-text" data-field="notes"></div>' : ""}</li>`;
 
   const list = GROUPS.map(
     ([g, title]) => `<section class="group" data-group-head="${g}"><h2 class="group-title">${title}</h2><ul class="rows">${apps.filter((p) => group(p) === g).map((p) => rows(p, "stable")).join("")}</ul></section>`,
   );
-  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel)));
+  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel, true)));
 
   const pages = apps.map((p) => {
     const c = caps(p);

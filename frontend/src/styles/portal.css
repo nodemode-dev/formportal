@@ -915,6 +915,55 @@ html[data-rail="mini"] .side-app[data-install="busy"] .nav-item::after {
   color: var(--fp-ink-3);
 }
 
+.list-updates .row-state {
+  align-content: flex-start;
+  min-block-size: 38px;
+}
+
+.st-more {
+  flex: 1 1 100%;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--fp-ink-3);
+  font-size: 11.5px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.list-updates > .row[data-install="update"] .st-more,
+.list-updates > .row[data-notes-open]:not([data-install="busy"]) .st-more {
+  display: flex;
+}
+
+.st-more > .mono:empty,
+.row:not([data-notes]) .st-more > .fold-head {
+  display: none;
+}
+
+button.fold-head {
+  min-block-size: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+.fold-head[aria-expanded="true"]::before {
+  transform: rotate(45deg);
+}
+
+.row-notes {
+  display: none;
+  grid-column: 2 / -1;
+  max-inline-size: 72ch;
+  margin: 0;
+}
+
+.row[data-notes-open] > .row-notes {
+  display: block;
+}
+
 /* home: the family */
 
 .offline-say {
