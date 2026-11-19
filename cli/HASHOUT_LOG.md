@@ -12,6 +12,13 @@ Last updated: 2026-11-11 · v0.64.1 the unknown-tool error names no tool count (
 
 The MCP tools install, update, rollback and remove ran as soon as an agent called them; only the instructions text asked for a go-ahead. They now pass `formportal_core::access::gate` first (core/HASHOUT_LOG.md#agent-access), and so do the same commands on the command line (`later` counts as update), which is treated as an outside agent: it follows the stored choice and has no way to change it. `status` reports `outside_agents` (the choice in force, the stored one, the seal state). Run with a fresh HOME and FORMPORTAL_ROOT under /tmp, through `formportal-cli mcp` on stdio and `formportal-cli remove`: default, ask, blocked and allowed (sealed with a stand-in key), a hand edit from blocked to allowed, an unsealed allowed, a missing key, a broken file, and allowed and blocked with no keychain; every case behaved as described and the file was never changed by the command line.
 
+## v0.65.0 · tests for the gate on the command line and MCP {#agent-access-tests}
+- refers-to: cli/tests/agent_access.rs
+- kind: test
+- logged: v0.65.0 · 2026-11-19
+
+Written after the runs in #agent-access. With a fresh FORMPORTAL_ROOT and HOME: the four MCP tools and the four commands are refused under the default with the window line, `status` reports ask, and no file is written; with an unsealed blocked file the tools, `remove` and `later` are refused and the file is byte for byte unchanged. With `--features seal-stand-in`, a choice sealed as allowed lets `remove` reach its own work (not installed) and the same command without the key is refused.
+
 ## v0.64.1 · the unknown-tool error {#unknown-tool}
 - refers-to: src/mcp.rs :: call
 - kind: fix

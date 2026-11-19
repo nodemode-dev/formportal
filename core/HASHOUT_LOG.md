@@ -12,6 +12,13 @@ Last updated: 2026-11-11 · v0.64.1 no change (the version only); 2026-11-09 · 
 
 `install` wrote `<version>.files.json` after the new version was moved into place and dropped any failure with `.ok()`, so the install was reported as done with `files` empty and a later check or removal had no record to work from. The record is now written from the staging folder (its paths are relative, so they are the same after the move) before the old folder is replaced; if it cannot be written the staging folder is removed and the install fails with "the record of [product] [version]'s files could not be written (...), so it was not installed", which reaches the command line, the MCP tool and the window. Checked by running a scratch program against the crate: a normal install records the file; with a folder standing where `1.0.0.files.json.part` goes, the install fails with that message and installed.json stays empty.
 
+## v0.65.0 · tests for the stored choice {#agent-access-tests}
+- refers-to: core/tests/agent_access.rs
+- kind: test
+- logged: v0.65.0 · 2026-11-19
+
+Written after the gate was run by hand (#agent-access). Four tests hold on any machine, keychain or not: no file is ask and reading writes nothing; a file that cannot be read is ask with the broken-seal sentence and is left as it is; allowed without a valid seal never passes (broken where a keychain answers, unavailable where none does); blocked without a seal refuses. The sealed paths (allowed passes, blocked and ask refuse, a hand edit from blocked to allowed is broken, a removed key is broken, no keychain keeps blocked and treats allowed as ask) run only with `--features seal-stand-in`, so the tests never read or write the real keychain; the default `cargo test` in CI does not run that one.
+
 ## v0.65.0 · the stored choice for outside agents, sealed {#agent-access}
 - refers-to: core/src/access.rs :: read, set, gate · core/Cargo.toml (hmac, getrandom, feature seal-stand-in)
 - kind: decision
