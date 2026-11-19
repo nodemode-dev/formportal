@@ -18,6 +18,19 @@ The "Ask your agent" dialog's sentence for no agent is set by its handler to nam
 
 Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
 
+## after v0.65.0 · Preferences shows a gear {#prefs-gear}
+- refers-to: index.html :: `.nav-foot` `[data-prefs-open]` · markup.ts :: ICONS.prefs
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+The Preferences item in the side panel and the rail drew a circle with eight rays, which reads as a sun or a brightness control. `design/icons.json` has no gear (its `settings` is the pair of sliders the Preferences dialog uses for its title and its General tab, left as it is), so one was drawn by hand: an eight-tooth outline between radius 6.5 and 8.6 around a 2.6 hub, in the 24 box, `currentColor`, stroke 1.7 with round joins, spanning 3.5 to 20.5 like the Help circle beside it. The same path replaces the unused `prefs` entry in markup.ts so the two cannot drift. Seen in Chromium in the expanded panel and the rail, default theme and AMOLED Black.
+
+Removed (both places):
+
+```html
+<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>
+```
+
 ## after v0.65.0 · every "..." menu opens whole, inside the window {#popout}
 - refers-to: src/extensions/popout/index.ts :: placeAt, popout · src/main.ts (registered last) · src/styles/main.css :: `.drop-panel` · src/extensions/notices/index.ts :: open
 - kind: fix
