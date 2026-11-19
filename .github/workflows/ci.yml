@@ -77,6 +77,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev pkg-config
       - name: Engine, command line and family layers
         run: cargo test --locked -p formportal-core -p formportal-cli
+      - name: The sealed choice for outside agents, with the stand-in keychain
+        run: cargo test --locked -p formportal-core -p formportal-cli --features seal-stand-in
 
   scripts:
     runs-on: ubuntu-latest

@@ -41,6 +41,13 @@ Four values are declared in setup/agents.py because no script can read them from
 
 `.docs/wiki/Agents.md` said the server serves nineteen tools; it was a hand-typed count, wrong since 0.64.0, and now names the generated files without a number. No other live document in the repo states a tool, read-only or skill count (catalog/apps/formportal.json still says 39 tools and is formai_dev's copy). tests/agent_manifest.rs, written after the sync and the checks above: the committed manifest's tools and read-only list equal what `formportal-cli mcp` lists, its skills equal the folders on disk, and its keys are exactly the schema's. It failed with "run ./formportal agents sync" when `policy` was taken out of `read_only` by hand and passed again after the sync.
 
+## v0.65.0 · CI runs the sealed-choice tests {#ci-seal-stand-in}
+- refers-to: ../.github/workflows/ci.yml :: test (second cargo test step) · tests/agent_access.rs · ../core/tests/agent_access.rs
+- kind: test
+- logged: v0.65.0 · 2026-11-18
+
+The cases for a choice sealed with the keychain key (allowed passes, a hand edit or a missing key is broken, no keychain) only compile with `--features seal-stand-in`, which swaps the system keychain for a key file named by FORMPORTAL_SEAL_STAND_IN. CI ran default features only, so none of them ran there. The test job now runs `cargo test --locked -p formportal-core -p formportal-cli --features seal-stand-in` as a second step after the default run, with the same actions as before and none added. Run here first: 71 passed, 0 failed with the feature (core agent_access 5, cli agent_access 3), 69 without. The feature never ships: the release builds and the shell do not enable it.
+
 ## v0.64.1 · the unknown-tool error {#unknown-tool}
 - refers-to: src/mcp.rs :: call
 - kind: fix
