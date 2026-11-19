@@ -7,7 +7,7 @@ check whether the problem is still there.
 
 | Version | Supported |
 | --- | --- |
-| 0.66.x (latest release) | Yes |
+| 0.67.x (latest release) | Yes |
 | Anything older | No |
 
 ## Reporting a vulnerability
