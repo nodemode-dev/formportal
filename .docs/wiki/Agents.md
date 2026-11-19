@@ -1,6 +1,6 @@
 # Agents
 
-FormPortal's MCP server is `./formportal mcp` (stdio). It serves nineteen tools; `.claude/skills/formportal-harness/references/tools.md` lists them, generated from the server.
+FormPortal's MCP server is `./formportal mcp` (stdio). `.claude/skills/formportal-harness/references/tools.md` lists its tools, and `agents/manifest.json` names them (and which only read), both generated from the server by `./formportal agents sync`.
 
 | Client | In this repository | For your account |
 | --- | --- | --- |

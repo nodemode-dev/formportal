@@ -1,0 +1,107 @@
+{
+  "format": "form-agent-manifest",
+  "version": 1,
+  "app": "formportal",
+  "mcp": {
+    "tools": [
+      "status",
+      "apps",
+      "app_info",
+      "installs",
+      "install",
+      "versions",
+      "updates",
+      "update",
+      "preferences",
+      "extensions",
+      "extension_install",
+      "extension_remove",
+      "extension_enable",
+      "account",
+      "shares",
+      "share",
+      "share_accept",
+      "share_pull",
+      "publish",
+      "policy",
+      "files",
+      "folders",
+      "open_file",
+      "file_versions",
+      "storage",
+      "fonts",
+      "font_install",
+      "font_remove",
+      "media",
+      "media_save",
+      "media_remove",
+      "repair",
+      "demo",
+      "learn",
+      "learn_progress",
+      "app_agents",
+      "connect_agents",
+      "open",
+      "rollback",
+      "remove"
+    ],
+    "read_only": [
+      "status",
+      "apps",
+      "app_info",
+      "installs",
+      "versions",
+      "updates",
+      "extensions",
+      "account",
+      "shares",
+      "policy",
+      "storage",
+      "fonts",
+      "media",
+      "learn",
+      "app_agents"
+    ],
+    "approval_gated": [],
+    "transports": [
+      "stdio"
+    ]
+  },
+  "skills": [
+    {
+      "name": "formportal-harness",
+      "sub_skills": [
+        "catalog-and-registry",
+        "channels-and-beta",
+        "extensions",
+        "files",
+        "fonts",
+        "form-family-bridge",
+        "harness-director",
+        "install-and-update",
+        "learn",
+        "organisations",
+        "repair",
+        "session-and-connection",
+        "stock-and-templates",
+        "verification"
+      ]
+    },
+    {
+      "name": "formportal-skillset",
+      "sub_skills": [
+        "agent-substrate",
+        "contract-and-design",
+        "engine-core",
+        "interface",
+        "shell-and-release"
+      ]
+    }
+  ],
+  "dock": {
+    "present": false,
+    "positions": [],
+    "tabs": []
+  },
+  "extensions": null
+}
