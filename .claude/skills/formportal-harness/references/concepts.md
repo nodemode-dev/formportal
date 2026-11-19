@@ -46,6 +46,9 @@ Inside: `apps/[product]/[channel]/[version]/`, `downloads/`, `catalog/apps.json`
 | [app] is open (process ...); close it first | remove, or reinstalling the version that is running | ask the person to close the app; never end the process yourself |
 | ... It was not installed (an extension) | a package's signature, manifest or native-code rule failed | report the sentence; see `sub-skills/extensions/SUB-SKILL.md` |
 | ...'s policy does not allow, or is set by the organisation's policy | an organisation manages this computer | report it; see `sub-skills/organisations/SUB-SKILL.md`; never work around it |
+| [install, update, rollback or remove] was refused: FormPortal asks before an outside agent ... and only its window can answer | the outside-agents choice is Ask (the default) | tell the person; ask them to make the change in the FormPortal window or choose Allowed in Preferences, Apps, Outside agents; do not retry |
+| [...] was refused: outside agents are blocked from installing, updating, rolling back or removing apps | the choice is Blocked | tell the person they can change it in the window, Preferences, Apps, Outside agents; nothing else changes it |
+| ... The saved agent permission was changed outside FormPortal, so it is back to Ask. / ... The system keychain is not available | a refusal that carries this sentence: the saved choice was edited, has no valid seal, or Allowed cannot be checked without the keychain | the choice reads as Ask; the person sets it again in the window |
 | the organisation's policy at ... is not valid | a broken policy file; every install is refused until it is fixed | tell the person to contact whoever manages the computer |
 | no product was given, or there is no channel | a parameter is missing or wrong | fix the call from `apps` |
 | a file could not be read or written | disk or permission problem in the install folder | report the path |

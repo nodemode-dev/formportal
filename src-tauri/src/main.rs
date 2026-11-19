@@ -406,8 +406,16 @@ fn open_web(url: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn open(product: String, channel: Channel) -> Result<u32, String> {
-    hub().launch(&product, channel).map_err(text)
+async fn open(product: String, channel: Channel) -> Result<u32, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let mut started = hub().start(&product, channel).map_err(text)?;
+        match started.left_early(formportal_core::launch::SETTLE) {
+            Some(message) => Err(message),
+            None => Ok(started.pid),
+        }
+    })
+    .await
+    .map_err(text)?
 }
 
 #[tauri::command]
@@ -591,6 +599,17 @@ fn preferences() -> Result<Preferences, String> {
 }
 
 #[tauri::command]
+fn agent_access() -> formportal_core::access::Access {
+    formportal_core::access::read(hub().root())
+}
+
+#[tauri::command]
+fn set_agent_access(choice: String) -> Result<formportal_core::access::Access, String> {
+    let choice = formportal_core::access::Choice::parse(&choice).ok_or_else(|| format!("{choice:?} is not ask, allowed or blocked"))?;
+    formportal_core::access::set(hub().root(), choice).map_err(text)
+}
+
+#[tauri::command]
 fn set_preferences(preferences: Preferences) -> Result<(), String> {
     hub().set_preferences(&preferences).map_err(text)?;
     sync_login()
@@ -770,7 +789,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            platform, catalog, catalog_kept, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences,
+            platform, catalog, catalog_kept, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences, agent_access, set_agent_access,
             extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])

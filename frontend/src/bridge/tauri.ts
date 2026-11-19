@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -102,6 +102,8 @@ export const tauriBridge: Bridge = {
   setPreferences: async (preferences) => {
     await tauri().core.invoke<null>("set_preferences", { preferences });
   },
+  agentAccess: () => tauri().core.invoke<AgentAccess>("agent_access"),
+  setAgentAccess: (choice) => tauri().core.invoke<AgentAccess>("set_agent_access", { choice }),
   siteUpcoming: () => tauri().core.invoke<UpcomingView>("site_upcoming"),
   supporterCheck: (code) => tauri().core.invoke<SupporterView>("supporter_check", { code }),
   autoUpdate: async (progress) => {

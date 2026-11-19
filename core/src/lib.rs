@@ -3,6 +3,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+pub mod access;
 pub mod agents;
 pub mod assistant;
 pub mod deploy;
@@ -15,6 +16,7 @@ pub mod media;
 pub mod extensions;
 pub mod installers;
 pub mod later;
+pub mod launch;
 pub mod learn;
 pub mod links;
 pub mod login;

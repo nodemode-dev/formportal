@@ -1,5 +1,6 @@
-import type { Os, Source } from "../../engine/types.ts";
+import type { AgentAccess, AgentChoice, Os, Source } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
+import { pickBridge } from "../../bridge/index.ts";
 import { CATALOG_KEY, UNSIGNED_KEY } from "../../bridge/tauri.ts";
 import type { Extension } from "../registry.ts";
 
@@ -73,6 +74,24 @@ export const settings: Extension = {
       }
     });
     for (const box of prefBoxes) box.addEventListener("change", () => void engine.dispatch("prefs.set", { [box.dataset.pref ?? ""]: box.checked }));
+
+    const accessField = document.querySelector<HTMLSelectElement>("[data-agent-access]");
+    const accessNote = document.querySelector<HTMLElement>("[data-agent-access-note]");
+    const showAccess = (view: AgentAccess) => {
+      if (accessField && accessField.value !== view.stored) accessField.value = view.stored;
+      const words = view.seal_broken
+        ? t("The saved agent permission was changed outside FormPortal, so it is back to Ask.")
+        : view.seal === "unavailable" && view.stored === "allowed"
+          ? t("The system keychain is not available, so outside agents are asked as if this were Ask.")
+          : " ";
+      if (accessNote && accessNote.textContent !== words) accessNote.textContent = words;
+    };
+    const bridge = pickBridge();
+    void bridge.agentAccess().then(showAccess, () => undefined);
+    accessField?.addEventListener("change", () => {
+      const choice = accessField.value as AgentChoice;
+      bridge.setAgentAccess(choice).then(showAccess, () => engine.setNotice(t("This choice could not be saved on this computer.")));
+    });
 
     const managedRow = document.querySelector<HTMLElement>("[data-managed]");
     const LOCKS: Record<string, string> = {

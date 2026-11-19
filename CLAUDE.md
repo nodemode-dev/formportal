@@ -4,7 +4,7 @@ FormPortal, the Form family's app portal: it installs, opens, updates, rolls bac
 
 ## Two kinds of work
 
-**Installing or managing Form apps with FormPortal** (list the family, install or update an app, a beta beside stable, roll back, remove): use the `formportal` MCP server (`.mcp.json` runs `./formportal mcp`) with the `formportal-harness` skill in `.claude/skills/formportal-harness`. Start with `status` and `apps`; confirm with the person before `install`, `rollback` or `remove`; check with `installs`.
+**Installing or managing Form apps with FormPortal** (list the family, install or update an app, a beta beside stable, roll back, remove): use the `formportal` MCP server (`.mcp.json` runs `./formportal mcp`) with the `formportal-harness` skill in `.claude/skills/formportal-harness`. Start with `status` and `apps`; say what will change before `install`, `update`, `rollback` or `remove`; check with `installs`. Those four are refused unless the person has allowed outside agents (the MCP server and `./formportal cli` both count as outside agents): the window's Preferences, Apps, Outside agents offers "Ask: the agent asks you to do it here" (the default), "Allowed" and "Blocked", and only the window can change it. Under Ask, tell the person to do the change in the window or to allow it there.
 
 **Changing FormPortal's code**: route through `.claude/skills/formportal-skillset/SKILL.md` (subsystem map, rules, specialists) and read the living logs `core/HASHOUT_LOG.md`, `cli/HASHOUT_LOG.md`, `frontend/HASHOUT_LOG.md`, `src-tauri/HASHOUT_LOG.md` and `design/HASHOUT_LOG.md` before editing.
 

@@ -349,6 +349,15 @@ export interface Platform {
   arch: Arch;
 }
 
+export type AgentChoice = "ask" | "allowed" | "blocked";
+
+export interface AgentAccess {
+  outside_agents: AgentChoice;
+  stored: AgentChoice;
+  seal: "sealed" | "broken" | "unavailable" | "none";
+  seal_broken: boolean;
+}
+
 export interface Preferences {
   auto_update: boolean;
   auto_update_beta: boolean;

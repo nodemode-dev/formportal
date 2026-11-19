@@ -10,7 +10,7 @@ description: Plans a broad FormPortal job before any tool runs. Use when the per
 Write down, before any change:
 
 1. The person's words, unparaphrased.
-2. `status`: the platform and the install folder.
+2. `status`: the platform, the install folder and `outside_agents`. Unless that is Allowed, `install`, `update`, `rollback` and `remove` will all be refused: tell the person first, and offer the plan as a list they carry out in the FormPortal window, or after choosing Allowed in Preferences, Apps, Outside agents.
 3. `apps`: per product and channel, offered and installed.
 
 ## Build the plan
@@ -26,7 +26,7 @@ One row per product and channel that would change:
 
 ## Confirm once, then work
 
-Show the table and get one yes for the whole plan. Then act row by row (`install`, `rollback` or `remove`), one call per row, and keep going past a failed row: note its error, finish the others.
+Show the table and get one yes for the whole plan. Then act row by row (`install`, `rollback` or `remove`), one call per row, and keep going past a failed row: note its error, finish the others. A refusal for the outside-agents choice is the exception: it is the same for every row, so stop and tell the person instead of repeating it.
 
 ## Close
 

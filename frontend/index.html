@@ -447,6 +447,7 @@
                 <button class="seg-item" type="button" data-theme-set="system" aria-pressed="false">%icon:laptop:ic-s%<span>Match the system</span></button>
                 <button class="seg-item" type="button" data-theme-set="dark" aria-pressed="true">%icon:moon:ic-s%<span>Dark</span></button>
                 <button class="seg-item" type="button" data-theme-set="light" aria-pressed="false">%icon:sun:ic-s%<span>Light</span></button>
+                <button class="seg-item" type="button" data-theme-set="amoled" aria-pressed="false"><svg class="ic ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="18" rx="2.5"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg><span>AMOLED Black</span></button>
               </div>
               <div class="cv-field">
                 <span>Accent colour</span>
@@ -474,6 +475,12 @@
               <label class="menu-check"><span>Beta builds too</span><input type="checkbox" class="switch" data-pref="auto_update_beta" /></label>
               <label class="menu-check"><span>Only apps that are not open</span><input type="checkbox" class="switch" data-pref="only_when_closed" checked /></label>
               <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Outside agents</h3>
+              <p class="fine">What an agent outside this window, through FormPortal's MCP server or its command line, may do when it asks to install, update, go back or remove an app. Only this window can change it.</p>
+              <label class="cv-field cv-field-stack"><span>Installing, updating, going back and removing</span><select class="field" data-agent-access><option value="ask">Ask: the agent asks you to do it here</option><option value="allowed">Allowed</option><option value="blocked">Blocked</option></select></label>
+              <p class="fine" data-agent-access-note>&nbsp;</p>
             </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Each app</h3>

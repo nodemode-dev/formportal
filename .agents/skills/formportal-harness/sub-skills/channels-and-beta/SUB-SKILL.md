@@ -6,6 +6,7 @@ description: Beta and nightly builds of Form apps beside the stable ones. Use wh
 # channels-and-beta
 
 - A channel is a separate install: `install {product, channel: "beta"}` puts the beta in its own folder and leaves stable untouched. Both can be installed and opened.
+- Installing a beta, like any install, is refused unless `status` shows `outside_agents` as Allowed; under Ask (the default) the person installs it in the FormPortal window, or chooses Allowed in Preferences, Apps, Outside agents first.
 - `apps` shows per channel what is offered; most products have no beta until their maker publishes one. When the beta is `no-release`, say so.
 - Rollback and remove act on one channel only. Removing the beta never touches stable.
 - Updating stable never updates beta, and the reverse.

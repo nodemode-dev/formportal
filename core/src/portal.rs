@@ -6,7 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::download::{download, fetch_bytes};
 use crate::error::{CoreError, Result};
-use crate::{agents, installers, process};
+use crate::{agents, installers, launch, process};
 use crate::releases::{COMPILER_CATALOG, STORE_CATALOG};
 use crate::signature::{read_local, trusted_keys, verify};
 use crate::policy::{self, Managed};
@@ -210,20 +210,20 @@ fn executable(path: &Path) -> bool {
     }
 }
 
-fn find_target(dir: &Path, product: &str) -> Option<PathBuf> {
-    let mut entries: Vec<PathBuf> = fs::read_dir(dir).ok()?.filter_map(|e| e.ok().map(|e| e.path())).collect();
+fn find_target(dir: &Path, product: &str) -> Result<Option<PathBuf>> {
+    let Ok(listing) = fs::read_dir(dir) else { return Ok(None) };
+    let mut entries: Vec<PathBuf> = listing.filter_map(|e| e.ok().map(|e| e.path())).collect();
     entries.sort();
     if entries.len() == 1 && entries[0].is_dir() && !has_extension(&entries[0], "app") {
         return find_target(&entries[0], product);
     }
     if cfg!(target_os = "macos") {
-        return entries.iter().find(|p| has_extension(p, "app")).cloned();
+        return Ok(entries.iter().find(|p| has_extension(p, "app")).cloned());
     }
     if cfg!(target_os = "windows") {
-        let named = entries.iter().find(|p| has_extension(p, "exe") && p.file_stem().map(|s| s.to_string_lossy().to_lowercase().contains(product)).unwrap_or(false));
-        return named.or_else(|| entries.iter().find(|p| has_extension(p, "exe"))).cloned();
+        return launch::windows_target(dir, product);
     }
-    entries.iter().find(|p| has_extension(p, "AppImage")).or_else(|| entries.iter().find(|p| executable(p))).cloned()
+    Ok(entries.iter().find(|p| has_extension(p, "AppImage")).or_else(|| entries.iter().find(|p| executable(p))).cloned())
 }
 
 fn deep_find(dir: &Path, product: &str, depth: u32) -> Option<PathBuf> {
@@ -448,11 +448,17 @@ impl Portal {
                 let _ = fs::remove_dir_all(&staging);
                 return Err(CoreError::Running { what: format!("{product} {version}"), pids: open.iter().map(|r| r.pid).collect() });
             }
+        }
+        let record = agents::files_record_path(&base, version);
+        if let Err(e) = agents::write_files_record(&staging, &record, product, channel, version) {
+            let _ = fs::remove_dir_all(&staging);
+            return Err(CoreError::Invalid(format!("the record of {product} {version}'s files could not be written ({e}), so it was not installed")));
+        }
+        if target.exists() {
             fs::remove_dir_all(&target)?;
         }
         fs::rename(&staging, &target)?;
-        let record = agents::files_record_path(&base, version);
-        let files = agents::write_files_record(&target, &record, product, channel, version).ok().map(|()| record);
+        let files = Some(record);
         let fresh = InstalledVersion { version: version.to_string(), path: target, sha256: artifact.sha256.clone(), installed_at: now(), files };
         let mut state = self.state()?;
         let install = match state.position(product, channel) {
@@ -640,20 +646,57 @@ impl Portal {
     pub fn launch_target(&self, product: &str, channel: Channel) -> Result<PathBuf> {
         let state = self.state()?;
         let install = state.get(product, channel).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
-        find_target(&install.current.path, product).or_else(|| deep_find(&install.current.path, product, 5)).ok_or_else(|| CoreError::NotInstalled(format!("anything to open in {}", install.current.path.display())))
+        if let Some(target) = find_target(&install.current.path, product)? {
+            return Ok(target);
+        }
+        let target = deep_find(&install.current.path, product, 5).ok_or_else(|| CoreError::NotInstalled(format!("anything to open in {}", install.current.path.display())))?;
+        if cfg!(target_os = "windows") {
+            launch::window_only(&install.current.path, product, &target)?;
+        }
+        Ok(target)
     }
 
-    pub fn launch(&self, product: &str, channel: Channel) -> Result<u32> {
+    pub fn start(&self, product: &str, channel: Channel) -> Result<launch::Started> {
+        self.start_with(product, channel, None)
+    }
+
+    pub fn start_with(&self, product: &str, channel: Channel, file: Option<&Path>) -> Result<launch::Started> {
         let target = self.launch_target(product, channel)?;
+        let folder = self.state()?.get(product, channel).map(|i| i.current.path.clone()).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
+        let mut quiet_zero = true;
+        let mut cleared: Vec<u32> = Vec::new();
+        if cfg!(target_os = "windows") {
+            let running = process::under(&folder);
+            quiet_zero = launch::app_open(&running, &folder);
+            cleared = launch::strays(&running, &folder).into_iter().filter(|pid| process::stop(*pid)).collect();
+            if !cleared.is_empty() {
+                std::thread::sleep(std::time::Duration::from_millis(500));
+            }
+        }
         let child = if cfg!(target_os = "macos") {
-            Command::new("open").arg(&target).spawn()?
+            match file {
+                Some(file) => Command::new("open").arg("-a").arg(&target).arg(file).spawn()?,
+                None => Command::new("open").arg(&target).spawn()?,
+            }
         } else {
             let mut command = Command::new(&target);
+            if let Some(file) = file {
+                command.arg(file);
+            }
             if let Some(parent) = target.parent() {
                 command.current_dir(parent);
             }
+            #[cfg(target_os = "windows")]
+            {
+                use std::os::windows::process::CommandExt;
+                command.creation_flags(launch::NO_CONSOLE_WINDOW);
+            }
             command.spawn()?
         };
-        Ok(child.id())
+        Ok(launch::Started { pid: child.id(), name: launch::display_name(&folder, product), target, quiet_zero, cleared, child })
+    }
+
+    pub fn launch(&self, product: &str, channel: Channel) -> Result<u32> {
+        Ok(self.start(product, channel)?.pid)
     }
 }

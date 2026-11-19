@@ -1,4 +1,4 @@
-import type { RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -65,6 +65,8 @@ export interface Bridge {
   connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
   preferences(): Promise<Preferences>;
   setPreferences(prefs: Preferences): Promise<void>;
+  agentAccess(): Promise<AgentAccess>;
+  setAgentAccess(choice: AgentChoice): Promise<AgentAccess>;
   siteUpcoming(): Promise<UpcomingView>;
   supporterCheck(code: string | null): Promise<SupporterView>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;

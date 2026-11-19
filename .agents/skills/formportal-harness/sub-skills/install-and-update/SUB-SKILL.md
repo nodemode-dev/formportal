@@ -10,7 +10,8 @@ description: Installing, updating, opening, rolling back and removing Form apps 
 `install {product, channel?}`. An update is an install of the newer version the catalogue offers; FormPortal keeps the version it replaces. Before calling:
 
 1. `apps` shows `available` for that channel. Anything else: stop and say which state it is in.
-2. Tell the person the version and the size, and get a yes.
+2. `status` shows `outside_agents`. `install`, `update`, `rollback` and `remove` run only under Allowed; under Ask (the default) or Blocked the call is refused and the person must make the change in the FormPortal window, or choose Allowed in Preferences, Apps, Outside agents. Say so now, before planning anything else; only the window can change it.
+3. Tell the person the version and the size, and get a yes.
 
 The result carries `installed.current` (version, path, SHA-256), `installed.previous` (what rollback would return to) and `opens` (the file `open` will start). Every desktop release kind installs per user without administrator: zip, AppImage, dmg (copied out of the mounted image), deb and rpm (unpacked, no install scripts), msi (an administrative image) and NSIS (silent, into FormPortal's folder). Nothing is registered with the system's package manager.
 

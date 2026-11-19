@@ -2,8 +2,17 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.64.1
+Current build version: v0.65.0
 Last updated: 2026-11-11 · v0.64.1 no change (the version only); 2026-11-09 · v0.64.0 no token or icon change (the version only); 2026-11-10 · v0.63.6 FormRec's icon in dark and light and its hue #ae75ec (#formrec); 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#formext-icon); 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
+
+---
+
+## AMOLED Black tokens {#amoled}
+- refers-to: design/tokens.css :: :root[data-oled]
+- kind: decision
+- logged: v0.65.0 · 2026-11-19
+
+The family's AMOLED Black profile in FormPortal's own names, which are the formvis names: `--bg-primary` and `--bg-secondary` are `#000000` (a black pixel is off on an OLED screen, so panels are told apart by borders alone), `--bg-tertiary` `#141414` (inputs, menus and selected rows use it as their only fill and would vanish at black), `--border-color` `#262626`, `--border-light` `#3a3a3a`, text `#ededed`, `#a6a6a6`, `#858585` (17.9, 8.6 and 5.7 to 1 on black). `--bg-hover` and `--border-soft` go to 10% and 12% white because the usual 6% and 8% are too close to black to read. The accent is not touched. The rule hangs on `data-oled`, never on the theme id, so another OLED profile needs only the flag. The shell's own surface tokens are in frontend/src/styles/portal.css (frontend/HASHOUT_LOG.md#amoled).
 
 ---
 

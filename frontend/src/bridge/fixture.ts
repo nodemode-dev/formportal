@@ -6,7 +6,7 @@ import learnPortal from "../../../core/data/learn-portal.json";
 import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { AgentAccess, RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -117,6 +117,7 @@ const SITE_TILES: { name: string; at: string | null }[] = [
   ...["FormDAM", "FormSculpt", "FormSurface", "FormWeb", "Planned app 1", "Planned app 2", "Planned app 3", "Planned app 4", "Planned app 5"].slice(0, SITE_UNDATED).map((name) => ({ name, at: null })),
   ...Array.from({ length: SITE_SUPPORTERS }, (_, i) => ({ name: `Codename ${i + 1}`, at: null })),
 ];
+let access: AgentAccess = new URLSearchParams(window.location.search).get("agents") === "broken" ? { outside_agents: "ask", stored: "allowed", seal: "broken", seal_broken: true } : { outside_agents: "ask", stored: "ask", seal: "none", seal_broken: false };
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
 
 function missing(product: string): Error {
@@ -476,6 +477,11 @@ export const fixtureBridge: Bridge = {
   preferences: async () => ({ ...prefs, per_app: { ...prefs.per_app } }),
   setPreferences: async (next) => {
     prefs = { ...next, per_app: { ...next.per_app } };
+  },
+  agentAccess: async () => ({ ...access }),
+  setAgentAccess: async (choice) => {
+    access = { outside_agents: choice, stored: choice, seal: "sealed", seal_broken: false };
+    return { ...access };
   },
   siteUpcoming: async () => ({ known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: Math.floor(Date.now() / 1000), stale: false }),
   supporterCheck: async (code) => {

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """./formportal agents: Claude Code, Codex and Cursor driving FormPortal.
 
-  sync [--check]    regenerate the formportal-harness skill's references/tools.md from the MCP server itself and
-                    mirror .claude/skills/formportal-harness to .agents/skills; --check exits 1 when anything drifted
+  sync [--check]    regenerate the formportal-harness skill's references/tools.md, the MCP tool count in README.md and
+                    agents/manifest.json (what the app offers agents) from the MCP server itself and mirror
+                    .claude/skills/formportal-harness to .agents/skills; --check exits 1 when anything drifted
   install [--dry-run] [claude|codex|cursor ...]
                     set the clients up for this user account: the MCP server and the skill (all three by default)
   status            which clients are on this computer and whether the skill is in step
@@ -24,6 +25,13 @@ NAME = "formportal"
 SKILL = ROOT / ".claude" / "skills" / "formportal-harness"
 MIRROR = ROOT / ".agents" / "skills" / "formportal-harness"
 HEAD = "Generated from the FormPortal MCP server by `./formportal agents sync`; do not edit by hand."
+MANIFEST = ROOT / "agents" / "manifest.json"
+SKILLS = ROOT / ".claude" / "skills"
+REGISTRY_NAME = "formportal"
+TRANSPORTS = ["stdio"]
+GATE_HOLDS_FOR_ANSWER = False
+DOCK = {"present": False, "positions": [], "tabs": []}
+EXTENSIONS = None
 
 
 def launch() -> str:
@@ -80,8 +88,50 @@ def tools_md() -> str:
     return "\n".join(out) + "\n"
 
 
+def gated_names() -> list[str]:
+    source = (ROOT / "cli" / "src" / "mcp.rs").read_text(encoding="utf-8")
+    found = re.search(r"pub const GATED: \[&str; \d+\] = \[([^\]]*)\]", source)
+    if not found:
+        sys.exit("agents: cli/src/mcp.rs no longer declares GATED")
+    return re.findall(r'"([^"]+)"', found.group(1))
+
+
+def skills_listed() -> list[dict]:
+    out = []
+    for folder in sorted(p for p in SKILLS.iterdir() if (p / "SKILL.md").is_file()):
+        subs = folder / "sub-skills"
+        names = sorted(p.name for p in subs.iterdir() if (p / "SUB-SKILL.md").is_file()) if subs.is_dir() else []
+        out.append({"name": folder.name, "sub_skills": names})
+    return out
+
+
+def manifest_text(listed: list[dict]) -> str:
+    names = [t["name"] for t in listed]
+    doc = {
+        "format": "form-agent-manifest",
+        "version": 1,
+        "app": REGISTRY_NAME,
+        "mcp": {
+            "tools": names,
+            "read_only": [t["name"] for t in listed if t.get("annotations", {}).get("readOnlyHint")],
+            "approval_gated": [n for n in gated_names() if n in names] if GATE_HOLDS_FOR_ANSWER else [],
+            "transports": TRANSPORTS,
+        },
+        "skills": skills_listed(),
+        "dock": DOCK,
+        "extensions": EXTENSIONS,
+    }
+    return json.dumps(doc, indent=2) + "\n"
+
+
 def _files(folder: Path) -> dict:
     return {str(p.relative_to(folder)): p.read_bytes() for p in sorted(folder.rglob("*")) if p.is_file()}
+
+
+def readme_count(listed: list[dict]) -> tuple[str, str]:
+    readme = ROOT / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    return text, re.sub(r"<h4>\d+ MCP tools</h4>", f"<h4>{len(listed)} MCP tools</h4>", text)
 
 
 def sync(check: bool) -> int:
@@ -93,6 +143,17 @@ def sync(check: bool) -> int:
         if not check:
             ref.parent.mkdir(parents=True, exist_ok=True)
             ref.write_text(text, encoding="utf-8")
+    was, now = readme_count(tools())
+    if was != now:
+        drift.append("README.md (MCP tool count)")
+        if not check:
+            (ROOT / "README.md").write_text(now, encoding="utf-8")
+    manifest = manifest_text(tools())
+    if not MANIFEST.exists() or MANIFEST.read_text(encoding="utf-8") != manifest:
+        drift.append(str(MANIFEST.relative_to(ROOT)))
+        if not check:
+            MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+            MANIFEST.write_text(manifest, encoding="utf-8")
     if not MIRROR.exists() or _files(MIRROR) != _files(SKILL):
         drift.append(str(MIRROR.relative_to(ROOT)))
         if not check:

@@ -2,8 +2,51 @@
 
 Living log for `formportal-cli`, FormPortal's command line and MCP server. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.64.1
+Current build version: v0.65.0
 Last updated: 2026-11-11 · v0.64.1 the unknown-tool error names no tool count (#unknown-tool); 2026-11-10 · v0.64.0 the README counts 40 MCP tools with demo (#tool-count); 2026-11-09 · v0.64.0 the demo tool opens formai://demo/<id> (#demo); 2026-11-10 · v0.63.7 ./formportal rebuilds when catalog/schedule.json changes (#schedule-rebuild); 2026-11-10 · v0.63.7 formportal.bat cli and agents pass the rest of the line as typed (#bat-args); 2026-11-10 · v0.63.6 formportal.bat exits with the real errorlevel (mcp, cli, agents labels); 2026-11-09 · v0.63.5 install reports a translated build; status shows the machine's architecture; 2026-11-07 · v0.63.1 the extension index is form.ext-registry's, verified, source, blocked and turned_off in extensions; 2026-11-07 · v0.63.0 extension notes say live pickup, product enums of the thirteen hosts, app, api and homepage in extensions; 2026-11-06 · v0.58.0 on_the_way matches formai.studio, the supporter code masked, progress clippy; 2026-11-06 · v0.56.0 apps lists only released apps, on_the_way; 2026-11-06 · the FormPortal update link and the MCP instructions name formai.studio and GitHub releases; 2026-11-02 · the default catalogue pinned to the download store; 2026-10-26 · a closed output pipe ends the command quietly (main.rs emit, FB-021); 2026-10-25 · install and update pass the release (install_from); the `shares` and `extensions` tool descriptions name `portfolio` and `support` (mcp.rs; `agents sync` regenerated tools.md); `org-package` (ops.rs org_package, main.rs dispatch and usage); `extensions` reports each package's support link and `shares` the portfolio (from the engine's views); shares, share, share-send, share-accept, share-pull, publish, unpublish and their tools; account, sign-in, sign-out, the account tool; preferences open_at_login; app-agents returns the manifest
+
+## v0.65.0 · install, update, rollback and remove follow the choice for outside agents {#agent-gate}
+- refers-to: src/mcp.rs :: GATED, call · src/main.rs :: main (the gate before dispatch) · src/ops.rs :: status (outside_agents)
+- kind: fix
+- logged: v0.65.0 · 2026-11-19
+
+The MCP tools install, update, rollback and remove ran as soon as an agent called them; only the instructions text asked for a go-ahead. They now pass `formportal_core::access::gate` first (core/HASHOUT_LOG.md#agent-access), and so do the same commands on the command line (`later` counts as update), which is treated as an outside agent: it follows the stored choice and has no way to change it. `status` reports `outside_agents` (the choice in force, the stored one, the seal state). Run with a fresh HOME and FORMPORTAL_ROOT under /tmp, through `formportal-cli mcp` on stdio and `formportal-cli remove`: default, ask, blocked and allowed (sealed with a stand-in key), a hand edit from blocked to allowed, an unsealed allowed, a missing key, a broken file, and allowed and blocked with no keychain; every case behaved as described and the file was never changed by the command line.
+
+## v0.65.0 · no hand-typed counts {#counts-from-source}
+- refers-to: src/mcp.rs :: tools (extensions) · ../setup/agents.py :: readme_count, sync · ../README.md (Everything in the box, Extensions)
+- kind: decision
+- logged: v0.65.0 · 2026-11-19
+
+The owner's rule: counts are not typed by hand. FormPortal's own tool count (40 from `tools/list`) is the one number README.md keeps, and `./formportal agents sync` now writes it into the `<h4>N MCP tools</h4>` heading and `--check` reports it as drift, beside references/tools.md. How many Form apps load extensions is a family number, so the extensions tool and README.md name no count; the tool still lists the ids. How many apps the family has is not stated in any live document here; the catalogue is the source. catalog/ is formai_dev's copy and was left as it is (its formportal.json still says 39 tools).
+
+## v0.65.0 · tests for the gate on the command line and MCP {#agent-access-tests}
+- refers-to: cli/tests/agent_access.rs
+- kind: test
+- logged: v0.65.0 · 2026-11-19
+
+Written after the runs in #agent-access. With a fresh FORMPORTAL_ROOT and HOME: the four MCP tools and the four commands are refused under the default with the window line, `status` reports ask, and no file is written; with an unsealed blocked file the tools, `remove` and `later` are refused and the file is byte for byte unchanged. With `--features seal-stand-in`, a choice sealed as allowed lets `remove` reach its own work (not installed) and the same command without the key is refused.
+
+## v0.65.0 · agents/manifest.json says what the app offers agents {#agent-manifest}
+- refers-to: ../setup/agents.py :: manifest_text, skills_listed, gated_names, sync, DOCK, EXTENSIONS, GATE_HOLDS_FOR_ANSWER · ../agents/manifest.json · tests/agent_manifest.rs · ../.docs/wiki/Agents.md
+- kind: feature
+- logged: v0.65.0 · 2026-11-18
+
+The family spec (formadaptor, "The agent manifest") builds each app's counts from this file at a released tag, so `./formportal agents sync` now writes it and `--check` names it when it drifts, beside references/tools.md and the README count. Every list comes from the source: `tools` and `read_only` from `tools/list` and each tool's `readOnlyHint` (40 and 15; the 15 equal what `mcp --read-only` serves), `skills` from `.claude/skills` (every folder with a SKILL.md, and the folders of its `sub-skills` that hold a SUB-SKILL.md, sorted: formportal-harness with 14, formportal-skillset with 5; the skillset is the developers' skill and is not mirrored to .agents, but it is a skill folder the app ships), `app` is `formportal`, the file name of the app's entry in formcompiler apps/ (its machine id there is formai, which the manifest does not use). Checked with formadaptor's `scripts/manifest.py check agents/manifest.json --app formportal`: accepted. In a temp copy a renamed tool, and a removed sub-skill folder, each made `--check` exit 1 and name agents/manifest.json.
+
+Four values are declared in setup/agents.py because no script can read them from the code:
+- `transports` is `["stdio"]`: FormPortal serves `./formportal mcp` on stdin and stdout and has no `/mcp` endpoint.
+- `approval_gated` is `[]`. The schema's wording is tools that wait for the person's approval in the app before acting. install, update, rollback and remove (the `GATED` list in src/mcp.rs) do not wait: they follow the choice stored in the window (core/HASHOUT_LOG.md#agent-access), Allowed runs them, Blocked and Ask refuse them with a sentence that says what to do in the window, and nothing is held for an answer. Listing them would tell a gateway they pause for an Allow that never comes. `GATE_HOLDS_FOR_ANSWER` is False; setting it True makes the field the `GATED` names that are listed tools, so a future gate that does hold a call needs one word changed. The schema has no way to say "refused unless the person allowed it in Preferences"; the four tools carry it in their descriptions and in `status` (`outside_agents`).
+- `dock` is `{present: false, positions: [], tabs: []}`. The window has no terminal or agent dock. What looks like one is Home's "dock", the row of app icons built into frontend/index.html at `@portal:dock` by frontend/markup.ts, and the assistant is a modal dialog (`[data-ask]`, frontend/src/extensions/assistant/index.ts) with no position and no tabs. The truth lives in frontend/index.html and the extensions folder; change the declared value when the family dock lands here.
+- `extensions` is `null`. FormPortal manages the extensions of thirteen apps (`HOSTS` in core/src/extensions.rs lists `formportal` among them, at 0.63.0) but this window loads none: nothing reads `extensions/formportal/enabled.json`, and `frontend/src/extensions/` is the window's own feature modules, not form.ext packages. A package for product `formportal` installs and is listed, and no code here runs it. If the owner counts formportal as a host from 0.63.0 the value would be `{"host_api": "1"}`; the code does not yet back that.
+
+`.docs/wiki/Agents.md` said the server serves nineteen tools; it was a hand-typed count, wrong since 0.64.0, and now names the generated files without a number. No other live document in the repo states a tool, read-only or skill count (catalog/apps/formportal.json still says 39 tools and is formai_dev's copy). tests/agent_manifest.rs, written after the sync and the checks above: the committed manifest's tools and read-only list equal what `formportal-cli mcp` lists, its skills equal the folders on disk, and its keys are exactly the schema's. It failed with "run ./formportal agents sync" when `policy` was taken out of `read_only` by hand and passed again after the sync.
+
+## v0.65.0 · CI runs the sealed-choice tests {#ci-seal-stand-in}
+- refers-to: ../.github/workflows/ci.yml :: test (second cargo test step) · tests/agent_access.rs · ../core/tests/agent_access.rs
+- kind: test
+- logged: v0.65.0 · 2026-11-18
+
+The cases for a choice sealed with the keychain key (allowed passes, a hand edit or a missing key is broken, no keychain) only compile with `--features seal-stand-in`, which swaps the system keychain for a key file named by FORMPORTAL_SEAL_STAND_IN. CI ran default features only, so none of them ran there. The test job now runs `cargo test --locked -p formportal-core -p formportal-cli --features seal-stand-in` as a second step after the default run, with the same actions as before and none added. Run here first: 71 passed, 0 failed with the feature (core agent_access 5, cli agent_access 3), 69 without. The feature never ships: the release builds and the shell do not enable it.
 
 ## v0.64.1 · the unknown-tool error {#unknown-tool}
 - refers-to: src/mcp.rs :: call

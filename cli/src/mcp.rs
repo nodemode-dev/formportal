@@ -75,7 +75,7 @@ fn tools() -> Value {
               "per_app": { "type": "object", "additionalProperties": { "type": ["boolean", "null"] } } } },
           "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false } },
         { "name": "extensions", "title": "Extensions",
-          "description": "The open extension index (effects, looks, templates, presets, plugins for the thirteen Form apps that load extensions: formvis, formcut, formwav, formpdf, formdeck, formlit, formmd, formencoder, formvfx, formmcp, formtray, formskills, formportal) with each package's app, author, kind, permissions, extension API, homepage, whether it is signed, verified (reviewed and published by form.ext-registry), source (its folder in the registry), blocked (the block list's reason, if any), its install state, and support, an https page where people can pay or sponsor its maker if it has one (the extension is free either way); plus every installed extension, including sideloaded ones (source sideload), the block list (blocked) and any installed extension the block list just turned off (turned_off, with the reason). The index is form.ext-registry's signed index (https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json, verified with registry keys only), or extensions_source, or FORMPORTAL_EXTENSIONS. index_error says when it was refused (this build trusts no registry key yet, a signature that does not match) or when the registry is private or unreachable.",
+          "description": "The open extension index (effects, looks, templates, presets, plugins for the Form apps that load extensions: formvis, formcut, formwav, formpdf, formdeck, formlit, formmd, formencoder, formvfx, formmcp, formtray, formskills, formportal) with each package's app, author, kind, permissions, extension API, homepage, whether it is signed, verified (reviewed and published by form.ext-registry), source (its folder in the registry), blocked (the block list's reason, if any), its install state, and support, an https page where people can pay or sponsor its maker if it has one (the extension is free either way); plus every installed extension, including sideloaded ones (source sideload), the block list (blocked) and any installed extension the block list just turned off (turned_off, with the reason). The index is form.ext-registry's signed index (https://github.com/nodemode-dev/form.ext-registry/releases/download/index/extensions.json, verified with registry keys only), or extensions_source, or FORMPORTAL_EXTENSIONS. index_error says when it was refused (this build trusts no registry key yet, a signature that does not match) or when the registry is private or unreachable.",
           "inputSchema": { "type": "object", "properties": props(json!({ "extensions_source": { "type": "string", "description": "Extension index address or file." } })) },
           "annotations": { "readOnlyHint": true, "openWorldHint": true } },
         { "name": "extension_install", "title": "Install an extension",
@@ -213,8 +213,13 @@ fn without_unsigned(args: &Value) -> Value {
     args
 }
 
+pub const GATED: [&str; 4] = ["install", "update", "rollback", "remove"];
+
 fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
     let args = &without_unsigned(args);
+    if GATED.contains(&name) {
+        formportal_core::access::gate(ctx.portal.root(), name).map_err(|e| e.to_string())?;
+    }
     let out = match name {
         "status" => ops::status(ctx),
         "apps" => ops::apps(ctx, args),
