@@ -406,8 +406,16 @@ fn open_web(url: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn open(product: String, channel: Channel) -> Result<u32, String> {
-    hub().launch(&product, channel).map_err(text)
+async fn open(product: String, channel: Channel) -> Result<u32, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let mut started = hub().start(&product, channel).map_err(text)?;
+        match started.left_early(formportal_core::launch::SETTLE) {
+            Some(message) => Err(message),
+            None => Ok(started.pid),
+        }
+    })
+    .await
+    .map_err(text)?
 }
 
 #[tauri::command]
