@@ -829,7 +829,8 @@ html[data-rail="mini"] .side-app[data-install="busy"] .nav-item::after {
 [data-install="ready"] .ucard-body > .acts [data-act="open"],
 [data-install="update"] .ucard-body > .acts [data-act="open"],
 [data-install="ready"] .hero-acts > .acts [data-act="open"],
-[data-install="update"] .hero-acts > .acts [data-act="open"] {
+[data-install="update"] .hero-acts > .acts [data-act="open"],
+.acts-files > .btn {
   display: inline-flex;
 }
 

@@ -18,6 +18,15 @@ The "Ask your agent" dialog's sentence for no agent is set by its handler to nam
 
 Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
 
+## after v0.65.0 · Files rows show Open, Versions and Public link {#file-acts}
+- refers-to: src/styles/portal.css :: `.acts-files > .btn` (in the one-state-at-a-time list) · index.html :: template `file-row`
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause: portal.css hides every button of an action group (`.acts > .btn { display: none; }`) and shows an app's Install, Update or Open again by its install state. A file row's group, `.acts-files`, holds Open, Versions and Public link and has no install state, so none of the three was ever shown: a person could not open a project from Files, see its kept versions or make a public link, although the handlers in `src/extensions/files/index.ts` were bound. `.acts-files > .btn` joins the list that shows a button. Nothing was removed. Seen in Chromium with the fixture's four projects at 1440x900, 1100x700 and 880x600: three buttons on every row, the last row's Versions the top element at its centre, and its click opens the Versions dialog inside the window.
+
+The other version control, Other versions in an app row's "..." menu, is hidden by `[data-history] .menu-versions` (main.css) unless the catalogue's release for that channel lists at least one earlier release with a build for this computer (`row.toggleAttribute("data-history", all.length > 1)` in `src/extensions/apps/index.ts`); Go back to the version before shows only when the install record has a previous version and the app is not busy (`data-previous`). Both are as before; the menu that holds them now opens whole (#popout).
+
 ## after v0.65.0 · Preferences shows a gear {#prefs-gear}
 - refers-to: index.html :: `.nav-foot` `[data-prefs-open]` · markup.ts :: ICONS.prefs
 - kind: fix
