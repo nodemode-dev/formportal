@@ -48,7 +48,8 @@ fn all() -> Vec<Running> {
 #[cfg(target_os = "windows")]
 fn all() -> Vec<Running> {
     let script = "Get-CimInstance Win32_Process | ForEach-Object { \"$($_.ProcessId)`t$($_.ExecutablePath)\" }";
-    let Ok(output) = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", script]).output() else { return Vec::new() };
+    use std::os::windows::process::CommandExt;
+    let Ok(output) = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", script]).creation_flags(crate::launch::NO_CONSOLE_WINDOW).output() else { return Vec::new() };
     String::from_utf8_lossy(&output.stdout)
         .lines()
         .filter_map(|line| {
@@ -87,4 +88,20 @@ pub fn under(folder: &Path) -> Vec<Running> {
     found.sort_by_key(|r| r.pid);
     found.dedup_by_key(|r| r.pid);
     found
+}
+
+pub fn within(folder: &Path, path: &Path) -> bool {
+    let base = normal(folder);
+    normal(path).starts_with(&format!("{base}{}", std::path::MAIN_SEPARATOR))
+}
+
+pub fn stop(pid: u32) -> bool {
+    #[cfg(target_os = "windows")]
+    let done = {
+        use std::os::windows::process::CommandExt;
+        std::process::Command::new("taskkill").args(["/PID", &pid.to_string(), "/T", "/F"]).creation_flags(crate::launch::NO_CONSOLE_WINDOW).output().map(|o| o.status)
+    };
+    #[cfg(not(target_os = "windows"))]
+    let done = std::process::Command::new("kill").arg(pid.to_string()).status();
+    done.map(|s| s.success()).unwrap_or(false)
 }

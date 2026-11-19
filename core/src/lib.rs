@@ -16,6 +16,7 @@ pub mod media;
 pub mod extensions;
 pub mod installers;
 pub mod later;
+pub mod launch;
 pub mod learn;
 pub mod links;
 pub mod login;

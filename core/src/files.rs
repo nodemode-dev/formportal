@@ -416,18 +416,8 @@ impl Portal {
         }
         let state = self.state()?;
         let channel = [Channel::Stable, Channel::Beta, Channel::Nightly].into_iter().find(|c| state.get(&product, *c).is_some()).ok_or_else(|| CoreError::NotInstalled(format!("{product}, which opens {ext} files,")))?;
-        let target = self.launch_target(&product, channel)?;
-        let child = if cfg!(target_os = "macos") {
-            std::process::Command::new("open").arg("-a").arg(&target).arg(path).spawn()?
-        } else {
-            let mut command = std::process::Command::new(&target);
-            command.arg(path);
-            if let Some(dir) = target.parent() {
-                command.current_dir(dir);
-            }
-            command.spawn()?
-        };
-        Ok((product, child.id()))
+        let started = self.start_with(&product, channel, Some(path))?;
+        Ok((product, started.pid))
     }
 
     pub fn storage(&self) -> Result<Storage> {
