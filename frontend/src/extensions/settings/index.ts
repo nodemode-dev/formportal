@@ -59,9 +59,20 @@ export const settings: Extension = {
     const say = (text: string) => {
       if (selfStatus && selfStatus.textContent !== text) selfStatus.textContent = text;
     };
-    engine.on("self", ({ status, installable }) => {
+    const updatesSub = document.querySelector("[data-updates-all]")?.parentElement?.querySelector<HTMLElement>(".sub") ?? null;
+    const updatesGet = document.createElement("button");
+    updatesGet.type = "button";
+    updatesGet.className = "toast-act";
+    updatesGet.hidden = true;
+    updatesGet.addEventListener("click", () => void engine.dispatch("self.install"));
+    updatesSub?.append(" ", updatesGet);
+    engine.on("self", ({ status, installable, label }) => {
       say(status);
-      if (installButton && installButton.hidden === installable) installButton.hidden = !installable;
+      for (const button of [installButton, updatesGet]) {
+        if (!button) continue;
+        if (label && button.textContent !== label) button.textContent = label;
+        if (button.hidden === installable) button.hidden = !installable;
+      }
     });
     checkButton?.addEventListener("click", () => void engine.dispatch("self.check"));
     installButton?.addEventListener("click", () => void engine.dispatch("self.install"));

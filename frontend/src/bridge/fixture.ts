@@ -176,7 +176,7 @@ export const fixtureBridge: Bridge = {
   selfUpdateCheck: async () => {
     await pause(200);
     const offered = new URLSearchParams(window.location.search).get("self");
-    return { configured: offered !== null, current: "0.0.0", available: offered || null, notes: null };
+    return { configured: offered !== null, current: "0.0.0", available: offered || null, notes: null, action: offered ? "download" : "none", page: "https://formai.studio/download/" };
   },
   selfUpdateInstall: async () => {
     await pause(300);
@@ -211,7 +211,12 @@ export const fixtureBridge: Bridge = {
       handler([path]);
     }, 6000);
   },
-  installs: async () => Array.from(installed.values()),
+  installs: async () =>
+    Array.from(installed.values()).map((r) => {
+      const latest = catalog.products.find((p) => p.id === r.product)?.channels[r.channel];
+      const release = [latest, ...(latest?.history ?? [])].find((x) => x?.version === r.version);
+      return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: release?.artifacts[0]?.sha256 ?? "0".repeat(64) };
+    }),
   install: async (product, channel, progress, version) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
     const release = version ? [latest, ...(latest?.history ?? [])].find((r) => r?.version === version) : latest;
@@ -236,6 +241,10 @@ export const fixtureBridge: Bridge = {
     const record = installed.get(key(product, channel));
     if (!record || !record.previous) throw missing(`an earlier version of ${product}`);
     const swapped: InstallRecord = { product, channel, version: record.previous, previous: record.version };
+    if (versionNewer(record.version, record.previous)) {
+      if (prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
+      later.delete(key(product, channel));
+    }
     installed.set(key(product, channel), swapped);
     return swapped;
   },

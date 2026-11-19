@@ -6,6 +6,7 @@
     <button class="drop-item" type="button" data-later="on">Update when I close it</button>
     <button class="drop-item" type="button" data-later="off">Cancel the later update</button>
     <button class="drop-item" type="button" data-act="rollback">Go back to the version before</button>
-    <button class="drop-item menu-danger" type="button" data-act="remove">Remove from this computer</button>
+    <button class="drop-item menu-danger" type="button" data-remove-ask aria-expanded="false">Remove from this computer</button>
+    <div class="menu-ask" role="group" aria-label="Remove from this computer"><span class="menu-ask-q">Remove it?</span><button class="btn btn-small drop-item drop-go menu-danger" type="button" data-act="remove">Remove</button><button class="btn btn-small" type="button" data-remove-keep>Keep</button></div>
   </div>
 </details>

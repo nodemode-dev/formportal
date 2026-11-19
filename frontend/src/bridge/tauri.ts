@@ -9,7 +9,7 @@ interface TauriGlobal {
 interface RawInstall {
   product: string;
   channel: Channel;
-  current: { version: string };
+  current: { version: string; path?: string; sha256?: string };
   previous?: { version: string } | null;
 }
 
@@ -42,6 +42,8 @@ const record = (raw: RawInstall): InstallRecord => ({
   channel: raw.channel,
   version: raw.current.version,
   previous: raw.previous?.version ?? null,
+  path: raw.current.path ?? null,
+  sha256: raw.current.sha256 ?? null,
 });
 
 export const tauriBridge: Bridge = {
@@ -58,7 +60,7 @@ export const tauriBridge: Bridge = {
   enableExtension: async (product, id, enabled) => {
     await tauri().core.invoke<InstalledExtension>("extension_enable", { product, id, enabled });
   },
-  selfUpdateCheck: () => tauri().core.invoke<SelfUpdate>("self_update_check"),
+  selfUpdateCheck: () => tauri().core.invoke<SelfUpdate>("self_update_check", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   selfUpdateInstall: async () => {
     await tauri().core.invoke<null>("self_update_install");
   },

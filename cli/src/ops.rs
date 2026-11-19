@@ -451,7 +451,7 @@ pub fn learn_progress(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 pub fn ask(ctx: &Ctx, args: &Value, command: std::path::PathBuf, prefix: Vec<String>, tools: Vec<String>) -> Result<Value, CoreError> {
     let question = text(args, "question").or_else(|| text(args, "product")).ok_or_else(|| fail("give the question"))?;
     let agents = formportal_core::assistant::assistant_agents();
-    let client = text(args, "client").or_else(|| agents.iter().find(|a| a.path.is_some()).map(|a| a.client.clone())).ok_or_else(|| fail("neither Claude Code nor Codex is installed on this computer (neither is on PATH)"))?;
+    let client = text(args, "client").or_else(|| agents.iter().find(|a| a.path.is_some()).map(|a| a.client.clone())).ok_or_else(|| fail(formportal_core::assistant::NONE_FOUND))?;
     let mut env = vec![("FORMPORTAL_ROOT".to_string(), ctx.portal.root().to_string_lossy().to_string()), ("FORMPORTAL_CATALOG".to_string(), ctx.source.clone())];
     if ctx.allow_unsigned {
         env.push(("FORMPORTAL_ALLOW_UNSIGNED".to_string(), "1".to_string()));
@@ -545,8 +545,7 @@ pub fn install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> R
 pub fn updates(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let (catalog, source) = load(ctx, args)?;
     let list = ctx.portal.updates(&catalog, Platform::current())?;
-    let me = catalog.view("formai", Channel::Stable, Platform::current());
-    let portal = me.version.filter(|v| formportal_core::version_newer(v, CORE_VERSION)).map(|v| json!({ "version": v, "get": "https://formai.studio/download/" }));
+    let portal = formportal_core::selfupdate::newer(&catalog, Platform::current(), CORE_VERSION).map(|n| json!({ "version": n.version, "get": n.page }));
     Ok(json!({ "source": source, "updates": list, "formportal_update": portal }))
 }
 

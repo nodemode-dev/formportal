@@ -93,6 +93,62 @@ export const side: Extension = {
       keep();
     });
 
+    const mine = nav.querySelector<HTMLElement>(".nav-mine");
+    if (mine) {
+      const more = () => {
+        const above = mine.scrollTop > 1;
+        const below = mine.scrollTop + mine.clientHeight < mine.scrollHeight - 1;
+        const say = above && below ? "both" : above ? "above" : below ? "below" : "";
+        if ((mine.dataset.more ?? "") === say) return;
+        if (say) mine.dataset.more = say;
+        else delete mine.dataset.more;
+      };
+      const rows = Array.from(mine.children) as HTMLElement[];
+      let turned = 0;
+      const turn = (count: number) => {
+        let at = 0;
+        for (const row of rows) {
+          const want = row.offsetParent !== null && at++ < count ? "1" : "";
+          if (row.style.order !== want) row.style.order = want;
+        }
+        turned = count;
+      };
+      const wrap = () => {
+        const shown = rows.filter((row) => row.offsetParent !== null);
+        const look = getComputedStyle(mine);
+        const pitch = shown.length > 1 ? shown[0].offsetHeight + (Number.parseFloat(look.rowGap) || 0) : 0;
+        const reach = mine.scrollHeight - mine.clientHeight;
+        const slack = Math.min(pitch, (reach - pitch) / 2);
+        if (pitch <= 0 || slack < 4) {
+          if (turned) turn(0);
+          if (mine.hasAttribute("data-wrap")) mine.removeAttribute("data-wrap");
+          return;
+        }
+        const starting = !mine.hasAttribute("data-wrap");
+        if (starting) mine.setAttribute("data-wrap", "");
+        const count = shown.length;
+        let top = starting && mine.scrollTop < 1 ? -(Number.parseFloat(look.getPropertyValue("--sp-5")) || 0) : mine.scrollTop;
+        let next = turned % count;
+        if (top > reach - slack || top < slack) {
+          const steps = Math.round((top - reach / 2) / pitch) || (top < slack ? -1 : 1);
+          next = (((next + steps) % count) + count) % count;
+          top -= steps * pitch;
+        }
+        if (next === turned && !starting) return;
+        turn(next);
+        mine.scrollTop = top;
+      };
+      const settle = () => {
+        wrap();
+        more();
+      };
+      mine.addEventListener("scroll", settle, { passive: true });
+      const watch = new ResizeObserver(settle);
+      watch.observe(mine);
+      for (const row of rows) watch.observe(row);
+      settle();
+    }
+
     label();
   },
 };

@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img alt="version 0.65.0" src="https://img.shields.io/badge/version-0.65.0-eef0f4?style=flat-square">
+  <img alt="version 0.66.0" src="https://img.shields.io/badge/version-0.66.0-eef0f4?style=flat-square">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-stable-B7410E?style=flat-square&logo=rust&logoColor=white">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24C8DB?style=flat-square">
   <img alt="macOS, Windows, Linux" src="https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-native-2f7bf5?style=flat-square">
@@ -19,7 +19,7 @@
 
 <p align="center">
   <a href="https://formportal.formai.studio/"><b>Download FormPortal on formai.studio</b></a> ·
-  <a href="https://github.com/nodemode-dev/formcompiler/releases/tag/formportal-v0.53.5">Latest release</a> ·
+  <a href="https://github.com/nodemode-dev/formportal/releases/latest">Latest release</a> ·
   <a href="#run-it-from-source">Run it from source</a>
 </p>
 

@@ -2,8 +2,221 @@
 
 Living log for FormPortal's interface (formai_dev's `hub/frontend` up to formai_dev 0.26.0; older entries keep the old paths). Source files stay comment-free; what they would have said lives here. Tokens, icons and the marker renderer are logged in `design/HASHOUT_LOG.md`.
 
-Current build version: v0.65.0
-Last updated: 2026-11-09 · v0.64.0 the three demos open inside FormPortal from Home and Preferences > Help, sandboxed in a labelled stage (#in-app-demos); 2026-11-10 · v0.63.7 Storage lists two project folders with the same last name (#storage-rows); 2026-11-10 · v0.63.7 a failed extension on/off puts the switch back (#ext-switch-back); 2026-11-10 · v0.63.7 Learn keeps tutorials of apps not out yet hidden under every filter (#learn-unlisted); 2026-11-10 · v0.63.7 Install every released app and Update all run once at a time and skip apps already installing (#install-all-once); 2026-11-10 · v0.63.7 versionNewer orders pre-release tags as the core does (#prerelease-order); 2026-11-10 · v0.63.7 Remove and the On switch send the extension's contract id (#ext-contract-id); 2026-11-10 · v0.63.6 FormRec is in catalog/products.json as in development (formcompiler 0.13.0 registers it); 2026-11-09 · v0.63.5 the build offered follows the machine's architecture; the Download fact says when it runs under Rosetta; 2026-11-08 · v0.63.2 form.ext is available in catalog/products.json (formcompiler builds it from v0.12.0) and its licence is GPL-3.0-only, as its repository says; 2026-11-07 · v0.63.1 extensions from form.ext-registry: Verified mark, source link, blocked rows and the turned-off notice, the registry note, the browser fixture reads a test index (`?extindex=`) and no longer carries the first-party packages; 2026-11-07 · v0.63.0 the Extensions page as the hub: a filter per app, panels and commands, ready in the app notices, deep links, Make an extension, the twelve real packages in the fixture; 2026-11-07 · v0.62.4 two more demos in demos/ (no change here, see demos/updates/HASHOUT_LOG.md); 2026-11-07 · v0.62.3 the splash animation shorthand fixed; 2026-11-07 · v0.62.2 the splash bar runs 2.6 s; 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+Current build version: v0.66.0
+Last updated: 2026-11-19 · v0.66.0 the release of every entry below headed "after v0.65.0" (the headings were left as written), plus: every app row has a second line (#row-line), and the README's "Latest release" opens this repository's newest release
+Last updated: 2026-11-19 · after v0.65.0 a newer FormPortal has one working action in Notifications, About and Updates; the agent sentence names three agents (#self-action); 2026-11-09 · v0.64.0 the three demos open inside FormPortal from Home and Preferences > Help, sandboxed in a labelled stage (#in-app-demos); 2026-11-10 · v0.63.7 Storage lists two project folders with the same last name (#storage-rows); 2026-11-10 · v0.63.7 a failed extension on/off puts the switch back (#ext-switch-back); 2026-11-10 · v0.63.7 Learn keeps tutorials of apps not out yet hidden under every filter (#learn-unlisted); 2026-11-10 · v0.63.7 Install every released app and Update all run once at a time and skip apps already installing (#install-all-once); 2026-11-10 · v0.63.7 versionNewer orders pre-release tags as the core does (#prerelease-order); 2026-11-10 · v0.63.7 Remove and the On switch send the extension's contract id (#ext-contract-id); 2026-11-10 · v0.63.6 FormRec is in catalog/products.json as in development (formcompiler 0.13.0 registers it); 2026-11-09 · v0.63.5 the build offered follows the machine's architecture; the Download fact says when it runs under Rosetta; 2026-11-08 · v0.63.2 form.ext is available in catalog/products.json (formcompiler builds it from v0.12.0) and its licence is GPL-3.0-only, as its repository says; 2026-11-07 · v0.63.1 extensions from form.ext-registry: Verified mark, source link, blocked rows and the turned-off notice, the registry note, the browser fixture reads a test index (`?extindex=`) and no longer carries the first-party packages; 2026-11-07 · v0.63.0 the Extensions page as the hub: a filter per app, panels and commands, ready in the app notices, deep links, Make an extension, the twelve real packages in the fixture; 2026-11-07 · v0.62.4 two more demos in demos/ (no change here, see demos/updates/HASHOUT_LOG.md); 2026-11-07 · v0.62.3 the splash animation shorthand fixed; 2026-11-07 · v0.62.2 the splash bar runs 2.6 s; 2026-11-07 · v0.62.1 the demo carries real media (no change here, see demo/HASHOUT_LOG.md); 2026-11-07 · v0.62.0 the browser demo in demo/ reuses this interface through its own bridge (no change here, see demo/HASHOUT_LOG.md); 2026-11-06 · v0.61.0 the owner's icon pack named by app (ICON_FILE, iconFile), true app names, formcompiler removed as an app (icons deleted); 2026-11-06 · v0.60.0 the kept catalogue paints first, the start runs in parallel, the starter library (fonts in their own faces, stock thumbnails from the app), the store note, Extensions reloads on open; 2026-11-06 · v0.59.0 the family redesign (shell, icon rail, Home, Apps, app pages with hero shots, file drop), the site's 34 apps and names; 2026-11-06 · v0.58.0 Date to come and supporter names, nothing paints before the reveal, no app before its release; 2026-11-06 · v0.57.0 every icon in the dark and light v3 sets, following the theme (tiles, Files, the brand, the splash, the app icon); 2026-11-06 · only released apps shown (live), On the way, What it does from formai_dev's app caps, the reveal waits for the catalogue; 2026-11-06 · the family look (formvis v1.99.7 tokens, dark by default, shared accent, no scrollbars, the macOS title row) and Preferences rebuilt in formvis's structure; 2026-11-06 · the scroll fix measured in WebKit, Included on a reopen, prelaunch apps with a release, formai.studio in the wording; 2026-11-03 · the stage scrolls again; 2026-11-02 · repository links in nodemode-dev; 2026-10-25 · Included, Support the maker, the portfolio line; Agent skills on app pages, formMCP in the Agents sections; every app tile is the app's own icon; the catalogue follows formcompiler's registry; Share, Public link and Shared with you in Files; Preferences, Account (the GitHub sign-in); the font is decided before the first frame; open at login; release dates in Other versions
+
+## v0.66.0 · every app row has a second line {#row-line}
+- refers-to: markup.ts :: `line`; ../catalog/products.json :: formcel, formtxt, formref, formtray, formsculpt; ../README.md :: the link row under the badges
+- kind: fix
+- logged: v0.66.0 · 2026-11-19
+
+Fault (the owner's screenshot, 2026-11-19): FormCel, FormTxt, FormRef and FormTray had a name and nothing under it, while form.ext and FormTools had a line. The second line of a row is `Instead of <alt_of>` or else `note`; these four (and FormSculpt) had neither field, so `line` returned an empty string.
+
+Data: `alt_of` for FormCel ("Excel and Google Sheets"), FormTxt ("Microsoft Word and Google Docs"), FormRef ("PureRef and Milanote") and FormSculpt ("ZBrush"), each copied from the `replaces` field of that app's own file in `catalog/apps/`; FormTray replaces nothing, so it gets a `note` (58 characters; the schema allows 80). Code: `line` falls back to the summary when an entry has neither field (`p.note || p.summary`, so an empty note counts as none), so an app added later can never show a bare name. The summary can run to two lines, as FormTools' note already does.
+
+The README link written in the entry below pointed at formcompiler's releases. Since the app repositories carry their own releases (tag `v0.65.0` is on this repository), it is now `releases/latest` on this repository, which needs no version in it.
+
+Seen: `tsc --noEmit` and `vite build` pass and the built page has the five lines. Not seen in the desktop window. The three committed demo builds were not rebuilt and still show the bare names.
+
+## after v0.65.0 · the README's "Latest release" link names the tag pattern {#readme-release-link}
+- refers-to: ../README.md :: the link row under the badges
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Logged here because the repository root has no log of its own. The link pointed at one release, `formportal-v0.53.5`, while the badge beside it said 0.65.0: it was a version site nobody bumped. It now opens formcompiler's releases filtered to the `formportal-v` tags (`releases?q=formportal-v&expanded=true`), the same address the Download table further down the README already uses, so the newest FormPortal release is first and no release commit has to touch this line again. Not opened in a browser from here (no outside network was used for this task); the address is the one already in the README.
+
+## after v0.65.0 · where an app is installed, and the SHA-256 of what is installed {#install-facts}
+- refers-to: src/engine/types.ts :: InstallRecord (`path`, `sha256`) · src/bridge/tauri.ts :: RawInstall, record · src/bridge/fixture.ts :: installs · markup.ts :: pages (two facts) · src/extensions/apps/index.ts :: patch · src/styles/portal.css :: `.facts-path`, `.facts-own` · src/i18n/es.json
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+The shell's `installs` command has always answered with the engine's whole record (`current.version`, `current.path`, `current.sha256`), and the bridge kept only the version. `record` in tauri.ts now also keeps the path and the SHA-256, and the app page's Overview facts show them as "Installed in" and "Installed SHA-256", under the catalogue's "Download" and "SHA-256". The first SHA-256 is what the catalogue offers; the new one is what the engine recorded for the copy on this computer, so the two can be compared by eye. No Rust changed.
+
+Both values are empty until the app is installed and read "Not yet" like the other facts. Each cell is three lines high from the start (`min-block-size: 48px` at a 16 px line), which is what a 64-character hash and a usual install path need in the 200 px column, so the facts box and the links under it do not move when the app is installed or removed. A longer path than three lines would still grow the box. Both cells can be selected and copied.
+
+The browser fixture's `installs` adds a sample path and a hash to each record.
+
+Checked in Chrome headless against the Vite dev server with `?installed=formvis&auto=off`, without throttling and under 4x CPU, 200 kB/s, 150 ms and no cache: FormCut's page read "Not yet" twice; after Install the two facts read the path and a 64-character hash; the facts box, the two cells and the links line under the overview each kept one size in every recorded frame of the install. Not checked in the desktop window, so the values the real engine sends were read in the code only (`core/src/state.rs` :: InstalledVersion).
+
+## after v0.65.0 · Remove asks first {#remove-asks}
+- refers-to: more-menu.html (the remove line, `menu-ask`) · src/extensions/apps/index.ts :: the `ask`, `keep` and `toggle` listeners · src/styles/main.css :: `[data-remove-ask]`, `.menu-ask` · src/i18n/es.json
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+"Remove from this computer" in the `...` menu removed the app at once, with no question, though the engine's own tool text says to confirm first. The line is now two steps inside the menu. The first button (`data-remove-ask`) removes nothing: it puts `data-asking` on the menu, which hides that line and shows `menu-ask` in its place: "Remove it?", `Remove` (the one button that carries `data-act="remove"`) and `Keep`. No browser `confirm` or `alert` is used anywhere.
+
+Details that matter: the first button keeps the `drop-item` look, and a click on a `drop-item` closes the menu (the document listener in this file), so its handler stops the click there. Focus goes to `Keep`, so Enter or Space right after the first click keeps the app. `Keep` puts the line back and gives focus back to it. Closing the menu any way (Escape, a click outside, scroll) clears `data-asking` on the `toggle` event, so the menu always opens on the first step. The question line has the height of a menu line (34 px) and fits the panel's width in English and Spanish, so the panel, which the popout placed once, does not change size or position. `row-actions.html` still has the old line; nothing includes that file.
+
+Checked in Chrome headless against the Vite dev server with `?installed=formcut,formvis,formwav&auto=off` at 1280x520 (so the last row's menu is near the window's edge), without throttling and under 4x CPU, 200 kB/s, 150 ms and no cache, and once on the Spanish page: after the first click the menu was open, the app still installed, the line read "Remove it?", "Remove", "Keep", focus was on Keep, and the panel had one box (272 by 84) in every recorded frame; Keep put the line back with the app installed; Escape closed the menu and the next open showed the first step; Remove then removed the app and closed the menu. The page reported no native dialog. Not checked in the desktop window.
+
+## after v0.65.0 · what changed and how big, on each Updates row {#update-notes}
+- refers-to: markup.ts :: rows (`waiting`), `changed` · src/extensions/apps/index.ts :: patch (`size`, `update-size`, `data-notes`), the notes toggle · src/styles/portal.css :: `.list-updates .row-state`, `.st-more`, `button.fold-head`, `.row-notes`
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+A row on Updates said "Update to 2.2.0" and the installed version, and nothing about what the update brings or how much it downloads; the notes were only on the app page's What's new tab. A row of the Updates list now has a second line in its status cell, shown while an update waits: the download size of the update and a "What changed" button. The button opens the notes of the offered release in a block under the row (`row-notes`, the second grid row of the same `li`). It is closed at the start. The catalogue the window holds is where the engine's `updates` takes `bytes` and `notes` from, so no new bridge call is made.
+
+Placement, and why not a line added under the row: a line that exists only while an update waits would make the row taller and move every row under it at the moment the state changes (a fresh catalogue arriving, going back, an update finishing). So the status cell of every Updates row is two lines high (`min-block-size: 38px`, content from the top) inside the row's existing 41 px of content: the status sits beside the app's name and the second line beside the line under the name. The row is 65 px with and without the second line. The cell has `overflow: hidden` from main.css, so the second line is in flow, not positioned outside the cell (a first try with `position: absolute` under the cell was clipped, and focus on the button scrolled the cell). While the app installs the progress bar takes the second line and the size and button step aside.
+
+Opening the notes makes the row taller downwards: the heading, the row's own first line and its buttons stay; rows under it move down. An open block stays open until the person closes it, also after the update is installed, so nothing closes by itself.
+
+The app page's size chip: it was empty once the app was installed (and the header moved when it came back with an update). It now always shows a size: the installed version's file when the catalogue still lists that version, the offered file otherwise.
+
+Under 1000 px of width the status cell of list rows is hidden by an older rule, and the second line with it; left as it is.
+
+Checked in Chrome headless against the Vite dev server with `?installed=formvis,formcut@2.6.1,formwav&auto=off`, without throttling and under 4x CPU, 200 kB/s, 150 ms and no cache: FormCut's row read "Update to 2.6.2", "2.6.1" and under it "231 MB" and "What changed", inside the 65 px row; installed rows had no second line and the same height; opening the notes left the page heading, the status text and the buttons where they were and moved the two rows under it by the block's height; updating, then going back, kept all three rows at one height and one position in every recorded frame. The status text still moves sideways when the row's buttons change (Update leaving or arriving changes the width of the buttons column); that was so before. Not checked in the desktop window.
+
+## after v0.65.0 · a list of versions in the Versions and beta tab {#version-list}
+- refers-to: src/extensions/versions/index.ts (new) · src/main.ts (import, register) · markup.ts :: pages (the `ver-list`, the Beta row's menu) · src/extensions/apps/index.ts :: patch (the picker), the picker's change listener · src/styles/portal.css :: `.ver-list`, `.ver`, `.ver-head`, `.fold`, `.fold-head` · src/i18n/es.json
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+The tab was called "Versions and beta" and held only the Beta row. The `vers` section now has a list, one item per version the catalogue lists for the stable channel (the release and its `history`, the same list the engine's `versions` answers from): version, date, the size of the file for this computer, the notes in a closed `details` ("What changed"), and `Install`. The installed version reads "Installed" and a version with no file for this computer says so; in both cases the button keeps its place and is not shown, so every item has the same columns. `Install` on an item is `app.install` with that version, so an older one gets the hold and its notice as before. While the app is installing, or the organisation blocks it, the buttons are disabled.
+
+`versions` is a new extension. The list is keyed by version: an item is made once (with the DOM API, before it is in the page), then only its text and attributes are patched; a new release in the catalogue inserts one item and a withdrawn one removes one. Nothing is cleared and refilled, so an open fold stays open while another version installs. The fold is under its head, so opening it moves only what is below it. `.fold` and `.fold-head` are written to be used again by the Updates rows.
+
+The Beta row there now carries the same `...` menu as a row on Updates (`acts(true)`), so a beta can be removed, taken back or switched from the tab where it is installed.
+
+The short picker in the `...` menu: it used to open on the newest version, which is usually the installed one, with `Install` live, so one click reinstalled what was there. `patch` now starts the picker on the first version that is not installed and keeps `Install` disabled while the installed one is chosen (also on the picker's `change`).
+
+Checked in Chrome headless against the Vite dev server with `?installed=formcut@2.6.1,formvis&auto=off`, without throttling and under 4x CPU, 200 kB/s, 150 ms and no cache: three items (2.6.2, 2.6.1 installed with no button, 2.6.0); opening the first fold moved the second item down and left the tab bar, the kept line and the first head in place; Install on 2.6.0 disabled the three buttons while it ran, then 2.6.0 read "Installed" and 2.6.1 got its button back, the three items were the same three nodes, and every head kept one box in every recorded frame; the picker opened on 2.6.2, and `Install` was disabled with 2.6.0 (installed) chosen; a beta installed from the tab showed the menu with Update automatically and Remove, inside the window. Not checked in the desktop window.
+
+## after v0.65.0 · the version kept to go back to is named {#kept-named}
+- refers-to: src/extensions/apps/index.ts :: patch (the rollback label, the `previous` field) · markup.ts :: pages (the `vers` section of the versions tab) · src/styles/portal.css :: `.vers`, `.vers-kept` · src/i18n/es.json
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+The install record already carried `previous`, and the window used it only to show or hide the menu line "Go back to the version before". `patch` now writes the line as "Go back to {version}" on every `[data-act='rollback']` of the row (the fixed sentence stays in the markup for a row with nothing kept, where the line is hidden anyway), and writes the kept version into a `previous` field.
+
+The app page's `Versions and beta` tab gets a `vers` section before the Beta row, itself a `data-row="stable"` element so the same patch and the same click wiring serve it: one line, "Kept to go back to: 2.1.1", with the same action beside it. With nothing kept the value reads "nothing" and the button keeps its place but is not shown (`visibility: hidden`), and the line has a minimum height, so the section is the same size in both states and the Beta row under it does not move. Version digits in the button are tabular so its width does not change between two versions of the same length.
+
+Checked in Chrome headless against the Vite dev server with `?installed=formcut@2.6.1,formvis`, without throttling and under 4x CPU, 200 kB/s, 150 ms and no cache: the menu line read "Go back to 2.6.1"; the tab read "Kept to go back to: 2.6.1" with the button; pressing it gave 2.6.1 installed and "Kept to go back to: 2.6.2"; the section, its line, the tab bar and the Beta row each kept one box across every recorded frame; FormVis, with nothing kept, read "Kept to go back to: nothing" with no button and the same 28 px line. Not checked in the desktop window.
+
+## after v0.65.0 · going back says what it did and re-reads the preferences {#rollback-notice}
+- refers-to: src/main.ts :: app.rollback · src/bridge/fixture.ts :: rollback · src/i18n/es.json
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Up to 0.65.0 `app.rollback` called the bridge and reloaded the installs, nothing more. The engine turns automatic updates off for the app when going back lands on an older version (`Portal::rollback` calls `hold`), but the window kept its own copy of the preferences, so the `Update automatically` switch still showed on, and the next `prefs.set` merged into that stale copy and saved it, which wrote the hold away.
+
+`app.rollback` now reads the preferences from the bridge after the swap (`engine.setPrefs`), so every switch follows and a later change starts from what the engine holds. It then says what happened as an `installs` notice: "{app} is back to {version}." and, only when the version it came from was newer and automatic updates for the app are now off, the sentence already used for installing an older version ("Automatic updates for it are off so it stays; turn them back on under More."). Going back a second time lands on the newer version and gets the short sentence. No node is added: the notice goes through the existing toast and Notifications row, and the row is patched by the existing `install` and `prefs` listeners.
+
+The browser fixture's `rollback` now does what the engine does (the hold, and the later update dropped, when the swap lands on an older version); before, it only swapped, so the stale switch could not be seen in the browser.
+
+Checked in Chrome headless against the Vite dev server with `?installed=formcut@2.6.1,formvis` (the fixture updates FormCut to 2.6.2 at the start and keeps 2.6.1), without throttling and again under 4x CPU, 200 kB/s, 150 ms and no cache: Go back gave 2.6.1, the row's switch and the Preferences switch off, the notice with the hold sentence; changing another preference twice left the switch off; going back again gave 2.6.2 and "FormCut is back to 2.6.2." The row and the row under it kept one box across every recorded frame. Not checked in the desktop window.
+
+## after v0.65.0 · a newer FormPortal has one action in three places; the agent sentence {#self-action}
+- refers-to: src/main.ts :: selfLabel, selfOffer, self.check, self.install, catalog.load (the notice) · src/engine/index.ts :: setSelf, the self event · src/engine/types.ts :: SelfUpdate · src/bridge/tauri.ts :: selfUpdateCheck · src/bridge/fixture.ts :: selfUpdateCheck · src/extensions/settings/index.ts (the self listener, the Updates button) · src/extensions/notices/index.ts (the bell row's action) · src/extensions/assistant/index.ts · src/i18n/es.json · ../src-tauri/HASHOUT_LOG.md#menu-self-agents
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Up to 0.65.0 the notice compared the catalogue's `formai` version with `package.json` here in main.ts and wrote "available at formai.studio/download" as plain text, while About asked the updater's feed and showed its button only when the feed had something. Nothing could be clicked. main.ts no longer compares versions: `selfOffer` asks the bridge once (`selfUpdateCheck`, which now passes the catalogue address) and sets the About status and the button label from the reply's `action`: "Install FormPortal {version} and restart" for `install`, "Get FormPortal {version}" for `download`. `self.install` checks again, then either lets the shell install in place or opens `page` through the bridge's `openWeb` and says the page is open; any failure is a fault notice that names what failed. The load-time notice carries that command as its action.
+
+Three places show the one action, each built from the same `self` event or notice: the About button (existing node, its text now follows the label); a button appended once, hidden, to the Updates page's subtitle line and shown while something newer exists; and the Notifications row, which now renders a notice's action as a button inside its paragraph (the toast already did). All three use the existing `toast-act` class; no stylesheet and no line of index.html changed, because another change is editing the window's styles and layout at the same time. The unused `package.json` import in main.ts is gone.
+
+The "Ask your agent" dialog's sentence for no agent is set by its handler to name Claude Code, Codex and Cursor's agent and where FormPortal looked, and the list is asked for again on the next open while none was found (it was asked once per run, so "open this again" could not help). The sentence still in index.html is replaced at run time.
+
+Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
+
+## after v0.65.0 · the list of apps in the side panel goes round {#side-wrap}
+- refers-to: src/extensions/side/index.ts :: turn, wrap, settle
+- kind: decision
+- logged: after v0.65.0 · 2026-11-19
+
+The owner asked for the list of apps to wrap around when scrolled. `wrap` runs on the list's scroll and on a ResizeObserver of the list and its rows. Only when the list overflows by more than one row plus 8 px does it set `data-wrap`; a shorter list keeps its plain scroll, no attribute and no inline style. In wrap, the first `turned` shown rows get the inline style `order: 1`, which draws them after the others in the flex column, so the drawn order is a rotation of the list while the nodes stay where they are in the document: no row is created, moved or removed (a MutationObserver on the list saw no child change over 80 wheel steps, and the children were the same nodes in the same order afterwards), Tab and Shift+Tab walk the apps once in catalogue order, and a screen reader reads the same single list. When the scroll comes within one row of either end, the rotation is advanced by the number of rows that puts the scroll back at the middle and `scrollTop` is corrected by the same distance in the same task, so what is drawn does not move and there is always room to keep scrolling either way. At rest the last app shows as a faded strip of `--sp-5` above the first.
+
+Seen in Chromium with 22 apps at 1440x900 (expanded and rail, under 4x CPU, a slow network and no cache), 1100x700 and 880x600: scrolling down passes the last app and continues with the first, and up likewise; across about 400 recorded frames no frame was without a row, the rows visible in two consecutive frames always moved by the same distance, and all 22 apps were seen. With 3 apps nothing changes. What differs from an ideal endless list: a list that overflows by less than a row and 8 px does not wrap; when an app is installed or removed while the list is turned, the rotation is kept by count, so the row at the top can change by one; momentum scrolling in the desktop webviews (WKWebView, WebKitGTK, WebView2) was not available here and is not verified.
+
+## after v0.65.0 · Files rows show Open, Versions and Public link {#file-acts}
+- refers-to: src/styles/portal.css :: `.acts-files > .btn` (in the one-state-at-a-time list) · index.html :: template `file-row`
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause: portal.css hides every button of an action group (`.acts > .btn { display: none; }`) and shows an app's Install, Update or Open again by its install state. A file row's group, `.acts-files`, holds Open, Versions and Public link and has no install state, so none of the three was ever shown: a person could not open a project from Files, see its kept versions or make a public link, although the handlers in `src/extensions/files/index.ts` were bound. `.acts-files > .btn` joins the list that shows a button. Nothing was removed. Seen in Chromium with the fixture's four projects at 1440x900, 1100x700 and 880x600: three buttons on every row, the last row's Versions the top element at its centre, and its click opens the Versions dialog inside the window.
+
+The other version control, Other versions in an app row's "..." menu, is hidden by `[data-history] .menu-versions` (main.css) unless the catalogue's release for that channel lists at least one earlier release with a build for this computer (`row.toggleAttribute("data-history", all.length > 1)` in `src/extensions/apps/index.ts`); Go back to the version before shows only when the install record has a previous version and the app is not busy (`data-previous`). Both are as before; the menu that holds them now opens whole (#popout).
+
+## after v0.65.0 · Preferences shows a gear {#prefs-gear}
+- refers-to: index.html :: `.nav-foot` `[data-prefs-open]` · markup.ts :: ICONS.prefs
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+The Preferences item in the side panel and the rail drew a circle with eight rays, which reads as a sun or a brightness control. `design/icons.json` has no gear (its `settings` is the pair of sliders the Preferences dialog uses for its title and its General tab, left as it is), so one was drawn by hand: an eight-tooth outline between radius 6.5 and 8.6 around a 2.6 hub, in the 24 box, `currentColor`, stroke 1.7 with round joins, spanning 3.5 to 20.5 like the Help circle beside it. The same path replaces the unused `prefs` entry in markup.ts so the two cannot drift. Seen in Chromium in the expanded panel and the rail, default theme and AMOLED Black.
+
+Removed (both places):
+
+```html
+<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>
+```
+
+## after v0.65.0 · every "..." menu opens whole, inside the window {#popout}
+- refers-to: src/extensions/popout/index.ts :: placeAt, popout · src/main.ts (registered last) · src/styles/main.css :: `.drop-panel` · src/extensions/notices/index.ts :: open
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause: `.drop-panel` was `position: absolute` under its `details.drop`, 4 px below the button and aligned to the button's end, with nothing that flipped or clamped it. Two ancestors cut it: `.stage .list:not(.rows)` and `.rows` (`overflow: hidden`, portal.css) cut the menu of the last rows of Apps, Updates, Fonts and Extensions, and `.pane-app .hero` (`overflow: hidden`, portal.css) cut the menu on an app's page, where the button sits at the left, so the panel also ran out past the left edge and under the tab bar. Update automatically, Other versions with its Install button, Go back to the version before and Remove were in those menus and could not be reached.
+
+The app had no placement code, so there is now one way for every `details.drop`: `popout` listens for `toggle` (captured, so rows cloned later are covered). On open the panel becomes a `popover="manual"` and is shown in the browser's top layer where that exists, and `placeAt` gives it a fixed position: under the button and end-aligned when that stays inside the stage, start-aligned when it would not, above the button when there is no room below, and clamped `--popout-edge` (`--sp-2`) from the window's edges, with `max-block-size` and its own scroll as the last resort. Where the top layer does not exist the same fixed position applies with `--z-dropdown`. The panel is `visibility: hidden` until `data-at` is set in the same task that places it, so it never paints at an old place first. A scroll outside the panel or a window resize closes it. Escape returns focus to the button when focus was inside; choosing an item returns it too. The existing Escape and outside-click handlers in `apps` are unchanged. Notifications returns focus to the bell when it closes with focus inside.
+
+Seen in Chromium at 1440x900, 1100x700 and 880x600, expanded and collapsed, first and last row: every panel inside the window, every item the top element at its centre, closed by Escape and by an outside click, focus back on the button; also at 880x330, where the panel is clamped to the bottom edge. Under 4x CPU, a slow network and no cache the panel had one position and size from its first frame and no layout shift was recorded.
+
+Removed:
+
+```css
+.drop-panel {
+  position: absolute;
+  inset-block-start: calc(100% + var(--sp-1));
+  inset-inline-end: 0;
+```
+
+## after v0.65.0 · the sidebar keeps its brand row, its whole menu and its bottom group {#side-layout}
+- refers-to: src/styles/portal.css :: `.brand`, `.side .nav`, `.side .nav-mine`, `.nav-title`, `.nav-foot`, `html[data-rail="mini"] .brand`, `html[data-rail="mini"] .nav-title` · src/extensions/side/index.ts :: more
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause, measured in Chromium with 22 apps installed: `.side` is a flex column and every child could shrink. `.brand` has `overflow: hidden`, and main.css gives `.nav` `overflow-y: auto`, so their automatic minimum height was zero. With a long app list the brand row went from 36 px to 23 px at 1440 by 900, 17 px at 1100 by 700 and 13 px at 880 by 600 (the rule under it touched the wordmark), and the main menu shrank from 286 px to 179, 127 and 102 px, showing five, three and two of its eight items with no scrollbar. The collapsed rail did the same.
+
+Now `.brand`, `.side .nav`, `.nav-title` and `.nav-foot` are `flex: none`; `.side .nav-mine` alone is `flex: 0 1 auto; min-block-size: 0`, so the list of apps is the one part that scrolls. Measured after: the brand row 45 px and all eight items at the three sizes, expanded and collapsed. At the minimum window, 880 by 600, the list has 65 px, a little under two rows.
+
+Spacing comes from the tokens: the brand row is 36 px of content plus `--sp-2` before its rule, then `--sp-3` to the menu; the title is a `--sp-4` line with `--sp-4` above and `--sp-2` below; the bottom group starts `--sp-3` down. In the rail the title keeps the same box and draws its 1 px rule as a centred background, and the brand keeps its block padding, so expanding and collapsing moves nothing vertically (the top of every item was the same in both states and in every frame of the fold, watched under 4x CPU, a slow network and no cache).
+
+Where the list has more above or below, `more` sets `data-more` to `above`, `below` or `both` on the list (one attribute, on scroll and on a ResizeObserver of the list and its rows) and the list fades over `--sp-5` at that edge, so the last icon is no longer cut by a hard edge where the list meets the bottom group.
+
+Removed:
+
+```css
+  gap: 8px;
+  block-size: 36px;
+  margin: 0 0 12px;
+  padding: 0 4px 0 6px;
+```
+
+```css
+.nav-title {
+  margin: 18px 10px 6px;
+```
+
+```css
+  padding-block-start: 12px;
+```
+
+```css
+html[data-rail="mini"] .brand {
+  justify-content: center;
+  padding: 0;
+}
+```
+
+```css
+html[data-rail="mini"] .nav-title {
+  block-size: 1px;
+  margin: 14px 8px 10px;
+  overflow: hidden;
+  background: var(--fp-edge);
+  color: transparent;
+}
+```
 
 ## v0.65.0 · AMOLED Black {#amoled}
 - refers-to: index.html (Appearance, a fourth button) · public/prepaint.js · src/extensions/theme/index.ts :: modeOf, paint · src/styles/portal.css :: :root[data-oled] · src/styles/main.css :: :root[data-oled] .cv-prefs-group · src/i18n/es.json · ../design/tokens.css (design/HASHOUT_LOG.md#amoled)

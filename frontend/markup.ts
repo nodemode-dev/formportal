@@ -39,7 +39,7 @@ const SVG: Record<string, string> = {
   stock: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m4.5 16.5 4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5"/><circle cx="15.5" cy="9.5" r="1.4"/>',
   extensions: '<path d="M10 4.5h4v3a1.5 1.5 0 1 0 3 0v-3h2.5V9h-3a1.5 1.5 0 1 0 0 3h3v7.5H14v-3a1.5 1.5 0 1 0-3 0v3H4.5V15h3a1.5 1.5 0 1 0 0-3h-3V4.5z"/>',
   learn: '<path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H19v14H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19"/>',
-  prefs: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+  prefs: '<path d="M10.43 5.69l.22-2.18h2.7l.22 2.18a6.5 6.5 0 0 1 1.78.74l1.7-1.39 1.91 1.91-1.39 1.7a6.5 6.5 0 0 1 .74 1.78l2.18.22v2.7l-2.18.22a6.5 6.5 0 0 1-.74 1.78l1.39 1.7-1.91 1.91-1.7-1.39a6.5 6.5 0 0 1-1.78.74l-.22 2.18h-2.7l-.22-2.18a6.5 6.5 0 0 1-1.78-.74l-1.7 1.39-1.91-1.91 1.39-1.7a6.5 6.5 0 0 1-.74-1.78l-2.18-.22v-2.7l2.18-.22a6.5 6.5 0 0 1 .74-1.78l-1.39-1.7 1.91-1.91 1.7 1.39a6.5 6.5 0 0 1 1.78-.74z"/><circle cx="12" cy="12" r="2.6"/>',
   help: '<circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.5v.5M12 16.8v.2"/>',
   drop: '<path d="M12 4v10M8 10l4 4 4-4M5 16v2.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V16"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
@@ -90,7 +90,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const group = (p: App) => (p.group === "adobe" ? "adobe" : "other");
   const hue = (p: App | string) => hues[typeof p === "string" ? p : p.id] ?? "#f3ebe3";
   const has = (dir: string, id: string) => existsSync(resolve(root, "public", dir, `${id}.webp`));
-  const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note ?? ""));
+  const line = (p: App) => esc(p.alt_of ? `Instead of ${p.alt_of}` : (p.note || p.summary));
   const name = (p: App, cls = "nm") => {
     const m = /^Form(.+)$/.exec(p.name);
     return m ? `<span class="${cls}"><span class="nm-f">Form</span><span class="nm-s">${esc(m[1])}</span></span>` : `<span class="${cls}"><span class="nm-f">${esc(p.name)}</span></span>`;
@@ -145,13 +145,14 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     `<li class="wave soon-group" data-soon-extra><p class="wave-head"><b class="soon-date">Date to come</b><span class="wave-n" data-wave-n></span></p><ul class="wave-tiles soon-tiles">${Array.from({ length: MORE }, () => sealTile).join("")}</ul></li>`,
   ];
 
-  const rows = (p: App, channel: "stable" | "beta") =>
-    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${group(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub">${line(p)}</p></div><p class="row-sum">${esc(p.summary)}</p><p class="row-state">${state}${bar}</p>${acts(true)}</li>`;
+  const changed = '<span class="st-more"><span class="mono" data-field="update-size"></span><button class="fold-head" type="button" data-notes-toggle aria-expanded="false">What changed</button></span>';
+  const rows = (p: App, channel: "stable" | "beta", waiting = false) =>
+    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${group(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub">${line(p)}</p></div><p class="row-sum">${esc(p.summary)}</p><p class="row-state">${state}${waiting ? changed : ""}${bar}</p>${acts(true)}${waiting ? '<div class="row-notes notes-text" data-field="notes"></div>' : ""}</li>`;
 
   const list = GROUPS.map(
     ([g, title]) => `<section class="group" data-group-head="${g}"><h2 class="group-title">${title}</h2><ul class="rows">${apps.filter((p) => group(p) === g).map((p) => rows(p, "stable")).join("")}</ul></section>`,
   );
-  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel)));
+  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel, true)));
 
   const pages = apps.map((p) => {
     const c = caps(p);
@@ -162,7 +163,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     const opensList = [...new Set([...(p.project_extensions ?? []), ...(c.project ? [c.project] : []), ...Object.entries(COMMON).filter(([, id]) => id === p.id).map(([ext]) => `.${ext}`)])].slice(0, 12);
     const does = (c.checks ?? []).slice(0, 6).map((t) => `<li>${esc(t)}</li>`).join("");
     const links = r ? `${web(`${r}#readme`, "Guide and docs")}${web("https://formai.studio/download/", "Every release")}${web(`${r}/issues/new`, "Report a problem")}${web(`${r}/discussions`, "Ask the community")}` : "";
-    const beta = `<div class="beta-row" data-row="beta" data-product="${p.id}"${style(p)}><div><h3 class="h3">Beta</h3><p class="sub">The next version while it is still being tested. It installs beside ${esc(p.name)}, keeps its own settings, and can be unstable.</p><p class="row-state">${state}${bar}</p></div>${acts(false)}${r ? `<p class="links">${web(`${r}/issues/new?labels=beta&title=${encodeURIComponent(`${p.name} beta: `)}`, "Send feedback on the beta")}</p>` : ""}</div>`;
+    const beta = `<div class="beta-row" data-row="beta" data-product="${p.id}"${style(p)}><div><h3 class="h3">Beta</h3><p class="sub">The next version while it is still being tested. It installs beside ${esc(p.name)}, keeps its own settings, and can be unstable.</p><p class="row-state">${state}${bar}</p></div>${acts(true)}${r ? `<p class="links">${web(`${r}/issues/new?labels=beta&title=${encodeURIComponent(`${p.name} beta: `)}`, "Send feedback on the beta")}</p>` : ""}</div>`;
     const agents = `<section class="ap-agents" data-agents="${p.id}" hidden aria-label="${esc(p.name)} with your AI tools"><h3 class="h3">Use ${esc(p.name)} with your AI tools</h3><p class="sub">${esc(p.name)} has its own MCP server. FormPortal adds it to Claude Code, Codex and Cursor and starts whichever version is installed.</p><ul class="agent-list">${[["claude", "Claude Code"], ["codex", "Codex"], ["cursor", "Cursor"]].map(([id, label]) => `<li class="agent" data-client="${id}"><span class="agent-name">${label}</span><span class="agent-state" data-agent-state>Checking</span></li>`).join("")}</ul><div class="agent-acts"><button class="btn btn-primary" type="button" data-agents-connect>Connect</button><button class="btn" type="button" data-agents-disconnect>Disconnect</button></div></section>`;
     return `<section class="pane pane-app" data-pane="app-${p.id}" data-title="${esc(p.name)}" data-product="${p.id}" data-tab="overview" aria-label="${esc(p.name)}"${style(p)}>
 <header class="hero" data-row="stable" data-product="${p.id}"><div class="hero-in"><button class="back" type="button" data-route-to="apps">${svg("back")}<span>Apps</span></button>
@@ -170,9 +171,9 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
 <div class="hero-acts"><p class="row-state">${state}${bar}</p>${acts(true)}</div>${hero}</div></header>
 <div class="page page-app"><nav class="tabs" role="tablist" aria-label="${esc(p.name)}"><button type="button" role="tab" data-tab-to="overview">Overview</button><button type="button" role="tab" data-tab-to="new">What's new</button><button type="button" role="tab" data-tab-to="versions">Versions and beta</button><button type="button" role="tab" data-tab-to="ai">AI tools</button></nav>
 <div class="tab" data-tab-pane="overview"><div class="ov"><div class="ov-main"><p class="lede">${esc(c.lede ?? p.summary)}</p>${does ? `<h3 class="h3">What it does</h3><ul class="does">${does}</ul>` : ""}</div>
-<aside class="facts" data-row="stable" data-product="${p.id}"><dl><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>Opens</dt><dd class="chips">${opensList.map((e) => `<span>${esc(e.toUpperCase())}</span>`).join("")}</dd></div><div><dt>Runs on</dt><dd>${esc(c.runs_on ?? "macOS, Windows and Linux")}</dd></div><div><dt>Licence</dt><dd>${esc(p.licence ?? "")} · free</dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills">Read them in FormSkills ${svg("arrow")}</button><span class="skills-no">None published yet</span></dd></div><div><dt>Download</dt><dd class="mono" data-field="file"></dd></div><div><dt>SHA-256</dt><dd class="mono facts-hash" data-field="sha256"></dd></div></dl></aside></div><p class="links">${links}</p></div>
+<aside class="facts" data-row="stable" data-product="${p.id}"><dl><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>Opens</dt><dd class="chips">${opensList.map((e) => `<span>${esc(e.toUpperCase())}</span>`).join("")}</dd></div><div><dt>Runs on</dt><dd>${esc(c.runs_on ?? "macOS, Windows and Linux")}</dd></div><div><dt>Licence</dt><dd>${esc(p.licence ?? "")} · free</dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills">Read them in FormSkills ${svg("arrow")}</button><span class="skills-no">None published yet</span></dd></div><div><dt>Download</dt><dd class="mono" data-field="file"></dd></div><div><dt>SHA-256</dt><dd class="mono facts-hash" data-field="sha256"></dd></div><div><dt>Installed in</dt><dd class="mono facts-hash facts-path" data-field="path"></dd></div><div><dt>Installed SHA-256</dt><dd class="mono facts-hash facts-own" data-field="installed-sha256"></dd></div></dl></aside></div><p class="links">${links}</p></div>
 <div class="tab" data-tab-pane="new"><div class="notes" data-row="stable" data-product="${p.id}"><p class="sub"><span data-field="version" class="mono"></span> · <span data-field="date"></span></p><div class="notes-text" data-field="notes"></div></div></div>
-<div class="tab" data-tab-pane="versions">${beta}</div>
+<div class="tab" data-tab-pane="versions"><section class="vers" data-row="stable" data-product="${p.id}" aria-label="Versions of ${esc(p.name)}"><h3 class="h3">Versions</h3><p class="vers-kept"><span>Kept to go back to: <b class="mono" data-field="previous"></b></span><button class="btn btn-small" type="button" data-act="rollback">Go back to the version before</button></p><ul class="ver-list" data-ver-list aria-label="Versions of ${esc(p.name)}"></ul></section>${beta}</div>
 <div class="tab" data-tab-pane="ai">${agents}<p class="sub ai-none">${esc(p.name)} has no MCP server of its own yet. <button class="link-btn" type="button" data-route-to="app-formmcp">FormMCP</button> connects your AI tools to every Form app at once.</p></div>
 </div></section>`;
   });

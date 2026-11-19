@@ -813,16 +813,27 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 }
 
 .drop-panel {
-  position: absolute;
-  inset-block-start: calc(100% + var(--sp-1));
-  inset-inline-end: 0;
+  --popout-edge: var(--sp-2);
+  --popout-gap: var(--sp-1);
+  position: fixed;
+  inset: var(--popout-y, 0) auto auto var(--popout-x, 0);
   z-index: var(--z-dropdown);
   display: grid;
   min-inline-size: 17rem;
+  max-inline-size: calc(100vw - 2 * var(--popout-edge));
+  max-block-size: calc(100vh - 2 * var(--popout-edge));
+  margin: 0;
   padding: var(--sp-2);
+  overflow: hidden auto;
+  border: 0;
   border-radius: var(--radius-m);
   background: var(--float);
+  color: inherit;
   box-shadow: 0 0 0 1px var(--edge), var(--shadow-tile);
+}
+
+.drop-panel:not([data-at]) {
+  visibility: hidden;
 }
 
 .drop-item {
@@ -897,6 +908,41 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 [data-install="ready"] .menu .menu-check,
 [data-install="update"] .menu .menu-check {
   display: flex;
+}
+
+.menu [data-remove-ask],
+.menu-ask {
+  display: none;
+}
+
+[data-install="ready"] .menu:not([data-asking]) [data-remove-ask],
+[data-install="update"] .menu:not([data-asking]) [data-remove-ask],
+[data-install="ready"] .menu[data-asking] .menu-ask,
+[data-install="update"] .menu[data-asking] .menu-ask {
+  display: flex;
+}
+
+.menu-ask {
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: 34px;
+  padding-inline: var(--sp-3) 0;
+  color: var(--fault);
+  font-size: var(--fs-s);
+}
+
+.menu-ask-q {
+  flex: 1;
+  min-inline-size: 0;
+  white-space: nowrap;
+}
+
+.menu-ask > .btn {
+  flex: none;
+}
+
+.menu-ask > .menu-danger {
+  color: var(--fault);
 }
 
 [data-blocked] [data-act="install"],

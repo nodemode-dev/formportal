@@ -19,6 +19,7 @@ export const notices: Extension = {
 
     const open = (on: boolean) => {
       if (panel.hidden === !on) return;
+      if (!on && panel.contains(document.activeElement)) bell.focus();
       panel.hidden = !on;
       bell.setAttribute("aria-expanded", String(on));
       if (on) root.removeAttribute("data-unread");
@@ -132,6 +133,17 @@ export const notices: Extension = {
       when.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       const body = document.createElement("p");
       body.textContent = text;
+      if (action) {
+        const act = document.createElement("button");
+        act.type = "button";
+        act.className = "toast-act";
+        act.textContent = action.label;
+        act.addEventListener("click", (event) => {
+          event.stopPropagation();
+          void engine.dispatch(action.command, action.arg);
+        });
+        body.append(" ", act);
+      }
       entry.append(when, body);
       list.prepend(entry);
       while (list.children.length > KEEP) list.lastElementChild?.remove();

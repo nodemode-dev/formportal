@@ -1,5 +1,6 @@
 import { versionNewer } from "../../engine/index.ts";
 import { t } from "../../i18n/index.ts";
+import { sizeText } from "../versions/index.ts";
 import type { Channel, ChannelView } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -51,6 +52,9 @@ export const apps: Extension = {
       row.setAttribute("data-availability", view.availability);
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
+      const back = record?.previous ? t("Go back to {version}", { version: record.previous }) : t("Go back to the version before");
+      row.querySelectorAll<HTMLElement>("[data-act='rollback']").forEach((button) => write(button, back));
+      write(row.querySelector<HTMLElement>("[data-field='previous']"), record?.previous ?? t("nothing"));
       const later = engine.later.has(key);
       if (row.hasAttribute("data-later") !== later) row.toggleAttribute("data-later", later);
       row.style.setProperty("--p", String(progress ?? 0));
@@ -68,12 +72,14 @@ export const apps: Extension = {
               : t(WORDS[channel][view.availability]);
       write(row.querySelector<HTMLElement>("[data-field='status']"), words);
       write(row.querySelector<HTMLElement>("[data-field='version']"), record?.version ?? view.version ?? "");
-      const bytes = view.artifact && state !== "ready" ? view.artifact.bytes : 0;
-      const size = bytes >= 1_000_000 ? `${Math.round(bytes / 1_000_000)} MB` : bytes > 0 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : "";
-      write(row.querySelector<HTMLElement>("[data-field='size']"), size);
       const info = engine.product(product);
       const release = info?.channels[channel];
       const field = (name: string, text: string) => write(row.querySelector<HTMLElement>(`[data-field='${name}']`), text);
+      const mine = record && release ? [release, ...(release.history ?? [])].find((r) => r.version === record.version) : undefined;
+      const own = mine ? engine.artifactFor(mine) : null;
+      field("size", sizeText((own ?? view.artifact)?.bytes ?? 0));
+      field("update-size", state === "update" && view.artifact ? sizeText(view.artifact.bytes) : "");
+      row.toggleAttribute("data-notes", Boolean(release?.notes));
       field("date", release ? release.published.slice(0, 10) : "");
       field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
@@ -84,8 +90,13 @@ export const apps: Extension = {
         picker.dataset.list = list;
         const wanted = picker.value;
         picker.replaceChildren(...all.map((r) => new Option(label(r), r.version)));
-        if (all.some((r) => r.version === wanted)) picker.value = wanted;
+        const other = all.find((r) => r.version !== record?.version);
+        if (wanted !== record?.version && all.some((r) => r.version === wanted)) picker.value = wanted;
+        else if (other) picker.value = other.version;
       }
+      const go = row.querySelector<HTMLButtonElement>("[data-version-go]");
+      const same = !picker?.value || picker.value === record?.version;
+      if (go && go.disabled !== same) go.disabled = same;
       row.toggleAttribute("data-history", all.length > 1);
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       const on = engine.automatic(product, channel);
@@ -96,6 +107,8 @@ export const apps: Extension = {
       field("file", view.artifact ? (translated ? t(under, { file: view.artifact.file }) : view.artifact.file) : "");
       field("minimum", view.artifact?.minimum_os ?? "");
       field("sha256", view.artifact?.sha256 ?? "");
+      field("path", record?.path ?? "");
+      field("installed-sha256", record?.sha256 ?? "");
       field("project", info?.project_extensions?.join(", ") ?? "");
       field("licence", info?.licence ?? "");
       const skills = row.querySelector<HTMLElement>("[data-skills]");
@@ -134,8 +147,13 @@ export const apps: Extension = {
     engine.on("policy", () => rows.forEach(patch));
     for (const row of rows) {
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
-      row.querySelector<HTMLButtonElement>("[data-version-go]")?.addEventListener("click", () => {
+      const go = row.querySelector<HTMLButtonElement>("[data-version-go]");
+      go?.addEventListener("click", () => {
         if (picker?.value) void engine.dispatch("app.install", { ...target(row), version: picker.value });
+      });
+      picker?.addEventListener("change", () => {
+        const { product, channel } = target(row);
+        if (go) go.disabled = picker.value === engine.installs.get(engine.key(product, channel))?.version;
       });
       const auto = row.querySelector<HTMLInputElement>("[data-auto]");
       auto?.addEventListener("change", () => {
@@ -156,6 +174,29 @@ export const apps: Extension = {
           const act = button.dataset.act === "update" ? "install" : button.dataset.act;
           void engine.dispatch(`app.${act}`, target(row));
         });
+      });
+      const ask = row.querySelector<HTMLButtonElement>("[data-remove-ask]");
+      const keep = row.querySelector<HTMLButtonElement>("[data-remove-keep]");
+      const asking = (on: boolean) => {
+        ask?.closest(".menu")?.toggleAttribute("data-asking", on);
+        ask?.setAttribute("aria-expanded", String(on));
+      };
+      ask?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        asking(true);
+        keep?.focus();
+      });
+      keep?.addEventListener("click", () => {
+        asking(false);
+        ask?.focus();
+      });
+      ask?.closest("details")?.addEventListener("toggle", (event) => {
+        if (!(event.currentTarget as HTMLDetailsElement).open) asking(false);
+      });
+      const notes = row.querySelector<HTMLButtonElement>("[data-notes-toggle]");
+      notes?.addEventListener("click", () => {
+        const open = row.toggleAttribute("data-notes-open");
+        notes.setAttribute("aria-expanded", String(open));
       });
       row.querySelectorAll<HTMLButtonElement>("[data-later]").forEach((button) => {
         button.addEventListener("click", () => void engine.dispatch("app.later", { ...target(row), on: button.dataset.later === "on" }));

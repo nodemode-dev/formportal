@@ -107,6 +107,8 @@ export interface SelfUpdate {
   current: string;
   available: string | null;
   notes: string | null;
+  action: "none" | "install" | "download";
+  page: string;
 }
 
 export interface MediaItem {
@@ -443,6 +445,8 @@ export interface InstallRecord {
   channel: Channel;
   version: string;
   previous: string | null;
+  path?: string | null;
+  sha256?: string | null;
 }
 
 export interface ChannelView {

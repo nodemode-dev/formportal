@@ -324,17 +324,7 @@ fn cursor_config() -> PathBuf {
 }
 
 pub(crate) fn which(program: &str) -> Option<PathBuf> {
-    let paths = std::env::var_os("PATH")?;
-    for dir in std::env::split_paths(&paths) {
-        let names = if cfg!(windows) { vec![format!("{program}.exe"), format!("{program}.cmd")] } else { vec![program.to_string()] };
-        for name in names {
-            let candidate = dir.join(&name);
-            if candidate.is_file() {
-                return Some(candidate);
-            }
-        }
-    }
-    None
+    crate::programs::find(program)
 }
 
 fn backup(path: &Path) -> Result<()> {
@@ -468,7 +458,7 @@ fn client_state(client: Client, name: &str) -> ClientState {
         Client::Claude => match which("claude") {
             None => ClientState { client, label, state: Link::NoClient, config: None, note: Some("the claude command is not installed on this computer".to_string()) },
             Some(claude) => {
-                let got = Command::new(claude).args(["mcp", "get", name]).current_dir(home()).output();
+                let got = crate::programs::command(&claude).args(["mcp", "get", name]).current_dir(home()).output();
                 match got {
                     Ok(out) if out.status.success() && String::from_utf8_lossy(&out.stdout).contains("Scope: User") => {
                         let text = String::from_utf8_lossy(&out.stdout).to_string();
@@ -512,8 +502,8 @@ fn write(client: Client, name: &str, program: &Path, args: &[String]) -> Result<
     match client {
         Client::Claude => {
             let claude = which("claude").ok_or_else(|| CoreError::Invalid("the claude command is not installed".to_string()))?;
-            let _ = Command::new(&claude).args(["mcp", "remove", name, "--scope", "user"]).output();
-            let mut command = Command::new(&claude);
+            let _ = crate::programs::command(&claude).args(["mcp", "remove", name, "--scope", "user"]).output();
+            let mut command = crate::programs::command(&claude);
             command.args(["mcp", "add", "--scope", "user", name]);
             if let Some(root) = &root {
                 command.arg("-e").arg(format!("FORMPORTAL_ROOT={root}"));
@@ -569,7 +559,7 @@ fn remove(client: Client, name: &str) -> Result<ClientState> {
     match client {
         Client::Claude => {
             if let Some(claude) = which("claude") {
-                let _ = Command::new(claude).args(["mcp", "remove", name, "--scope", "user"]).output();
+                let _ = crate::programs::command(&claude).args(["mcp", "remove", name, "--scope", "user"]).output();
             }
         }
         Client::Codex => {

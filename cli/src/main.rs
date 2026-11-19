@@ -46,7 +46,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   learn [PRODUCT] [--query Q] [--learn-source S]   tutorials and the steps you have finished
   learn-step ID --step N [--done false]   mark a step finished (or not); steps count from 1
   learn-reset ID                  clear a tutorial's progress
-  ask \"QUESTION\" [--client claude|codex]   ask your own agent about your Form apps; it can only read
+  ask \"QUESTION\" [--client claude|codex|cursor]   ask your own agent about your Form apps; it can only read
   policy                         the organisation's policy, if this computer has one
   account                        whether you are signed in to GitHub, and as whom (optional; nothing needs it to install)
   sign-in [--share true]         sign in to GitHub with a code you enter on github.com; --share also asks for repository access

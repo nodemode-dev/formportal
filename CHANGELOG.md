@@ -2,6 +2,24 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.66.0 · 2026-11-19
+
+- A newer FormPortal can be acted on. The notice, Preferences and the Updates page now agree, and each has one button: "Install FormPortal [version] and restart" when this copy can update itself, otherwise "Get FormPortal [version]", which opens the download page. Before, the notice said a version was available, Preferences said FormPortal was up to date, and nothing could be clicked.
+- The menu bar's Settings item opens Preferences (macOS).
+- Claude Code, Codex and Cursor are found when FormPortal is started from the Dock, the Finder or the Start menu. Before, it looked only where the system's own short program path points, so a program installed by Homebrew, npm or in your home folder was reported as missing. Ask your agent offers Cursor's agent too.
+- The side panel keeps its top row, its whole menu and its bottom group with any number of apps installed; only the app list scrolls. With 22 apps the menu had lost Fonts, Stock and templates, Extensions and Learn, and the top row was cut in half.
+- The app list in the side panel goes round when scrolled, and fades at an edge that has more.
+- Every "..." menu opens whole, inside the window. The menus of the last rows of a list and the menu on an app's page were cut off.
+- Preferences shows a gear, not a sun.
+- Files rows show Open, Versions and Public link. They were hidden by mistake.
+- Going back to the version before says what it did, names the version in the menu ("Go back to 2.1.1"), and the Update automatically switch shows what was set. Before, the switch could stay on and the next settings change could turn automatic updates back on for that app.
+- An app's Versions and beta tab lists the versions with date, size and notes, with Install beside each, and shows the version kept to go back to.
+- Updates rows show what changed and the download size.
+- Remove from this computer asks first.
+- An app's page shows where the app is installed and the SHA-256 of what is installed.
+- Every app row has a line under its name. FormCel, FormTxt, FormRef, FormTray and FormSculpt had none.
+- The README's "Latest release" opens this repository's newest release.
+
 ## v0.65.0 · 2026-11-19
 
 - On Windows, Open now starts the app's own program. Before, for 14 of the 23 apps (FormVis, FormLit, FormRef and others) it started the app's helper in a console window and the app never appeared. Apps already installed are fixed without reinstalling.

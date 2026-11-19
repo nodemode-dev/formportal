@@ -1,3 +1,4 @@
+import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 
 export const assistant: Extension = {
@@ -25,8 +26,10 @@ export const assistant: Extension = {
     };
 
     engine.on("assistant", ({ agents }) => {
-      loaded = true;
       const present = agents.filter((a) => a.path);
+      loaded = present.length > 0;
+      const missing = t("FormPortal did not find Claude Code, Codex or Cursor's agent on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders. Install one, sign in to it, then open this again.");
+      if (none.textContent !== missing) none.textContent = missing;
       agentsBox.replaceChildren(
         ...present.map((a, i) => {
           const b = document.createElement("button");
