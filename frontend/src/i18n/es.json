@@ -97,6 +97,8 @@
     "Open": "Abrir",
     "Remove": "Quitar",
     "Remove from this computer": "Quitar de este ordenador",
+    "Remove it?": "¿Quitarla?",
+    "Keep": "Conservar",
     "Go back to the version before": "Volver a la versión anterior",
     "Go back to {version}": "Volver a la {version}",
     "Install {version}": "Instalar la {version}",

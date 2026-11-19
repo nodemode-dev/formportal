@@ -910,6 +910,41 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
   display: flex;
 }
 
+.menu [data-remove-ask],
+.menu-ask {
+  display: none;
+}
+
+[data-install="ready"] .menu:not([data-asking]) [data-remove-ask],
+[data-install="update"] .menu:not([data-asking]) [data-remove-ask],
+[data-install="ready"] .menu[data-asking] .menu-ask,
+[data-install="update"] .menu[data-asking] .menu-ask {
+  display: flex;
+}
+
+.menu-ask {
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: 34px;
+  padding-inline: var(--sp-3) 0;
+  color: var(--fault);
+  font-size: var(--fs-s);
+}
+
+.menu-ask-q {
+  flex: 1;
+  min-inline-size: 0;
+  white-space: nowrap;
+}
+
+.menu-ask > .btn {
+  flex: none;
+}
+
+.menu-ask > .menu-danger {
+  color: var(--fault);
+}
+
 [data-blocked] [data-act="install"],
 [data-blocked] [data-act="update"],
 [data-blocked] .drop-go,

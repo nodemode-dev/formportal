@@ -173,6 +173,24 @@ export const apps: Extension = {
           void engine.dispatch(`app.${act}`, target(row));
         });
       });
+      const ask = row.querySelector<HTMLButtonElement>("[data-remove-ask]");
+      const keep = row.querySelector<HTMLButtonElement>("[data-remove-keep]");
+      const asking = (on: boolean) => {
+        ask?.closest(".menu")?.toggleAttribute("data-asking", on);
+        ask?.setAttribute("aria-expanded", String(on));
+      };
+      ask?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        asking(true);
+        keep?.focus();
+      });
+      keep?.addEventListener("click", () => {
+        asking(false);
+        ask?.focus();
+      });
+      ask?.closest("details")?.addEventListener("toggle", (event) => {
+        if (!(event.currentTarget as HTMLDetailsElement).open) asking(false);
+      });
       const notes = row.querySelector<HTMLButtonElement>("[data-notes-toggle]");
       notes?.addEventListener("click", () => {
         const open = row.toggleAttribute("data-notes-open");
