@@ -1,6 +1,6 @@
 ---
 name: formportal-harness
-description: Drive FormPortal, the Form family's app portal (a Creative Cloud desktop app alternative), through its formportal MCP server or the formportal command line. Use whenever the person wants a Form app (FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, form.md, FormDAM, FormDeck, FormPDF, FormTxt, FormCel and the rest) listed, checked, installed, updated, opened, rolled back to the previous version, removed, or its beta installed beside the stable build; asks which Form apps exist, what each replaces, which are released or in progress, what version is installed or offered for this computer; wants the catalogue checked or pointed at a local or forked catalogue; wants another Form app's own MCP server reached after installing it; or when formportal tools such as status, apps, app_info, installs, install, open, rollback or remove are available or fail, or an organisation's policy refuses one. Not for changing FormPortal's own source (use formportal-skillset).
+description: Drive FormPortal, the Form family's app portal, through its formportal MCP server or the formportal command line. Use whenever the person wants a Form app (FormCut, FormVis, FormLit, FormDesign, FormPath, FormVFX, FormEncoder, FormWav, form.md, FormDAM, FormDeck, FormPDF, FormTxt, FormCel and the rest) listed, checked, installed, updated, opened, rolled back to the previous version, removed, or its beta installed beside the stable build; asks which Form apps exist, what each replaces, which are released or in progress, what version is installed or offered for this computer; wants the catalogue checked or pointed at a local or forked catalogue; wants another Form app's own MCP server reached after installing it; or when formportal tools such as status, apps, app_info, installs, install, open, rollback or remove are available or fail, the outside-agents choice (Ask, Allowed, Blocked) or an organisation's policy refuses one. Not for changing FormPortal's own source (use formportal-skillset).
 ---
 
 # formportal harness
@@ -27,10 +27,20 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 ## The loop
 
 1. **Plan.** One line per change: product, channel, from which version to which, and the download size.
-2. **Confirm.** `install`, `update`, `rollback`, `remove` and `preferences` changes alter the person's computer or choices. Say what will change and get a yes first. `remove` also deletes the kept previous version.
+2. **Confirm.** `install`, `update`, `rollback`, `remove` and `preferences` changes alter the person's computer or choices. Say what will change and get a yes first. `remove` also deletes the kept previous version. Then read `outside_agents` in `status` (its own `outside_agents` field is the choice that applies): `install`, `update`, `rollback` and `remove` go ahead only under Allowed (see "Outside agents" below); under Ask or Blocked the person's yes is not enough and the call is refused.
 3. **Act** with one tool call per product and channel.
 4. **Check** with `installs`: the version and SHA-256 now on disk. `open` only when the person wants the app started.
 5. **Report**: what changed, the version, where it is, and anything refused with its reason.
+
+## Outside agents
+
+An agent that is not the FormPortal window is an outside agent, and that includes this MCP server and `./formportal cli`. The person decides what it may do in the window: Preferences, Apps, Outside agents, with the choices "Ask: the agent asks you to do it here" (the default), "Allowed" and "Blocked". The choice covers `install`, `update`, `rollback` and `remove` (and `later` on the command line, which is an update); everything else works under every choice.
+
+- **Ask:** the call is refused with "[tool] was refused: FormPortal asks before an outside agent installs, updates, rolls back or removes an app, and only its window can answer." Tell the person plainly, and ask them to make the change in the FormPortal window, or to choose Allowed in Preferences, Apps, Outside agents. Do not retry, and do not look for another way to make the change.
+- **Allowed:** the call goes ahead (still say what will change first).
+- **Blocked:** refused every time; the person can change that in the same place.
+- Only the window can change the choice; no tool or command can, so never offer to. If the saved choice was changed outside FormPortal, or the system keychain is not available, it reads as Ask, and the refusal says so.
+- Read it with `status` before planning, so the person hears about it before a plan is made rather than after the first refusal.
 
 ## Routing
 
@@ -56,7 +66,7 @@ Its MCP server, named `formportal`, is the same engine as the window (`formporta
 - **Never guess an id.** Product ids come from `apps` (lowercase: `formcut`, `formvis`, `formencoder`, `formmd`). FormPortal itself is `formai` in the catalogue.
 - **The catalogue decides.** `apps` lists only released or installed apps, as formai.studio does; an app it does not list is not released yet, so there is nothing to install. Say so, give the opening date from `on_the_way` when the person asks what is coming, and never name an unreleased app or look for a download elsewhere.
 - **Never weaken a check to make an install work.** Do not ask the person to set `FORMPORTAL_ALLOW_UNSIGNED` for the family catalogue. A SHA-256 mismatch means the file is not the one the catalogue describes: report it, do not retry with another source.
-- **Ask before changing the computer**, every time, for `install`, `rollback`, `remove`.
+- **Ask before changing the computer**, every time, for `install`, `update`, `rollback`, `remove`, and respect a refusal from the outside-agents choice: it is the person's, and only their window can change it.
 - **Leave the person's work alone.** FormPortal's tools touch only its own install folder; never delete an app's documents or settings by hand.
 
 ## References

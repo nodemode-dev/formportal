@@ -8,9 +8,25 @@ FormPortal's MCP server is `./formportal mcp` (stdio). `.claude/skills/formporta
 | Codex | `.codex/config.toml` | `./formportal agents install codex` |
 | Cursor | `.cursor/mcp.json` | `./formportal agents install cursor` |
 
-The `formportal-harness` skill (`.claude/skills`, mirrored in `.agents/skills`) teaches the workflow: status and apps first, confirm before install, rollback or remove, check with installs. After changing a tool, run `./formportal agents sync`.
+The `formportal-harness` skill (`.claude/skills`, mirrored in `.agents/skills`) teaches the workflow: status and apps first, say what will change, check with installs, and when an install, update, rollback or remove is refused because of the choice for outside agents (below), tell the person to do it in the window or allow it there. After changing a tool, run `./formportal agents sync`.
 
 Without MCP: `./formportal cli [command]` prints the same JSON.
+
+## Outside agents
+
+An agent that is not the FormPortal window is an outside agent: the MCP server is one, and so is `./formportal cli`. What an outside agent may do when it asks to install, update, roll back or remove an app is the person's choice, made only in the window, Preferences, Apps, Outside agents:
+
+| Choice (as the window words it) | What happens to the request |
+| --- | --- |
+| Ask: the agent asks you to do it here (the default) | Refused. The message says FormPortal asks before an outside agent installs, updates, rolls back or removes an app, and only its window can answer, and tells the agent to ask the person to do it in the FormPortal window or to allow outside agents there. |
+| Allowed | It goes ahead. |
+| Blocked | Refused every time. The message says outside agents are blocked and that the person can change that in the window. |
+
+- Only `install`, `update`, `rollback` and `remove` follow the choice, and `later` on the command line, which is an update. `status`, `apps`, `app_info`, `installs`, `open` and every other tool work under every choice.
+- `status` reports the choice as `outside_agents` (`outside_agents` is what applies, `stored` what was saved, `seal` whether the saved choice is intact). No tool and no command changes it.
+- The saved choice is `agent-access.json` in FormPortal's folder, sealed with a key held in the system keychain. A file that was edited by hand, has no valid seal or is not readable reads as Ask, and the window says the saved permission was changed outside FormPortal. With no system keychain, a saved Allowed is asked as Ask (Blocked stays Blocked), and the window says so.
+- Someone scripting FormPortal with `./formportal cli install` or `update` needs Allowed set first; there is no flag or environment variable instead. Without it, make the change in the window.
+- An organisation's policy is separate: a policy refusal names the policy and is reported as it is.
 
 ## The apps' own MCP servers
 

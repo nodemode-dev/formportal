@@ -100,12 +100,25 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 
 ```sh
 ./formportal cli apps                             # the family and what this computer is offered
-./formportal cli install formcut --channel beta   # install the beta beside the stable build
+./formportal cli status                           # what is installed, and outside_agents: the choice described below
+./formportal cli install formcut --channel beta   # install the beta beside the stable build (see "Outside agents" first)
 ./formportal agents install                       # add FormPortal and its skill to Claude Code, Codex and Cursor
 ./formportal mcp                                  # MCP server on stdio for Claude Code, Codex and Cursor
 ```
 
 `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are already wired in this repo. See [`AGENTS.md`](AGENTS.md).
+
+### Outside agents
+
+An agent that is not the FormPortal window, whether it reaches FormPortal through the MCP server or through `./formportal cli`, may install, update, roll back or remove an app only as far as the person allows. The command line counts as an outside agent. The choice is in the window, Preferences, Apps, Outside agents:
+
+- **Ask: the agent asks you to do it here** is the default. The request is refused, and the agent is told to ask the person to do it in the FormPortal window, or to allow outside agents there.
+- **Allowed**: the request goes ahead.
+- **Blocked**: the request is always refused, and the message says the person can change that in the window.
+
+Only the window can change the choice; no tool or command can. It covers `install`, `update`, `rollback` and `remove` (and `later` on the command line, which is an update), and nothing else: `status`, `apps`, `installs`, `open` and the rest work under every choice. `status` reports the choice as `outside_agents`. If the saved choice was changed outside FormPortal, it reads as Ask again and the window says so; with no system keychain a saved Allowed is asked as Ask.
+
+So `./formportal cli install formcut --channel beta` works as written once the person has chosen Allowed. Under Ask it is refused with a message saying so, and the person can make the same install in the window instead. A script that installs or updates apps has no flag or environment variable that stands in for the choice: the person sets Allowed first.
 
 ## Under the hood
 
@@ -113,7 +126,7 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 - **Thin layers:** `src-tauri/` is the window and `cli/` holds the commands and the MCP server, both over the core.
 - **Install record:** after each install FormPortal records every installed file's SHA-256, which FormMCP checks before it starts the app.
 - **Built from a registry:** every app's row and card is written at build time from `catalog/products.json`.
-- **Tested:** 50 Rust tests (catalogue trust, install lifecycle, version order, extension trust, open links, CLI).
+- **Tested:** Rust tests for catalogue trust, install lifecycle, version order, extension trust, open links, the choice for outside agents, machine architecture, the agents manifest and the CLI.
 
 ## Demo
 

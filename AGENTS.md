@@ -1,12 +1,14 @@
 # formportal
 
-FormPortal, the Form family's app portal (a Creative Cloud desktop app alternative): Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
+FormPortal, the Form family's app portal: Rust engine (`formportal-core`), Tauri 2 shell, vanilla TypeScript and Vite interface, and a command line with an MCP server.
 
 ## Managing Form apps (natural language)
 
-When the person wants Form apps listed, installed, updated, opened, rolled back or removed, or a beta beside the stable build, use the `formportal` MCP server's tools guided by the `formportal-harness` skill in `.agents/skills/formportal-harness` (`references/tools.md` lists every tool; `references/concepts.md` the ids, channels, folders and errors). Start with `status` and `apps`, confirm with the person before `install`, `rollback` or `remove`, and check with `installs` before reporting.
+When the person wants Form apps listed, installed, updated, opened, rolled back or removed, or a beta beside the stable build, use the `formportal` MCP server's tools guided by the `formportal-harness` skill in `.agents/skills/formportal-harness` (`references/tools.md` lists every tool; `references/concepts.md` the ids, channels, folders and errors). Start with `status` and `apps`, say what will change before `install`, `update`, `rollback` or `remove`, and check with `installs` before reporting.
 
-The MCP server is configured here in `.codex/config.toml` (Codex), `.cursor/mcp.json` (Cursor) and `.mcp.json` (Claude Code); all run `./formportal mcp`, which builds the server on first use. From any other folder, `./formportal agents install` sets Claude Code, Codex and Cursor up for the user account. Without MCP, `./formportal cli` has the same surface: `status`, `apps`, `info`, `installs`, `install`, `open`, `rollback`, `remove`.
+**Those four are refused unless the person has allowed outside agents.** The MCP server and `./formportal cli` are outside agents. In the FormPortal window, Preferences, Apps, Outside agents, the person chooses "Ask: the agent asks you to do it here" (the default), "Allowed" or "Blocked". Under Ask the request is refused and the message tells you to ask the person to do it in the FormPortal window or to allow outside agents there; under Blocked it is refused too. Only the window can change the choice, and `status` shows it as `outside_agents`. When refused, tell the person that and stop; do not retry, and do not look for another way to make the change.
+
+The MCP server is configured here in `.codex/config.toml` (Codex), `.cursor/mcp.json` (Cursor) and `.mcp.json` (Claude Code); all run `./formportal mcp`, which builds the server on first use. From any other folder, `./formportal agents install` sets Claude Code, Codex and Cursor up for the user account. Without MCP, `./formportal cli [command]` runs the same engine and prints the same JSON (`./formportal cli` with no command prints every command); `references/tools.md` in the skill lists the MCP tools.
 
 ## Changing FormPortal's code
 
