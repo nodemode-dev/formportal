@@ -28,6 +28,7 @@ pub mod process;
 pub mod programs;
 pub mod releases;
 pub mod repair;
+pub mod selfupdate;
 pub mod share;
 pub mod signature;
 pub mod site;
