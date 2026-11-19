@@ -60,6 +60,9 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
   connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
   disconnect <product> [--channel C] [--clients ...]               take it out again
+  app-agents                      FormPortal's own MCP server: whether Claude Code, Codex and Cursor are on this computer and connected
+  connect [--clients claude,codex,cursor]      add FormPortal's own MCP server to them (the entry formportal, this program with mcp)
+  disconnect [--clients ...]                   take FormPortal's own entry out again
   app-mcp <product> [--channel C]          run the installed app's MCP server on stdio (what the clients start)
   org-package --policy FILE --installer FILE --to DIR
                                   one folder for a managed rollout: FormPortal's msi, dmg, deb, rpm or AppImage,
@@ -262,14 +265,20 @@ fn main() -> ExitCode {
             Ok(exe) => ops::ask(&ctx, &args, exe, vec!["mcp".to_string(), "--read-only".to_string()], mcp::read_only_tools()),
             Err(e) => Err(formportal_core::CoreError::Io(e)),
         },
+        "app-agents" if args.get("product").is_none() => ops::own_agents(),
         "app-agents" => ops::app_agents(&ctx, &args),
+        "connect" if args.get("product").is_none() => ops::connect_own(&args),
         "connect" => ops::connect_agents(&ctx, &args),
         "disconnect" => {
             let mut a = args.clone();
             if let Some(o) = a.as_object_mut() {
                 o.insert("disconnect".to_string(), json!(true));
             }
-            ops::connect_agents(&ctx, &a)
+            if a.get("product").is_none() {
+                ops::connect_own(&a)
+            } else {
+                ops::connect_agents(&ctx, &a)
+            }
         }
         "mirror" => ops::mirror(&ctx, &args, &mut progress),
         "org-package" => ops::org_package(&args),
