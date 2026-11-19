@@ -19,7 +19,7 @@
 
 <p align="center">
   <a href="https://formportal.formai.studio/"><b>Download FormPortal on formai.studio</b></a> ·
-  <a href="https://github.com/nodemode-dev/formcompiler/releases/tag/formportal-v0.53.5">Latest release</a> ·
+  <a href="https://github.com/nodemode-dev/formcompiler/releases?q=formportal-v&amp;expanded=true">Latest release</a> ·
   <a href="#run-it-from-source">Run it from source</a>
 </p>
 
