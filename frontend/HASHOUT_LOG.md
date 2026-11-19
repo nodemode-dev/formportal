@@ -18,6 +18,26 @@ The "Ask your agent" dialog's sentence for no agent is set by its handler to nam
 
 Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
 
+## after v0.65.0 · every "..." menu opens whole, inside the window {#popout}
+- refers-to: src/extensions/popout/index.ts :: placeAt, popout · src/main.ts (registered last) · src/styles/main.css :: `.drop-panel` · src/extensions/notices/index.ts :: open
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause: `.drop-panel` was `position: absolute` under its `details.drop`, 4 px below the button and aligned to the button's end, with nothing that flipped or clamped it. Two ancestors cut it: `.stage .list:not(.rows)` and `.rows` (`overflow: hidden`, portal.css) cut the menu of the last rows of Apps, Updates, Fonts and Extensions, and `.pane-app .hero` (`overflow: hidden`, portal.css) cut the menu on an app's page, where the button sits at the left, so the panel also ran out past the left edge and under the tab bar. Update automatically, Other versions with its Install button, Go back to the version before and Remove were in those menus and could not be reached.
+
+The app had no placement code, so there is now one way for every `details.drop`: `popout` listens for `toggle` (captured, so rows cloned later are covered). On open the panel becomes a `popover="manual"` and is shown in the browser's top layer where that exists, and `placeAt` gives it a fixed position: under the button and end-aligned when that stays inside the stage, start-aligned when it would not, above the button when there is no room below, and clamped `--popout-edge` (`--sp-2`) from the window's edges, with `max-block-size` and its own scroll as the last resort. Where the top layer does not exist the same fixed position applies with `--z-dropdown`. The panel is `visibility: hidden` until `data-at` is set in the same task that places it, so it never paints at an old place first. A scroll outside the panel or a window resize closes it. Escape returns focus to the button when focus was inside; choosing an item returns it too. The existing Escape and outside-click handlers in `apps` are unchanged. Notifications returns focus to the bell when it closes with focus inside.
+
+Seen in Chromium at 1440x900, 1100x700 and 880x600, expanded and collapsed, first and last row: every panel inside the window, every item the top element at its centre, closed by Escape and by an outside click, focus back on the button; also at 880x330, where the panel is clamped to the bottom edge. Under 4x CPU, a slow network and no cache the panel had one position and size from its first frame and no layout shift was recorded.
+
+Removed:
+
+```css
+.drop-panel {
+  position: absolute;
+  inset-block-start: calc(100% + var(--sp-1));
+  inset-inline-end: 0;
+```
+
 ## after v0.65.0 · the sidebar keeps its brand row, its whole menu and its bottom group {#side-layout}
 - refers-to: src/styles/portal.css :: `.brand`, `.side .nav`, `.side .nav-mine`, `.nav-title`, `.nav-foot`, `html[data-rail="mini"] .brand`, `html[data-rail="mini"] .nav-title` · src/extensions/side/index.ts :: more
 - kind: fix

@@ -19,6 +19,7 @@ export const notices: Extension = {
 
     const open = (on: boolean) => {
       if (panel.hidden === !on) return;
+      if (!on && panel.contains(document.activeElement)) bell.focus();
       panel.hidden = !on;
       bell.setAttribute("aria-expanded", String(on));
       if (on) root.removeAttribute("data-unread");
