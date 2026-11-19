@@ -7,7 +7,9 @@ const APPEARANCE = 3;
 const ACCENT = "#f97316";
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
-type Mode = "system" | "light" | "dark";
+type Mode = "system" | "light" | "dark" | "amoled";
+
+const modeOf = (value: unknown): Mode => (value === "light" || value === "system" || value === "amoled" ? value : "dark");
 
 export const theme: Extension = {
   id: "theme",
@@ -18,8 +20,7 @@ export const theme: Extension = {
     const media = window.matchMedia("(prefers-color-scheme: light)");
     const read = (): Mode => {
       try {
-        const stored = localStorage.getItem(KEY);
-        return stored === "light" || stored === "system" ? stored : "dark";
+        return modeOf(localStorage.getItem(KEY));
       } catch {
         return "dark";
       }
@@ -31,6 +32,8 @@ export const theme: Extension = {
       if (light) {
         if (root.getAttribute("data-theme") !== "light") root.setAttribute("data-theme", "light");
       } else if (root.hasAttribute("data-theme")) root.removeAttribute("data-theme");
+      const oled = !light && mode === "amoled";
+      if (root.hasAttribute("data-oled") !== oled) root.toggleAttribute("data-oled", oled);
       for (const b of buttons) {
         const on = String(b.dataset.themeSet === mode);
         if (b.getAttribute("aria-pressed") !== on) b.setAttribute("aria-pressed", on);
@@ -38,7 +41,7 @@ export const theme: Extension = {
     };
 
     engine.command("theme.set", (arg) => {
-      mode = arg === "light" || arg === "system" ? arg : "dark";
+      mode = modeOf(arg);
       try {
         localStorage.setItem(KEY, mode);
       } catch {

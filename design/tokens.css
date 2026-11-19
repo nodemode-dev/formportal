@@ -168,6 +168,19 @@
   --z-prefs-port: calc(var(--z-raised) + 1);
 }
 
+:root[data-oled] {
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --bg-tertiary: #141414;
+  --bg-hover: rgba(255, 255, 255, 0.1);
+  --border-color: #262626;
+  --border-light: #3a3a3a;
+  --border-soft: rgba(255, 255, 255, 0.12);
+  --text-primary: #ededed;
+  --text-secondary: #a6a6a6;
+  --text-muted: #858585;
+}
+
 :root[data-theme="light"] {
   color-scheme: light;
 

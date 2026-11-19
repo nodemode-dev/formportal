@@ -7,6 +7,15 @@ Last updated: 2026-11-11 · v0.64.1 no change (the version only); 2026-11-09 · 
 
 ---
 
+## AMOLED Black tokens {#amoled}
+- refers-to: design/tokens.css :: :root[data-oled]
+- kind: decision
+- logged: v0.65.0 · 2026-11-19
+
+The family's AMOLED Black profile in FormPortal's own names, which are the formvis names: `--bg-primary` and `--bg-secondary` are `#000000` (a black pixel is off on an OLED screen, so panels are told apart by borders alone), `--bg-tertiary` `#141414` (inputs, menus and selected rows use it as their only fill and would vanish at black), `--border-color` `#262626`, `--border-light` `#3a3a3a`, text `#ededed`, `#a6a6a6`, `#858585` (17.9, 8.6 and 5.7 to 1 on black). `--bg-hover` and `--border-soft` go to 10% and 12% white because the usual 6% and 8% are too close to black to read. The accent is not touched. The rule hangs on `data-oled`, never on the theme id, so another OLED profile needs only the flag. The shell's own surface tokens are in frontend/src/styles/portal.css (frontend/HASHOUT_LOG.md#amoled).
+
+---
+
 ## FormRec's icon and hue {#formrec}
 - refers-to: frontend/public/apps/formrec.webp, formrec-light.webp; design/app-hues.json :: formrec; LICENSES.md :: the FormRec icon row
 - kind: decision

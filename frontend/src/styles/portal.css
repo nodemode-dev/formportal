@@ -22,6 +22,17 @@
   --hue: #f3ebe3;
 }
 
+:root[data-oled] {
+  --fp-main: #000000;
+  --fp-side: #000000;
+  --fp-bar: #000000;
+  --fp-pane: #000000;
+  --fp-raise: #141414;
+  --fp-ctl: #141414;
+  --fp-edge: #262626;
+  --fp-edge-2: #3a3a3a;
+}
+
 :root[data-theme="light"] {
   --fp-main: #e2e0d8;
   --fp-side: #ecebe6;
