@@ -375,6 +375,8 @@
     "{app} was taken out of Claude Code, Codex and Cursor.": "{app} se ha quitado de Claude Code, Codex y Cursor.",
     "{app} {version} is installed. Automatic updates for it are off so it stays; turn them back on under More.": "{app} {version} está instalada. Sus actualizaciones automáticas están desactivadas para que se quede así; vuelve a activarlas en Más.",
     "{app} {version} is installed.": "{app} {version} está instalada.",
+    "{app} is back to {version}. Automatic updates for it are off so it stays; turn them back on under More.": "{app} ha vuelto a la {version}. Sus actualizaciones automáticas están desactivadas para que se quede así; vuelve a activarlas en Más.",
+    "{app} is back to {version}.": "{app} ha vuelto a la {version}.",
     "{file} is back to the version you chose; the one before is kept too.": "{file} ha vuelto a la versión que elegiste; la anterior también se guarda.",
     "{file} is saved in {folder} and opening in {app}.": "{file} se ha guardado en {folder} y se está abriendo en {app}.",
     "{file} is saved in {folder}.": "{file} se ha guardado en {folder}.",

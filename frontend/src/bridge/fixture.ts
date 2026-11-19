@@ -236,6 +236,10 @@ export const fixtureBridge: Bridge = {
     const record = installed.get(key(product, channel));
     if (!record || !record.previous) throw missing(`an earlier version of ${product}`);
     const swapped: InstallRecord = { product, channel, version: record.previous, previous: record.version };
+    if (versionNewer(record.version, record.previous)) {
+      if (prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
+      later.delete(key(product, channel));
+    }
     installed.set(key(product, channel), swapped);
     return swapped;
   },

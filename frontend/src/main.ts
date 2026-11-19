@@ -257,8 +257,14 @@ engine.command("app.open", (arg) => guard(() => bridge.open((arg as Target).prod
 
 engine.command("app.rollback", (arg) =>
   guard(async () => {
-    await bridge.rollback((arg as Target).product, (arg as Target).channel);
+    const { product, channel } = arg as Target;
+    const before = engine.installs.get(engine.key(product, channel))?.version ?? "";
+    const now = await bridge.rollback(product, channel);
     await refresh();
+    engine.setPrefs(await bridge.preferences());
+    const vars = { app: `${engine.name(product)}${channel === "stable" ? "" : ` ${channel}`}`, version: now.version };
+    const stays = versionNewer(before, now.version) && !engine.automatic(product, channel);
+    engine.setNotice(stays ? t("{app} is back to {version}. Automatic updates for it are off so it stays; turn them back on under More.", vars) : t("{app} is back to {version}.", vars), "info", "installs");
   }, "installs"),
 );
 
