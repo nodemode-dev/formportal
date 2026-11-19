@@ -359,6 +359,27 @@ async fn connect_agents(product: String, channel: Channel, disconnect: bool) -> 
     .map_err(text)?
 }
 
+#[tauri::command]
+async fn own_agents() -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let launcher = formportal_core::agents::Launcher::installed().map_err(text)?;
+        Ok(serde_json::json!({ "clients": formportal_core::agents::own_clients(&launcher) }))
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn connect_own(client: formportal_core::agents::Client, disconnect: bool) -> Result<serde_json::Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let launcher = formportal_core::agents::Launcher::installed().map_err(text)?;
+        let clients = formportal_core::agents::connect_own(&[client], &launcher, !disconnect).map_err(text)?;
+        Ok(serde_json::json!({ "clients": clients }))
+    })
+    .await
+    .map_err(text)?
+}
+
 fn app_mcp_from_args() -> Option<i32> {
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).map(String::as_str) != Some("app-mcp") {
@@ -826,7 +847,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             platform, catalog, catalog_kept, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences, agent_access, set_agent_access,
-            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
+            extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, own_agents, connect_own, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
