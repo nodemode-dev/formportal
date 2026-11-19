@@ -148,6 +148,13 @@ fn main() -> ExitCode {
             }
         };
     }
+    let gated = if cmd == "later" { "update" } else { cmd.as_str() };
+    if mcp::GATED.contains(&gated) {
+        if let Err(e) = formportal_core::access::gate(ctx.portal.root(), gated) {
+            eprintln!("{e}");
+            return ExitCode::FAILURE;
+        }
+    }
     let mut last = u64::MAX;
     let mut progress = |have: u64, total: u64| {
         let step = (have * 100).checked_div(total).unwrap_or(0);

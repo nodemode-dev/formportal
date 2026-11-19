@@ -476,6 +476,12 @@
               <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
             </section>
             <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Outside agents</h3>
+              <p class="fine">What an agent outside this window, through FormPortal's MCP server or its command line, may do when it asks to install, update, go back or remove an app. Only this window can change it.</p>
+              <label class="cv-field cv-field-stack"><span>Installing, updating, going back and removing</span><select class="field" data-agent-access><option value="ask">Ask: the agent asks you to do it here</option><option value="allowed">Allowed</option><option value="blocked">Blocked</option></select></label>
+              <p class="fine" data-agent-access-note>&nbsp;</p>
+            </section>
+            <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Each app</h3>
               <p class="fine">Turn automatic updates off for one app; the others follow the switch above.</p>
               <ul class="auto-list">

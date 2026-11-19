@@ -130,6 +130,7 @@ pub fn status(ctx: &Ctx) -> Result<Value, CoreError> {
         "trusted_keys": { "compiled": formportal_core::signature::compiled_keys().len(), "total": formportal_core::signature::trusted_keys().len() },
         "installed": installs.len(),
         "installs": installs,
+        "outside_agents": formportal_core::access::read(ctx.portal.root()),
         "next": "apps lists the family and what this computer is offered; install, open, rollback and remove act on one product and channel."
     }))
 }

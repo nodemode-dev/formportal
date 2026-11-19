@@ -1283,6 +1283,8 @@ version = "0.64.1"
 dependencies = [
  "base64 0.22.1",
  "ed25519-dalek",
+ "getrandom 0.2.17",
+ "hmac",
  "keyring",
  "serde",
  "serde_json",

@@ -213,8 +213,13 @@ fn without_unsigned(args: &Value) -> Value {
     args
 }
 
+pub const GATED: [&str; 4] = ["install", "update", "rollback", "remove"];
+
 fn call(ctx: &Ctx, name: &str, args: &Value) -> Result<Value, String> {
     let args = &without_unsigned(args);
+    if GATED.contains(&name) {
+        formportal_core::access::gate(ctx.portal.root(), name).map_err(|e| e.to_string())?;
+    }
     let out = match name {
         "status" => ops::status(ctx),
         "apps" => ops::apps(ctx, args),

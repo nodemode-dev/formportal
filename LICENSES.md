@@ -15,6 +15,7 @@ FormPortal is GPL-3.0-only (LICENSE, NOTICE), as FormPromo, FormMCP and FormSkil
 | serde, serde_json | 1 | MIT or Apache-2.0 | core, cli |
 | ed25519-dalek 2, base64 0.22, and what ed25519-dalek brings | as locked | BSD-3-Clause (the dalek crates); MIT or Apache-2.0 (the rest) | core, checking the catalogue's signature |
 | sha2 0.10, ureq 2, zip 2 | as locked | MIT or Apache-2.0 (sha2, ureq); MIT (zip) | core: hashing, fetching, unpacking |
+| hmac 0.12, getrandom 0.2 | as locked (already present through keyring and ureq) | MIT or Apache-2.0 | core: the seal on the stored choice for outside agents and its random key (0.65.0) |
 | sha1 0.10 | as locked (already present through keyring) | MIT or Apache-2.0 | core: git blob hashes, so sharing sends only changed files (0.48.0) |
 | keyring 3.6.3 (macOS: apple-native; Windows: windows-native; Linux: sync-secret-service with crypto-rust) | 3.6.3 | MIT or Apache-2.0 | core: the optional GitHub sign-in's token, kept in the system keychain (0.47.0) |
 | What keyring brings (read from `cargo metadata` in 0.47.0): dbus-secret-service 4.1.0, dbus 0.9, libdbus-sys 0.2, aes, cbc, cipher, hkdf, hmac, inout, block-padding, the num crates, rand 0.8 and rand_chacha, sha1, zeroize_derive, security-framework 2.11 on macOS; the lockfile also lists secret-service 4.0.0 and the zbus 4 crates, which the Linux build does not use | as locked | MIT or Apache-2.0; MIT (nix, cfg_aliases, xdg-home, the zbus and zvariant crates); BSD-2-Clause or Apache-2.0 or MIT (zerocopy, under MIT). Nothing GPL, LGPL, AGPL or MPL | core |
