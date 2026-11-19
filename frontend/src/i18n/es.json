@@ -98,6 +98,9 @@
     "Remove": "Quitar",
     "Remove from this computer": "Quitar de este ordenador",
     "Go back to the version before": "Volver a la versión anterior",
+    "Go back to {version}": "Volver a la {version}",
+    "Kept to go back to:": "Guardada para volver:",
+    "nothing": "ninguna",
     "Other versions": "Otras versiones",
     "Update automatically": "Actualizar automáticamente",
     "More actions": "Más acciones",
@@ -460,6 +463,7 @@
     ["{app} beta", "{app} beta"],
     ["Use {app} with your AI tools", "Usa {app} con tus herramientas de IA"],
     ["{app} with your AI tools", "{app} con tus herramientas de IA"],
+    ["Versions of {app}", "Versiones de {app}"],
     ["{app} has its own MCP server. FormPortal adds it to Claude Code, Codex and Cursor and starts whichever version is installed, so updates and going back a version need nothing more.", "{app} tiene su propio servidor MCP. FormPortal lo añade a Claude Code, Codex y Cursor y arranca la versión que esté instalada, así que las actualizaciones y volver a una versión anterior no requieren nada más."]
   ]
 }

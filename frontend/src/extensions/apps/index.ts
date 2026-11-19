@@ -51,6 +51,9 @@ export const apps: Extension = {
       row.setAttribute("data-availability", view.availability);
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
+      const back = record?.previous ? t("Go back to {version}", { version: record.previous }) : t("Go back to the version before");
+      row.querySelectorAll<HTMLElement>("[data-act='rollback']").forEach((button) => write(button, back));
+      write(row.querySelector<HTMLElement>("[data-field='previous']"), record?.previous ?? t("nothing"));
       const later = engine.later.has(key);
       if (row.hasAttribute("data-later") !== later) row.toggleAttribute("data-later", later);
       row.style.setProperty("--p", String(progress ?? 0));

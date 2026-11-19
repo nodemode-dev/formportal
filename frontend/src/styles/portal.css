@@ -1866,6 +1866,39 @@ html:not([data-installed]) .list-updates {
   color: var(--fp-ink-3);
 }
 
+.vers {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--fp-edge);
+  border-radius: 14px;
+  background: var(--fp-pane);
+}
+
+.vers-kept {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-block-size: 28px;
+  margin: 0;
+  color: var(--fp-ink-2);
+}
+
+.vers-kept b {
+  color: var(--fp-ink);
+  font-weight: 500;
+}
+
+.vers-kept .btn {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.vers:not([data-previous]) [data-act="rollback"] {
+  visibility: hidden;
+}
+
 .beta-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
