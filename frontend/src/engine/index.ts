@@ -16,7 +16,7 @@ export interface EngineEvents {
   product: { id: string };
   extensions: { count: number };
   prefs: { prefs: Preferences };
-  self: { status: string; installable: boolean };
+  self: { status: string; installable: boolean; label: string };
   policy: { policy: PolicyView | null };
   agents: { product: string; view: AgentsView };
   files: { result: FilesScan };
@@ -208,8 +208,8 @@ export class Engine {
     return this.names.get(id) ?? this.product(id)?.name ?? id;
   }
 
-  setSelf(status: string, installable: boolean): void {
-    this.emit("self", { status, installable });
+  setSelf(status: string, installable: boolean, label = ""): void {
+    this.emit("self", { status, installable, label });
   }
 
   setPrefs(prefs: Preferences): void {

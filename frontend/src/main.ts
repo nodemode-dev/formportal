@@ -1,8 +1,7 @@
 import { pickBridge } from "./bridge/index.ts";
 import { Engine, versionNewer } from "./engine/index.ts";
-import type { Channel, InstallRecord, NoticeCategory, Preferences, SyncReport } from "./engine/types.ts";
+import type { Channel, InstallRecord, NoticeCategory, Preferences, SelfUpdate, SyncReport } from "./engine/types.ts";
 import { HOSTS, MAKER, MAKER_PAGE, catalogueId } from "./engine/hosts.ts";
-import pkg from "../package.json";
 import registry from "../../catalog/products.json";
 import { apps } from "./extensions/apps/index.ts";
 import { library } from "./extensions/library/index.ts";
@@ -99,14 +98,15 @@ engine.command("catalog.load", () =>
       const v = engine.view(r.product, r.channel);
       return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version);
     }).length;
-    const self = engine.view("formai", "stable");
+    const self = await selfOffer().catch(() => null);
     const parts = [
       ok.length ? t("Updated {list}.", { list: ok.join(", ") }) : "",
       failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : "",
       waiting ? (waiting === 1 ? t("1 update is waiting in Updates.") : t("{n} updates are waiting in Updates.", { n: waiting })) : "",
-      self.version && versionNewer(self.version, pkg.version) ? t("FormPortal {version} is available at formai.studio/download.", { version: self.version }) : "",
+      self?.available ? t("FormPortal {version} is available.", { version: self.available }) : "",
     ].filter(Boolean);
-    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates");
+    const act = self?.available ? { label: selfLabel(self), command: "self.install" } : undefined;
+    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates", act);
   }),
 );
 
@@ -373,24 +373,45 @@ engine.command("ext.make", () => {
   else void engine.dispatch("web.open", MAKER_PAGE);
 });
 
+function selfLabel(s: SelfUpdate): string {
+  const version = s.available ?? "";
+  return s.action === "install" ? t("Install FormPortal {version} and restart", { version }) : t("Get FormPortal {version}", { version });
+}
+
+async function selfOffer(): Promise<SelfUpdate> {
+  const s = await bridge.selfUpdateCheck();
+  if (!s.available) engine.setSelf(t("FormPortal is up to date."), false);
+  else if (s.action === "install") engine.setSelf(t("FormPortal {version} is available.", { version: s.available }), true, selfLabel(s));
+  else engine.setSelf(t("FormPortal {version} is available. The button opens formai.studio/download in your browser.", { version: s.available }), true, selfLabel(s));
+  return s;
+}
+
 engine.command("self.check", async () => {
   engine.setSelf(t("Checking..."), false);
   try {
-    const s = await bridge.selfUpdateCheck();
-    if (!s.configured) engine.setSelf(t("This build has no update key yet; new versions come from formai.studio/download."), false);
-    else if (s.available) engine.setSelf(t("FormPortal {version} is available.", { version: s.available }), true);
-    else engine.setSelf(t("FormPortal is up to date."), false);
+    await selfOffer();
   } catch (e) {
-    engine.setSelf(e instanceof Error ? e.message : String(e), false);
+    engine.setSelf(t("FormPortal could not check for a newer version: {why}", { why: e instanceof Error ? e.message : String(e) }), false);
   }
 });
 
 engine.command("self.install", async () => {
-  engine.setSelf(t("Downloading and checking the signature..."), false);
   try {
-    await bridge.selfUpdateInstall();
+    const s = await selfOffer();
+    if (!s.available) return;
+    if (s.action === "install") {
+      engine.setSelf(t("Downloading and checking the signature..."), false);
+      await bridge.selfUpdateInstall();
+      return;
+    }
+    await bridge.openWeb(s.page);
+    const opened = t("The download page is open in your browser. Install FormPortal {version} from there, then start FormPortal again.", { version: s.available });
+    engine.setSelf(opened, true, selfLabel(s));
+    engine.setNotice(opened, "info", "updates");
   } catch (e) {
-    engine.setSelf(e instanceof Error ? e.message : String(e), false);
+    const why = t("FormPortal could not be updated: {why}", { why: e instanceof Error ? e.message : String(e) });
+    engine.setSelf(why, false);
+    engine.setNotice(why, "fault", "updates");
   }
 });
 

@@ -107,6 +107,8 @@ export interface SelfUpdate {
   current: string;
   available: string | null;
   notes: string | null;
+  action: "none" | "install" | "download";
+  page: string;
 }
 
 export interface MediaItem {

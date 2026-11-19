@@ -176,7 +176,7 @@ export const fixtureBridge: Bridge = {
   selfUpdateCheck: async () => {
     await pause(200);
     const offered = new URLSearchParams(window.location.search).get("self");
-    return { configured: offered !== null, current: "0.0.0", available: offered || null, notes: null };
+    return { configured: offered !== null, current: "0.0.0", available: offered || null, notes: null, action: offered ? "download" : "none", page: "https://formai.studio/download/" };
   },
   selfUpdateInstall: async () => {
     await pause(300);

@@ -317,8 +317,8 @@ async fn learn_mark(id: String, step: Option<u64>, done: bool, reset: bool, url:
 }
 
 #[tauri::command]
-fn assistant_agents() -> Vec<formportal_core::assistant::AgentCli> {
-    formportal_core::assistant::assistant_agents()
+async fn assistant_agents() -> Result<Vec<formportal_core::assistant::AgentCli>, String> {
+    tauri::async_runtime::spawn_blocking(formportal_core::assistant::assistant_agents).await.map_err(text)
 }
 
 #[tauri::command]
@@ -554,20 +554,34 @@ struct SelfUpdate {
     current: String,
     available: Option<String>,
     notes: Option<String>,
+    action: formportal_core::selfupdate::Action,
+    page: String,
 }
 
 fn updater_configured(app: &AppHandle) -> bool {
     app.config().plugins.0.get("updater").and_then(|u| u.get("pubkey")).and_then(|k| k.as_str()).map(|k| !k.trim().is_empty()).unwrap_or(false)
 }
 
-#[tauri::command]
-async fn self_update_check(app: AppHandle) -> Result<SelfUpdate, String> {
-    let current = app.package_info().version.to_string();
-    if !updater_configured(&app) {
-        return Ok(SelfUpdate { configured: false, current, available: None, notes: None });
+async fn in_place(app: &AppHandle) -> Option<(String, Option<String>)> {
+    if !updater_configured(app) {
+        return None;
     }
-    let update = app.updater().map_err(text)?.check().await.map_err(text)?;
-    Ok(SelfUpdate { configured: true, current, available: update.as_ref().map(|u| u.version.clone()), notes: update.and_then(|u| u.body.clone()) })
+    let update = app.updater().ok()?.check().await.ok()??;
+    Some((update.version.clone(), update.body.clone()))
+}
+
+#[tauri::command]
+async fn self_update_check(app: AppHandle, url: String, allow_unsigned: bool) -> Result<SelfUpdate, String> {
+    let current = app.package_info().version.to_string();
+    let running = current.clone();
+    let newer = tauri::async_runtime::spawn_blocking(move || recent_catalog(&hub(), &url, allow_unsigned).map(|catalog| formportal_core::selfupdate::newer(&catalog, Platform::current(), &running)))
+        .await
+        .map_err(text)??;
+    let configured = updater_configured(&app);
+    let feed = if newer.is_some() { in_place(&app).await } else { None };
+    let action = formportal_core::selfupdate::action(newer.as_ref(), feed.as_ref().map(|(version, _)| version.as_str()));
+    let page = newer.as_ref().map(|n| n.page.clone()).unwrap_or_else(|| formportal_core::selfupdate::DOWNLOAD_PAGE.to_string());
+    Ok(SelfUpdate { configured, current, available: newer.map(|n| n.version), notes: feed.and_then(|(_, notes)| notes), action, page })
 }
 
 #[tauri::command]
@@ -576,9 +590,9 @@ async fn self_update_install(app: AppHandle) -> Result<(), String> {
         return Err("FormPortal's own updates are not set up in this build yet".to_string());
     }
     let Some(update) = app.updater().map_err(text)?.check().await.map_err(text)? else {
-        return Err("FormPortal is up to date".to_string());
+        return Err("FormPortal's update feed offers no newer version to install in place; get it from formai.studio/download".to_string());
     };
-    update.download_and_install(|_, _| {}, || {}).await.map_err(text)?;
+    update.download_and_install(|_, _| {}, || {}).await.map_err(|e| format!("FormPortal {} could not be downloaded and installed in place: {e}", update.version))?;
     app.restart()
 }
 
@@ -689,6 +703,8 @@ fn sync_login() -> Result<(), String> {
 }
 
 const SCHEME: &str = "formai://";
+#[cfg(target_os = "macos")]
+const PREFERENCES_ITEM: &str = "preferences";
 
 struct Pending(Mutex<Option<String>>);
 
@@ -782,6 +798,26 @@ fn main() {
                     }
                 }
             }
+            #[cfg(target_os = "macos")]
+            {
+                let menu = tauri::menu::Menu::default(app.handle())?;
+                let items = menu.items()?;
+                if let Some(first) = items.first().and_then(|item| item.as_submenu()) {
+                    let settings = tauri::menu::MenuItem::with_id(app.handle(), PREFERENCES_ITEM, "Settings...", true, Some("CmdOrCtrl+,"))?;
+                    first.insert_items(&[&tauri::menu::PredefinedMenuItem::separator(app.handle())?, &settings], 1)?;
+                }
+                app.set_menu(menu)?;
+                app.on_menu_event(|handle, event| {
+                    if event.id().0.as_str() == PREFERENCES_ITEM {
+                        if let Some(window) = handle.get_webview_window("main") {
+                            let _ = window.unminimize();
+                            let _ = window.set_focus();
+                        }
+                        let _ = handle.emit("deep-link", PREFERENCES_ITEM);
+                    }
+                });
+            }
+            std::thread::spawn(formportal_core::programs::warm);
             watch_saves(app.handle().clone());
             let _ = sync_login();
             let handle = app.handle().clone();

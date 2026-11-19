@@ -132,6 +132,17 @@ export const notices: Extension = {
       when.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       const body = document.createElement("p");
       body.textContent = text;
+      if (action) {
+        const act = document.createElement("button");
+        act.type = "button";
+        act.className = "toast-act";
+        act.textContent = action.label;
+        act.addEventListener("click", (event) => {
+          event.stopPropagation();
+          void engine.dispatch(action.command, action.arg);
+        });
+        body.append(" ", act);
+      }
       entry.append(when, body);
       list.prepend(entry);
       while (list.children.length > KEEP) list.lastElementChild?.remove();

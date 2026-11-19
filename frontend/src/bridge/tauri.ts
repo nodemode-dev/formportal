@@ -58,7 +58,7 @@ export const tauriBridge: Bridge = {
   enableExtension: async (product, id, enabled) => {
     await tauri().core.invoke<InstalledExtension>("extension_enable", { product, id, enabled });
   },
-  selfUpdateCheck: () => tauri().core.invoke<SelfUpdate>("self_update_check"),
+  selfUpdateCheck: () => tauri().core.invoke<SelfUpdate>("self_update_check", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   selfUpdateInstall: async () => {
     await tauri().core.invoke<null>("self_update_install");
   },
