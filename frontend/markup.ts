@@ -182,6 +182,10 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     (p) => `<li class="auto-item" data-row="stable" data-product="${p.id}">${`<label class="check">${icon(p.id, 22, "app-ic app-ic-s")}<span class="auto-name">${esc(p.name)}</span><input type="checkbox" class="switch" data-auto /></label>`}</li>`,
   );
 
+  const ownagents = loadJson<{ clients: { id: string; label: string }[] }>(resolve(root, "../core/data/agent-clients.json")).clients.map(
+    (c) => `<li class="own-item" data-own-client="${esc(c.id)}"><span class="own-name">${esc(c.label)}</span><span class="own-state" data-own-state aria-live="polite">&nbsp;</span><button class="btn btn-small own-act" type="button" data-own-act disabled>Connect</button><p class="fine own-note" data-own-note>&nbsp;</p></li>`,
+  );
+
   const learn = apps.filter((p) => repo(p)).map((p) => `<li class="learn" data-product="${p.id}"${style(p)}>${icon(p.id, 40)}<div class="learn-text"><h3 class="learn-name">${name(p)}</h3><p class="links">${web(`${repo(p)}#readme`, "Guide and docs")}${web("https://formai.studio/download/", "Every release")}${web(`${repo(p)}/discussions`, "Ask the community")}</p></div></li>`);
 
   const extIds = EXT_PRODUCTS.map(catalogueId).filter((id) => all.some((p) => p.id === id));
@@ -202,6 +206,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     updates,
     pages,
     autolist,
+    ownagents,
     learn,
     extfilters,
     total: [String(apps.length)],
