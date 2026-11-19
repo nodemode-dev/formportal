@@ -93,6 +93,23 @@ export const side: Extension = {
       keep();
     });
 
+    const mine = nav.querySelector<HTMLElement>(".nav-mine");
+    if (mine) {
+      const more = () => {
+        const above = mine.scrollTop > 1;
+        const below = mine.scrollTop + mine.clientHeight < mine.scrollHeight - 1;
+        const say = above && below ? "both" : above ? "above" : below ? "below" : "";
+        if ((mine.dataset.more ?? "") === say) return;
+        if (say) mine.dataset.more = say;
+        else delete mine.dataset.more;
+      };
+      mine.addEventListener("scroll", more, { passive: true });
+      const watch = new ResizeObserver(more);
+      watch.observe(mine);
+      for (const row of Array.from(mine.children)) watch.observe(row);
+      more();
+    }
+
     label();
   },
 };

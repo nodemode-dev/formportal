@@ -200,10 +200,12 @@ html[data-side-drag] .shell {
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex: none;
+  gap: var(--sp-2);
+  box-sizing: content-box;
   block-size: 36px;
-  margin: 0 0 12px;
-  padding: 0 4px 0 6px;
+  margin: 0 0 var(--sp-3);
+  padding: 0 4px var(--sp-2) 6px;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -238,11 +240,37 @@ html[data-side-drag] .shell {
 
 .side .nav {
   display: flex;
+  flex: none;
   flex-direction: column;
   gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.side .nav-mine {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  overscroll-behavior: contain;
+}
+
+.side .nav-mine > li {
+  flex: none;
+}
+
+.side .nav-mine[data-more="below"] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--sp-5)), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - var(--sp-5)), transparent);
+}
+
+.side .nav-mine[data-more="above"] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--sp-5));
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--sp-5));
+}
+
+.side .nav-mine[data-more="both"] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--sp-5), #000 calc(100% - var(--sp-5)), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--sp-5), #000 calc(100% - var(--sp-5)), transparent);
 }
 
 .side .nav-item {
@@ -322,10 +350,13 @@ html[data-side-drag] .shell {
 }
 
 .nav-title {
-  margin: 18px 10px 6px;
+  flex: none;
+  block-size: var(--sp-4);
+  margin: var(--sp-4) 10px var(--sp-2);
   color: var(--fp-ink-3);
   font-size: 11px;
   font-weight: 600;
+  line-height: var(--sp-4);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -383,9 +414,10 @@ html:not([data-installed]) .nav-title-mine {
 .nav-foot {
   display: flex;
   flex-direction: column;
+  flex: none;
   gap: 2px;
   margin-block-start: auto;
-  padding-block-start: 12px;
+  padding-block-start: var(--sp-3);
 }
 
 .side-edge {
@@ -474,7 +506,7 @@ html[data-rail="mini"] .side {
 
 html[data-rail="mini"] .brand {
   justify-content: center;
-  padding: 0;
+  padding-inline: 0;
 }
 
 html[data-rail="mini"] .brand-name,
@@ -486,10 +518,9 @@ html[data-rail="mini"] .side-bar {
 }
 
 html[data-rail="mini"] .nav-title {
-  block-size: 1px;
-  margin: 14px 8px 10px;
+  margin-inline: var(--sp-2);
   overflow: hidden;
-  background: var(--fp-edge);
+  background: linear-gradient(var(--fp-edge), var(--fp-edge)) center / 100% 1px no-repeat;
   color: transparent;
 }
 

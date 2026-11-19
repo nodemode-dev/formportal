@@ -18,6 +18,54 @@ The "Ask your agent" dialog's sentence for no agent is set by its handler to nam
 
 Checked in a browser: the built interface served by `vite preview` from a copy outside the repository, Chrome headless through Playwright, the fixture bridge with `?self=0.65.0` (the row, the toast, About and Updates each showed "Get FormPortal 0.65.0"; pressing the row's button changed About's status to the page-is-open sentence and added that notice), with no parameter (up to date, no buttons) and with `?assistant=none` (the new sentence). `tsc --noEmit` passed there. Not checked in the desktop window.
 
+## after v0.65.0 · the sidebar keeps its brand row, its whole menu and its bottom group {#side-layout}
+- refers-to: src/styles/portal.css :: `.brand`, `.side .nav`, `.side .nav-mine`, `.nav-title`, `.nav-foot`, `html[data-rail="mini"] .brand`, `html[data-rail="mini"] .nav-title` · src/extensions/side/index.ts :: more
+- kind: fix
+- logged: after v0.65.0 · 2026-11-19
+
+Cause, measured in Chromium with 22 apps installed: `.side` is a flex column and every child could shrink. `.brand` has `overflow: hidden`, and main.css gives `.nav` `overflow-y: auto`, so their automatic minimum height was zero. With a long app list the brand row went from 36 px to 23 px at 1440 by 900, 17 px at 1100 by 700 and 13 px at 880 by 600 (the rule under it touched the wordmark), and the main menu shrank from 286 px to 179, 127 and 102 px, showing five, three and two of its eight items with no scrollbar. The collapsed rail did the same.
+
+Now `.brand`, `.side .nav`, `.nav-title` and `.nav-foot` are `flex: none`; `.side .nav-mine` alone is `flex: 0 1 auto; min-block-size: 0`, so the list of apps is the one part that scrolls. Measured after: the brand row 45 px and all eight items at the three sizes, expanded and collapsed. At the minimum window, 880 by 600, the list has 65 px, a little under two rows.
+
+Spacing comes from the tokens: the brand row is 36 px of content plus `--sp-2` before its rule, then `--sp-3` to the menu; the title is a `--sp-4` line with `--sp-4` above and `--sp-2` below; the bottom group starts `--sp-3` down. In the rail the title keeps the same box and draws its 1 px rule as a centred background, and the brand keeps its block padding, so expanding and collapsing moves nothing vertically (the top of every item was the same in both states and in every frame of the fold, watched under 4x CPU, a slow network and no cache).
+
+Where the list has more above or below, `more` sets `data-more` to `above`, `below` or `both` on the list (one attribute, on scroll and on a ResizeObserver of the list and its rows) and the list fades over `--sp-5` at that edge, so the last icon is no longer cut by a hard edge where the list meets the bottom group.
+
+Removed:
+
+```css
+  gap: 8px;
+  block-size: 36px;
+  margin: 0 0 12px;
+  padding: 0 4px 0 6px;
+```
+
+```css
+.nav-title {
+  margin: 18px 10px 6px;
+```
+
+```css
+  padding-block-start: 12px;
+```
+
+```css
+html[data-rail="mini"] .brand {
+  justify-content: center;
+  padding: 0;
+}
+```
+
+```css
+html[data-rail="mini"] .nav-title {
+  block-size: 1px;
+  margin: 14px 8px 10px;
+  overflow: hidden;
+  background: var(--fp-edge);
+  color: transparent;
+}
+```
+
 ## v0.65.0 · AMOLED Black {#amoled}
 - refers-to: index.html (Appearance, a fourth button) · public/prepaint.js · src/extensions/theme/index.ts :: modeOf, paint · src/styles/portal.css :: :root[data-oled] · src/styles/main.css :: :root[data-oled] .cv-prefs-group · src/i18n/es.json · ../design/tokens.css (design/HASHOUT_LOG.md#amoled)
 - kind: decision
