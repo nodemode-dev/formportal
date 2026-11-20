@@ -21,4 +21,4 @@ FormPortal ships six tutorials of its own (installing a first app, a beta beside
 
 ## Ask your agent
 
-The window's Ask your agent sends one question to Claude Code or Codex on this computer, which answers through FormPortal's reading server (`mcp --read-only`, only the tools annotated read-only). If you are that agent, you can read but not install, update, roll back or remove; tell the person which FormPortal button does it.
+The window's Ask your agent sends one question to Claude Code, Codex, Cursor's agent or Antigravity on this computer, which answers through FormPortal's reading server (`mcp --read-only`, only the tools annotated read-only). If you are that agent, you can read but not install, update, roll back or remove; tell the person which FormPortal button does it.
