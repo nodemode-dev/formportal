@@ -244,9 +244,10 @@ pub enum Client {
     Claude,
     Codex,
     Cursor,
+    Antigravity,
 }
 
-pub const CLIENTS: [Client; 3] = [Client::Claude, Client::Codex, Client::Cursor];
+pub const CLIENTS: [Client; 4] = [Client::Claude, Client::Codex, Client::Cursor, Client::Antigravity];
 
 impl Client {
     pub fn label(self) -> &'static str {
@@ -254,6 +255,7 @@ impl Client {
             Client::Claude => "Claude Code",
             Client::Codex => "Codex",
             Client::Cursor => "Cursor",
+            Client::Antigravity => "Antigravity",
         }
     }
 
@@ -262,6 +264,7 @@ impl Client {
             "claude" | "claude-code" | "claude code" => Some(Client::Claude),
             "codex" => Some(Client::Codex),
             "cursor" => Some(Client::Cursor),
+            "antigravity" | "agy" => Some(Client::Antigravity),
             _ => None,
         }
     }
@@ -327,6 +330,48 @@ fn codex_config() -> PathBuf {
 
 fn cursor_config() -> PathBuf {
     home().join(".cursor").join("mcp.json")
+}
+
+fn antigravity_config() -> PathBuf {
+    home().join(".gemini").join("config").join("mcp_config.json")
+}
+
+fn antigravity_older() -> PathBuf {
+    home().join(".gemini").join("antigravity-cli").join("mcp_config.json")
+}
+
+fn json_config(client: Client) -> PathBuf {
+    if client == Client::Antigravity {
+        antigravity_config()
+    } else {
+        cursor_config()
+    }
+}
+
+fn only_older(client: Client) -> bool {
+    client == Client::Antigravity && antigravity_older().is_file() && !antigravity_config().exists()
+}
+
+fn with_older(seen: bool, note: Option<String>) -> Option<String> {
+    if !seen {
+        return note;
+    }
+    let older = format!("an older Antigravity settings file was seen at {} and left alone; FormPortal writes {}", antigravity_older().display(), antigravity_config().display());
+    Some(match note {
+        Some(first) => format!("{first}; {older}"),
+        None => older,
+    })
+}
+
+fn write_whole(path: &Path, text: &str) -> Result<()> {
+    let target = path.canonicalize().unwrap_or_else(|_| path.to_path_buf());
+    let part = target.with_file_name(format!("{}.part", target.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default()));
+    fs::write(&part, text)?;
+    if let Ok(held) = fs::metadata(&target) {
+        let _ = fs::set_permissions(&part, held.permissions());
+    }
+    fs::rename(&part, &target)?;
+    Ok(())
 }
 
 pub(crate) fn which(program: &str) -> Option<PathBuf> {
@@ -635,8 +680,8 @@ fn held(client: Client, found: Option<&Path>, launcher: &Launcher) -> Option<Hel
                 exact: section.trim() == codex_block(OWN_SERVER, &exe, &args, root.as_deref(), OWN_LIMITS).trim(),
             })
         }
-        Client::Cursor => {
-            let data: serde_json::Value = fs::read_to_string(cursor_config()).ok().and_then(|t| serde_json::from_str(&t).ok())?;
+        Client::Cursor | Client::Antigravity => {
+            let data: serde_json::Value = fs::read_to_string(json_config(client)).ok().and_then(|t| serde_json::from_str(&t).ok())?;
             let entry = data.get("mcpServers")?.get(OWN_SERVER)?;
             Some(Held {
                 command: entry.get("command").and_then(|c| c.as_str()).map(str::to_string),
@@ -653,7 +698,7 @@ pub fn own_state(client: Client, launcher: &Launcher) -> OwnState {
     let config = match client {
         Client::Claude => None,
         Client::Codex => Some(codex_config()),
-        Client::Cursor => Some(cursor_config()),
+        Client::Cursor | Client::Antigravity => Some(json_config(client)),
     };
     let held = held(client, program.as_deref(), launcher);
     let own = held.as_ref().is_some_and(|h| h.command.as_deref().is_some_and(|c| own_command(c, &h.args, &launcher.program)));
@@ -667,6 +712,7 @@ pub fn own_state(client: Client, launcher: &Launcher) -> OwnState {
         (None, None) => (Link::NoClient, Some(looked_for(client))),
         (None, Some(_)) => (Link::NotConnected, None),
     };
+    let note = with_older(only_older(client), note);
     OwnState { client, label, state, program, config, command: held.and_then(|h| h.command), current, note }
 }
 
@@ -689,12 +735,17 @@ pub fn connect_own(clients: &[Client], launcher: &Launcher, connect: bool) -> Re
             out.push(before);
             continue;
         }
+        let older = only_older(client);
         if connect {
             put(client, OWN_SERVER, &launcher.program, &args, OWN_LIMITS)?;
         } else {
             take(client, OWN_SERVER)?;
         }
-        out.push(own_state(client, launcher));
+        let mut after = own_state(client, launcher);
+        if older && only_older(client) != older {
+            after.note = with_older(true, after.note);
+        }
+        out.push(after);
     }
     Ok(out)
 }
@@ -797,11 +848,15 @@ impl Portal {
         let mut out = Vec::new();
         for &client in clients {
             let before = client_state(client, &name);
-            let after = match (connect, before.state) {
+            let older = only_older(client);
+            let mut after = match (connect, before.state) {
                 (true, Link::NotConnected) | (true, Link::Connected) => write(client, &name, &launcher.program, &args, APP_LIMITS)?,
                 (false, Link::Connected) => remove(client, &name)?,
                 _ => before,
             };
+            if older && only_older(client) != older {
+                after.note = with_older(true, after.note);
+            }
             out.push(after);
         }
         Ok(out)
@@ -835,15 +890,15 @@ fn client_state(client: Client, name: &str) -> ClientState {
             };
             ClientState { client, label, state, config: Some(path), note: (state == Link::Taken).then(|| format!("another server named {name} is set up; left alone")) }
         }
-        Client::Cursor => {
-            let path = cursor_config();
+        Client::Cursor | Client::Antigravity => {
+            let path = json_config(client);
             let data: serde_json::Value = fs::read_to_string(&path).ok().and_then(|t| serde_json::from_str(&t).ok()).unwrap_or_default();
             let state = match data.get("mcpServers").and_then(|m| m.get(name)) {
                 Some(entry) if ours(&entry.to_string()) => Link::Connected,
                 Some(_) => Link::Taken,
                 None => Link::NotConnected,
             };
-            ClientState { client, label, state, config: Some(path), note: (state == Link::Taken).then(|| format!("another server named {name} is set up; left alone")) }
+            ClientState { client, label, state, config: Some(path), note: with_older(only_older(client), (state == Link::Taken).then(|| format!("another server named {name} is set up; left alone"))) }
         }
     }
 }
@@ -872,7 +927,7 @@ fn put(client: Client, name: &str, program: &Path, args: &[String], limits: &str
             command.args(["--", &exe]).args(args);
             let out = command.output()?;
             if !out.status.success() {
-                return Err(CoreError::Invalid(format!("claude mcp add failed: {}", String::from_utf8_lossy(&out.stderr).trim())));
+                return Err(CoreError::Invalid(format!("claude mcp add failed: {}", crate::programs::last_line(&String::from_utf8_lossy(&out.stderr)).unwrap_or("it stopped without saying why"))));
             }
         }
         Client::Codex => {
@@ -890,8 +945,8 @@ fn put(client: Client, name: &str, program: &Path, args: &[String], limits: &str
             }
             fs::write(&path, next)?;
         }
-        Client::Cursor => {
-            json_file_put(&cursor_config(), name, &cursor_entry(&exe, args, root.as_deref()))?;
+        Client::Cursor | Client::Antigravity => {
+            json_file_put(&json_config(client), name, &cursor_entry(&exe, args, root.as_deref()))?;
         }
     }
     Ok(())
@@ -917,7 +972,7 @@ fn json_file_put(path: &Path, name: &str, entry: &serde_json::Value) -> Result<(
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir)?;
     }
-    fs::write(path, next)?;
+    write_whole(path, &next)?;
     Ok(())
 }
 
@@ -934,7 +989,7 @@ fn json_file_take(path: &Path, name: &str) -> Result<()> {
         None => serde_json::to_string_pretty(&data).map_err(|e| CoreError::State(e.to_string()))? + "\n",
     };
     backup(path)?;
-    fs::write(path, next)?;
+    write_whole(path, &next)?;
     Ok(())
 }
 
@@ -959,7 +1014,7 @@ fn take(client: Client, name: &str) -> Result<()> {
                 fs::write(&path, format!("{head}{}", &text[b..]))?;
             }
         }
-        Client::Cursor => json_file_take(&cursor_config(), name)?,
+        Client::Cursor | Client::Antigravity => json_file_take(&json_config(client), name)?,
     }
     Ok(())
 }

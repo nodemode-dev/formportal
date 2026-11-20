@@ -6,7 +6,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
-use formportal_core::programs::{child_path, find_in, known_dirs, order, shell_dirs};
+use formportal_core::programs::{child_path, find_in, find_under, known_dirs, order, shell_dirs};
 use formportal_core::Os;
 use support::*;
 
@@ -109,4 +109,46 @@ fn a_started_program_gets_its_own_folder_first_on_its_path() {
     let dirs: Vec<PathBuf> = std::env::split_paths(&path).collect();
     assert_eq!(dirs[0], scratch.path().join("node/bin"));
     assert!(dirs.ends_with(&short()), "{dirs:?}");
+}
+
+#[test]
+fn a_program_is_found_one_or_two_folders_down_only_under_a_folder_with_its_name() {
+    let scratch = Scratch::new("programs-under");
+    let root = scratch.path().join("Local");
+    let words = ["antigravity", "agy"];
+    std::fs::create_dir_all(&root).unwrap();
+    assert_eq!(find_under(&root, &words, "agy.exe"), None);
+    program(&root.join("Programs/Other/agy.exe"), "");
+    program(&root.join("agy.exe"), "");
+    program(&root.join("Programs/Other/Antigravity/agy.exe"), "");
+    assert_eq!(find_under(&root, &words, "agy.exe"), None);
+    program(&root.join("Programs/Antigravity CLI/agy.exe"), "");
+    assert_eq!(find_under(&root, &words, "agy.exe"), Some(root.join("Programs/Antigravity CLI/agy.exe")));
+    program(&root.join("Google Antigravity/bin/agy.exe"), "");
+    assert_eq!(find_under(&root, &words, "agy.exe"), Some(root.join("Google Antigravity/bin/agy.exe")));
+    program(&root.join("AGY/agy.exe"), "");
+    assert_eq!(find_under(&root, &words, "agy.exe"), Some(root.join("AGY/agy.exe")));
+    assert_eq!(find_under(&scratch.path().join("absent"), &words, "agy.exe"), None);
+}
+
+#[test]
+fn the_known_folders_can_be_narrowed_to_the_home_folder() {
+    let scratch = Scratch::new("programs-under-home");
+    let home = scratch.path().join("home");
+    for os in [Os::Linux, Os::Macos] {
+        let all = known_dirs(os, &home, &none);
+        let kept = formportal_core::programs::under(all.clone(), &home);
+        assert!(all.iter().any(|d| d == Path::new("/usr/local/bin")));
+        assert!(!kept.is_empty() && kept.iter().all(|d| d.starts_with(&home)), "{kept:?}");
+        assert!(kept.contains(&home.join(".local/bin")));
+        assert_eq!(kept.len(), all.iter().filter(|d| d.starts_with(&home)).count());
+    }
+}
+
+#[test]
+fn the_note_env_prints_about_its_options_is_never_the_programs_last_line() {
+    assert_eq!(formportal_core::programs::last_line("authentication required\n/usr/bin/env: use -[v]S to pass options in shebang lines\n\n"), Some("authentication required"));
+    assert_eq!(formportal_core::programs::last_line("env: use -[v]S to pass options in shebang lines\n"), None);
+    assert_eq!(formportal_core::programs::last_line("one\n  two  \n"), Some("two"));
+    assert_eq!(formportal_core::programs::last_line(""), None);
 }
