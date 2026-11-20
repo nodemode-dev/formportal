@@ -14,7 +14,7 @@
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24C8DB?style=flat-square">
   <img alt="macOS, Windows, Linux" src="https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-native-2f7bf5?style=flat-square">
   <img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-3a3a3a?style=flat-square">
-  <img alt="Status: in development" src="https://img.shields.io/badge/status-in%20development-d69e2e?style=flat-square">
+  <img alt="Status: released" src="https://img.shields.io/badge/status-released-d69e2e?style=flat-square">
 </p>
 
 <p align="center">
@@ -161,7 +161,7 @@ npm run dev         # web UI at http://localhost:3250, on the sample catalogue
 `./formportal_oc_install` then `./formportal` opens the desktop window instead (`.bat` files on Windows). The first start compiles the shell. The web UI runs on localhost:3250 only; `npm run preview` serves it on 3251.
 
 > [!IMPORTANT]
-> **Status:** in development. The browser preview runs on a bundled sample catalogue, so installs there are simulated. See [`.docs/wiki/Releasing.md`](.docs/wiki/Releasing.md).
+> **Status:** released. FormPortal is built and bundled for macOS, Windows and Linux and has been tested on all three. The browser preview runs on a bundled sample catalogue, so installs there are simulated. See [`.docs/wiki/Releasing.md`](.docs/wiki/Releasing.md).
 
 **Contributing:** branch from `main`, keep changes to source here, and leave packaging and releases to formcompiler. See [`.docs/BRANCHING.md`](.docs/BRANCHING.md) and [`AGENTS.md`](AGENTS.md).
 
