@@ -147,7 +147,7 @@ engine.command("app.install", (arg) =>
     if (!notes.length) notes.push(t("{app} {version} is installed.", { app: `${label}${channel === "stable" ? "" : ` ${channel}`}`, version: installed }));
     const view = await bridge.appAgents(product, channel).catch(() => null);
     if (view?.surface && !view.clients.some((c) => c.state === "connected")) {
-      notes.push(t("It has its own MCP server: connect it to Claude Code, Codex and Cursor from its page."));
+      notes.push(t("It has its own MCP server: connect it to Claude Code, Codex, Cursor and Antigravity from its page."));
     }
     engine.setNotice(notes.join(" "), "info", "installs");
   }, "installs"),
@@ -636,7 +636,7 @@ engine.command("agents.connect", (arg) =>
       const done = clients.filter((c) => c.state === "connected").map((c) => c.label);
       engine.setNotice(
         disconnect
-          ? t("{app} was taken out of Claude Code, Codex and Cursor.", { app: engine.name(product) })
+          ? t("{app} was taken out of Claude Code, Codex, Cursor and Antigravity.", { app: engine.name(product) })
           : t("{app} is connected to {clients}. Restart the client, or reload its MCP servers, to see its tools.", { app: engine.name(product), clients: done.join(", ") || t("no client") }),
         "info",
         "agents",

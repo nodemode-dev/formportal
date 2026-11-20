@@ -74,7 +74,7 @@ const repairFindings: RepairFinding[] = params.has("repair")
     ]
   : [];
 const credit = (m: MediaItem) => (m.licence === "CC0-1.0" ? `${m.title} by ${m.creator}, public domain (CC0 1.0), ${m.source_url}` : `${m.title} by ${m.creator}, licensed ${m.licence}, ${m.source_url}`);
-const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
+const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor", antigravity: "Antigravity" };
 const linked = new Set<string>();
 const OWN_PROGRAM = "/Applications/FormPortal.app/Contents/MacOS/FormPortal";
 const ownSeen = new Map<string, string>((new URLSearchParams(window.location.search).get("own") ?? "").split(",").filter(Boolean).map((pair) => pair.split(":") as [string, string]));
@@ -88,7 +88,7 @@ const ownFor = (row: { id: string; label: string; programs: string[] }): OwnAgen
   return { ...base, state: "not-connected" };
 };
 const agentsFor = (product: string, channel: Channel): AgentClient[] =>
-  (["claude", "codex", "cursor"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
+  (["claude", "codex", "cursor", "antigravity"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
 
 for (const seed of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",")) {
   const [product, version] = seed.split(":");
@@ -426,7 +426,7 @@ export const fixtureBridge: Bridge = {
   },
   connectAgents: async (product, channel, disconnect) => {
     await pause(300);
-    for (const client of ["claude", "codex", "cursor"]) {
+    for (const client of ["claude", "codex", "cursor", "antigravity"]) {
       const id = `${key(product, channel)}:${client}`;
       if (disconnect) linked.delete(id);
       else linked.add(id);
