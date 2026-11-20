@@ -2,11 +2,12 @@ import apps from "../../../catalog/fixtures/apps.json";
 import fixtureIndex from "../../../catalog/fixtures/extensions.json";
 import registry from "../../../catalog/products.json";
 import schedule from "../../../catalog/schedule.json";
+import agentClients from "../../../core/data/agent-clients.json";
 import learnPortal from "../../../core/data/learn-portal.json";
 import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentAccess, RepairFinding, AgentClient, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -75,6 +76,17 @@ const repairFindings: RepairFinding[] = params.has("repair")
 const credit = (m: MediaItem) => (m.licence === "CC0-1.0" ? `${m.title} by ${m.creator}, public domain (CC0 1.0), ${m.source_url}` : `${m.title} by ${m.creator}, licensed ${m.licence}, ${m.source_url}`);
 const LABELS: Record<AgentClient["client"], string> = { claude: "Claude Code", codex: "Codex", cursor: "Cursor" };
 const linked = new Set<string>();
+const OWN_PROGRAM = "/Applications/FormPortal.app/Contents/MacOS/FormPortal";
+const ownSeen = new Map<string, string>((new URLSearchParams(window.location.search).get("own") ?? "").split(",").filter(Boolean).map((pair) => pair.split(":") as [string, string]));
+const ownFor = (row: { id: string; label: string; programs: string[] }): OwnAgent => {
+  const seen = ownSeen.get(row.id) ?? "open";
+  const base = { client: row.id, label: row.label, program: seen === "none" ? null : `/usr/local/bin/${row.programs[0]}`, config: null, command: null, current: false, note: null };
+  if (seen === "none") return { ...base, state: "no-client", note: `FormPortal did not find ${row.label} on this computer. It looked for ${row.programs.join(" and ")} on your PATH, in the PATH your shell reports and in the usual install folders.` };
+  if (seen === "taken") return { ...base, state: "taken", command: "npx", note: "another server named formportal is set up; left alone" };
+  if (seen === "stale") return { ...base, state: "connected", command: "/home/you/formportal/formportal", note: `its entry starts /home/you/formportal/formportal, not this FormPortal (${OWN_PROGRAM}); connecting again changes it` };
+  if (seen === "connected") return { ...base, state: "connected", command: OWN_PROGRAM, current: true };
+  return { ...base, state: "not-connected" };
+};
 const agentsFor = (product: string, channel: Channel): AgentClient[] =>
   (["claude", "codex", "cursor"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
 
@@ -420,6 +432,17 @@ export const fixtureBridge: Bridge = {
       else linked.add(id);
     }
     return agentsFor(product, channel);
+  },
+  ownAgents: async () => {
+    await pause(Number(new URLSearchParams(window.location.search).get("ownwait") ?? 0));
+    return agentClients.clients.map(ownFor);
+  },
+  connectOwn: async (client, disconnect) => {
+    await pause(300);
+    const before = ownSeen.get(client) ?? "open";
+    if (disconnect && (before === "connected" || before === "stale")) ownSeen.set(client, "open");
+    if (!disconnect && (before === "open" || before === "stale")) ownSeen.set(client, "connected");
+    return agentClients.clients.filter((row) => row.id === client).map(ownFor);
   },
   githubStatus: async () => ({ configured: new URLSearchParams(window.location.search).has("github"), account: github.account }),
   githubStart: async (share) => {

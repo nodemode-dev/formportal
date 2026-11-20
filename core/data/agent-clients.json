@@ -1,0 +1,27 @@
+{
+  "format": "formportal-agent-clients",
+  "format_version": 1,
+  "clients": [
+    {
+      "id": "claude",
+      "label": "Claude Code",
+      "programs": ["claude"],
+      "apps": {}
+    },
+    {
+      "id": "codex",
+      "label": "Codex",
+      "programs": ["codex"],
+      "apps": {}
+    },
+    {
+      "id": "cursor",
+      "label": "Cursor",
+      "programs": ["cursor", "cursor-agent"],
+      "apps": {
+        "macos": ["/Applications/Cursor.app", "~/Applications/Cursor.app"],
+        "windows": ["%LOCALAPPDATA%/Programs/cursor/Cursor.exe"]
+      }
+    }
+  ]
+}

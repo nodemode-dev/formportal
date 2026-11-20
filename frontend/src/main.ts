@@ -13,6 +13,7 @@ import { prefs } from "./extensions/prefs/index.ts";
 import { search } from "./extensions/search/index.ts";
 import { theme } from "./extensions/theme/index.ts";
 import { agents } from "./extensions/agents/index.ts";
+import { ownAgents } from "./extensions/own-agents/index.ts";
 import { files } from "./extensions/files/index.ts";
 import { fonts } from "./extensions/fonts/index.ts";
 import { stock } from "./extensions/stock/index.ts";
@@ -41,7 +42,7 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
-[live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
+[live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, ownAgents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
 activateAll(engine);
 
 interface Target {

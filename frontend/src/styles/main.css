@@ -2736,6 +2736,56 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
   flex: 1;
 }
 
+.own-list {
+  display: grid;
+  border-radius: var(--radius-m);
+  box-shadow: inset 0 0 0 1px var(--edge);
+}
+
+.own-item {
+  display: grid;
+  grid-template-columns: 8.5em minmax(0, 1fr) 9em;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-block-end: 1px solid var(--edge);
+  font-size: var(--fs-s);
+}
+
+.own-item:last-child {
+  border-block-end: 0;
+}
+
+.own-name,
+.own-state {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.own-state {
+  color: var(--text-muted);
+}
+
+.own-act {
+  inline-size: 100%;
+  justify-content: center;
+}
+
+.own-item:not([data-own-can]) .own-act {
+  visibility: hidden;
+}
+
+.own-item[data-busy] .own-act {
+  pointer-events: none;
+}
+
+.cv-prefs-dlg .own-note {
+  grid-column: 1 / -1;
+  block-size: calc(3 * 1.45em);
+  overflow: auto;
+}
+
 .self-update {
   display: flex;
   flex-wrap: wrap;

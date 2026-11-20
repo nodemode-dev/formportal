@@ -185,4 +185,6 @@ export const tauriBridge: Bridge = {
   },
   appAgents: (product, channel) => tauri().core.invoke<AgentsView>("app_agents", { product, channel }),
   connectAgents: async (product, channel, disconnect) => (await tauri().core.invoke<{ clients: AgentClient[] }>("connect_agents", { product, channel, disconnect })).clients,
+  ownAgents: async () => (await tauri().core.invoke<{ clients: import("../engine/types.ts").OwnAgent[] }>("own_agents")).clients,
+  connectOwn: async (client, disconnect) => (await tauri().core.invoke<{ clients: import("../engine/types.ts").OwnAgent[] }>("connect_own", { client, disconnect })).clients,
 };

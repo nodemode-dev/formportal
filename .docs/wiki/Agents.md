@@ -98,3 +98,5 @@ After each install FormPortal writes `<version>.files.json` beside the version's
 Paths use `/`; a symlink is recorded by its target. The record is removed with the version's folder. FormMCP 0.7.1 compares an install with it before starting the app's server.
 
 `./formportal cli connect [product]`, `disconnect [product]` and `app-agents [product]` do the same from a terminal. The window's own program answers `app-mcp` too, without opening a window, so installed copies of FormPortal can serve the apps with no command line installed.
+
+With no product, the same three commands are about FormPortal's own MCP server: `app-agents` says for each client whether its program was found on this computer and whether the entry `formportal` is connected, `connect` adds that entry (the running program with the argument `mcp`) and `disconnect` takes it out. An entry of that name that something else wrote is left alone and reported; the entry `./formportal agents install` wrote counts as FormPortal's own. The MCP tools cannot do this: `connect_agents` needs a product.

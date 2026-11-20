@@ -497,6 +497,29 @@ pub fn connect_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     Ok(json!({ "product": id, "server_name": formportal_core::agents::server_name(&id, ch), "launcher": launcher.program, "clients": result, "next": "Restart the client, or reload its MCP servers, to see the app's tools." }))
 }
 
+pub fn own_agents() -> Result<Value, CoreError> {
+    let launcher = formportal_core::agents::Launcher::installed()?;
+    Ok(json!({
+        "server_name": formportal_core::agents::OWN_SERVER,
+        "launcher": launcher.program,
+        "args": [formportal_core::agents::OWN_ARG],
+        "clients": formportal_core::agents::own_clients(&launcher),
+        "note": "connect with no product adds FormPortal's own MCP server to the clients; disconnect with no product takes it out."
+    }))
+}
+
+pub fn connect_own(args: &Value) -> Result<Value, CoreError> {
+    let clients: Vec<formportal_core::agents::Client> = match args.get("clients") {
+        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        _ => formportal_core::agents::client_rows().into_iter().map(|(client, _)| client).collect(),
+    };
+    let connect = !flag(args, "disconnect").unwrap_or(false);
+    let launcher = formportal_core::agents::Launcher::installed()?;
+    let result = formportal_core::agents::connect_own(&clients, &launcher, connect)?;
+    Ok(json!({ "server_name": formportal_core::agents::OWN_SERVER, "launcher": launcher.program, "args": [formportal_core::agents::OWN_ARG], "clients": result, "next": "Restart the client, or reload its MCP servers, to see FormPortal's tools." }))
+}
+
 pub fn versions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;

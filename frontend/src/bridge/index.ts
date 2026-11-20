@@ -63,6 +63,8 @@ export interface Bridge {
   fontRemove(family: string, style?: string): Promise<void>;
   appAgents(product: string, channel: Channel): Promise<AgentsView>;
   connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
+  ownAgents(): Promise<import("../engine/types.ts").OwnAgent[]>;
+  connectOwn(client: string, disconnect: boolean): Promise<import("../engine/types.ts").OwnAgent[]>;
   preferences(): Promise<Preferences>;
   setPreferences(prefs: Preferences): Promise<void>;
   agentAccess(): Promise<AgentAccess>;

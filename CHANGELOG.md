@@ -2,6 +2,17 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.67.0 · 2026-11-19
+
+- FormPortal can add itself to Claude Code, Codex and Cursor. Preferences, Apps has a new group, "FormPortal in your agent", with one row for each program: what state it is in, and one button, Connect or Disconnect. Once connected, the agent can see and manage your Form apps through FormPortal's own MCP server. Before, FormPortal could connect an app's server to an agent but not its own, and that took a script from the source folder.
+- A program FormPortal does not find on this computer gets no button; the row says where FormPortal looked. Cursor is looked for as its command and as the installed app.
+- The entry is named formportal. If an agent already has a server of that name that something else set up, FormPortal leaves it alone and says so, on Connect and on Disconnect.
+- An entry made by an earlier copy of FormPortal, or by `./formportal agents install`, is shown as connected to another copy; Connect points it at the FormPortal that is running, and Disconnect removes it. From an AppImage, the entry points at the AppImage file.
+- Connecting changes only FormPortal's entry in the agent's settings file. The rest of Codex's and Cursor's file stays as you wrote it, a copy of the file is kept before any change, and a second Connect or Disconnect with nothing to change writes nothing. Connecting an app's server to Cursor now keeps the rest of that file as you wrote it too; before, its keys were sorted and the file was laid out again.
+- On the command line, `connect`, `disconnect` and `app-agents` with no app named are about FormPortal itself; `--clients` narrows them. With an app named they do what they did.
+- FormPortal's MCP server cannot add or remove FormPortal in an agent. Only the person can, in the window or on the command line.
+- The three browser demos' Preferences say FormPortal 0.67.0. They were not rebuilt and do not show the new group.
+
 ## v0.66.0 · 2026-11-19
 
 - A newer FormPortal can be acted on. The notice, Preferences and the Updates page now agree, and each has one button: "Install FormPortal [version] and restart" when this copy can update itself, otherwise "Get FormPortal [version]", which opens the download page. Before, the notice said a version was available, Preferences said FormPortal was up to date, and nothing could be clicked.

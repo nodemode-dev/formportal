@@ -236,6 +236,17 @@ export interface AgentsView {
   clients: AgentClient[];
 }
 
+export interface OwnAgent {
+  client: string;
+  label: string;
+  state: AgentClient["state"];
+  program: string | null;
+  config: string | null;
+  command: string | null;
+  current: boolean;
+  note: string | null;
+}
+
 export interface GithubAccount {
   login: string;
   name: string | null;
