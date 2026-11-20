@@ -9,7 +9,7 @@ Built against: v0.69.0 · 2026-11-20
 - kind: explainer
 - logged: after v0.69.0 · 2026-11-20
 
-Rebuilt with the command in README.md, for the first time since v0.64.0, so this demo carries every interface change since then, as demo 1 did at v0.69.0 (demo/HASHOUT_LOG.md#rebuild-0-69): every sentence of FormPortal's own that lists the agent programs names Claude Code, Codex, Cursor and Antigravity, the AMOLED choice reaches `prepaint.js`, FormRec's icons are copied, and the fonts follow the family's order. Opened from file:// in headless Chromium at 1180 by 760: the page draws, no console error. The descriptions of other apps that name three programs are those apps' own text from `catalog/apps/`, not FormPortal's, and were not changed. The release commit rebuilds it again so the Preferences line carries the new version.
+Rebuilt with the command in README.md, for the first time since v0.64.0, so this demo carries every interface change since then, as demo 1 did at v0.69.0 (demo/HASHOUT_LOG.md#rebuild-0-69): every sentence of FormPortal's own that lists the agent programs names Claude Code, Codex, Cursor and Antigravity, the AMOLED choice reaches `prepaint.js`, FormRec's icons are copied, and the fonts follow the family's order. Opened from file:// in headless Chromium at 1180 by 760: the page draws, no console error. The descriptions of other apps that name three programs are those apps' own text from `catalog/apps/`, not FormPortal's, and were not changed. At v0.70.0 the Preferences line was moved by hand (the build lane was taken); the rebuild of demos/updates at v0.70.0 changed only that line.
 
 ## Same window, a second bridge {#bridge}
 - refers-to: demos/library/vite.config.mjs · demos/library/src/pickbridge.ts · demos/library/src/bridge.ts
