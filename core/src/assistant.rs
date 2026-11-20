@@ -32,8 +32,19 @@ pub fn assistant_agents() -> Vec<AgentCli> {
     AGENTS.iter().map(|(client, label, program)| AgentCli { client: client.to_string(), label: label.to_string(), path: which(program) }).collect()
 }
 
-pub const AGENTS: &[(&str, &str, &str)] = &[("claude", "Claude Code", "claude"), ("codex", "Codex", "codex"), ("cursor", "Cursor", "cursor-agent")];
-pub const NONE_FOUND: &str = "FormPortal did not find Claude Code, Codex or Cursor's agent on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders.";
+pub const AGENTS: &[(&str, &str, &str)] = &[("claude", "Claude Code", "claude"), ("codex", "Codex", "codex"), ("cursor", "Cursor", "cursor-agent"), ("antigravity", "Antigravity", "agy")];
+pub const NONE_FOUND: &str = "FormPortal did not find Claude Code, Codex, Cursor's agent or Antigravity on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders.";
+
+fn antigravity_args(prompt: &str, server: &Server, workdir: &Path) -> Result<Vec<String>> {
+    let entry = serde_json::json!({ "mcpServers": { "formportal": {
+        "command": server.command.to_string_lossy(),
+        "args": server.args,
+        "env": server.env.iter().map(|(k, v)| (k.clone(), serde_json::Value::String(v.clone()))).collect::<serde_json::Map<String, serde_json::Value>>(),
+    } } });
+    fs::create_dir_all(workdir.join(".agents"))?;
+    fs::write(workdir.join(".agents").join("mcp_config.json"), serde_json::to_string_pretty(&entry).map_err(|e| CoreError::State(e.to_string()))?)?;
+    Ok(vec!["-p".to_string(), format!("{GUIDE}\n\n{prompt}"), "--output-format".to_string(), "text".to_string()])
+}
 
 fn cursor_args(prompt: &str, server: &Server, workdir: &Path) -> Result<Vec<String>> {
     let entry = serde_json::json!({ "mcpServers": { "formportal": {
@@ -85,6 +96,7 @@ pub fn ask_agent(client: &str, prompt: &str, server: &Server, workdir: &Path) ->
     let args = match client {
         "claude" => claude_args(prompt, server),
         "codex" => codex_args(prompt, server),
+        "antigravity" => antigravity_args(prompt, server, workdir)?,
         _ => cursor_args(prompt, server, workdir)?,
     };
     let mut child = crate::programs::command(&exe)
@@ -122,8 +134,11 @@ pub fn ask_agent(client: &str, prompt: &str, server: &Server, workdir: &Path) ->
     let text = reader.join().unwrap_or_default();
     let errors = errs.join().unwrap_or_default();
     if !status.success() {
-        let why = errors.lines().rev().find(|l| !l.trim().is_empty()).unwrap_or("it stopped without saying why").trim().to_string();
+        let why = crate::programs::last_line(&errors).unwrap_or("it stopped without saying why").to_string();
         return Err(CoreError::Invalid(format!("{} could not answer: {why}", agent.label)));
+    }
+    if client == "antigravity" && text.trim().is_empty() {
+        return Err(CoreError::Invalid(format!("{} finished without writing an answer to its output; FormPortal has nothing to show", agent.label)));
     }
     Ok(text.trim().to_string())
 }

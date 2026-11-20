@@ -22,6 +22,12 @@
         "macos": ["/Applications/Cursor.app", "~/Applications/Cursor.app"],
         "windows": ["%LOCALAPPDATA%/Programs/cursor/Cursor.exe"]
       }
+    },
+    {
+      "id": "antigravity",
+      "label": "Antigravity",
+      "programs": ["agy"],
+      "apps": {}
     }
   ]
 }

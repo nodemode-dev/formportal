@@ -18,8 +18,9 @@ description: How an agent reaches FormPortal. Use when the formportal MCP tools 
 | Claude Code | `.mcp.json` | `./formportal agents install claude` |
 | Codex | `.codex/config.toml` (trusted projects) | `./formportal agents install codex` |
 | Cursor | `.cursor/mcp.json` | `./formportal agents install cursor` |
+| Antigravity (Google's `agy` program) | not set up here | `./formportal agents install antigravity` (writes `~/.gemini/config/mcp_config.json`) |
 
-`./formportal agents install` sets all three up and copies this skill to `~/.claude/skills` and `~/.agents/skills`. `--dry-run` shows what it would change. Existing config files are backed up first.
+`./formportal agents install` sets all four up and copies this skill to `~/.claude/skills` and `~/.agents/skills` (Antigravity gets the MCP server only). `--dry-run` shows what it would change. Existing config files are backed up first.
 
 ## When the catalogue is refused or missing
 

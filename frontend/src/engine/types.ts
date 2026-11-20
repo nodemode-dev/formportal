@@ -224,7 +224,7 @@ export interface StorageView {
 }
 
 export interface AgentClient {
-  client: "claude" | "codex" | "cursor";
+  client: "claude" | "codex" | "cursor" | "antigravity";
   label: string;
   state: "connected" | "not-connected" | "taken" | "no-client";
   note: string | null;

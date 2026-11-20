@@ -2,6 +2,19 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.68.0 · 2026-11-19
+
+- Antigravity, Google's `agy` program, is the fourth agent program FormPortal knows, beside Claude Code, Codex and Cursor.
+- "FormPortal in your agent" in Preferences, Apps has a fourth row. Connect adds FormPortal's own MCP server to Antigravity, in the file Antigravity reads its servers from (`.gemini/config/mcp_config.json` in your home folder); Disconnect takes it out. Only FormPortal's entry changes: every other server and setting in that file stays as you wrote it, a copy of the file is kept before any change, and a second Connect or Disconnect with nothing to change writes nothing. A server named formportal that something else set up is left alone, and FormPortal says so.
+- An app's AI tools tab lists Antigravity too, and Connect adds the app's own MCP server to it along with the other three.
+- Ask your agent offers Antigravity when it is on this computer. Antigravity asks you before it uses a tool it has no rule for, and it cannot ask when FormPortal runs it in the background, so until you have allowed FormPortal's tools inside Antigravity its answer may not have read your apps. FormPortal never turns that question off. If Antigravity finishes without an answer, FormPortal says so instead of showing an empty reply.
+- If Antigravity's settings are only in the place earlier versions of it used, FormPortal writes the current place and tells you the older file was seen and left alone.
+- FormPortal finds `agy` the way it finds the other programs: on your PATH, in the PATH your shell reports and in the usual install folders. On Windows it also looks in Antigravity's own folder under your local app data. Nobody has yet tried this against a real install of Antigravity, on any system: it was built and checked with a stand-in program.
+- When an agent program stops with an error, FormPortal no longer shows a line from the system's `env` tool about passing options as the reason; it shows the program's own last line.
+- Cursor's and Antigravity's settings files are now replaced in one step, so a crash in the middle of a write cannot leave half a file.
+- On the command line, `--clients` and `ask --client` take `antigravity`, and `./formportal agents install antigravity` adds FormPortal to it from a source folder.
+- The desktop window was not built for this release on the machine that prepared it, and nothing was run on Windows or macOS.
+
 ## v0.67.0 · 2026-11-19
 
 - FormPortal can add itself to Claude Code, Codex and Cursor. Preferences, Apps has a new group, "FormPortal in your agent", with one row for each program: what state it is in, and one button, Connect or Disconnect. Once connected, the agent can see and manage your Form apps through FormPortal's own MCP server. Before, FormPortal could connect an app's server to an agent but not its own, and that took a script from the source folder.

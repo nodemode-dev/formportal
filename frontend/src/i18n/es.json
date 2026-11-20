@@ -370,9 +370,9 @@
     "The download page is open in your browser. Install FormPortal {version} from there, then start FormPortal again.": "La página de descargas está abierta en tu navegador. Instala FormPortal {version} desde allí y vuelve a abrir FormPortal.",
     "FormPortal could not be updated: {why}": "No se pudo actualizar FormPortal: {why}",
     "FormPortal could not check for a newer version: {why}": "FormPortal no pudo buscar una versión más nueva: {why}",
-    "FormPortal did not find Claude Code, Codex or Cursor's agent on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders. Install one, sign in to it, then open this again.": "FormPortal no encontró Claude Code, Codex ni el agente de Cursor en este ordenador. Buscó en tu PATH, en el PATH que indica tu shell y en las carpetas de instalación habituales. Instala uno, inicia sesión en él y vuelve a abrir esto.",
+    "FormPortal did not find Claude Code, Codex, Cursor's agent or Antigravity on this computer. It looked on your PATH, in the PATH your shell reports and in the usual install folders. Install one, sign in to it, then open this again.": "FormPortal no encontró Claude Code, Codex, el agente de Cursor ni Antigravity en este ordenador. Buscó en tu PATH, en el PATH que indica tu shell y en las carpetas de instalación habituales. Instala uno, inicia sesión en él y vuelve a abrir esto.",
     "Go back to this": "Volver a esta",
-    "It has its own MCP server: connect it to Claude Code, Codex and Cursor from its page.": "Tiene su propio servidor MCP: conéctalo a Claude Code, Codex y Cursor desde su página.",
+    "It has its own MCP server: connect it to Claude Code, Codex, Cursor and Antigravity from its page.": "Tiene su propio servidor MCP: conéctalo a Claude Code, Codex, Cursor y Antigravity desde su página.",
     "It was installed from a file, not the catalogue.": "Se instaló desde un archivo, no desde el catálogo.",
     "Opening {file} in {app}.": "Abriendo {file} en {app}.",
     "Repaired {fixed} of {total}.": "Reparados {fixed} de {total}.",
@@ -388,7 +388,7 @@
     "{app} is no longer waiting to update later.": "{app} ya no espera para actualizarse más tarde.",
     "{app} is not installed, so {file} cannot open yet. Install {app} from Apps.": "{app} no está instalada, así que {file} aún no se puede abrir. Instala {app} desde Apps.",
     "{app} updates to {version} when you close it. FormPortal checks every few minutes while it is open, and when it next opens.": "{app} se actualiza a {version} cuando la cierres. FormPortal lo comprueba cada pocos minutos mientras está abierto, y la próxima vez que se abra.",
-    "{app} was taken out of Claude Code, Codex and Cursor.": "{app} se ha quitado de Claude Code, Codex y Cursor.",
+    "{app} was taken out of Claude Code, Codex, Cursor and Antigravity.": "{app} se ha quitado de Claude Code, Codex, Cursor y Antigravity.",
     "{app} {version} is installed. Automatic updates for it are off so it stays; turn them back on under More.": "{app} {version} está instalada. Sus actualizaciones automáticas están desactivadas para que se quede así; vuelve a activarlas en Más.",
     "{app} {version} is installed.": "{app} {version} está instalada.",
     "{app} is back to {version}. Automatic updates for it are off so it stays; turn them back on under More.": "{app} ha vuelto a la {version}. Sus actualizaciones automáticas están desactivadas para que se quede así; vuelve a activarlas en Más.",
@@ -477,6 +477,6 @@
     ["Use {app} with your AI tools", "Usa {app} con tus herramientas de IA"],
     ["{app} with your AI tools", "{app} con tus herramientas de IA"],
     ["Versions of {app}", "Versiones de {app}"],
-    ["{app} has its own MCP server. FormPortal adds it to Claude Code, Codex and Cursor and starts whichever version is installed, so updates and going back a version need nothing more.", "{app} tiene su propio servidor MCP. FormPortal lo añade a Claude Code, Codex y Cursor y arranca la versión que esté instalada, así que las actualizaciones y volver a una versión anterior no requieren nada más."]
+    ["{app} has its own MCP server. FormPortal adds it to Claude Code, Codex, Cursor and Antigravity and starts whichever version is installed, so updates and going back a version need nothing more.", "{app} tiene su propio servidor MCP. FormPortal lo añade a Claude Code, Codex, Cursor y Antigravity y arranca la versión que esté instalada, así que las actualizaciones y volver a una versión anterior no requieren nada más."]
   ]
 }

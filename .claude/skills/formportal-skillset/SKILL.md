@@ -24,7 +24,7 @@ formcompiler (via formpipe) publishes dl.formai.studio/catalog/apps.json + .sig 
 formportal-core (core/)            no window, no Tauri
   -> src-tauri (Tauri commands: platform, catalog, installs, install, open, rollback, remove, launch_link)
        -> frontend (bridge/tauri.ts) -> engine -> extensions -> DOM
-  -> cli (formportal-cli): commands, and mcp (stdio JSON-RPC) -> Claude Code, Codex, Cursor
+  -> cli (formportal-cli): commands, and mcp (stdio JSON-RPC) -> Claude Code, Codex, Cursor, Antigravity
 frontend in a browser: bridge/fixture.ts reads catalog/fixtures (./formportal is the window; npm run dev is the browser mode)
 ```
 

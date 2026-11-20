@@ -19,7 +19,7 @@
   "facts": [
     {"dt": "Catalogue", "dd": "Ed25519-signed, published by FormCompiler (nodemode-dev/formcompiler)"},
     {"dt": "Engine", "dd": "Rust (formportal-core, formportal-cli) in a Tauri 2 shell with a vanilla TypeScript interface"},
-    {"dt": "Agents", "dd": "39 MCP tools for Claude Code, Codex and Cursor"},
+    {"dt": "Agents", "dd": "39 MCP tools for Claude Code, Codex, Cursor and Antigravity"},
     {"dt": "Channels", "dd": "Stable, beta and nightly, each its own install"}
   ],
   "chapters": [
@@ -32,7 +32,7 @@
     {"id": "trust", "icon": "shield", "title": "Trust you can check", "text": "An Ed25519-signed catalogue and a SHA-256 per file.", "bullets": ["A mismatch is refused before unpacking", "https or this computer only", "No flag skips the hash"], "shot": ""},
     {"id": "rollback", "icon": "updates", "title": "Rollback, betas side by side", "text": "Every update keeps the version it replaced.", "bullets": ["Each channel (stable, beta, nightly) is its own install", "One step back is always there"], "shot": "updates"},
     {"id": "resident", "icon": "check", "title": "Nothing resident", "text": "No account and no tray process.", "bullets": ["FormPortal checks when it is open and stops when you close it"], "shot": ""},
-    {"id": "agents", "icon": "formai", "title": "Agent ready", "text": "./formportal mcp serves 39 tools over stdio.", "bullets": ["Tools include status, apps, install, update, rollback, remove, open and repair", ".mcp.json, .codex/config.toml and .cursor/mcp.json are wired", "A FormAI app that ships its own MCP server is connected to Claude Code, Codex and Cursor in one step, and stays connected across its updates"], "shot": ""},
+    {"id": "agents", "icon": "formai", "title": "Agent ready", "text": "./formportal mcp serves 39 tools over stdio.", "bullets": ["Tools include status, apps, install, update, rollback, remove, open and repair", ".mcp.json, .codex/config.toml and .cursor/mcp.json are wired", "A FormAI app that ships its own MCP server is connected to Claude Code, Codex, Cursor and Antigravity in one step, and stays connected across its updates"], "shot": ""},
     {"id": "layout", "icon": "apps", "title": "A calm layout", "text": "A two-level sidebar with Home, Apps (Updates and Beta), Extensions and Learn.", "bullets": ["Search, a notifications bell and Preferences in the top bar", "Apps as a list with one action each and a More menu", "Preferences as a dialog with a switch per app"], "shot": "apps"},
     {"id": "files", "icon": "source", "title": "Files on your own disk", "text": "Pick folders and FormPortal lists your Form projects and opens each in the right app.", "bullets": ["Keeps a version each time you save while it is open, up to 20 to go back to", "Shows previews the apps write", "Shows what it uses on disk", "No cloud"], "shot": "files"},
     {"id": "fonts", "icon": "captions", "title": "Fonts without an account", "text": "Open-licensed families from a signed index, or your own TTF and OTF files.", "bullets": ["Installed for you alone with no administrator"], "shot": "fonts"},
@@ -48,7 +48,7 @@
     "install": "chmod +x formportal formportal_oc_install\n./formportal_oc_install",
     "run": "./formportal",
     "desktop": "",
-    "agents": "./formportal agents install adds the MCP server and the formportal-harness skill to Claude Code, Codex and Cursor; ./formportal mcp serves it on stdio.",
+    "agents": "./formportal agents install adds the MCP server to Claude Code, Codex, Cursor and Antigravity, and the formportal-harness skill to the first three; ./formportal mcp serves it on stdio.",
     "topics": [
       {"title": "Quick Start", "text": "The README gives requirements and commands for macOS, Linux and Windows (formportal_oc_install.bat, formportal.bat); the first boot compiles the shell, which takes a few minutes."},
       {"title": "Command line", "text": "./formportal cli apps lists the family; ./formportal cli install formcut --channel beta installs a beta."},

@@ -7,6 +7,7 @@ FormPortal's MCP server is `./formportal mcp` (stdio). `.claude/skills/formporta
 | Claude Code | `.mcp.json` | `./formportal agents install claude` |
 | Codex | `.codex/config.toml` | `./formportal agents install codex` |
 | Cursor | `.cursor/mcp.json` | `./formportal agents install cursor` |
+| Antigravity (Google's `agy` program) | not set up here | `./formportal agents install antigravity` (writes `~/.gemini/config/mcp_config.json`) |
 
 The `formportal-harness` skill (`.claude/skills`, mirrored in `.agents/skills`) teaches the workflow: status and apps first, say what will change, check with installs, and when an install, update, rollback or remove is refused because of the choice for outside agents (below), tell the person to do it in the window or allow it there. After changing a tool, run `./formportal agents sync`.
 
@@ -44,9 +45,9 @@ A Form app that has its own MCP server says so in a `form-app.json` file shipped
 
 `command` is relative to the file and must stay inside the app's install folder. FormPortal then:
 
-- marks the install (`installs`, `mcp_server: true`) and offers, on the app's page and through `connect_agents`, to add it to Claude Code, Codex and Cursor at user scope, under the product id (`-beta` for a beta);
+- marks the install (`installs`, `mcp_server: true`) and offers, on the app's page and through `connect_agents`, to add it to Claude Code, Codex, Cursor and Antigravity at user scope, under the product id (`-beta` for a beta);
 - writes each entry as FormPortal's own program with `app-mcp [product]`, which starts whichever version is installed, so updates and going back a version never leave a client pointing at a deleted folder;
-- never replaces a server of the same name it did not add, backs up `~/.codex/config.toml` and `~/.cursor/mcp.json` before changing them, and uses `claude mcp add --scope user` for Claude Code;
+- never replaces a server of the same name it did not add, backs up `~/.codex/config.toml`, `~/.cursor/mcp.json` and `~/.gemini/config/mcp_config.json` (Antigravity) before changing them, and uses `claude mcp add --scope user` for Claude Code;
 - carries `FORMPORTAL_ROOT` into the entry when it is set.
 
 ### format_version 2

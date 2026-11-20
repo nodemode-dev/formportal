@@ -9,6 +9,7 @@ use crate::{version_newer, Os, Platform};
 
 pub const SHELL_LIMIT: Duration = Duration::from_secs(3);
 pub const NO_SHELL: &str = "FORMPORTAL_NO_SHELL_PATH";
+pub const NO_SYSTEM: &str = "FORMPORTAL_NO_SYSTEM_DIRS";
 const OPEN: &str = "__FORMPORTAL_PATH_OPEN__";
 const CLOSE: &str = "__FORMPORTAL_PATH_CLOSE__";
 const SHELLS: &[&str] = &["zsh", "bash", "fish", "ksh", "sh", "dash"];
@@ -138,7 +139,12 @@ fn home() -> PathBuf {
 pub fn search_dirs() -> Vec<PathBuf> {
     let process = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).collect()).unwrap_or_default();
     let known = known_dirs(Platform::current().os, &home(), &|name| std::env::var_os(name).filter(|v| !v.is_empty()).map(PathBuf::from));
+    let known = if std::env::var_os(NO_SYSTEM).is_some() { under(known, &home()) } else { known };
     order(process, session_shell(), known)
+}
+
+pub fn under(dirs: Vec<PathBuf>, home: &Path) -> Vec<PathBuf> {
+    dirs.into_iter().filter(|dir| dir.starts_with(home)).collect()
 }
 
 fn runnable(path: &Path) -> bool {
@@ -159,7 +165,40 @@ pub fn find_in(dirs: &[PathBuf], program: &str) -> Option<PathBuf> {
 }
 
 pub fn find(program: &str) -> Option<PathBuf> {
-    find_in(&search_dirs(), program)
+    find_in(&search_dirs(), program).or_else(|| searched(program))
+}
+
+const WINDOWS_SEARCH: &[(&str, &[&str])] = &[("agy", &["antigravity", "agy"])];
+const ENV_NOTE: &str = "use -[v]S to pass options";
+
+pub fn find_under(root: &Path, fragments: &[&str], file: &str) -> Option<PathBuf> {
+    let named = |dir: &Path| dir.file_name().map(|n| n.to_string_lossy().to_lowercase()).is_some_and(|n| fragments.iter().any(|f| n.contains(f)));
+    let folders = |dir: &Path| -> Vec<PathBuf> {
+        let mut out: Vec<PathBuf> = std::fs::read_dir(dir).map(|entries| entries.flatten().map(|e| e.path()).filter(|p| p.is_dir()).collect()).unwrap_or_default();
+        out.sort();
+        out
+    };
+    let mut places = Vec::new();
+    for one in folders(root) {
+        if named(&one) {
+            places.push(one.clone());
+        }
+        places.extend(folders(&one).into_iter().filter(|two| named(&one) || named(two)));
+    }
+    places.into_iter().map(|dir| dir.join(file)).find(|candidate| runnable(candidate))
+}
+
+fn searched(program: &str) -> Option<PathBuf> {
+    if !cfg!(windows) {
+        return None;
+    }
+    let fragments = WINDOWS_SEARCH.iter().find(|(name, _)| *name == program)?.1;
+    let root = std::env::var_os("LOCALAPPDATA").filter(|v| !v.is_empty()).map(PathBuf::from).unwrap_or_else(|| home().join("AppData").join("Local"));
+    find_under(&root, fragments, &format!("{program}.exe"))
+}
+
+pub fn last_line(text: &str) -> Option<&str> {
+    text.lines().rev().map(str::trim).find(|line| !line.is_empty() && !line.contains(ENV_NOTE))
 }
 
 pub fn child_path(exe: &Path, dirs: &[PathBuf]) -> OsString {

@@ -42,10 +42,14 @@ exit 0
 
 const CODEX: &str = "model = \"gpt-5\"\n\n[mcp_servers.notes]\ncommand = \"npx\"\nargs = [\"-y\", \"notes-server\"]\n\n[profiles.fast]\nmodel = \"gpt-5-mini\"\n";
 const CURSOR: &str = "{\n  \"mcpServers\": {\n    \"notes\": { \"command\": \"npx\", \"args\": [\"-y\", \"notes-server\"] },\n    \"alpha\": { \"url\": \"https://example.com/mcp\" }\n  },\n  \"zeta\": true,\n  \"beta\": [1, 2]\n}\n";
+const ANTIGRAVITY: &str = "{\n  \"theme\": \"dark\",\n  \"mcpServers\": {\n    \"notes\": { \"command\": \"npx\", \"args\": [\"-y\", \"notes-server\"], \"timeoutSeconds\": 30 },\n    \"remote\": { \"serverUrl\": \"https://example.com/mcp\", \"headers\": { \"X-A\": \"b\" } }\n  },\n  \"zeta\": [1, 2]\n}\n";
+const ALL: [&str; 4] = ["claude", "codex", "cursor", "agy"];
 
 fn home(tag: &str, programs: &[&str]) -> PathBuf {
     let home = std::env::temp_dir().join(format!("formportal-cli-test-{}-{tag}", std::process::id()));
     let _ = std::fs::remove_dir_all(&home);
+    std::fs::create_dir_all(home.join(".gemini/config")).unwrap();
+    std::fs::write(home.join(".gemini/config/mcp_config.json"), ANTIGRAVITY).unwrap();
     for folder in [".local/bin", ".codex", ".cursor"] {
         std::fs::create_dir_all(home.join(folder)).unwrap();
     }
@@ -61,7 +65,12 @@ fn home(tag: &str, programs: &[&str]) -> PathBuf {
 
 fn cli(home: &Path) -> Command {
     let mut cmd = Command::new(env!("CARGO_BIN_EXE_formportal-cli"));
-    cmd.env_clear().env("HOME", home).env("PATH", "/usr/bin:/bin").env("FORMPORTAL_NO_SHELL_PATH", "1");
+    for dir in ["/usr/bin", "/bin"] {
+        for program in ["claude", "codex", "cursor", "cursor-agent", "agy"] {
+            assert!(!Path::new(dir).join(program).exists(), "{dir}/{program} is an agent program this test could start, so it does not run here");
+        }
+    }
+    cmd.env_clear().env("HOME", home).env("PATH", "/usr/bin:/bin").env("FORMPORTAL_NO_SHELL_PATH", "1").env("FORMPORTAL_NO_SYSTEM_DIRS", "1");
     if let Some(libs) = std::env::var_os("LD_LIBRARY_PATH") {
         cmd.env("LD_LIBRARY_PATH", libs);
     }
@@ -80,7 +89,7 @@ fn states(reply: &serde_json::Value) -> Vec<String> {
 
 fn files(home: &Path) -> Vec<(PathBuf, Vec<u8>, std::time::SystemTime)> {
     let mut out = Vec::new();
-    for folder in [".codex", ".cursor", ".claude-stand-in"] {
+    for folder in [".codex", ".cursor", ".claude-stand-in", ".gemini/config", ".gemini/antigravity-cli"] {
         let Ok(entries) = std::fs::read_dir(home.join(folder)) else { continue };
         for entry in entries.flatten().filter(|e| e.file_name() != "calls.log") {
             out.push((entry.path(), std::fs::read(entry.path()).unwrap(), entry.metadata().unwrap().modified().unwrap()));
@@ -100,13 +109,20 @@ fn text(home: &Path, file: &str) -> String {
 
 #[test]
 fn connect_adds_only_formportals_entry_and_a_second_connect_writes_nothing() {
-    let home = home("own-connect", &["claude", "codex", "cursor"]);
+    let home = home("own-connect", &ALL);
     let exe = env!("CARGO_BIN_EXE_formportal-cli");
-    assert_eq!(states(&run(&home, &["app-agents"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected"]);
-    assert_eq!(files(&home).len(), 2);
+    assert_eq!(states(&run(&home, &["app-agents"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected", "antigravity:not-connected"]);
+    assert_eq!(files(&home).len(), 3);
 
     let reply = run(&home, &["connect"]);
-    assert_eq!(states(&reply), ["claude:connected", "codex:connected", "cursor:connected"]);
+    assert_eq!(states(&reply), ["claude:connected", "codex:connected", "cursor:connected", "antigravity:connected"]);
+    let antigravity = text(&home, ".gemini/config/mcp_config.json");
+    assert!(antigravity.starts_with(&ANTIGRAVITY[..ANTIGRAVITY.find("\n  },").unwrap()]), "{antigravity}");
+    assert!(antigravity.ends_with("\n  },\n  \"zeta\": [1, 2]\n}\n"), "{antigravity}");
+    let mut wanted: serde_json::Value = serde_json::from_str(ANTIGRAVITY).unwrap();
+    wanted["mcpServers"]["formportal"] = serde_json::json!({ "command": exe, "args": ["mcp"] });
+    assert_eq!(serde_json::from_str::<serde_json::Value>(&antigravity).unwrap(), wanted);
+    assert!(calls(&home).iter().all(|call| call.starts_with("mcp ")), "{:?}", calls(&home));
     assert_eq!(reply["server_name"], serde_json::json!("formportal"));
     for client in reply["clients"].as_array().unwrap() {
         assert_eq!(client["command"], serde_json::json!(exe), "{client}");
@@ -123,7 +139,7 @@ fn connect_adds_only_formportals_entry_and_a_second_connect_writes_nothing() {
 
     let before = files(&home);
     let asked = calls(&home).len();
-    assert_eq!(states(&run(&home, &["connect"])), ["claude:connected", "codex:connected", "cursor:connected"]);
+    assert_eq!(states(&run(&home, &["connect"])), ["claude:connected", "codex:connected", "cursor:connected", "antigravity:connected"]);
     assert_eq!(files(&home), before, "a second connect wrote a file");
     assert_eq!(calls(&home)[asked..], ["mcp get formportal".to_string()]);
     let _ = std::fs::remove_dir_all(&home);
@@ -131,14 +147,15 @@ fn connect_adds_only_formportals_entry_and_a_second_connect_writes_nothing() {
 
 #[test]
 fn disconnect_takes_only_formportals_entry_out_and_a_second_disconnect_writes_nothing() {
-    let home = home("own-disconnect", &["claude", "codex", "cursor"]);
+    let home = home("own-disconnect", &ALL);
     run(&home, &["connect"]);
-    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected"]);
+    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected", "antigravity:not-connected"]);
     assert_eq!(text(&home, ".codex/config.toml"), CODEX);
     assert_eq!(text(&home, ".cursor/mcp.json"), CURSOR);
+    assert_eq!(text(&home, ".gemini/config/mcp_config.json"), ANTIGRAVITY);
     assert!(!home.join(".claude-stand-in/formportal.entry").exists());
     let before = files(&home);
-    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected"]);
+    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected", "antigravity:not-connected"]);
     assert_eq!(files(&home), before, "a second disconnect wrote a file");
     let _ = std::fs::remove_dir_all(&home);
 }
@@ -155,7 +172,8 @@ fn one_client_can_be_named() {
 
 #[test]
 fn an_entry_of_the_same_name_that_something_else_wrote_is_left_alone_and_reported() {
-    let home = home("own-taken", &["claude", "codex", "cursor"]);
+    let home = home("own-taken", &ALL);
+    std::fs::write(home.join(".gemini/config/mcp_config.json"), "{ \"mcpServers\": { \"formportal\": { \"command\": \"npx\", \"args\": [\"-y\", \"other\"] } } }\n").unwrap();
     std::fs::write(home.join(".codex/config.toml"), format!("{CODEX}\n[mcp_servers.formportal]\ncommand = \"npx\"\nargs = [\"-y\", \"someone-elses-server\"]\n")).unwrap();
     std::fs::write(home.join(".cursor/mcp.json"), "{ \"mcpServers\": { \"formportal\": { \"command\": \"node\", \"args\": [\"/opt/other/server.js\"] } } }\n").unwrap();
     std::fs::create_dir_all(home.join(".claude-stand-in")).unwrap();
@@ -163,7 +181,7 @@ fn an_entry_of_the_same_name_that_something_else_wrote_is_left_alone_and_reporte
     let before = files(&home);
     for action in ["connect", "disconnect"] {
         let reply = run(&home, &[action]);
-        assert_eq!(states(&reply), ["claude:taken", "codex:taken", "cursor:taken"], "{action}");
+        assert_eq!(states(&reply), ["claude:taken", "codex:taken", "cursor:taken", "antigravity:taken"], "{action}");
         for client in reply["clients"].as_array().unwrap() {
             assert_eq!(client["note"], serde_json::json!("another server named formportal is set up; left alone"), "{client}");
         }
@@ -178,7 +196,9 @@ fn a_client_whose_program_is_missing_says_where_formportal_looked() {
     let home = home("own-missing", &["codex"]);
     let before = files(&home);
     let reply = run(&home, &["connect"]);
-    assert_eq!(states(&reply), ["claude:no-client", "codex:connected", "cursor:no-client"]);
+    assert_eq!(states(&reply), ["claude:no-client", "codex:connected", "cursor:no-client", "antigravity:no-client"]);
+    assert_eq!(reply["clients"][3]["note"], serde_json::json!("FormPortal did not find Antigravity on this computer. It looked for agy on your PATH, in the PATH your shell reports and in the usual install folders."));
+    assert_eq!(text(&home, ".gemini/config/mcp_config.json"), ANTIGRAVITY);
     assert_eq!(reply["clients"][0]["note"], serde_json::json!("FormPortal did not find Claude Code on this computer. It looked for claude on your PATH, in the PATH your shell reports and in the usual install folders."));
     assert_eq!(reply["clients"][2]["note"], serde_json::json!("FormPortal did not find Cursor on this computer. It looked for cursor and cursor-agent on your PATH, in the PATH your shell reports and in the usual install folders."));
     assert_eq!(text(&home, ".cursor/mcp.json"), CURSOR);
@@ -188,14 +208,15 @@ fn a_client_whose_program_is_missing_says_where_formportal_looked() {
 
 #[test]
 fn the_entry_the_repository_launcher_wrote_is_formportals_own() {
-    let home = home("own-launcher", &["claude", "codex", "cursor"]);
+    let home = home("own-launcher", &ALL);
     let exe = env!("CARGO_BIN_EXE_formportal-cli");
     std::fs::write(home.join(".codex/config.toml"), format!("{CODEX}\n[mcp_servers.formportal]\ncommand = \"/home/someone/formportal/formportal\"\nargs = [\"mcp\"]\nstartup_timeout_sec = 600\ntool_timeout_sec = 3600\n")).unwrap();
     std::fs::write(home.join(".cursor/mcp.json"), "{\n  \"mcpServers\": {\n    \"formportal\": {\n      \"command\": \"/home/someone/formportal/formportal\",\n      \"args\": [\n        \"mcp\"\n      ]\n    }\n  }\n}\n").unwrap();
     std::fs::create_dir_all(home.join(".claude-stand-in")).unwrap();
     std::fs::write(home.join(".claude-stand-in/formportal.entry"), "/home/someone/formportal/formportal\nmcp\n").unwrap();
     let seen = run(&home, &["app-agents"]);
-    assert_eq!(states(&seen), ["claude:connected", "codex:connected", "cursor:connected"]);
+    assert_eq!(states(&seen), ["claude:connected", "codex:connected", "cursor:connected", "antigravity:not-connected"]);
+    let seen = serde_json::json!({ "clients": seen["clients"].as_array().unwrap()[..3] });
     for client in seen["clients"].as_array().unwrap() {
         assert_eq!(client["current"], serde_json::json!(false), "{client}");
         assert_eq!(client["command"], serde_json::json!("/home/someone/formportal/formportal"), "{client}");
@@ -204,8 +225,9 @@ fn the_entry_the_repository_launcher_wrote_is_formportals_own() {
         assert_eq!(client["current"], serde_json::json!(true), "{client}");
         assert_eq!(client["command"], serde_json::json!(exe), "{client}");
     }
-    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected"]);
+    assert_eq!(states(&run(&home, &["disconnect"])), ["claude:not-connected", "codex:not-connected", "cursor:not-connected", "antigravity:not-connected"]);
     assert_eq!(text(&home, ".codex/config.toml"), CODEX);
+    assert_eq!(text(&home, ".gemini/config/mcp_config.json"), ANTIGRAVITY);
     assert_eq!(text(&home, ".cursor/mcp.json"), "{\n  \"mcpServers\": {}\n}\n");
     let _ = std::fs::remove_dir_all(&home);
 }
