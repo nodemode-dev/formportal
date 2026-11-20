@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.69.0 · 2026-11-20
+
+- Every sentence that names the agent programs names all four: Claude Code, Codex, Cursor and Antigravity. This covers the line Ask your agent shows when it finds none, FormMCP's line in the app list, and the last line the install scripts print, in English and in Spanish.
+- The hub's text follows the rest of the Form family: on macOS it is the system's San Francisco, as in FormVis; on Windows and Linux it is still Inter. Code and version numbers use the family's monospaced fonts. Colours, spacing and layout did not change.
+- The browser demo is rebuilt from the current interface, so it names the four agent programs and offers the AMOLED Black appearance.
+- The desktop window was not built for this release on the machine that prepared it, and nothing was run on Windows or macOS.
+
 ## v0.68.0 · 2026-11-19
 
 - Antigravity, Google's `agy` program, is the fourth agent program FormPortal knows, beside Claude Code, Codex and Cursor.
