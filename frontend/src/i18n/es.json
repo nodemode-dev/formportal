@@ -323,7 +323,7 @@
     "Your question": "Tu pregunta",
     "For example: which of my apps have updates waiting, and what changed?": "Por ejemplo: ¿qué apps mías tienen actualizaciones pendientes y qué ha cambiado?",
     "Your own agent on this computer answers, with your own account. It can read FormPortal (your apps, installs, updates, disk use, fonts, stock, extensions and tutorials) but cannot install, update or remove anything from here.": "Responde tu propio agente en este ordenador, con tu propia cuenta. Puede leer FormPortal (tus apps, instalaciones, actualizaciones, uso del disco, fuentes, stock, extensiones y tutoriales), pero desde aquí no puede instalar, actualizar ni quitar nada.",
-    "Neither Claude Code nor Codex is installed on this computer. Install one, sign in to it, then open this again.": "Ni Claude Code ni Codex están instalados en este ordenador. Instala uno, inicia sesión en él y vuelve a abrir esto.",
+    "One connection from Claude Code, Codex, Cursor and Antigravity to the Form apps": "Una conexión desde Claude Code, Codex, Cursor y Antigravity a las apps Form",
     "No standard app existed, so we built one": "No existía una app de referencia, así que creamos una",
     "The connector for the whole Form family": "El conector de toda la familia Form",
     "A code platform you host yourself: repositories, reviews and releases.": "Una plataforma de código que alojas tú: repositorios, revisiones y versiones.",

@@ -26,6 +26,7 @@
     var mode = localStorage.getItem("formportal-theme");
     var sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
     if (mode === "light" || (mode === "system" && sys)) d.setAttribute("data-theme", "light");
+    else if (mode === "amoled") d.setAttribute("data-oled", "");
   } catch (e) {}
   try {
     var shared = JSON.parse(localStorage.getItem("nodemode_ui_settings") || "null");

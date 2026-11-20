@@ -203,7 +203,7 @@
       "id": "formmcp",
       "name": "FormMCP",
       "alt_of": "",
-      "note": "One connection from Claude Code, Codex and Cursor to the Form family",
+      "note": "One connection from Claude Code, Codex, Cursor and Antigravity to the Form apps",
       "group": "other",
       "status": "available",
       "kind": "gateway",
