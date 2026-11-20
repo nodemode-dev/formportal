@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.70.0 · 2026-11-20
+
+- The two other browser demos, Updates and trust and Fonts, stock and templates, are rebuilt from the current interface: every sentence of FormPortal's that names the agent programs names all four, Claude Code, Codex, Cursor and Antigravity, and they offer the AMOLED Black appearance and FormRec's icon.
+- The README's status now says released: FormPortal is built and bundled for macOS, Windows and Linux.
+
 ## v0.69.0 · 2026-11-20
 
 - Every sentence that names the agent programs names all four: Claude Code, Codex, Cursor and Antigravity. This covers the line Ask your agent shows when it finds none, FormMCP's line in the app list, and the last line the install scripts print, in English and in Spanish.
