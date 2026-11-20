@@ -204,7 +204,7 @@ pub fn installs(ctx: &Ctx) -> Result<Value, CoreError> {
             v
         })
         .collect();
-    Ok(json!({ "root": ctx.portal.root(), "installs": rows, "next": "an install with mcp_server true can be connected to Claude Code, Codex and Cursor with connect_agents" }))
+    Ok(json!({ "root": ctx.portal.root(), "installs": rows, "next": "an install with mcp_server true can be connected to Claude Code, Codex, Cursor and Antigravity with connect_agents" }))
 }
 
 pub fn project_extensions() -> std::collections::BTreeMap<String, String> {
@@ -487,8 +487,8 @@ pub fn connect_agents(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     let id = product(args)?;
     let ch = channel(args)?;
     let clients: Vec<formportal_core::agents::Client> = match args.get("clients") {
-        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
-        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex, cursor or antigravity")))).collect::<Result<_, _>>()?,
+        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex, cursor or antigravity")))).collect::<Result<_, _>>()?,
         _ => formportal_core::agents::CLIENTS.to_vec(),
     };
     let connect = !flag(args, "disconnect").unwrap_or(false);
@@ -510,8 +510,8 @@ pub fn own_agents() -> Result<Value, CoreError> {
 
 pub fn connect_own(args: &Value) -> Result<Value, CoreError> {
     let clients: Vec<formportal_core::agents::Client> = match args.get("clients") {
-        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
-        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex or cursor")))).collect::<Result<_, _>>()?,
+        Some(Value::Array(list)) => list.iter().filter_map(Value::as_str).map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex, cursor or antigravity")))).collect::<Result<_, _>>()?,
+        Some(Value::String(list)) => list.split(',').map(|c| formportal_core::agents::Client::parse(c).ok_or_else(|| fail(format!("there is no client {c:?}; use claude, codex, cursor or antigravity")))).collect::<Result<_, _>>()?,
         _ => formportal_core::agents::client_rows().into_iter().map(|(client, _)| client).collect(),
     };
     let connect = !flag(args, "disconnect").unwrap_or(false);

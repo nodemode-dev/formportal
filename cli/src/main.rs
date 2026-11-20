@@ -46,7 +46,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   learn [PRODUCT] [--query Q] [--learn-source S]   tutorials and the steps you have finished
   learn-step ID --step N [--done false]   mark a step finished (or not); steps count from 1
   learn-reset ID                  clear a tutorial's progress
-  ask \"QUESTION\" [--client claude|codex|cursor]   ask your own agent about your Form apps; it can only read
+  ask \"QUESTION\" [--client claude|codex|cursor|antigravity]   ask your own agent about your Form apps; it can only read
   policy                         the organisation's policy, if this computer has one
   account                        whether you are signed in to GitHub, and as whom (optional; nothing needs it to install)
   sign-in [--share true]         sign in to GitHub with a code you enter on github.com; --share also asks for repository access
@@ -58,10 +58,10 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
   share-pull OWNER/REPO          download the latest of a library shared with you
   publish FILE | unpublish FILE  give a file a public link (in formportal-public in your account), or remove it
   app-agents <product> [--channel C]       whether the installed app ships an MCP server, and where it is connected
-  connect <product> [--channel C] [--clients claude,codex,cursor]   add it to Claude Code, Codex and Cursor
+  connect <product> [--channel C] [--clients claude,codex,cursor,antigravity]   add it to Claude Code, Codex, Cursor and Antigravity
   disconnect <product> [--channel C] [--clients ...]               take it out again
-  app-agents                      FormPortal's own MCP server: whether Claude Code, Codex and Cursor are on this computer and connected
-  connect [--clients claude,codex,cursor]      add FormPortal's own MCP server to them (the entry formportal, this program with mcp)
+  app-agents                      FormPortal's own MCP server: whether Claude Code, Codex, Cursor and Antigravity are on this computer and connected
+  connect [--clients claude,codex,cursor,antigravity]      add FormPortal's own MCP server to them (the entry formportal, this program with mcp)
   disconnect [--clients ...]                   take FormPortal's own entry out again
   app-mcp <product> [--channel C]          run the installed app's MCP server on stdio (what the clients start)
   org-package --policy FILE --installer FILE --to DIR
