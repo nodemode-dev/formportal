@@ -40,12 +40,14 @@ Every notice is filed under Updates, Installs, Files and library, Agents, Learni
 
 ## Ask your agent
 
-The speech bubble in the top bar asks Claude Code or Codex, whichever is on this computer, one question. FormPortal starts it with its own account and with FormPortal's reading server attached:
+The speech bubble in the top bar asks Claude Code, Codex, Cursor's agent or Antigravity (Google's `agy` program), whichever is on this computer, one question. FormPortal starts it with its own account and with FormPortal's reading server attached:
 
 - Claude Code: `claude -p QUESTION --mcp-config ... --strict-mcp-config --allowedTools mcp__formportal__status ...`, only the reading tools allowed.
 - Codex: `codex exec --sandbox read-only` with FormPortal's server added by `-c mcp_servers.formportal...`.
+- Cursor's agent: `cursor-agent -p --output-format text --approve-mcps QUESTION`, with FormPortal's server in `.cursor/mcp.json` in the question's own folder.
+- Antigravity: `agy -p QUESTION --output-format text`, with FormPortal's server in `.agents/mcp_config.json` in the question's own folder. Antigravity asks the person before it uses a tool it has no rule for, and a run with no terminal cannot ask, so it may answer without reading FormPortal until the person has allowed the tools inside Antigravity. FormPortal never passes a flag that skips that question.
 
-The server is `FormPortal mcp --read-only` (or `formportal mcp --read-only` from the command line): it lists only the tools annotated read-only and refuses the rest, so an answer can describe what to install but never install it. An agent that does not answer within 240 seconds is stopped. From the command line: `formportal ask "QUESTION" [--client claude|codex]`.
+The server is `FormPortal mcp --read-only` (or `formportal mcp --read-only` from the command line): it lists only the tools annotated read-only and refuses the rest, so an answer can describe what to install but never install it. An agent that does not answer within 240 seconds is stopped. From the command line: `formportal ask "QUESTION" [--client claude|codex|cursor|antigravity]`.
 
 ## Ask the community
 

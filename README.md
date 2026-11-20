@@ -41,7 +41,7 @@
     <td width="25%" valign="top"><h3>Rollback built in</h3>Every update keeps the version it replaced, so one step back is always there. Betas install beside the stable build.</td>
     <td width="25%" valign="top"><h3>Checked before unpacking</h3>The catalogue is Ed25519-signed and every download's SHA-256 must match before anything is unpacked.</td>
     <td width="25%" valign="top"><h3>Nothing resident</h3>No account and no tray process. FormPortal checks when it is open and stops when you close it.</td>
-    <td width="25%" valign="top"><h3>Agent-ready</h3>The same engine runs the window, a command line and an MCP server, so Claude Code, Codex and Cursor can manage the family.</td>
+    <td width="25%" valign="top"><h3>Agent-ready</h3>The same engine runs the window, a command line and an MCP server, so Claude Code, Codex, Cursor and Antigravity can manage the family.</td>
   </tr>
 </table>
 
@@ -102,8 +102,8 @@ The window, the command line and the MCP server call one engine in `core/`, so a
 ./formportal cli apps                             # the family and what this computer is offered
 ./formportal cli status                           # what is installed, and outside_agents: the choice described below
 ./formportal cli install formcut --channel beta   # install the beta beside the stable build (see "Outside agents" first)
-./formportal agents install                       # add FormPortal and its skill to Claude Code, Codex and Cursor
-./formportal mcp                                  # MCP server on stdio for Claude Code, Codex and Cursor
+./formportal agents install                       # add FormPortal to Claude Code, Codex, Cursor and Antigravity (and its skill to the first three)
+./formportal mcp                                  # MCP server on stdio for Claude Code, Codex, Cursor and Antigravity
 ```
 
 `.mcp.json`, `.codex/config.toml` and `.cursor/mcp.json` are already wired in this repo. See [`AGENTS.md`](AGENTS.md).

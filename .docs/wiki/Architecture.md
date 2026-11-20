@@ -7,7 +7,7 @@ formcompiler (via formpipe)  ->  dl.formai.studio/catalog/apps.json + apps.json.
                /                \
    src-tauri (window)          cli (commands, MCP server)
         |                             |
-   frontend (interface)        Claude Code, Codex, Cursor
+   frontend (interface)        Claude Code, Codex, Cursor, Antigravity
 ```
 
 - **core** has no window and no Tauri. Install unpacks into a staging folder and swaps only after success, keeping the previous version for rollback.
