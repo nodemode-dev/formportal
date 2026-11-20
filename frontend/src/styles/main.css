@@ -428,7 +428,7 @@ html[data-parsing] #app {
 }
 
 html[data-font="fallback"] {
-  --font-ui: "Inter Fallback", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', "Inter Fallback", 'Segoe UI', system-ui, sans-serif;
 }
 
 .pane {

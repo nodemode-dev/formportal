@@ -7,6 +7,17 @@ Last updated: 2026-11-19 · v0.68.0 no token or icon file changed (the version o
 
 ---
 
+## The family alignment of 2026-11-20 {#family-align}
+- refers-to: design/tokens.css :: `--text-on-accent`, `--font-ui`, `--font-mono`, the `--z-*` scale · frontend/src/styles/main.css :: `html[data-font="fallback"]`
+- kind: decision
+- logged: after v0.68.0 · 2026-11-20
+
+The family's design pass (one visual language, FormVis's token names and Studio Dark's values; DESIGN_W7.md) found 53 names shared with FormVis's `tokens.css` and 8 of them with another value. Surfaces, text, borders and radii were already FormVis's in dark, light and AMOLED, so nothing there moved. Three of the 8 take FormVis's value: `--text-on-accent` `#fff` (the same colour), `--font-ui` and `--font-mono` (FormVis's lists, word for word). No owner decision in this log covers the fonts; the 2026-10-04 decision (a neutral hub, one hue per product) is about colour and is kept as it was, with the accent the ink colour. The five others are the z-index scale and stay ours, as the family's decision says: `--z-raised` 100 (FormVis 8), `--z-chrome` 300 (100), `--z-overlay` 600 (50000), `--z-toast` 800 (3000), `--z-debug` 1000 (100000); moving them would reorder what stacks over what. The alias layer (`--ground`, `--pane`, `--ink` and the rest) stays. The base font size stays 13px.
+
+What a person sees: on macOS the hub's text is now the system's San Francisco, as FormVis's is; on Windows and Linux Inter still comes before Segoe UI and the system font. The bundled Inter file and the wait for it before the first frame (`frontend/public/prepaint.js`) are unchanged. When Inter is not ready in time, `html[data-font="fallback"]` keeps the same order with the metric-matched "Inter Fallback" in Inter's place, so the fallback no longer puts Arial's metrics before San Francisco on macOS.
+
+Measured in headless Chromium on Linux at the hub's window size, 1180 by 760, with the browser fixture, every view (Home, Apps, Updates, Files, Fonts, Stock and templates, Extensions, Learn) in dark and light before and after: only text pixels changed (12,687 to 37,374 per view, in the text of the sidebar, the top bar and the page, x 47 to 1140), because on this machine `-apple-system` resolves to the system's Inter rather than the bundled variable file; no surface, border or colour moved. Every resolved token on `:root` is the same before and after except `--font-ui`, `--font-mono` and the body's font. A cold load at 4x CPU throttle, recorded frame by frame, gave the same sequence before and after: one white frame captured on the empty tab as the recording began (before the document arrived, the same in both), then `#111111` and then the finished Studio Dark window; no frame in another palette. Not seen on macOS or Windows.
+
 ## AMOLED Black tokens {#amoled}
 - refers-to: design/tokens.css :: :root[data-oled]
 - kind: decision
