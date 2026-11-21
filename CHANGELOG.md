@@ -2,6 +2,11 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.70.1 · 2026-11-20
+
+- An extension package that reaches FormPortal from outside its window, by a `formai://extensions?install=` link, by opening a `.formpkg` with FormPortal or from another program, is shown in a dialog with its file and path, and installs only when you press Install. Cancel leaves nothing installed. A file you drop on the window installs at once, as before. The new sentences are in Spanish too.
+- The catalogue's pages for other Form apps name Claude Code, Codex, Cursor and Antigravity wherever that app's own README names all four, and the three browser demos are rebuilt with that text.
+
 ## v0.70.0 · 2026-11-20
 
 - The two other browser demos, Updates and trust and Fonts, stock and templates, are rebuilt from the current interface: every sentence of FormPortal's that names the agent programs names all four, Claude Code, Codex, Cursor and Antigravity, and they offer the AMOLED Black appearance and FormRec's icon.
