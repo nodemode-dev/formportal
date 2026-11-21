@@ -193,7 +193,7 @@
     "install": "./formfabric_oc_install\nWindows: formfabric_oc_install.bat",
     "run": "./formfabric\n./formfabric desktop dev\nWindows: formfabric.bat",
     "desktop": "./build_app\nWindows: build_app.bat",
-    "agents": "./formfabric mcp runs an MCP server on stdio for Claude Code, Codex, Cursor and Antigravity..mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
+    "agents": "./formfabric mcp runs an MCP server on stdio for Claude Code, Codex, Cursor and Antigravity. The files .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
     "topics": [
       {
         "title": "Run from source",

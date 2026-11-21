@@ -178,7 +178,7 @@
       "bullets": [
         "The Agent column and the embedded terminal",
         "An MCP server in backend/formwav_mcp with 35 formwav_* tools",
-        "Settings > Agents adds FormWav to Claude Code, Codex, Cursor or Claude Desktop in one click",
+        "Settings > Agents adds FormWav to Claude Code, Codex, Cursor, Antigravity or Claude Desktop in one click",
         "The formwav-harness skill teaches an agent which tool fits a job"
       ],
       "shot": "agent"
@@ -210,7 +210,7 @@
     "install": "git clone https://github.com/nodemode-dev/formwav.git\ncd formwav\n./formwav_oc_install\nWindows: formwav_oc_install.bat",
     "run": "./formwav\nWindows: formwav.bat",
     "desktop": "./build_app\n./build_macos_app",
-    "agents": "An MCP server in backend/formwav_mcp; Settings > Agents adds FormWav to Claude Code, Codex, Cursor or Claude Desktop in one click.",
+    "agents": "An MCP server in backend/formwav_mcp; Settings > Agents adds FormWav to Claude Code, Codex, Cursor, Antigravity or Claude Desktop in one click.",
     "topics": [
       {
         "title": "Ports",
