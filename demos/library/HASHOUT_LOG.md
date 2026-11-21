@@ -2,7 +2,14 @@
 
 Living log for demo 3. Source files stay comment-free; what they would have said lives here.
 
-Built against: v0.69.0 · 2026-11-20
+Built against: v0.70.0 · 2026-11-20
+
+## Rebuilt after v0.70.0 {#rebuild-0-70-1}
+- refers-to: demos/library/index.html · demos/library/assets/library.js
+- kind: explainer
+- logged: after v0.70.0 · 2026-11-20
+
+Rebuilt with the command in README.md, as demo 1 and demo 2 were in the same pass, for two changes: the catalogue's text for other Form apps names Claude Code, Codex, Cursor and Antigravity where that app's README does, and the page carries the dialog that asks before a package handed over from outside the window is installed (frontend/HASHOUT_LOG.md#package-ask). Opened from file:// in headless Chromium at 1180 by 760: the page draws, no console error, 52 four-name sentences in the DOM (42 before).
 
 ## Rebuilt after v0.69.0 {#rebuild-0-70}
 - refers-to: demos/library/index.html · demos/library/assets/ · demos/library/prepaint.js · demos/library/apps/formrec*.webp
