@@ -14,7 +14,7 @@
     "Streams chat on the Claude API with a sidebar, a composer with the + menu, model and effort, and a side panel for artifacts and files.",
     "Runs a real terminal in a dock, and lets Claude run commands and change files behind approval cards.",
     "Opens versioned, sandboxed artifacts beside the chat, with documents, spreadsheets and slides exported to Word, Excel, PowerPoint and PDF.",
-    "Acts as an MCP server so Claude Code, Codex and Cursor can use it."
+    "Acts as an MCP server so Claude Code, Codex, Cursor and Antigravity can use it."
   ],
   "facts": [
     {
@@ -165,7 +165,7 @@
       "bullets": [
         "Tools such as send_message, wait_for_reply, publish_artifact and list_conversations",
         "run_command for any command id",
-        "Configs for Claude Code, Cursor and Codex in the repo",
+        "Configs for Claude Code, Codex, Cursor and Antigravity in the repo",
         "./format agents install --user registers FormAT with Codex and Claude Code"
       ],
       "shot": ""

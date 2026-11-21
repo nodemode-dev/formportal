@@ -203,7 +203,7 @@
       "bullets": [
         "Claude Code tab (Shift+Mod+J) running your own sign-in, already connected to FormSculpt's tools",
         "Chat tab (Alt+Mod+J) that sculpts through the same tools, each change one undo step",
-        "./formsculpt agents install registers FormSculpt for Claude Code, Codex and Cursor"
+        "./formsculpt agents install registers FormSculpt for Claude Code, Codex, Cursor and Antigravity"
       ],
       "shot": "dock"
     },
@@ -233,7 +233,7 @@
     "install": "./formsculpt_oc_install\n./formsculpt doctor",
     "run": "./formsculpt",
     "desktop": "./build_app",
-    "agents": "./formsculpt agents install registers FormSculpt for Claude Code, Codex and Cursor; .mcp.json, .codex/config.toml and .cursor/mcp.json start ./formsculpt mcp, and the formsculpt-modeling skill teaches the tools.",
+    "agents": "./formsculpt agents install registers FormSculpt for Claude Code, Codex, Cursor and Antigravity;.mcp.json, .codex/config.toml and .cursor/mcp.json start ./formsculpt mcp, and the formsculpt-modeling skill teaches the tools.",
     "topics": [
       {
         "title": "Quick Start",

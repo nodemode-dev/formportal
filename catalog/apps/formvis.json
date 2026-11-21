@@ -53,7 +53,7 @@
       "id": "agents",
       "kicker": "Agents",
       "title": "Edit by asking",
-      "text": "The MCP server gives Claude Code, Codex and Cursor 134 tools for files, layers, text, selections, filters and the command catalogue, with approvals and an activity feed. Window > Terminal and Window > Claude Code put a shell and Claude Code in the window.",
+      "text": "The MCP server gives Claude Code, Codex, Cursor and Antigravity 134 tools for files, layers, text, selections, filters and the command catalogue, with approvals and an activity feed. Window > Terminal and Window > Claude Code put a shell and Claude Code in the window.",
       "shot": "agent"
     }
   ],

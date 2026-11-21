@@ -4,22 +4,22 @@
   "version": "0.7.7",
   "repo": "https://github.com/nodemode-dev/formMCP",
   "kind": "MCP gateway for FormAI apps",
-  "title": "one MCP connection from Claude Code, Codex and Cursor to the whole Form family",
+  "title": "one MCP connection from Claude Code, Codex, Cursor and Antigravity to the whole Form family",
   "summary": "FormMCP is the one MCP server you add for the Form family: agents see every FormAI app in one short list and load an app's own tools only when a task needs it.",
-  "lede": "FormMCP is the one MCP server you add to Claude Code, Codex or Cursor for the Form family of desktop apps. The agent sees every FormAI app in one short list, whether or not any of them is installed, and loads one app's own tools only when the task needs that app. FormMCP suggests; FormPortal installs.",
+  "lede": "FormMCP is the one MCP server you add to Claude Code, Codex, Cursor or Antigravity for the Form family of desktop apps. The agent sees every FormAI app in one short list, whether or not any of them is installed, and loads one app's own tools only when the task needs that app. FormMCP suggests; FormPortal installs.",
   "replaces": "",
   "project": "",
   "runs_on": "macOS 11+, Windows and Linux",
   "checks": [
-    "Gives Claude Code, Codex or Cursor every FormAI app in one short list, with no app's tools loaded up front.",
+    "Gives Claude Code, Codex, Cursor or Antigravity every FormAI app in one short list, with no app's tools loaded up front.",
     "Starts one app's own MCP server only when the task needs it, and returns that app's results unchanged.",
     "Lets you turn apps off per agent and single tools off for every agent, and save that as a profile to share.",
     "Keeps secrets in the system keychain, hides token-shaped text, and refuses to start an installed app whose files changed."
   ],
   "facts": [
     {"dt": "Engine", "dd": "Rust (formmcp-core, formmcp-cli) in a Tauri 2 shell, with a vanilla TypeScript and Vite window with zero runtime dependencies"},
-    {"dt": "Scale", "dd": "24 FormAI apps from FormCompiler's registry and the signed catalogue, 8 MCP tools, stdio and HTTP, 2 ways to reach an app, 3 agent clients"},
-    {"dt": "Agents", "dd": "Claude Code, Codex and Cursor, over stdio or over HTTP on 127.0.0.1:5625 with an access token"},
+    {"dt": "Scale", "dd": "24 FormAI apps from FormCompiler's registry and the signed catalogue, 8 MCP tools, stdio and HTTP, 2 ways to reach an app, 4 agent clients"},
+    {"dt": "Agents", "dd": "Claude Code, Codex, Cursor and Antigravity, over stdio or over HTTP on 127.0.0.1:5625 with an access token"},
     {"dt": "Repository", "dd": "nodemode-dev/formMCP; FormMCP is the display name"}
   ],
   "chapters": [
@@ -49,7 +49,7 @@
     "install": "./formmcp_oc_install\nWindows: formmcp_oc_install.bat",
     "run": "./formmcp\n./formmcp mcp\n./formmcp cli apps\nWindows: formmcp.bat, formmcp.bat mcp",
     "desktop": "./build_app\nWindows: build_app.bat",
-    "agents": "./formmcp cli agents install adds FormMCP to Claude Code, Codex and Cursor for your user account, as Connect does in the window; agents then run formmcp mcp on stdio, or reach http://127.0.0.1:5625/mcp with the access token from ./formmcp cli http token.",
+    "agents": "./formmcp cli agents install adds FormMCP to Claude Code, Codex, Cursor and Antigravity for your user account; agents then run formmcp mcp on stdio, or reach http://127.0.0.1:5625/mcp with the access token from ./formmcp cli http token.",
     "topics": [
       {"title": "Getting Started", "text": ".docs/wiki/Getting-Started.md covers the requirements, running from source, building the desktop app with build_app, refreshing the family list and the ports."},
       {"title": "Agents", "text": ".docs/wiki/Agents.md covers connecting Claude Code, Codex and Cursor, the 8 MCP tools, apps per agent, profiles, start policies, HTTP, secrets, hooks, the activity log and the environment variables."},

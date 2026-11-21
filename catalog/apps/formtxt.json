@@ -5,8 +5,8 @@
   "repo": "https://github.com/nodemode-dev/formtxt",
   "kind": "Word processor",
   "title": "paginated and pageless documents with .docx round trips on your own machine",
-  "summary": "FormTxt is an open, local-first word processor with real pages, a ribbon, .docx and .odt round trips, and Claude Code, Codex or Cursor editing through the same commands.",
-  "lede": "FormTxt is an open, local-first alternative to Microsoft Word and Google Docs. It lays documents out on real pages or pageless, opens and saves .docx and .odt, and lets Claude Code, Codex or Cursor draft and edit live through the same commands a person uses.",
+  "summary": "FormTxt is an open, local-first word processor with real pages, a ribbon, .docx and .odt round trips, and Claude Code, Codex, Cursor or Antigravity editing through the same commands.",
+  "lede": "FormTxt is an open, local-first alternative to Microsoft Word and Google Docs. It lays documents out on real pages or pageless, opens and saves .docx and .odt, and lets Claude Code, Codex, Cursor or Antigravity draft and edit live through the same commands a person uses.",
   "replaces": "Microsoft Word and Google Docs",
   "project": ".ftxt",
   "runs_on": "macOS, Windows and Linux, in a browser or as a desktop app built with ./build_app",
@@ -227,7 +227,7 @@
     "install": "./formtxt_oc_install\nWindows: formtxt_oc_install.bat",
     "run": "./formtxt\n./formtxt cli list\nWindows: formtxt.bat",
     "desktop": "./build_app\n./build_app --open",
-    "agents": "Claude Code, Codex or Cursor work on the open document through the same commands, which also run from ./formtxt cli run.",
+    "agents": "Claude Code, Codex, Cursor or Antigravity work on the open document through the same commands, which also run from ./formtxt cli run.",
     "topics": [
       {
         "title": "Stack and ports",

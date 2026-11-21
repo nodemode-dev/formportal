@@ -6,7 +6,7 @@
   "kind": "Motion graphics and VFX compositor",
   "title": "motion graphics and visual effects compositing on your own machine",
   "summary": "FormVFX is a motion graphics and VFX compositor with 306 effects, a Rust engine, OpenFX and WebAssembly plug-ins, tracking, roto and a Render Queue.",
-  "lede": "FormVFX is a motion graphics and visual effects compositor for the desktop and the browser. It has compositions, layers, keyframes and the Graph Editor, 306 effects, text animators with 169 presets, 3D cameras and lights, tracking, roto and a Render Queue, with an agent harness so Claude Code, Codex and Cursor can drive every tool.",
+  "lede": "FormVFX is a motion graphics and visual effects compositor for the desktop and the browser. It has compositions, layers, keyframes and the Graph Editor, 306 effects, text animators with 169 presets, 3D cameras and lights, tracking, roto and a Render Queue, with an agent harness so Claude Code, Codex, Cursor and Antigravity can drive every tool.",
   "replaces": "After Effects",
   "project": ".fvxproj",
   "runs_on": "macOS, Windows and Linux, in a browser or as a Tauri 2 desktop app",
