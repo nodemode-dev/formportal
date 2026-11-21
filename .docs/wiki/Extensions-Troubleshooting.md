@@ -20,7 +20,7 @@ The block list names extensions, or single versions, that must not run. A blocke
 
 - **The file is not associated with FormPortal.** The installed FormPortal registers `.formpkg` (the `application/x-formpkg` type) through its installer. If another program took it over, choose Open with, FormPortal, and make it the default. On Linux, `xdg-mime query default application/x-formpkg` shows which program has it, and `xdg-mime default` with FormPortal's desktop entry gives it back.
 - **FormPortal was moved or reinstalled.** Reinstall FormPortal so the association points at the current copy.
-- **Install it without the association.** Run `formportal cli extension-install --path FILE.formpkg`, which gives the same checks and the same messages.
+- **Install it without the association.** Run `formportal cli extension-install --path FILE.formpkg`, which gives the same checks and the same messages. The command line is an outside agent, so this follows the choice in Preferences, Apps, Outside agents: under Ask (the default) and Blocked it is refused, and you install the file in the window instead.
 
 ## Messages and what they mean
 

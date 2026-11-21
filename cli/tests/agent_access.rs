@@ -76,6 +76,34 @@ fn the_command_line_never_changes_the_saved_choice() {
     let _ = std::fs::remove_dir_all(&root);
 }
 
+#[test]
+fn a_package_file_from_the_command_line_follows_the_choice() {
+    let root = scratch("ext-path");
+    let package = root.join("demo-look-1.0.0.formpkg");
+    let ask = refused(&cli(&root).args(["extension-install", "--path"]).arg(&package).output().unwrap());
+    assert!(ask.starts_with("extension-install was refused"), "{ask}");
+    assert!(ask.contains("only its window can answer"), "{ask}");
+    std::fs::write(root.join("agent-access.json"), UNSEALED_BLOCKED).unwrap();
+    let blocked = refused(&cli(&root).args(["extension-install", "--path"]).arg(&package).output().unwrap());
+    assert!(blocked.contains("outside agents are blocked"), "{blocked}");
+    assert!(!root.join("extensions").exists(), "a refused package was placed");
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[cfg(feature = "seal-stand-in")]
+#[test]
+fn an_allowed_choice_lets_a_package_file_through() {
+    let root = scratch("ext-path-allowed");
+    let key = root.join("stand-in.key");
+    std::env::set_var("FORMPORTAL_SEAL_STAND_IN", &key);
+    formportal_core::access::set(&root, formportal_core::access::Choice::Allowed).unwrap();
+    let out = cli(&root).env("FORMPORTAL_SEAL_STAND_IN", &key).args(["extension-install", "--path"]).arg(root.join("missing-1.0.0.formpkg")).output().unwrap();
+    let text = String::from_utf8_lossy(&out.stderr).into_owned();
+    assert!(!out.status.success(), "{text}");
+    assert!(!text.contains("was refused"), "{text}");
+    let _ = std::fs::remove_dir_all(&root);
+}
+
 #[cfg(feature = "seal-stand-in")]
 #[test]
 fn a_choice_the_window_allowed_lets_the_agent_through() {
