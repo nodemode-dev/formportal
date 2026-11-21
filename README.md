@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img alt="version 0.70.0" src="https://img.shields.io/badge/version-0.70.0-eef0f4?style=flat-square">
+  <img alt="version 0.70.2" src="https://img.shields.io/badge/version-0.70.2-eef0f4?style=flat-square">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-stable-B7410E?style=flat-square&logo=rust&logoColor=white">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24C8DB?style=flat-square">
   <img alt="macOS, Windows, Linux" src="https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-native-2f7bf5?style=flat-square">
@@ -116,7 +116,7 @@ An agent that is not the FormPortal window, whether it reaches FormPortal throug
 - **Allowed**: the request goes ahead.
 - **Blocked**: the request is always refused, and the message says the person can change that in the window.
 
-Only the window can change the choice; no tool or command can. It covers `install`, `update`, `rollback` and `remove` (and `later` on the command line, which is an update), and nothing else: `status`, `apps`, `installs`, `open` and the rest work under every choice. `status` reports the choice as `outside_agents`. If the saved choice was changed outside FormPortal, it reads as Ask again and the window says so; with no system keychain a saved Allowed is asked as Ask.
+Only the window can change the choice; no tool or command can. It covers `install`, `update`, `rollback` and `remove` (and `later` on the command line, which is an update), and `extension-install` with a package file (`--path`), and nothing else: `status`, `apps`, `installs`, `open` and the rest work under every choice. `status` reports the choice as `outside_agents`. If the saved choice was changed outside FormPortal, it reads as Ask again and the window says so; with no system keychain a saved Allowed is asked as Ask.
 
 So `./formportal cli install formcut --channel beta` works as written once the person has chosen Allowed. Under Ask it is refused with a message saying so, and the person can make the same install in the window instead. A script that installs or updates apps has no flag or environment variable that stands in for the choice: the person sets Allowed first.
 

@@ -20,7 +20,7 @@ The block list names extensions, or single versions, that must not run. A blocke
 
 - **The file is not associated with FormPortal.** The installed FormPortal registers `.formpkg` (the `application/x-formpkg` type) through its installer. If another program took it over, choose Open with, FormPortal, and make it the default. On Linux, `xdg-mime query default application/x-formpkg` shows which program has it, and `xdg-mime default` with FormPortal's desktop entry gives it back.
 - **FormPortal was moved or reinstalled.** Reinstall FormPortal so the association points at the current copy.
-- **Install it without the association.** Run `formportal cli extension-install --path FILE.formpkg`, which gives the same checks and the same messages.
+- **Install it without the association.** Run `formportal cli extension-install --path FILE.formpkg`, which gives the same checks and the same messages. The command line is an outside agent, so this follows the choice in Preferences, Apps, Outside agents: under Ask (the default) and Blocked it is refused, and you install the file in the window instead.
 
 ## Messages and what they mean
 
@@ -50,7 +50,7 @@ The block list names extensions, or single versions, that must not run. A blocke
 
 FormPortal writes `extensions/<app>/enabled.json` in its folder, and each app that hosts extensions (FormVis 2.1.0, FormCut 2.14.0, FormWav 2.24.0, FormPDF 0.59.0, FormDeck 0.32.0, FormLit 0.50.0, form.md 0.50.0, FormEncoder 0.7.0, FormVFX 0.54.0, FormMCP 0.9.0, FormTray 0.15.0, FormSkills 0.9.0 and newer) watches that file and picks up an install, a removal or a switch while it runs; the notice says "ready in" the app and offers to open it. An older copy of an app uses the change from its next start. Turning an extension off in Extensions keeps it installed but unused; Remove deletes it. The first time an extension opens, the app asks you to allow what it uses.
 
-Each app's own Extensions menu has Manage in FormPortal, which opens this page filtered to that app (`formai://extensions?product=formcut`). A `formai://extensions?install=/full/path/to/file.formpkg` link, and opening a `.formpkg` from form.ext, go through the same checks as opening the file. Make an extension opens form.ext when it is installed, or its page on formai.studio.
+Each app's own Extensions menu has Manage in FormPortal, which opens this page filtered to that app (`formai://extensions?product=formcut`). A `formai://extensions?install=/full/path/to/file.formpkg` link, and opening a `.formpkg` from form.ext, go through the same checks as opening the file. A package that reaches FormPortal from outside its window, by such a link, by opening the file with FormPortal or from another program, is shown in a dialog with its path first and installs only when you press Install; a file you drop on the window installs at once. Make an extension opens form.ext when it is installed, or its page on formai.studio.
 
 Some extensions show Support the maker in their details: it opens the maker's own page (sponsoring, a tip jar) in your browser. FormPortal takes no payment, and the extension works the same whether you use it or not. Makers add it with the `support` field (an https address) in their registry entry.
 

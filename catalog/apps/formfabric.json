@@ -53,7 +53,7 @@
       "id": "agents",
       "kicker": "Agents",
       "title": "One registry of 255 commands",
-      "text": "The UI, the Python package and the MCP server call the same engine commands. ./formfabric mcp runs an MCP server on stdio for Claude Code, Codex and Cursor.",
+      "text": "The UI, the Python package and the MCP server call the same engine commands. ./formfabric mcp runs an MCP server on stdio for Claude Code, Codex, Cursor and Antigravity.",
       "shot": ""
     }
   ],
@@ -163,7 +163,7 @@
       "bullets": [
         "./formfabric py -m formfabric commands lists the engine commands",
         "./formfabric py my_script.py runs a script against the engine",
-        "./formfabric mcp serves MCP on stdio for Claude Code, Codex and Cursor"
+        "./formfabric mcp serves MCP on stdio for Claude Code, Codex, Cursor and Antigravity"
       ],
       "shot": ""
     },
@@ -193,7 +193,7 @@
     "install": "./formfabric_oc_install\nWindows: formfabric_oc_install.bat",
     "run": "./formfabric\n./formfabric desktop dev\nWindows: formfabric.bat",
     "desktop": "./build_app\nWindows: build_app.bat",
-    "agents": "./formfabric mcp runs an MCP server on stdio for Claude Code, Codex and Cursor. .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
+    "agents": "./formfabric mcp runs an MCP server on stdio for Claude Code, Codex, Cursor and Antigravity. The files .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
     "topics": [
       {
         "title": "Run from source",

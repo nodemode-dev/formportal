@@ -173,7 +173,7 @@
       "title": "Agent-ready",
       "text": "An MCP server with 30 tools, one engine.",
       "bullets": [
-        "./formtools mcp serves MCP on stdio for Claude Code, Codex and Cursor",
+        "./formtools mcp serves MCP on stdio for Claude Code, Codex, Cursor and Antigravity",
         "The window, the CLI and the MCP server call the same code",
         "The repo ships .mcp.json, .codex/config.toml and .cursor/mcp.json"
       ],
@@ -204,7 +204,7 @@
     "install": "./formtools_oc_install\nWindows: formtools_oc_install.bat",
     "run": "./formtools\nWindows: formtools.bat",
     "desktop": "./formtools desktop dev (run ./formtools install-desktop first)\n./build_app\nWindows: build_app.bat",
-    "agents": "./formtools mcp serves 30 MCP tools on stdio for Claude Code, Codex and Cursor. .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
+    "agents": "./formtools mcp serves 30 MCP tools on stdio for Claude Code, Codex, Cursor and Antigravity. The files .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository.",
     "topics": [
       {
         "title": "Run in a browser",

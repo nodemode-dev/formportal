@@ -6,7 +6,7 @@
  "kind": "Photo library and raw developer",
  "title": "photo library and raw development on your own machine",
  "summary": "FormLit is a free, open-source photo library and non-destructive raw developer with Library, Develop, Map, Book, Slideshow, Print and Web modules.",
- "lede": "FormLit is a catalog of your photos and a non-destructive raw developer, with Library, Develop, Map, Book, Slideshow, Print and Web modules. It is local-first and runs in a browser against its local engine or as a desktop app. Claude Code, Codex and Cursor can cull, develop and export through its MCP tools.",
+ "lede": "FormLit is a catalog of your photos and a non-destructive raw developer, with Library, Develop, Map, Book, Slideshow, Print and Web modules. It is local-first and runs in a browser against its local engine or as a desktop app. Claude Code, Codex, Cursor and Antigravity can cull, develop and export through its MCP tools.",
  "replaces": "Lightroom Classic",
  "project": "",
  "runs_on": "macOS, Windows and Linux (desktop build targets: all); also in a browser against the local engine",

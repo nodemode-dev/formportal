@@ -6,7 +6,7 @@
   "kind": "PDF editor",
   "title": "PDF editing that stays on your computer",
   "summary": "FormPDF is a free, open-source PDF editor that runs on your computer, with in-place text editing, redaction, OCR, signing, forms and an agent dock.",
-  "lede": "FormPDF is a PDF editor in the Form family that runs on your computer. It is built so that Claude Code, Codex or Cursor can do PDF work in the open window while you watch, with every agent turn undoable at once.",
+  "lede": "FormPDF is a PDF editor in the Form family that runs on your computer. It is built so that Claude Code, Codex, Cursor or Antigravity can do PDF work in the open window while you watch, with every agent turn undoable at once.",
   "replaces": "Adobe Acrobat",
   "project": "",
   "runs_on": "macOS, Windows and Linux (browser or Tauri desktop)",

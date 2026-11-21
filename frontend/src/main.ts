@@ -289,7 +289,7 @@ engine.command("link.open", (arg) => {
     const install = query.get("install") ?? "";
     void engine.dispatch("route.go", "extensions");
     void engine.dispatch("ext.filter", query.get("product") ?? "all");
-    if (/\.formpkg$/i.test(install) && /^(\/|[A-Za-z]:[\\/])/.test(install)) void engine.dispatch("ext.install", { path: install });
+    if (/\.formpkg$/i.test(install) && /^(\/|[A-Za-z]:[\\/])/.test(install)) engine.emit("pkgask", { path: install });
     else if (install) engine.setNotice(t("That link does not point to a .formpkg file on this computer."), "fault", "installs");
     return;
   }
@@ -821,7 +821,7 @@ bridge.onFileDrop((paths, phase) => {
 
 bridge.onPackage((path) => {
   void engine.dispatch("route.go", "extensions");
-  void engine.dispatch("ext.install", { path });
+  engine.emit("pkgask", { path });
 });
 
 void engine.dispatch("route.launch");

@@ -53,7 +53,7 @@
    "id": "agents",
    "kicker": "Agents",
    "title": "93 MCP tools and a terminal inside the window",
-   "text": "./formpath mcp gives Claude Code, Codex and Cursor 93 tools over the whole command catalogue. Window > Terminal opens real shells with a Claude Code button already connected to FormPath's tools.",
+   "text": "./formpath mcp gives Claude Code, Codex, Cursor and Antigravity 93 tools over the whole command catalogue. Window > Terminal opens real shells with a Claude Code button already connected to FormPath's tools.",
    "shot": "terminal"
   }
  ],
@@ -181,7 +181,7 @@
    "id": "agents",
    "icon": "formai",
    "title": "Agents",
-   "text": "./formpath mcp gives Claude Code, Codex and Cursor 93 tools.",
+   "text": "./formpath mcp gives Claude Code, Codex, Cursor and Antigravity 93 tools.",
    "bullets": [
     "From get_image to pathfinder to run_command and run_commands",
     "The window asks the person once",

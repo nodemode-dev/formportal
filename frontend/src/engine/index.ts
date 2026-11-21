@@ -8,6 +8,7 @@ export interface EngineEvents {
   answer: { pending: boolean; answer: string | null; error: string | null };
   repair: { pending: boolean; report: RepairReport | null };
   webfile: { plan: WebPlan };
+  pkgask: { path: string };
   saved: { paths: string[] };
   route: { route: Route };
   theme: { light: boolean };

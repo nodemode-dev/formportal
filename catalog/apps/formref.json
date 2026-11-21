@@ -205,7 +205,7 @@
       "bullets": [
         "Agent panel (Ctrl+J) running Claude Code, Codex, Cursor or Ollama",
         "Chat tab (Ctrl/Cmd+Alt+J) with a memory and cost meter",
-        "Terminal dock with a Claude Code button (Ctrl/Cmd+Shift+J)",
+        "Terminal dock with Claude Code (Ctrl/Cmd+Shift+J), Codex, Cursor and Antigravity buttons",
         "Python MCP SDK stdio server; ./formref claude starts Claude Code with the same tools"
       ],
       "shot": "agent"

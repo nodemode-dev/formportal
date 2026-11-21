@@ -850,6 +850,7 @@ pub fn extensions(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
 pub fn extension_install(ctx: &Ctx, args: &Value, progress: &mut dyn FnMut(u64, u64)) -> Result<Value, CoreError> {
     let allow = flag(args, "allow_unsigned").unwrap_or(ctx.allow_unsigned);
     if let Some(path) = text(args, "path") {
+        formportal_core::access::gate(ctx.portal.root(), "extension-install")?;
         let index = ext_index(ctx, args).ok().map(|(i, _)| i);
         let done = ctx.portal.install_extension_file(std::path::Path::new(&path), index.as_ref(), allow)?;
         let note = ctx.portal.extension_note(&done.product);

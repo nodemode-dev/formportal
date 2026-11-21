@@ -70,5 +70,27 @@ export const repair: Extension = {
       if (plan) void engine.dispatch("web.fetch", plan);
     });
     document.querySelector("[data-webfile-cancel]")?.addEventListener("click", () => dialog.close());
+
+    const ask = document.querySelector<HTMLDialogElement>("[data-pkgask]");
+    const askWhat = document.querySelector<HTMLElement>("[data-pkgask-what]");
+    const askPath = document.querySelector<HTMLElement>("[data-pkgask-path]");
+    const askGo = document.querySelector<HTMLButtonElement>("[data-pkgask-go]");
+    if (!ask || !askWhat || !askPath || !askGo) return;
+    let asked: string | null = null;
+    engine.on("pkgask", ({ path }) => {
+      asked = path;
+      askWhat.textContent = t("{name} was handed to FormPortal from outside this window: a file that was opened with FormPortal, a link, or another program.", { name: path.split(/[\\/]/).pop() ?? path });
+      askPath.textContent = path;
+      if (!ask.open) ask.showModal();
+    });
+    askGo.addEventListener("click", () => {
+      ask.close();
+      if (asked) void engine.dispatch("ext.install", { path: asked });
+      asked = null;
+    });
+    document.querySelector("[data-pkgask-cancel]")?.addEventListener("click", () => {
+      asked = null;
+      ask.close();
+    });
   },
 };

@@ -6,7 +6,7 @@
   "kind": "Presentation and pitch deck app",
   "title": "presentations and pitch decks that agents can draft while you watch",
   "summary": "An open presentation app with 67 templates, .pptx and .odp exchange, a presenter view and an MCP server so an agent can draft a deck from your material.",
-  "lede": "FormDeck is presentations and pitch decks in the form family, an open alternative to PowerPoint, Keynote and Google Slides. It is built so that Claude Code, Codex or Cursor can draft a whole deck from your material in your chosen template, live, while you watch, then hand it to you for review.",
+  "lede": "FormDeck is presentations and pitch decks in the form family, an open alternative to PowerPoint, Keynote and Google Slides. It is built so that Claude Code, Codex, Cursor or Antigravity can draft a whole deck from your material in your chosen template, live, while you watch, then hand it to you for review.",
   "replaces": "PowerPoint, Keynote and Google Slides",
   "project": ".fdec",
   "runs_on": "macOS 12+, Windows 10+ and Linux, in the browser or as a Tauri desktop app",
