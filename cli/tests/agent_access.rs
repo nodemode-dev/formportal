@@ -91,8 +91,12 @@ fn a_package_file_from_the_command_line_follows_the_choice() {
 }
 
 #[cfg(feature = "seal-stand-in")]
+static STAND_IN: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+#[cfg(feature = "seal-stand-in")]
 #[test]
 fn an_allowed_choice_lets_a_package_file_through() {
+    let _turn = STAND_IN.lock().unwrap_or_else(|held| held.into_inner());
     let root = scratch("ext-path-allowed");
     let key = root.join("stand-in.key");
     std::env::set_var("FORMPORTAL_SEAL_STAND_IN", &key);
@@ -107,6 +111,7 @@ fn an_allowed_choice_lets_a_package_file_through() {
 #[cfg(feature = "seal-stand-in")]
 #[test]
 fn a_choice_the_window_allowed_lets_the_agent_through() {
+    let _turn = STAND_IN.lock().unwrap_or_else(|held| held.into_inner());
     let root = scratch("access-allowed");
     let key = root.join("stand-in.key");
     std::env::set_var("FORMPORTAL_SEAL_STAND_IN", &key);
