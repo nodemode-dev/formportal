@@ -3,7 +3,51 @@
 Living log for FormPortal's desktop shell (formai_dev's `hub/src-tauri` up to formai_dev 0.26.0; older entries keep the old names). Source files stay comment-free; what they would have said lives here.
 
 Current build version: v0.70.2
-Last updated: 2026-11-20 · v0.70.2 no shell source changed (the version only); 2026-11-20 · v0.70.1 no shell source changed (the version only); 2026-11-20 · v0.70.0 no shell source changed (the version only); 2026-11-20 · v0.69.0 no shell source changed (the version only); 2026-11-19 · v0.68.0 no shell source changed (the version only): the window's commands take the fourth client, antigravity, because the core's Client and CLIENTS gained it; not compiled; 2026-11-19 · v0.67.0 releases the entry headed "after v0.66.0" (heading left as written): own_agents and connect_own, the window's commands for FormPortal's own MCP server, not compiled (#own-mcp); 2026-11-19 · v0.66.0 releases the entries headed "after v0.65.0" (headings left as written): the macOS menu has Settings and it opens Preferences, the self-update check follows the catalogue, agents are looked for off the interface thread (#menu-self-agents); 2026-11-19 · v0.65.0 open waits 8 seconds off the interface thread and returns the sentence when the app did not stay open (#open-watch); 2026-11-09 · v0.64.0 the CSP allows blob: media, images and fonts and a same-origin frame for the in-app demos (frontend/HASHOUT_LOG.md#in-app-demos); 2026-11-07 · v0.63.1 extensions and extension_install read form.ext-registry's index (default_index), index_error carries the refusal; 2026-11-07 · v0.63.0 no shell change (formai://extensions links go through the existing deep link path); 2026-11-07 · v0.62.4 no shell change; 2026-11-07 · v0.62.3 no shell change (splash.css fix, see frontend/HASHOUT_LOG.md); 2026-11-07 · v0.62.2 splash parity with formvis (2.6 s minimum, splash in the capability); 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+Last updated: 2026-11-21 · v0.71.0 install-step events (#install-steps), provider keys (#provider-keys), the registry fork (#registry-fork), web fonts (#web-fonts), templates (#templates), stock (#stock), not compiled; 2026-11-20 · v0.70.2 no shell source changed (the version only); 2026-11-20 · v0.70.1 no shell source changed (the version only); 2026-11-20 · v0.70.0 no shell source changed (the version only); 2026-11-20 · v0.69.0 no shell source changed (the version only); 2026-11-19 · v0.68.0 no shell source changed (the version only): the window's commands take the fourth client, antigravity, because the core's Client and CLIENTS gained it; not compiled; 2026-11-19 · v0.67.0 releases the entry headed "after v0.66.0" (heading left as written): own_agents and connect_own, the window's commands for FormPortal's own MCP server, not compiled (#own-mcp); 2026-11-19 · v0.66.0 releases the entries headed "after v0.65.0" (headings left as written): the macOS menu has Settings and it opens Preferences, the self-update check follows the catalogue, agents are looked for off the interface thread (#menu-self-agents); 2026-11-19 · v0.65.0 open waits 8 seconds off the interface thread and returns the sentence when the app did not stay open (#open-watch); 2026-11-09 · v0.64.0 the CSP allows blob: media, images and fonts and a same-origin frame for the in-app demos (frontend/HASHOUT_LOG.md#in-app-demos); 2026-11-07 · v0.63.1 extensions and extension_install read form.ext-registry's index (default_index), index_error carries the refusal; 2026-11-07 · v0.63.0 no shell change (formai://extensions links go through the existing deep link path); 2026-11-07 · v0.62.4 no shell change; 2026-11-07 · v0.62.3 no shell change (splash.css fix, see frontend/HASHOUT_LOG.md); 2026-11-07 · v0.62.2 splash parity with formvis (2.6 s minimum, splash in the capability); 2026-11-06 · v0.60.0 catalog_kept, the fetched catalogue held 90 s, the splash minimum 700 ms, the store's asset reader; 2026-11-06 · v0.58.0 the identifier, the web view's data, the second launch, clippy; 2026-11-06 · v0.57.0 the bundle icons from the v3 set, the app icon follows the theme (app_icon.rs); 2026-11-06 · v0.56.0 the family splash and reveal; 2026-11-03 · v0.54.1 the bundle names the publisher and the licence; 2026-11-03 · the release ships the installers; 2026-11-02 · updates from the public download store; 2026-10-30 · the build scripts for formcompiler; 2026-10-25 · install passes the release; the sharing commands; the GitHub sign-in commands; the login item; the save watcher; file_preview
+
+## v0.71.0 · install-step events from install and rollback {#install-steps}
+- refers-to: src/main.rs :: Step, install, rollback
+- kind: feature
+- logged: v0.71.0 · 2026-11-21
+
+A `Step { product, channel, step, detail }` payload, sent as `install-step` beside the existing `install-progress`. `install` calls `recheck_kept` after it has the catalogue and sends `signature` (`signed` or `unsigned`), sends `pick` with the chosen file name once the artifact is chosen, then calls `install_from_stepped` with a second closure that forwards each step. `rollback` takes the `AppHandle` and calls `rollback_stepped`. No command was added for this, so `generate_handler!` is unchanged by it. The shell cannot be compiled on the build machine.
+
+## v0.71.0 · provider_keys, provider_key_set, provider_key_clear {#provider-keys}
+- refers-to: src/main.rs :: provider_keys, provider_key_set, provider_key_clear, generate_handler
+- kind: feature
+- logged: v0.71.0 · 2026-11-21
+
+Three commands, thin calls into `formportal_core::keys`, each run through `spawn_blocking` the way the `github_*` commands are, because a keychain call can wait on the system (a prompt on macOS, a bus on Linux) and must not stand on the thread that draws the window. `provider_keys` returns the list; `provider_key_set(provider, key)` and `provider_key_clear(provider)` return the new list so the interface changes the one row that changed. No command returns a key, and the interface has no way to ask for one: `get` is not exposed. `provider_keys` returns the list without a `Result`, as `still_open` does; if the blocking task itself fails the list is empty, which the interface shows as "no key kept", the true safe answer. The three names sit each on a new line in `generate_handler!`, before `traffic_lights::set_window_title`.
+
+The shell cannot be compiled on the build machine; the commands copy the shape of `github_status` and `github_sign_out` (async, owned arguments, `spawn_blocking`, `.map_err(text)`) and are type-checked for Windows and macOS after integration.
+
+## v0.71.0 · github_start_fork and github_fork {#registry-fork}
+- refers-to: src/main.rs :: two commands after `github_sign_out`, two lines in `generate_handler!`
+- kind: feature
+- logged: v0.71.0 · 2026-11-21
+
+Thin calls into `formportal_core::github` in the shape of `github_start` and `github_sign_out`; `github_start_fork` asks for `read:user public_repo`.
+
+## v0.71.0 · four font source commands {#web-fonts}
+- refers-to: src/main.rs :: `font_web`, `font_web_family`, `font_web_preview`, `font_web_install`, and four new lines in `generate_handler!`
+- kind: feature
+- logged: v0.71.0 · 2026-11-21
+
+Thin `spawn_blocking` calls into `formportal_core::fonts`, the shape of `provider_keys`. Removing uses the existing `font_remove` with the `source:id` family id.
+
+## v0.71.0 · five thin templates commands {#templates}
+- refers-to: src/main.rs :: templates_kept, templates_fetch, templates_download, templates_preview, templates_reveal
+- kind: decision
+- logged: v0.71.0 · 2026-11-21
+
+Each is one call into `formportal-core::templates`, shaped like `media_thumb` and `media_save` (blocking work in `spawn_blocking`). Opening a downloaded template in its app reuses the existing `file_open`, so the app is found by its `project_extensions` exactly as Files does it.
+
+## v0.71.0 · stock_sources, stock_search, stock_preview, stock_save, stock_reveal {#stock}
+- refers-to: src/main.rs :: stock_sources, stock_search, stock_preview, stock_save, stock_reveal, generate_handler
+- kind: feature
+- logged: v0.71.0 · 2026-11-21
+
+Thin calls into `formportal_core::stock`, through `spawn_blocking` where they touch the network or the keychain. `stock_save` emits `stock-progress { id, have, total }` once per percent, the way `install` emits `install-progress`. Each name sits on its own new line in `generate_handler!` after `provider_key_clear`. Not compiled here.
 
 ## after v0.66.0 · own_agents and connect_own {#own-mcp}
 
