@@ -1,5 +1,6 @@
 import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
+import type { SavedMedia, StockKind, StockPage, StockSource } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -86,6 +87,11 @@ export interface Bridge {
   templatesDownload(id: string): Promise<import("../engine/types.ts").TemplateDownload>;
   templatesPreview(path: string): Promise<string>;
   templatesReveal(path: string): Promise<void>;
+  stockSources(): Promise<StockSource[]>;
+  stockSearch(source: string, kind: StockKind, query: string, page: number): Promise<StockPage>;
+  stockPreview(id: string, which: "thumb" | "view"): Promise<string>;
+  stockSave(id: string, progress: (fraction: number) => void): Promise<SavedMedia>;
+  stockReveal(path: string): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
 }
 

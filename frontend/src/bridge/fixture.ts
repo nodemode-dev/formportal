@@ -11,6 +11,7 @@ import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, Save
 import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 import { templatesFixture } from "./fixture-templates.ts";
+import { stockFixture } from "./stockfixture.ts";
 
 function browserPlatform(): Platform {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
@@ -645,6 +646,11 @@ export const fixtureBridge: Bridge = {
     providerKept.delete(provider);
     return providerStates();
   },
+  stockSources: async () => stockFixture.sources(providerKept),
+  stockSearch: (source, kind, query, page) => stockFixture.search(providerKept, source, kind, query, page),
+  stockPreview: (id, which) => stockFixture.preview(id, which),
+  stockSave: (id, progress) => stockFixture.save(id, savedMedia, progress),
+  stockReveal: async () => undefined,
   autoUpdate: async (progress) => {
     const done: UpdateOutcome[] = [];
     for (const record of Array.from(installed.values())) {

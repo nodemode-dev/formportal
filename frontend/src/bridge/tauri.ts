@@ -1,5 +1,6 @@
 import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
+import type { SavedMedia, StockPage, StockSource } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -118,6 +119,22 @@ export const tauriBridge: Bridge = {
   templatesPreview: (path) => tauri().core.invoke<string>("templates_preview", { path }),
   templatesReveal: async (path) => {
     await tauri().core.invoke("templates_reveal", { path });
+  },
+  stockSources: () => tauri().core.invoke<StockSource[]>("stock_sources"),
+  stockSearch: (source, kind, query, page) => tauri().core.invoke<StockPage>("stock_search", { source, kind, query, page }),
+  stockPreview: (id, which) => tauri().core.invoke<string>("stock_preview", { id, which }),
+  stockSave: async (id, progress) => {
+    const stop = await tauri().event.listen<{ id: string; have: number; total: number }>("stock-progress", ({ payload }) => {
+      if (payload.id === id) progress(payload.total > 0 ? payload.have / payload.total : 0);
+    });
+    try {
+      return await tauri().core.invoke<SavedMedia>("stock_save", { id });
+    } finally {
+      stop();
+    }
+  },
+  stockReveal: async (path) => {
+    await tauri().core.invoke<null>("stock_reveal", { path });
   },
   autoUpdate: async (progress) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>

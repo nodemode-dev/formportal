@@ -294,6 +294,48 @@ export interface KeyState {
   present: boolean;
 }
 
+export type StockKind = "image" | "video" | "audio";
+
+export interface StockSource {
+  id: string;
+  name: string;
+  kinds: StockKind[];
+  needs_key: boolean;
+  key_page: string | null;
+  home: string;
+  on: boolean;
+}
+
+export interface StockItem {
+  id: string;
+  source: string;
+  source_name: string;
+  kind: StockKind;
+  title: string;
+  author: string;
+  author_url: string | null;
+  page_url: string;
+  licence: string;
+  licence_url: string | null;
+  nc: boolean;
+  nd: boolean;
+  width: number | null;
+  height: number | null;
+  seconds: number | null;
+  thumb: boolean;
+  credit: string;
+  file_note: string;
+}
+
+export interface StockPage {
+  source: string;
+  kind: StockKind;
+  query: string;
+  page: number;
+  more: boolean;
+  items: StockItem[];
+}
+
 export interface DeviceCode {
   device_code: string;
   user_code: string;

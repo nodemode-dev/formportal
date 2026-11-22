@@ -751,6 +751,43 @@ async fn github_fork() -> Result<formportal_core::github::Fork, String> {
 }
 
 #[tauri::command]
+async fn stock_sources() -> Vec<formportal_core::stock::SourceInfo> {
+    tauri::async_runtime::spawn_blocking(formportal_core::stock::sources).await.unwrap_or_default()
+}
+
+#[tauri::command]
+async fn stock_search(source: String, kind: String, query: String, page: u32) -> Result<formportal_core::stock::StockPage, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::stock::search(&source, &kind, &query, page).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn stock_preview(id: String, which: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::stock::preview_data_url(&id, &which).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn stock_save(app: AppHandle, id: String) -> Result<formportal_core::media::Saved, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let mut last = u64::MAX;
+        formportal_core::stock::save(&id, &mut |have, total| {
+            let step = (have * 100).checked_div(total).unwrap_or(0);
+            if step != last {
+                last = step;
+                let _ = app.emit("stock-progress", serde_json::json!({ "id": id, "have": have, "total": total }));
+            }
+        })
+        .map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn stock_reveal(path: String) -> Result<(), String> {
+    formportal_core::stock::show_in_folder(std::path::Path::new(&path)).map_err(text)
+}
+
+#[tauri::command]
 async fn shares_view() -> Result<formportal_core::share::SharesView, String> {
     tauri::async_runtime::spawn_blocking(|| hub().shares().map_err(text)).await.map_err(text)?
 }
@@ -940,6 +977,11 @@ fn main() {
             templates_download,
             templates_preview,
             templates_reveal,
+            stock_sources,
+            stock_search,
+            stock_preview,
+            stock_save,
+            stock_reveal,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
