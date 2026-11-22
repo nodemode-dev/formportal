@@ -63,6 +63,37 @@ export const files: Extension = {
     const mountedFiles = new Map<string, HTMLElement>();
     const mountedFolders = new Map<string, HTMLElement>();
     let current = "";
+    const known = new Map<string, ProjectFile>();
+    const versionRows = new Map<string, HTMLLIElement>();
+    const inspector = document.querySelector<HTMLDialogElement>("[data-inspect-dialog]");
+    let inspected = "";
+    const fact = (field: string, text: string) => {
+      const node = inspector?.querySelector<HTMLElement>(`[data-inspect='${field}']`);
+      if (node && node.textContent !== text) node.textContent = text;
+    };
+    const inspect = (path: string) => {
+      const file = known.get(path);
+      if (!inspector || !file) return;
+      inspected = path;
+      current = path;
+      const dot = file.name.lastIndexOf(".");
+      fact("name", file.name);
+      fact("path", file.path);
+      fact("size", size(file.bytes));
+      fact("when", when(file.modified));
+      fact("app", engine.name(file.product));
+      fact("kind", dot > 0 ? file.name.slice(dot + 1).toUpperCase() : t("No extension"));
+      fact("versions", t("Looking"));
+      fact("sha256", "");
+      const shot = inspector.querySelector<HTMLElement>("[data-inspect-shot]");
+      if (shot) {
+        shot.hidden = !file.preview;
+        shot.style.backgroundImage = "";
+        if (file.preview) void engine.dispatch("file.preview", { path: file.preview, into: shot });
+      }
+      if (!inspector.open) inspector.showModal();
+      void engine.dispatch("file.versions", { path });
+    };
 
     const clone = (tpl: HTMLTemplateElement) => (tpl.content.firstElementChild as HTMLElement).cloneNode(true) as HTMLElement;
 
@@ -77,8 +108,10 @@ export const files: Extension = {
           void engine.dispatch("file.versions", { path: current });
           if (!dialog.open) dialog.showModal();
         });
+        row.querySelector("[data-file-act='inspect']")?.addEventListener("click", () => inspect(row?.dataset.path ?? ""));
         mountedFiles.set(file.path, row);
       }
+      known.set(file.path, file);
       if (row.dataset.product !== file.product) row.dataset.product = file.product;
       const tile = row.querySelector<HTMLElement>("[data-field='short']");
       if (tile) appIcon(tile, file.product, engine.name(file.product));
@@ -188,26 +221,56 @@ export const files: Extension = {
       if (title) title.textContent = t("Versions of {file}", { file: name });
       const where = document.querySelector<HTMLElement>("[data-versions-path]");
       if (where) where.textContent = path;
-      versionList.replaceChildren(
-        ...list.map((v: FileVersion, i: number) => {
-          const li = document.createElement("li");
+      if (versionList.dataset.path !== path) {
+        versionList.dataset.path = path;
+        versionRows.clear();
+        versionList.replaceChildren();
+      }
+      const rows = list.map((v: FileVersion, i: number) => {
+        let li = versionRows.get(v.id);
+        if (!li) {
+          li = document.createElement("li");
           li.className = "version";
+          li.dataset.version = v.id;
           const text = document.createElement("div");
           text.innerHTML = '<span class="row-name-text"></span><p class="row-sub"></p>';
-          (text.firstElementChild as HTMLElement).textContent = `${when(v.at)}${i === 0 ? ` ${t("(latest)")}` : ""}`;
-          (text.lastElementChild as HTMLElement).textContent = `${size(v.size)} · ${v.reason}`;
-          li.append(text);
-          if (i > 0) {
-            const back = document.createElement("button");
-            back.type = "button";
-            back.className = "btn";
-            back.textContent = t("Go back to this");
-            back.addEventListener("click", () => void engine.dispatch("file.versions", { path, action: "revert", version: v.id }));
-            li.append(back);
-          }
-          return li;
-        }),
-      );
+          const back = document.createElement("button");
+          back.type = "button";
+          back.className = "btn";
+          back.textContent = t("Go back to this");
+          back.addEventListener("click", () => void engine.dispatch("file.versions", { path: versionList.dataset.path, action: "revert", version: v.id }));
+          li.append(text, back);
+          versionRows.set(v.id, li);
+        }
+        const [head, sub] = Array.from(li.querySelectorAll<HTMLElement>(".row-name-text, .row-sub"));
+        const top = `${when(v.at)}${i === 0 ? ` ${t("(latest)")}` : ""}`;
+        const meta = `${size(v.size)} · ${v.reason}`;
+        if (head.textContent !== top) head.textContent = top;
+        if (sub.textContent !== meta) sub.textContent = meta;
+        const back = li.querySelector<HTMLButtonElement>("button");
+        if (back && back.hidden !== (i === 0)) back.hidden = i === 0;
+        return li;
+      });
+      for (const [id, li] of versionRows) {
+        if (!rows.includes(li)) {
+          li.remove();
+          versionRows.delete(id);
+        }
+      }
+      rows.forEach((li, i) => {
+        if (versionList.children[i] !== li) versionList.insertBefore(li, versionList.children[i] ?? null);
+      });
+    });
+
+    engine.on("versions", ({ path, list }) => {
+      if (!inspector?.open || path !== inspected) return;
+      fact("versions", list.length === 0 ? t("None kept yet") : list.length === 1 ? t("1 version") : t("{n} versions", { n: list.length }));
+      fact("sha256", list[0]?.sha256 ?? t("None kept yet"));
+    });
+    inspector?.querySelector("[data-inspect-keep]")?.addEventListener("click", () => inspected && void engine.dispatch("file.versions", { path: inspected, action: "save" }));
+    inspector?.querySelector("[data-inspect-close]")?.addEventListener("click", () => inspector.close());
+    inspector?.addEventListener("click", (event) => {
+      if (event.target === inspector) inspector.close();
     });
 
     dialog.querySelector("[data-versions-close]")?.addEventListener("click", () => dialog.close());

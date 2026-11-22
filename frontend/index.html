@@ -245,7 +245,7 @@
               <template id="file-row">
                 <li class="row file">
                   <span class="tile" aria-hidden="true" data-field="short"></span>
-                  <div class="row-main"><span class="row-name-text" data-field="name"></span><p class="row-sub" data-field="where"></p></div>
+                  <div class="row-main"><button class="row-name-text file-inspect" type="button" data-file-act="inspect" data-field="name"></button><p class="row-sub" data-field="where"></p></div>
                   <p class="row-state"><span class="state-text" data-field="when"></span><span class="state-ver" data-field="meta"></span></p>
                   <div class="acts acts-files">
                     <button class="btn btn-primary" type="button" data-file-act="open">Open</button>
@@ -714,6 +714,22 @@
         <p class="versions-new" data-versions-new><span class="fine">You saved it again; a new version was kept.</span><button class="link-btn" type="button" data-versions-show>Show it</button></p>
         <ol class="list versions-list" data-versions-list></ol>
         <footer class="agent-acts"><button class="btn" type="button" data-versions-save>Keep a version now</button><button class="btn" type="button" data-versions-close>Close</button></footer>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions inspect" data-inspect-dialog aria-labelledby="h-inspect">
+      <div class="versions-frame">
+        <header class="versions-head"><h2 id="h-inspect" class="prefs-title" data-inspect="name">File</h2><p class="fine mono" data-inspect="path"></p></header>
+        <div class="inspect-shot" data-inspect-shot hidden></div>
+        <dl class="inspect-facts">
+          <div><dt>Size</dt><dd class="mono" data-inspect="size"></dd></div>
+          <div><dt>Changed</dt><dd data-inspect="when"></dd></div>
+          <div><dt>Opens in</dt><dd data-inspect="app"></dd></div>
+          <div><dt>Kind</dt><dd class="mono" data-inspect="kind"></dd></div>
+          <div><dt>Versions kept</dt><dd data-inspect="versions"></dd></div>
+          <div><dt>Last kept SHA-256</dt><dd class="mono inspect-hash" data-inspect="sha256"></dd></div>
+        </dl>
+        <footer class="agent-acts"><button class="btn" type="button" data-inspect-keep>Keep as a new version</button><button class="btn" type="button" data-inspect-close>Close</button></footer>
       </div>
     </dialog>
 

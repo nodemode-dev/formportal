@@ -156,6 +156,80 @@
   padding: 0 9px;
 }
 
+.file-inspect {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fp-ink);
+  font-family: inherit;
+  line-height: inherit;
+  text-align: start;
+  text-decoration: underline transparent;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.file-inspect:hover,
+.file-inspect:focus-visible {
+  outline: none;
+  text-decoration-color: currentColor;
+}
+
+.prefs.inspect {
+  inline-size: min(560px, 92vw);
+}
+
+.inspect-shot {
+  block-size: 168px;
+  border: 1px solid var(--fp-edge);
+  border-radius: 10px;
+  background: var(--fp-ctl) center / contain no-repeat;
+}
+
+.inspect-shot[hidden] {
+  display: none;
+}
+
+.inspect-facts {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-block: 1px solid var(--fp-edge);
+}
+
+.inspect-facts > div {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding-block: 7px;
+}
+
+.inspect-facts > div + div {
+  border-block-start: 1px solid var(--fp-edge);
+}
+
+.inspect-facts dt {
+  color: var(--fp-ink-3);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inspect-facts dd {
+  margin: 0;
+  min-block-size: 1.3em;
+  color: var(--fp-ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.inspect-hash {
+  min-block-size: 2.6em;
+  font-size: 12px;
+}
+
 .ext .drop-more > .menu {
   inline-size: auto;
   min-inline-size: 17rem;
