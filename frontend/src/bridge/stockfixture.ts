@@ -45,7 +45,7 @@ function picture(item: StockItem, w: number, h: number): string {
     return enc(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="hsl(${hue} 22% 16%)"/><g fill="hsl(${hue} 60% 66%)">${bars}</g></svg>`);
   }
   const cx = 20 + (seed % 60);
-  return enc(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 100 ${(100 * h) / w}" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue} 45% 42%)"/><stop offset="1" stop-color="hsl(${hue2} 40% 18%)"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="${cx}" cy="22" r="9" fill="hsl(${hue2} 70% 80% / .55)"/><path d="M0 70 L30 44 L52 62 L72 40 L100 66 L100 100 L0 100 Z" fill="hsl(${hue} 30% 12% / .7)"/></svg>`);
+  return enc(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 100 ${(100 * h) / w}" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue} 45% 42%)"/><stop offset="1" stop-color="hsl(${hue2} 40% 18%)"/></linearGradient></defs><rect width="100" height="200" fill="url(#g)"/><circle cx="${cx}" cy="22" r="9" fill="hsl(${hue2} 70% 80% / .55)"/><path d="M0 70 L30 44 L52 62 L72 40 L100 66 L100 100 L0 100 Z" fill="hsl(${hue} 30% 12% / .7)"/></svg>`);
 }
 
 function tone(seconds: number, freq: number): string {

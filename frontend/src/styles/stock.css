@@ -313,6 +313,7 @@
 .stock-view {
   inline-size: min(1180px, 94vw);
   block-size: min(760px, 90vh);
+  margin: auto;
   padding: 0;
   overflow: hidden;
   border: 1px solid var(--border-light);

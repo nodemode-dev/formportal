@@ -582,7 +582,7 @@ export function stockSearch(engine: Engine): void {
     setText(v.limit, lim);
     show(v.limit, Boolean(lim));
     setText(v.credit, t("Credit: {line}", { line: item.credit }));
-    const size = item.width && item.height ? ` · ${item.width} x ${item.height}` : "";
+    const size = item.kind === "image" && item.width && item.height && !item.file_note.includes(" x ") ? ` · ${item.width} x ${item.height}` : "";
     setText(v.file, t("Save gets: {what}", { what: item.file_note }) + size);
     setText(v.page, t("Open its page on {source}", { source: item.source_name }));
   };
