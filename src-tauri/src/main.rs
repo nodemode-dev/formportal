@@ -317,6 +317,37 @@ async fn media_thumb(url: String) -> Result<String, String> {
     .map_err(text)?
 }
 
+#[tauri::command]
+fn templates_kept() -> Result<Option<formportal_core::templates::TemplatesView>, String> {
+    hub().templates_kept().map_err(text)
+}
+
+#[tauri::command]
+async fn templates_fetch() -> Result<formportal_core::templates::TemplatesView, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_fetch().map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn templates_download(id: String) -> Result<formportal_core::templates::TemplateDownload, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_download(&id, &mut |_, _| {}).map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn templates_preview(path: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_preview(&path).map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn templates_reveal(path: String) -> Result<(), String> {
+    hub().templates_reveal(std::path::Path::new(&path)).map_err(text)
+}
+
 fn ctx(url: String, allow_unsigned: bool) -> formportal_cli::ops::Ctx {
     formportal_cli::ops::Ctx { portal: hub(), source: url, allow_unsigned }
 }
@@ -904,6 +935,11 @@ fn main() {
             font_web_family,
             font_web_preview,
             font_web_install,
+            templates_kept,
+            templates_fetch,
+            templates_download,
+            templates_preview,
+            templates_reveal,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
