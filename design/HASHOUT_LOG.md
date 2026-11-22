@@ -2,7 +2,7 @@
 
 Living log for the shared design files: the tokens, the icon set and the build-time marker renderer that both the site and the hub interface use. Source files stay comment-free; what they would have said lives here.
 
-Current build version: v0.70.2
+Current build version: v0.71.0
 Last updated: 2026-11-21 · v0.71.0 FormPublisher in the registry, FormREC spelled as the website does (#publisher-registry); 2026-11-20 · v0.70.2 no design source changed (the version only); 2026-11-20 · v0.70.1 no design source changed (the version only); 2026-11-20 · v0.70.0 no design source changed (the version only); 2026-11-20 · v0.69.0 releases the entry headed "after v0.68.0" (heading left as written): the family alignment (#family-align); 2026-11-19 · v0.68.0 no token or icon file changed (the version only); 2026-11-19 · v0.67.0 no token or icon file changed (the version only); 2026-11-19 · v0.66.0 no token or icon file changed (the version only; the gear for Preferences is drawn in the interface's markup, see the frontend log); 2026-11-11 · v0.64.1 no change (the version only); 2026-11-09 · v0.64.0 no token or icon change (the version only); 2026-11-10 · v0.63.6 FormRec's icon in dark and light and its hue #ae75ec (#formrec); 2026-11-09 · v0.63.3 form.ext's real icon in dark and light (#formext-icon); 2026-11-07 · v0.63.0 form.ext's hue #4f6bff; 2026-11-06 · v0.61.0 formcompiler is no app, its hue removed; formranker keyed as formbench; 2026-11-06 · v0.59.0 app-hues.json; 2026-10-04 · scaffold
 
 ---
