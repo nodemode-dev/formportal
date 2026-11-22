@@ -64,6 +64,10 @@ export interface Bridge {
   fontPick(): Promise<string | null>;
   fontAdd(path: string, rightsConfirmed: boolean): Promise<void>;
   fontRemove(family: string, style?: string): Promise<void>;
+  fontWeb(source: import("../engine/types.ts").WebFontSource): Promise<import("../engine/types.ts").WebFontCatalogue>;
+  fontWebFamily(source: import("../engine/types.ts").WebFontSource, id: string): Promise<import("../engine/types.ts").WebFontDetail>;
+  fontWebPreview(source: import("../engine/types.ts").WebFontSource, id: string, weight: number, italic: boolean): Promise<string>;
+  fontWebInstall(source: import("../engine/types.ts").WebFontSource, id: string): Promise<void>;
   appAgents(product: string, channel: Channel): Promise<AgentsView>;
   connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
   ownAgents(): Promise<import("../engine/types.ts").OwnAgent[]>;

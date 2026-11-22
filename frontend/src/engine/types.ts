@@ -171,8 +171,39 @@ export interface InstalledFont {
   family_id: string | null;
   file: string;
   sha256: string;
-  source: "index" | "own";
+  source: "index" | "own" | "fontsource" | "google";
   licence: string | null;
+}
+
+export type WebFontSource = "fontsource" | "google";
+
+export interface WebFontFamily {
+  id: string;
+  family: string;
+  category: string;
+  subsets: string[];
+  weights: number[];
+  italic: boolean;
+  variable: boolean;
+}
+
+export interface WebFontCatalogue {
+  source: WebFontSource;
+  on: boolean;
+  families: WebFontFamily[];
+}
+
+export interface WebFontDetail {
+  source: WebFontSource;
+  id: string;
+  family: string;
+  category: string;
+  licence: string | null;
+  licence_url: string | null;
+  credit: string | null;
+  subset: string | null;
+  faces: { weight: number; italic: boolean; style: string }[];
+  installable: boolean;
 }
 
 export interface FontsView {

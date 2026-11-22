@@ -182,6 +182,12 @@ export const tauriBridge: Bridge = {
   fontInstall: async (id, style) => {
     await tauri().core.invoke("font_install", { id, style: style ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() });
   },
+  fontWeb: (source) => tauri().core.invoke("font_web", { source }),
+  fontWebFamily: (source, id) => tauri().core.invoke("font_web_family", { source, id }),
+  fontWebPreview: (source, id, weight, italic) => tauri().core.invoke<string>("font_web_preview", { source, id, weight, italic }),
+  fontWebInstall: async (source, id) => {
+    await tauri().core.invoke("font_web_install", { source, id });
+  },
   fontPick: () => tauri().core.invoke<string | null>("font_pick"),
   fontAdd: async (path, rightsConfirmed) => {
     await tauri().core.invoke("font_add", { path, rightsConfirmed });

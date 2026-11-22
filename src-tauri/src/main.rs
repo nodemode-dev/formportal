@@ -258,6 +258,26 @@ fn font_remove(family: String, style: Option<String>) -> Result<usize, String> {
 }
 
 #[tauri::command]
+async fn font_web(source: String) -> Result<formportal_core::fonts::WebCatalogue, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_catalogue(&source).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_family(source: String, id: String) -> Result<formportal_core::fonts::WebFamilyDetail, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_family(&source, &id).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_preview(source: String, id: String, weight: u16, italic: bool) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_preview(&source, &id, weight, italic).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_install(source: String, id: String) -> Result<Vec<formportal_core::fonts::InstalledFont>, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().install_web_font(&source, &id).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
 async fn media_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
@@ -880,6 +900,10 @@ fn main() {
             provider_key_clear,
             github_start_fork,
             github_fork,
+            font_web,
+            font_web_family,
+            font_web_preview,
+            font_web_install,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
