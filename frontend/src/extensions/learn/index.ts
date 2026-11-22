@@ -32,6 +32,19 @@ export const learn: Extension = {
     let folders: number | null = null;
     let lastKey = "";
 
+    const NEEDS_BETA = new Set(["portal-beta"]);
+    const anyBeta = () => (engine.state.catalog?.products ?? []).some((p) => Boolean(p.channels.beta));
+    const hold = (r: HTMLElement) => {
+      const held = NEEDS_BETA.has(r.dataset.tutorial ?? "") && !anyBeta();
+      if (r.hasAttribute("data-held") !== held) r.toggleAttribute("data-held", held);
+      const head = r.querySelector<HTMLButtonElement>(".tutorial-head");
+      if (head && head.getAttribute("aria-disabled") !== String(held)) head.setAttribute("aria-disabled", String(held));
+      if (head && held && head.getAttribute("aria-expanded") === "true") head.setAttribute("aria-expanded", "false");
+      const body = r.querySelector<HTMLElement>(".tutorial-body");
+      if (body && held && !body.hidden) body.hidden = true;
+      setText(r.querySelector(".tutorial-held"), held ? tr("No Form app has a beta yet") : "");
+    };
+
     const row = (t: Tutorial) => {
       let r = rows.get(t.id);
       if (!r) {
@@ -41,7 +54,7 @@ export const learn: Extension = {
         head.type = "button";
         head.setAttribute("aria-expanded", "false");
         const main = el("span", "tutorial-main");
-        main.append(el("span", "tutorial-app"), el("span", "tutorial-title"), el("span", "tutorial-sum"), el("span", "tutorial-meta"));
+        main.append(el("span", "tutorial-app"), el("span", "tutorial-title"), el("span", "tutorial-sum"), el("span", "tutorial-meta"), el("span", "tutorial-held"));
         const meter = el("span", "tutorial-meter");
         const bar = el("span", "tutorial-bar");
         bar.append(el("span", "tutorial-fill"));
@@ -55,6 +68,7 @@ export const learn: Extension = {
         again.addEventListener("click", () => void engine.dispatch("learn.mark", { id: t.id, reset: true, title: t.title }));
         body.append(steps, again);
         head.addEventListener("click", () => {
+          if (r?.hasAttribute("data-held")) return;
           const open = body.hidden;
           body.hidden = !open;
           head.setAttribute("aria-expanded", String(open));
@@ -76,6 +90,7 @@ export const learn: Extension = {
       const width = `${Math.round((done / Math.max(1, t.steps.length)) * 100)}%`;
       if (fill && fill.style.inlineSize !== width) fill.style.inlineSize = width;
       r.dataset.state = t.finished ? "finished" : done ? "started" : "new";
+      hold(r);
       const steps = r.querySelector<HTMLOListElement>(".tutorial-steps");
       if (steps && steps.children.length !== t.steps.length) {
         steps.replaceChildren(
@@ -150,7 +165,8 @@ export const learn: Extension = {
         items.push(suggestion(tr("Continue {title}", { title: started.title }), tr("Next: step {n} of {steps}, {step}.", { n: next + 1, steps: started.steps.length, step: started.steps[next]?.title ?? "" }), tr("Continue"), () => openTutorial(started.id)));
       } else {
         const own = (t: Tutorial) => t.product === "formportal" && (installed.size === 0 ? t.id === "portal-first-app" : t.id !== "portal-first-app");
-        const fresh = tutorials.find((t) => !t.done_steps.length && installed.has(t.product)) ?? tutorials.find((t) => !t.done_steps.length && own(t));
+        const open = (t: Tutorial) => !rows.get(t.id)?.hasAttribute("data-held");
+        const fresh = tutorials.find((t) => !t.done_steps.length && installed.has(t.product) && open(t)) ?? tutorials.find((t) => !t.done_steps.length && own(t) && open(t));
         if (fresh) items.push(suggestion(fresh.title, `${fresh.summary} ${fresh.minutes} min.`, tr("Start"), () => openTutorial(fresh.id)));
       }
       if (folders === 0) items.push(suggestion(tr("Choose where your projects live"), tr("FormPortal lists your Form projects, opens each in its app and keeps earlier versions."), tr("Go to Files"), () => void engine.dispatch("route.go", "files")));
@@ -182,6 +198,10 @@ export const learn: Extension = {
       suggestions();
     });
     engine.on("install", () => suggestions());
+    engine.on("source", () => {
+      rows.forEach(hold);
+      suggestions();
+    });
     engine.on("files", ({ result }) => {
       folders = result.scan.folders.length;
       suggestions();
