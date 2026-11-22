@@ -508,6 +508,7 @@ export const fixtureBridge: Bridge = {
     }
   },
   fontWeb: async (source) => {
+    ((window as unknown as { __fontWebCalls?: string[] }).__fontWebCalls ??= []).push(source);
     await pause(400);
     const on = source === "fontsource" || providerKept.has("google-fonts");
     return { source, on, families: on ? webFamilies(source) : [] };
