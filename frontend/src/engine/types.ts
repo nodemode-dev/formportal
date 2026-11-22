@@ -482,6 +482,7 @@ export interface ChannelView {
 export interface UpcomingDay {
   at: string;
   count: number;
+  sealed?: boolean;
 }
 
 export interface UpcomingView {
@@ -491,6 +492,7 @@ export interface UpcomingView {
   supporters: number;
   checked: number;
   stale: boolean;
+  launched?: number | null;
 }
 
 export interface SupporterTile {

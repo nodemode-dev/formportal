@@ -77,9 +77,12 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const all = loadJson<{ products: App[] }>(resolve(catalog, "products.json")).products;
   const apps = all.filter((p) => p.id !== "formai");
   const hues = loadJson<Record<string, string>>(resolve(design, "app-hues.json"));
-  const schedule = loadJson<{ releases: { label: string; at: string; apps: string[] }[] }>(resolve(catalog, "schedule.json")).releases.map((g) => ({
+  const releases = loadJson<{ releases: { label: string; at: string; apps: string[]; names?: string[]; sealed?: boolean }[] }>(resolve(catalog, "schedule.json")).releases;
+  const sealed = releases.filter((g) => g.sealed);
+  const schedule = releases.filter((g) => !g.sealed).map((g) => ({
     ...g,
     apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => apps.some((p) => p.id === id)),
+    extra: g.apps.filter((id) => !apps.some((p) => p.id === (ALIAS[id] ?? id)) && id !== "formportal").length + (g.names?.length ?? 0),
   }));
   const scheduled = new Set(schedule.flatMap((g) => g.apps));
   const undated = apps.filter((p) => !scheduled.has(p.id)).length;
@@ -140,9 +143,14 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const soon = [
     ...schedule.map(
       (g, i) =>
-        `<li class="wave soon-group" data-soon-group="${i}" data-soon-at="${esc(g.at)}"><p class="wave-head"><b class="soon-date">${esc(opens(g.at))}</b><b class="soon-due">Being prepared</b><span class="wave-n" data-wave-n></span></p><ul class="wave-tiles soon-tiles">${g.apps.map(() => sealTile).join("")}</ul></li>`,
+        `<li class="wave soon-group" data-soon-group="${i}" data-soon-at="${esc(g.at)}"><p class="wave-head"><b class="soon-date">${esc(opens(g.at))}</b><b class="soon-due">Being prepared</b><span class="wave-n" data-wave-n></span></p><ul class="wave-tiles soon-tiles">${Array.from({ length: g.apps.length + g.extra }, () => sealTile).join("")}</ul></li>`,
+    ),
+    ...sealed.map(
+      (g) =>
+        `<li class="wave-sealed" data-soon-sealed data-soon-at="${esc(g.at)}"><p class="wave-head"><b class="soon-date">${esc(opens(g.at))}</b></p><div class="sealed-body"><svg class="sealed-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 3.5l3.1 2.6 4-.6 1.7 3.7 3.8 1.4-.3 4 2.9 2.9-1.9 3.6 1.3 3.8-3.4 2.2-.6 4-4 .5-2.4 3.3-3.7-1.6-3.7 1.6-2.4-3.3-4-.5-.6-4-3.4-2.2 1.3-3.8-1.9-3.6 2.9-2.9-.3-4 3.8-1.4 1.7-3.7 4 .6z"/><circle cx="20" cy="20" r="9.5"/><circle cx="20" cy="17.6" r="2.4"/><path d="M18.9 19.8l-1 5.2h4.2l-1-5.2"/></svg><span class="sealed-say">Sealed until the day</span></div></li>`,
     ),
     `<li class="wave soon-group" data-soon-extra><p class="wave-head"><b class="soon-date">Date to come</b><span class="wave-n" data-wave-n></span></p><ul class="wave-tiles soon-tiles">${Array.from({ length: MORE }, () => sealTile).join("")}</ul></li>`,
+    `<li class="wave-ask" data-soon-ask-tile><button class="ask-tile" type="button" data-soon-ask-open><svg class="ask-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8v8M8 12h8"/></svg><span class="ask-text"><b class="ask-name">Request a new Form App</b><span class="ask-sub">Name an app for the Form family to take on next.</span></span></button></li>`,
   ];
 
   const changed = '<span class="st-more"><span class="mono" data-field="update-size"></span><button class="fold-head" type="button" data-notes-toggle aria-expanded="false">What changed</button></span>';
@@ -212,7 +220,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     total: [String(apps.length)],
     fileapps: [esc(JSON.stringify(fileApps))],
   };
-  const left = schedule.map((g) => g.apps.length);
+  const left = schedule.map((g) => g.apps.length + g.extra);
   const rootState = ` data-live=""${left.map((n, i) => ` data-soon-g${i}="${n}"`).join("")} data-soon-left="${left.reduce((a, b) => a + b, 0)}" data-soon-more="${Math.min(MORE, undated)}"`;
 
   const liveRules = [
@@ -220,11 +228,12 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     ...apps.map((p) => `html[data-live~="${p.id}"] .dk[data-slot="${p.id}"] { order: 0; } html[data-live~="${p.id}"] .dk[data-slot="${p.id}"] .dk-hit { display: grid; } html[data-live~="${p.id}"] .dk[data-slot="${p.id}"] .dk-seal { display: none; }`),
     ...schedule.flatMap((g, i) => [
       `html[data-soon-g${i}="0"] [data-soon-group="${i}"] { display: none; }`,
-      ...g.apps.map((_, k) => `html[data-soon-g${i}="${k}"] [data-soon-group="${i}"] .soon-tile:nth-child(n + ${k + 1}) { display: none; }`),
+      ...Array.from({ length: g.apps.length + g.extra }, (_, k) => `html[data-soon-g${i}="${k}"] [data-soon-group="${i}"] .soon-tile:nth-child(n + ${k + 1}) { display: none; }`),
     ]),
     `html[data-soon-more="0"] [data-soon-extra] { display: none; }`,
     ...Array.from({ length: MORE - 1 }, (_, k) => `html[data-soon-more="${k + 1}"] [data-soon-extra] .soon-tile:nth-child(n + ${k + 2}) { display: none; }`),
-    `html[data-soon-left="0"][data-soon-more="0"] [data-soon] { display: none; }`,
+    `html[data-soon-unsealed] [data-soon-sealed], html:not([data-soon-ask]) [data-soon-ask-tile] { display: none; }`,
+    `html[data-soon-left="0"][data-soon-more="0"]${sealed.length ? "[data-soon-unsealed]" : ""}:not([data-soon-ask]):not([data-soon-site]) [data-soon] { display: none; }`,
     ...extIds.map((id) => `[data-pane="extensions"][data-filter="${id}"] .ext:not([data-product="${id}"]) { display: none; }`),
     ...GROUPS.map(([g]) => {
       const none = apps.filter((p) => group(p) === g).map((p) => `:not([data-live~="${p.id}"])`).join("");

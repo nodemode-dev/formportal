@@ -7,9 +7,11 @@
     { "label": "Group 2", "at": "2026-11-13T17:00:00Z", "apps": ["formcel", "formtxt", "formtools"] },
     { "label": "Group 3", "at": "2026-11-16T17:00:00Z", "apps": ["format", "formref", "formweb"] },
     { "label": "Group 4", "at": "2026-11-19T17:00:00Z", "apps": ["formsurface", "formsculpt", "formfabric"] },
-    { "label": "Group 5", "at": "2026-11-22T17:00:00Z", "apps": ["formmorpheus", "formbench", "formcraft"] },
-    { "label": "Group 6", "at": "2026-11-25T17:00:00Z", "apps": ["formpromo", "formrig", "formcad"] },
-    { "label": "Group 7", "at": "2026-11-28T17:00:00Z", "apps": ["formnet", "formslot", "subform"] }
+    { "label": "Group 5", "at": "2026-11-22T17:00:00Z", "apps": ["formmorpheus", "formcad", "formpublisher"] },
+    { "label": "Group 6", "at": "2026-11-25T17:00:00Z", "apps": ["formpromo", "formrig", "formcraft"] },
+    { "label": "Group 7", "at": "2026-11-28T17:00:00Z", "apps": ["formnet", "formslot", "subform"] },
+    { "label": "Group 8", "at": "2026-12-01T17:00:00Z", "apps": ["formbench", "formrec"], "names": ["FormField.io"] },
+    { "label": "Finale", "at": "2026-12-13T17:00:00Z", "apps": [], "sealed": true }
   ],
   "supporters": ["Form3D", "FormAD", "FormAPI", "FormCanvas", "FormDev", "FormHub", "FormLink", "FormPitch", "FormSIM", "FormUI", "NodeForm"]
 }

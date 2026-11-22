@@ -149,6 +149,17 @@
                 <ul class="waves">
                   <!-- @portal:soon -->
                 </ul>
+                <dialog class="prefs versions request" data-request aria-labelledby="h-request">
+                  <form class="versions-frame request-form" novalidate>
+                    <h2 id="h-request" class="prefs-title">Request a new Form App</h2>
+                    <label class="request-field"><span class="request-label">App name</span><input class="request-input" type="text" maxlength="80" required autocomplete="off" spellcheck="false" data-request-name /></label>
+                    <label class="request-field"><span class="request-label">What you use it for <span class="fine">(optional)</span></span><textarea class="request-input" rows="4" maxlength="1000" data-request-use></textarea></label>
+                    <label class="request-field"><span class="request-label">Link to the app <span class="fine">(optional)</span></span><input class="request-input" type="url" maxlength="300" inputmode="url" autocomplete="off" spellcheck="false" data-request-link placeholder="https://" /></label>
+                    <p class="fine request-say" data-request-say aria-live="polite">&nbsp;</p>
+                    <p class="fine">Your request becomes a public discussion on GitHub. FormPortal sends nothing itself: it opens the page in your browser with your words filled in, and you press Start discussion there.</p>
+                    <footer class="agent-acts"><button class="btn btn-primary" type="submit" data-request-go disabled>Open on GitHub</button><button class="btn" type="button" data-request-cancel>Cancel</button></footer>
+                  </form>
+                </dialog>
               </section>
             </div>
           </section>

@@ -22,6 +22,8 @@ function browserPlatform(): Platform {
 }
 
 const catalog = apps as unknown as Catalog;
+const SOON = new URLSearchParams(window.location.search).get("soon") ?? "sealed";
+if (SOON.startsWith("ask")) for (const p of registry.products) if (p.id !== "formai" && !catalog.products.some((c) => c.id === p.id)) catalog.products.push({ ...(catalog.products.find((c) => c.id === "formcut") ?? catalog.products[0]), id: p.id, name: p.name });
 const installed = new Map<string, InstallRecord>();
 for (const item of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",").filter(Boolean)) {
   const [product, wanted] = item.split("@");
@@ -132,15 +134,17 @@ const SUPPORTER_FIXTURE_CODE = "d1.0.00000000000000000000000000000000.AAAAAAAAAA
 const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const SITE_UNDATED = 9;
 const SITE_SUPPORTERS = 11;
-const SITE_DATED = schedule.releases.map((g) => ({ at: g.at, count: g.apps.length }));
+const SITE_RELEASES = schedule.releases as { at: string; apps: string[]; names?: string[]; sealed?: boolean }[];
+const SITE_DATED = SITE_RELEASES.map((g) => (g.sealed ? { at: g.at, count: 1, sealed: true } : { at: g.at, count: g.apps.length + (g.names?.length ?? 0) }));
 const SITE_NAMES = new Map(registry.products.map((p) => [p.id, p.name]));
 const SITE_TILES: { name: string; at: string | null }[] = [
-  ...schedule.releases.flatMap((g) => g.apps.filter((id) => id !== "formportal").map((id) => ({ name: SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id, at: g.at as string | null }))),
+  ...SITE_RELEASES.flatMap((g) => [...g.apps.filter((id) => id !== "formportal").map((id) => SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id), ...(g.names ?? [])].map((name) => ({ name, at: g.at as string | null }))),
   ...["FormDAM", "FormSculpt", "FormSurface", "FormWeb", "Planned app 1", "Planned app 2", "Planned app 3", "Planned app 4", "Planned app 5"].slice(0, SITE_UNDATED).map((name) => ({ name, at: null })),
   ...Array.from({ length: SITE_SUPPORTERS }, (_, i) => ({ name: `Codename ${i + 1}`, at: null })),
 ];
 let access: AgentAccess = new URLSearchParams(window.location.search).get("agents") === "broken" ? { outside_agents: "ask", stored: "allowed", seal: "broken", seal_broken: true } : { outside_agents: "ask", stored: "ask", seal: "none", seal_broken: false };
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
+if (params.has("supporter")) prefs = { ...prefs, supporter_code: SUPPORTER_FIXTURE_CODE };
 
 function missing(product: string): Error {
   return new Error(`${product} is not installed`);
@@ -541,7 +545,13 @@ export const fixtureBridge: Bridge = {
     access = { outside_agents: choice, stored: choice, seal: "sealed", seal_broken: false };
     return { ...access };
   },
-  siteUpcoming: async () => ({ known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: Math.floor(Date.now() / 1000), stale: false }),
+  siteUpcoming: async () => {
+    const now = Math.floor(Date.now() / 1000);
+    if (SOON === "bundled") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: true, launched: null };
+    if (!SOON.startsWith("ask")) return { known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: null };
+    const dated = SOON === "ask-new" ? [{ at: "2027-01-15T17:00:00Z", count: 2 }] : [];
+    return { known: true, dated, undated: 0, supporters: 0, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
+  },
   supporterCheck: async (code) => {
     const given = code === null ? (prefs.supporter_code ?? "") : code.trim();
     if (code === "") {
