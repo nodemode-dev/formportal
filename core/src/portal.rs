@@ -358,6 +358,7 @@ impl Portal {
         if self.reads_releases()? {
             crate::releases::apply_kept(&self.root, &mut catalog);
         }
+        crate::site::seen_launch(&self.root, &catalog);
         Ok(catalog)
     }
 
@@ -366,7 +367,9 @@ impl Portal {
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             let body = read_local(&url, &keys, allow_unsigned)?;
             let text = String::from_utf8(body).map_err(|_| CoreError::Signature("it is not text".to_string()))?;
-            return Ok(Catalog::from_json(&text)?);
+            let catalog = Catalog::from_json(&text)?;
+            crate::site::seen_launch(&self.root, &catalog);
+            return Ok(catalog);
         }
         let dir = self.root.join("catalog");
         let kept = dir.join("apps.json");
@@ -405,6 +408,7 @@ impl Portal {
         if self.reads_releases()? {
             crate::releases::discover(&self.root, &mut catalog);
         }
+        crate::site::seen_launch(&self.root, &catalog);
         Ok(catalog)
     }
 

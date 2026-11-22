@@ -79,8 +79,8 @@ export interface Bridge {
   setPreferences(prefs: Preferences): Promise<void>;
   agentAccess(): Promise<AgentAccess>;
   setAgentAccess(choice: AgentChoice): Promise<AgentAccess>;
-  siteUpcoming(): Promise<UpcomingView>;
-  supporterCheck(code: string | null): Promise<SupporterView>;
+  siteUpcoming(ask: boolean): Promise<UpcomingView>;
+  supporterCheck(code: string | null, ask: boolean): Promise<SupporterView>;
   providerKeys(): Promise<KeyState[]>;
   setProviderKey(provider: string, key: string): Promise<KeyState[]>;
   clearProviderKey(provider: string): Promise<KeyState[]>;

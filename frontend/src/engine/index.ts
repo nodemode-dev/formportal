@@ -40,7 +40,7 @@ export interface NoticeAction {
   arg?: unknown;
 }
 
-export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false };
+export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false, ask_site: false };
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {

@@ -400,7 +400,7 @@
     {
       "id": "formcad",
       "name": "FormCAD",
-      "alt_of": "SolidWorks",
+      "alt_of": "AutoCAD, SolidWorks and Rhino",
       "note": "2D drafting, parametric parts and NURBS surfaces",
       "group": "other",
       "status": "available",
@@ -456,7 +456,7 @@
       "group": "other",
       "status": "available",
       "kind": "animation",
-      "summary": "Animation on a Stage over a Timeline, drawn frame by frame, keyframed or performed live.",
+      "summary": "Animation studio: draw frame by frame, keyframe or perform live on a timeline.",
       "identifier": "ai.nodemode.formmorpheus",
       "repository": "https://github.com/nodemode-dev/formmorpheus",
       "licence": "Apache-2.0",
@@ -515,16 +515,16 @@
       }
     },
     {
-      "id": "subform",
-      "name": "SubForm",
-      "alt_of": "Microsoft",
-      "note": "A code editor for several Claude Code agents at once",
+      "id": "formsubstrate",
+      "name": "FormSubstrate",
+      "alt_of": "VS Code",
+      "note": "The family's code and text editor, with Claude Code agents built in",
       "group": "other",
       "status": "available",
       "kind": "workbench",
-      "summary": "A code editor that runs several Claude Code agents at once, each in its own git worktree.",
-      "identifier": "ai.nodemode.subform",
-      "repository": "https://github.com/nodemode-dev/subform",
+      "summary": "A code and text editor that runs several Claude Code agents at once, each in its own git worktree.",
+      "identifier": "ai.nodemode.formsubstrate",
+      "repository": "https://github.com/nodemode-dev/formsubstrate",
       "licence": "GPL-3.0-only",
       "minimum_os": {
         "macos": "macOS 11"
@@ -533,14 +533,15 @@
     {
       "id": "formpublisher",
       "name": "FormPublisher",
-      "note": "In development",
+      "alt_of": "Wix and Squarespace",
+      "note": "Templates, checks and packaging for self-hosted sites",
       "group": "other",
       "status": "in-development",
       "kind": "publisher",
-      "summary": "Publishing for the sites you build in FormWeb, in development.",
+      "summary": "Starts FormWeb sites from templates, checks and signs them, and prepares them for your own host.",
       "identifier": "ai.nodemode.formpublisher",
       "repository": "https://github.com/nodemode-dev/formpublisher",
-      "licence": "Apache-2.0"
+      "licence": "GPL-3.0-only"
     }
   ]
 }

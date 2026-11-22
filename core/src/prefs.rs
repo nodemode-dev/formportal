@@ -35,6 +35,8 @@ pub struct Preferences {
     pub open_at_login: bool,
     #[serde(default)]
     pub supporter_code: Option<String>,
+    #[serde(default)]
+    pub ask_site: bool,
 }
 
 pub const LANGUAGES: [&str; 2] = ["en", "es"];
@@ -50,7 +52,7 @@ impl Preferences {
 
 impl Default for Preferences {
     fn default() -> Self {
-        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None, open_at_login: false, supporter_code: None }
+        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None, open_at_login: false, supporter_code: None, ask_site: false }
     }
 }
 

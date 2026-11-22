@@ -26,6 +26,19 @@ html:not([data-theme="light"]) .ic-light {
   min-block-size: 32px;
 }
 
+.supporter-word {
+  display: grid;
+}
+
+.supporter-word > span {
+  grid-area: 1 / 1;
+}
+
+[data-supporter-check]:not([data-again]) [data-word="again"],
+[data-supporter-check][data-again] [data-word="check"] {
+  visibility: hidden;
+}
+
 .supporter-say {
   min-block-size: 3em;
   line-height: 1.5;

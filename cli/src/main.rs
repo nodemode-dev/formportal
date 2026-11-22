@@ -8,7 +8,7 @@ use serde_json::{json, Map, Value};
 const USAGE: &str = "formportal-cli: FormPortal without the window
 
   status                          version, platform, install folder, catalogue source, installs
-  apps [--source S]               the Form family and what this computer is offered
+  apps [--source S] [--ask-site]  the Form family and what this computer is offered; --ask-site also asks formai.studio what is on the way
   info <product> [--source S]     one product's registry entry and releases
   installs                        what is installed
   install <product> [--channel C] [--version V] [--source S] [--allow-unsigned]
@@ -22,7 +22,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
                                   formvfx formmcp formtray formskills formportal; the app picks changes up live
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
-  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...]
+  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...] [--ask-site ...]
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]

@@ -545,6 +545,8 @@
                 <button class="seg-item" type="button" data-open-set="last" aria-pressed="false">Where I left off</button>
               </div>
               <label class="menu-check"><span>Open FormPortal when I log in</span><input type="checkbox" class="switch" data-pref="open_at_login" /></label>
+              <label class="menu-check"><span>Ask formai.studio what is on the way</span><input type="checkbox" class="switch" data-pref="ask_site" /></label>
+              <p class="fine">On: once, each time FormPortal starts, and a kept supporter code is checked again then. Off: FormPortal shows the schedule it was built with and asks formai.studio nothing.</p>
             </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Version</h3>
@@ -665,7 +667,7 @@
               <p class="fine">Optional. If you supported the Form apps on formai.studio, paste the code from the thanks page. The code says only that you supported us, and it stays on this computer.</p>
               <label class="cv-field cv-field-stack"><span>Supporter code</span><input class="field" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" data-supporter-input placeholder="d1.0.0000.0000" /></label>
               <div class="supporter-acts">
-                <button class="btn btn-primary" type="button" data-supporter-check>Check</button>
+                <button class="btn btn-primary" type="button" data-supporter-check><span class="supporter-word"><span data-word="check">Check</span><span data-word="again">Check again</span></span></button>
                 <button class="btn" type="button" data-supporter-forget>Forget</button>
               </div>
               <p class="fine supporter-say" role="status" data-supporter-say data-state="none">Not set</p>

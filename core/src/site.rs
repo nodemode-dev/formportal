@@ -10,13 +10,12 @@ use sha2::{Digest, Sha256};
 
 use crate::download::check_url;
 use crate::error::Result;
-use crate::Portal;
+use crate::{Availability, Catalog, Channel, Platform, Portal};
 
 pub const SITE: &str = "https://formai.studio";
 pub const SITE_ENV: &str = "FORMPORTAL_SITE";
 pub const SITE_FILE: &str = "site.json";
 pub const SITE_FORMAT: &str = "formportal-site";
-const UPCOMING_FRESH: u64 = 15 * 60;
 const SUPPORTER_FRESH: u64 = 24 * 60 * 60;
 const SUPPORTER_KEEP: u64 = 7 * 24 * 60 * 60;
 const RETRY: u64 = 60;
@@ -293,13 +292,16 @@ fn upcoming_view(kept: &KeptUpcoming, stale: bool, launched: Option<u64>) -> Upc
     UpcomingView { known: kept.checked > 0, dated: kept.data.dated.clone(), undated: kept.data.undated, supporters: kept.data.supporters, checked: kept.checked, stale, launched }
 }
 
-pub fn upcoming(root: &Path) -> UpcomingView {
+pub fn upcoming(root: &Path, ask: bool) -> UpcomingView {
     let at = now();
     let kept = load(root);
     let launched = kept.launched;
+    if !ask {
+        return kept.upcoming.as_ref().map_or(UpcomingView { launched, ..UpcomingView::default() }, |have| upcoming_view(have, false, launched));
+    }
     if let Some(have) = &kept.upcoming {
-        if at < have.checked + UPCOMING_FRESH || at < have.tried + RETRY {
-            return upcoming_view(have, at >= have.checked + UPCOMING_FRESH, launched);
+        if at < have.tried + RETRY {
+            return upcoming_view(have, at >= have.checked + RETRY, launched);
         }
     }
     let answer = base().and_then(|site| match exchange(&format!("{site}/api/upcoming"), None) {
@@ -348,6 +350,17 @@ fn supporter_view(have: &KeptSupporter, stale: bool) -> SupporterView {
 
 fn plain(state: &str) -> SupporterView {
     SupporterView { state: state.to_string(), ..SupporterView::default() }
+}
+
+pub fn kept_supporter(root: &Path, code: &str) -> SupporterView {
+    if !code_ok(code) {
+        return plain("no");
+    }
+    let id = digest(code);
+    match load(root).supporter.filter(|s| s.code == id && s.checked > 0) {
+        Some(have) if usable(&have, now()) => supporter_view(&have, false),
+        _ => plain("unchecked"),
+    }
 }
 
 pub fn check_supporter(root: &Path, code: &str, force: bool) -> SupporterView {
@@ -410,12 +423,63 @@ pub fn forget(root: &Path) {
     update(root, |k| k.supporter = None);
 }
 
+const SCHEDULE: &str = include_str!("../../catalog/schedule.json");
+const REGISTRY: &str = include_str!("../../catalog/products.json");
+const ALIAS: [(&str, &str); 3] = [("formportal", "formai"), ("formdeck", "formslide"), ("formskill", "formskills")];
+
+fn fold(text: &str) -> String {
+    text.chars().filter(char::is_ascii_alphanumeric).map(|c| c.to_ascii_lowercase()).collect()
+}
+
+fn live(catalog: &Catalog, id: &str) -> bool {
+    [Channel::Stable, Channel::Beta].iter().any(|ch| matches!(catalog.view(id, *ch, Platform::current()).availability, Availability::Available | Availability::OtherPlatform))
+}
+
+pub fn launch_done(catalog: &Catalog, at: u64) -> bool {
+    let schedule: Value = serde_json::from_str(SCHEDULE).unwrap_or(Value::Null);
+    let registry: Value = serde_json::from_str(REGISTRY).unwrap_or(Value::Null);
+    let known: Vec<&str> = registry.get("products").and_then(Value::as_array).map(|l| l.iter().filter_map(|p| p.get("id").and_then(Value::as_str)).collect()).unwrap_or_default();
+    let groups = schedule.get("releases").and_then(Value::as_array).cloned().unwrap_or_default();
+    let mut sealed_due = false;
+    let mut named: Vec<String> = Vec::new();
+    for group in &groups {
+        let Some(due) = group.get("at").and_then(Value::as_str).and_then(parse_time) else { continue };
+        if group.get("sealed").and_then(Value::as_bool) == Some(true) {
+            sealed_due = at >= due;
+            if !sealed_due {
+                return false;
+            }
+            continue;
+        }
+        for id in group.get("apps").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str) {
+            let id = ALIAS.iter().find(|(theirs, _)| *theirs == id).map_or(id, |(_, ours)| *ours);
+            if id != "formai" && !live(catalog, id) {
+                return false;
+            }
+        }
+        named.extend(group.get("names").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(fold));
+    }
+    let out: Vec<&crate::Product> = catalog.products.iter().filter(|p| live(catalog, &p.id)).collect();
+    let names = |n: &str, p: &crate::Product| n == fold(&p.name) || n.starts_with(&fold(&p.id));
+    sealed_due && named.iter().all(|n| out.iter().any(|p| names(n, p))) && out.iter().any(|p| !known.contains(&p.id.as_str()) && !named.iter().any(|n| names(n, p)))
+}
+
+pub fn seen_launch(root: &Path, catalog: &Catalog) {
+    if catalog.fixture || load(root).launched.is_some() {
+        return;
+    }
+    let at = now();
+    if launch_done(catalog, at) {
+        update(root, |k| k.launched = k.launched.or(Some(at)));
+    }
+}
+
 impl Portal {
-    pub fn upcoming(&self) -> UpcomingView {
-        upcoming(self.root())
+    pub fn upcoming(&self, ask: bool) -> UpcomingView {
+        upcoming(self.root(), ask)
     }
 
-    pub fn supporter(&self, code: Option<String>) -> Result<SupporterView> {
+    pub fn supporter(&self, code: Option<String>, ask: bool) -> Result<SupporterView> {
         match code.map(|c| c.trim().to_string()) {
             Some(given) if given.is_empty() => {
                 self.forget_supporter()?;
@@ -432,7 +496,7 @@ impl Portal {
             }
             None => match self.preferences()?.supporter_code {
                 Some(stored) => {
-                    let view = check_supporter(self.root(), &stored, false);
+                    let view = if ask { check_supporter(self.root(), &stored, true) } else { kept_supporter(self.root(), &stored) };
                     if self.preferences()?.supporter_code.as_deref() != Some(stored.as_str()) {
                         forget(self.root());
                         return Ok(plain("none"));

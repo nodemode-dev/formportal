@@ -6,7 +6,7 @@
   "kind": "Codebase memory for coding agents",
   "title": "codebase memory that tells agents what is already built",
   "summary": "FormSlot is the Form family's memory for coding agents: what is already built, where it lives and the rules it follows, served in few tokens. Rust and SQLite, on your machine.",
-  "lede": "FormSlot is codebase memory for coding agents. It records what is already built, where it lives and the rules it follows, and serves that in as few tokens as the task needs. It is written in Rust on SQLite and runs on your own machine. It has no window of its own: you use it from a terminal, from Claude Code, or in SubForm, where its panel lives.",
+  "lede": "FormSlot is codebase memory for coding agents. It records what is already built, where it lives and the rules it follows, and serves that in as few tokens as the task needs. It is written in Rust on SQLite and runs on your own machine. It has no window of its own: you use it from a terminal, from Claude Code, or in FormSubstrate, where its panel lives.",
   "replaces": "",
   "project": "",
   "runs_on": "macOS, Windows and Linux",

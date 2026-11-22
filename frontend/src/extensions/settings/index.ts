@@ -80,7 +80,7 @@ export const settings: Extension = {
     const prefBoxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-pref]"));
     engine.on("prefs", ({ prefs }) => {
       for (const box of prefBoxes) {
-        const on = Boolean(prefs[box.dataset.pref as "auto_update" | "auto_update_beta" | "only_when_closed" | "notices" | "keep_previous" | "open_at_login"]);
+        const on = Boolean(prefs[box.dataset.pref as "auto_update" | "auto_update_beta" | "only_when_closed" | "notices" | "keep_previous" | "open_at_login" | "ask_site"]);
         if (box.checked !== on) box.checked = on;
       }
     });

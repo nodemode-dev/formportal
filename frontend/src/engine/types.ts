@@ -484,6 +484,7 @@ export interface Preferences {
   language: string | null;
   open_at_login: boolean;
   supporter_code?: string | null;
+  ask_site?: boolean;
 }
 
 export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";
@@ -592,7 +593,7 @@ export interface SupporterTile {
 }
 
 export interface SupporterView {
-  state: "none" | "supporter" | "no" | "unreachable";
+  state: "none" | "supporter" | "no" | "unreachable" | "unchecked";
   supporter: boolean;
   until: string | null;
   upcoming: SupporterTile[];

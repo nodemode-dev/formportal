@@ -5,7 +5,6 @@ import { language, t } from "../../i18n/index.ts";
 
 const KEY = "formportal.soon";
 const HOUR = 3600 * 1000;
-const POLL = 15 * 60 * 1000;
 export const REQUEST = "https://github.com/orgs/nodemode-dev/discussions/new?category=replicate-app-request";
 
 export function requestAddress(name: string, use: string, link: string): string {
@@ -24,8 +23,19 @@ const linkOk = (text: string): boolean => {
   }
 };
 
+let asking: Promise<boolean> | null = null;
+export const askSite = (): Promise<boolean> =>
+  (asking ??= pickBridge()
+    .preferences()
+    .then((p) => p.ask_site === true)
+    .catch(() => false));
 let first: Promise<UpcomingView> | null = null;
-export const upcomingOnce = (): Promise<UpcomingView> => (first ??= pickBridge().siteUpcoming());
+let askedRun = false;
+export const upcomingOnce = (): Promise<UpcomingView> =>
+  (first ??= askSite().then((ask) => {
+    if (ask) askedRun = true;
+    return pickBridge().siteUpcoming(ask);
+  }));
 
 export function onTheWay(engine: Engine, bundled: number[]): void {
   const bridge = pickBridge();
@@ -149,7 +159,6 @@ export function onTheWay(engine: Engine, bundled: number[]): void {
     const kept = JSON.parse(localStorage.getItem(KEY) ?? "null");
     if (kept && typeof kept.title === "string") name(kept.title);
   } catch {}
-  let asked = Date.now();
   const refresh = async (ask: Promise<UpcomingView>) => {
     try {
       apply(await ask);
@@ -157,16 +166,27 @@ export function onTheWay(engine: Engine, bundled: number[]): void {
   };
   void refresh(upcomingOnce());
   const looked = () => {
-    if (engine.state.route !== "home") return;
-    if (Date.now() - asked < POLL) {
-      if (last) apply(last);
-      return;
-    }
-    asked = Date.now();
-    void refresh(bridge.siteUpcoming());
+    if (engine.state.route === "home" && last) apply(last);
   };
   engine.on("route", looked);
   window.addEventListener("focus", looked);
+  engine.on("source", () => {
+    if (engine.state.catalog && last?.launched == null) void refresh(bridge.siteUpcoming(false));
+  });
+  let on: boolean | null = null;
+  void askSite().then((given) => {
+    on ??= given;
+  });
+  engine.on("prefs", ({ prefs }) => {
+    if (on === null) return;
+    const now = prefs.ask_site === true;
+    const was = on;
+    on = now;
+    if (!was && now && !askedRun) {
+      askedRun = true;
+      void refresh(bridge.siteUpcoming(true));
+    }
+  });
 
   const dialog = document.querySelector<HTMLDialogElement>("[data-request]");
   const opener = document.querySelector<HTMLButtonElement>("[data-soon-ask-open]");

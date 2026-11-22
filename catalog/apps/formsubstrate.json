@@ -1,12 +1,12 @@
 {
-  "id": "subform",
-  "name": "SubForm",
+  "id": "formsubstrate",
+  "name": "FormSubstrate",
   "version": "0.16.2",
-  "repo": "https://github.com/nodemode-dev/subform",
+  "repo": "https://github.com/nodemode-dev/formsubstrate",
   "kind": "Developer workbench for Claude Code agents",
-  "title": "a code editor that runs several Claude Code agents at once",
-  "summary": "SubForm is a code editor that runs several Claude Code agents at once, each in its own git worktree, with hunk-by-hunk review and FormSlot checks before an agent writes.",
-  "lede": "SubForm is a developer workbench: a code editor that runs several Claude Code agents at once. Each agent works in its own git worktree, you review its changes hunk by hunk, and what FormSlot already knows is shown before an agent writes. It runs in a browser or as a desktop app.",
+  "title": "a code and text editor that runs several Claude Code agents at once",
+  "summary": "FormSubstrate is the Form family's code and text editor. It runs several Claude Code agents at once, each in its own git worktree, with hunk-by-hunk review and FormSlot checks before an agent writes.",
+  "lede": "FormSubstrate is a developer workbench: a code and text editor that runs several Claude Code agents at once. Installed, the app is called Substrate. Each agent works in its own git worktree, you review its changes hunk by hunk, and what FormSlot already knows is shown before an agent writes. It runs in a browser or as a desktop app.",
   "replaces": "",
   "project": "",
   "runs_on": "macOS, Windows and Linux; also in a browser",
@@ -143,7 +143,7 @@
       "title": "Built for agents",
       "text": "The engine is an MCP server with nine read-mostly tools. Only review_comment changes state, and no tool writes files, commits or answers a gate.",
       "bullets": [
-        "./subform mcp serves MCP on stdio for Claude Code, Codex and Cursor",
+        "./formsubstrate mcp serves MCP on stdio for Claude Code, Codex and Cursor",
         "POST /mcp behind a local guard and a bearer token",
         "A routing skill pack for agents"
       ],
@@ -161,14 +161,14 @@
       "Node 20.19 or later",
       "Claude Code for agent sessions"
     ],
-    "install": "./subform_oc_install\nWindows: subform_oc_install.bat",
-    "run": "./subform\nWindows: subform.bat",
+    "install": "./formsubstrate_oc_install\nWindows: formsubstrate_oc_install.bat",
+    "run": "./formsubstrate\nWindows: formsubstrate.bat",
     "desktop": "./build_app\nWindows: build_app.bat",
-    "agents": "./subform mcp\n./subform doctor",
+    "agents": "./formsubstrate mcp\n./formsubstrate doctor",
     "topics": [
       {
         "title": "Engine and ports",
-        "text": "./subform starts the engine on 127.0.0.1:5655 and the web UI at http://localhost:5650; SUBFORM_PORT moves the engine port."
+        "text": "./formsubstrate starts the engine on 127.0.0.1:5655 and the web UI at http://localhost:5650; FORMSUBSTRATE_PORT moves the engine port."
       },
       {
         "title": "Desktop window",
@@ -180,11 +180,11 @@
       },
       {
         "title": "First install",
-        "text": "New users can double-click Install subform.command or Install subform.bat. The guide is docs/GUIDE.md."
+        "text": "New users can double-click Install formsubstrate.command or Install formsubstrate.bat. The guide is docs/GUIDE.md."
       },
       {
         "title": "Releases",
-        "text": "All SubForm builds are compiled and released from FormCompiler; the repository holds the source."
+        "text": "All FormSubstrate builds are compiled and released from FormCompiler; the repository holds the source."
       }
     ]
   },
@@ -228,31 +228,31 @@
   ],
   "captures": {
     "file-graph": {
-      "file": "/media/subform/ui-file-graph-2.webp",
+      "file": "/media/formsubstrate/ui-file-graph-2.webp",
       "width": 2400,
       "height": 1500,
       "alt": "File graph of a repository with files as nodes coloured by type and links between them",
       "size": ""
     },
     "formslot": {
-      "file": "/media/subform/ui-formslot-2.webp",
+      "file": "/media/formsubstrate/ui-formslot-2.webp",
       "width": 2400,
       "height": 1500,
-      "alt": "SubForm with the FormSlot panel listing slots and code units that match a search for toast notification",
+      "alt": "FormSubstrate with the FormSlot panel listing slots and code units that match a search for toast notification",
       "size": ""
     },
     "editor": {
-      "file": "/media/subform/ui-hero-2.webp", "light": "/media/subform/ui-hero-light-2.webp",
+      "file": "/media/formsubstrate/ui-hero-2.webp", "light": "/media/formsubstrate/ui-hero-light-2.webp",
       "width": 2400,
       "height": 1500,
-      "alt": "SubForm editing a TypeScript file with the FormSlot panel open on the left, showing the Toast notices slot and the copies of it found in two repositories",
+      "alt": "FormSubstrate editing a TypeScript file with the FormSlot panel open on the left, showing the Toast notices slot and the copies of it found in two repositories",
       "size": ""
     },
     "review": {
-      "file": "/media/subform/ui-review-2.webp",
+      "file": "/media/formsubstrate/ui-review-2.webp",
       "width": 2400,
       "height": 1500,
-      "alt": "SubForm Source Control panel beside a side-by-side diff of a changed file",
+      "alt": "FormSubstrate Source Control panel beside a side-by-side diff of a changed file",
       "size": ""
     }
   },
