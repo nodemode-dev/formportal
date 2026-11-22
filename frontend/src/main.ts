@@ -662,7 +662,7 @@ engine.command("account.start", async (arg) => {
   const run = ++accountRun;
   engine.emit("account", { status: null, code: null, busy: true, error: null });
   try {
-    const code = await bridge.githubStart(Boolean(arg));
+    const code = arg === "fork" ? await bridge.githubStartFork() : await bridge.githubStart(Boolean(arg));
     if (run !== accountRun) return;
     engine.emit("account", { status: null, code, busy: false, error: null });
     const until = Date.now() + code.expires_in * 1000;
@@ -677,7 +677,7 @@ engine.command("account.start", async (arg) => {
       else {
         accountRun += 1;
         engine.emit("account", { status: { configured: true, account: poll.account }, code: null, busy: false, error: null });
-        engine.setNotice(t("Signed in to GitHub as {login}.", { login: poll.account.login }), "info", "system");
+        engine.setNotice(t("Connected to GitHub as {login}.", { login: poll.account.login }), "info", "system");
         return;
       }
     }
@@ -695,6 +695,7 @@ engine.command("account.signOut", async () => {
   accountRun += 1;
   try {
     await bridge.githubSignOut();
+    engine.setNotice(t("Disconnected from GitHub. The token is gone from this computer's keychain; to withdraw FormPortal's access on GitHub too, revoke it under Settings, Applications on github.com."), "info", "system");
     await engine.dispatch("account.check");
   } catch (e) {
     accountFail(e);

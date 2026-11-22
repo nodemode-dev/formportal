@@ -273,6 +273,12 @@ export interface DeviceCode {
 
 export type GithubPoll = { state: "waiting"; interval: number } | { state: "signed-in"; account: GithubAccount };
 
+export interface GithubFork {
+  repo: string;
+  url: string;
+  existed: boolean;
+}
+
 export interface SharedFolder {
   folder: string;
   repo: string;

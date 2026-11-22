@@ -1,4 +1,4 @@
-import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
@@ -141,6 +141,8 @@ export const tauriBridge: Bridge = {
   githubSignOut: async () => {
     await tauri().core.invoke<null>("github_sign_out");
   },
+  githubStartFork: () => tauri().core.invoke<DeviceCode>("github_start_fork"),
+  githubFork: () => tauri().core.invoke<GithubFork>("github_fork"),
   shares: () => tauri().core.invoke<SharesView>("shares_view"),
   shareFolder: (folder, invite) => tauri().core.invoke<SyncReport>("share_folder", { folder, invite }),
   shareSend: (folder) => tauri().core.invoke<SyncReport>("share_send", { folder }),

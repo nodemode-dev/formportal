@@ -688,6 +688,18 @@ async fn provider_key_clear(provider: String) -> Result<Vec<formportal_core::key
 }
 
 #[tauri::command]
+async fn github_start_fork() -> Result<formportal_core::github::DeviceCode, String> {
+    use formportal_core::github::{start, FORK_SCOPE, SIGN_IN_SCOPE};
+    let scope = format!("{SIGN_IN_SCOPE} {FORK_SCOPE}");
+    tauri::async_runtime::spawn_blocking(move || start(&scope).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_fork() -> Result<formportal_core::github::Fork, String> {
+    tauri::async_runtime::spawn_blocking(|| formportal_core::github::fork_registry().map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
 async fn shares_view() -> Result<formportal_core::share::SharesView, String> {
     tauri::async_runtime::spawn_blocking(|| hub().shares().map_err(text)).await.map_err(text)?
 }
@@ -866,6 +878,8 @@ fn main() {
             provider_keys,
             provider_key_set,
             provider_key_clear,
+            github_start_fork,
+            github_fork,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())

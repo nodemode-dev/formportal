@@ -65,7 +65,10 @@ type FixtureTutorial = { id: string; product: string; title: string; summary: st
 const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutorial[]), sampleTutorial];
 const progress = new Map<string, Set<number>>();
 const later = new Set<string>();
-const github: { account: GithubAccount | null; polls: number; share: boolean } = { account: null, polls: 0, share: false };
+const github: { account: GithubAccount | null; polls: number; share: boolean; fork: boolean; forked: boolean } = { account: null, polls: 0, share: false, fork: false, forked: false };
+const githubMode = new URLSearchParams(window.location.search).get("github") ?? "";
+if (githubMode === "on" || githubMode === "forked") github.account = { login: "octo-tester", name: "Octo Tester", scopes: ["read:user"] };
+if (githubMode === "forked") github.forked = true;
 const PROVIDER_KEYS = ["pexels", "pixabay", "freesound", "google-fonts"];
 const providerKept = new Set<string>();
 const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ provider, present: providerKept.has(provider) }));
@@ -455,20 +458,36 @@ export const fixtureBridge: Bridge = {
   githubStart: async (share) => {
     github.polls = 0;
     github.share = share;
+    github.fork = false;
     return { device_code: "fixture-device-code", user_code: "WDJB-MJHT", verification_uri: "https://github.com/login/device", expires_in: 900, interval: 1 };
   },
   githubPoll: async (_code, interval) => {
     github.polls += 1;
     if (github.polls < 3) return { state: "waiting", interval };
-    github.account = { login: "octo-tester", name: "Octo Tester", scopes: github.share ? ["read:user", "repo"] : ["read:user"] };
+    github.account = { login: "octo-tester", name: "Octo Tester", scopes: github.share ? ["read:user", "repo"] : github.fork ? ["read:user", "public_repo"] : ["read:user"] };
     return { state: "signed-in", account: github.account };
   },
   githubSignOut: async () => {
     github.account = null;
   },
+  githubStartFork: async () => {
+    github.polls = 0;
+    github.share = false;
+    github.fork = true;
+    return { device_code: "fixture-device-code", user_code: "WDJB-MJHT", verification_uri: "https://github.com/login/device", expires_in: 900, interval: 1 };
+  },
+  githubFork: async () => {
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
+    if (!github.account.scopes.some((s) => s === "public_repo" || s === "repo")) throw new Error("GitHub sign-in: forking the extension registry needs the public_repo permission; choose Set up my extension registry fork in Preferences, Profile and approve it on GitHub");
+    await new Promise((done) => window.setTimeout(done, 600));
+    const existed = github.forked;
+    github.forked = true;
+    const repo = `${github.account.login}/form.ext-registry`;
+    return { repo, url: `https://github.com/${repo}`, existed };
+  },
   shares: async () => ({ ...shares, invitations: github.account && params.has("shared") ? shares.invitations : [] }),
   shareFolder: async (folder, invite) => {
-    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
     const repo = `${github.account.login}/formportal-library-${folder.split(/[\\/]/).pop()?.toLowerCase().replace(/[^a-z0-9]+/g, "-") ?? "library"}`;
     const url = `https://github.com/${repo}`;
     const row = shares.shared.find((s) => s.folder === folder) ?? { folder, repo, url, invited: [] as string[] };
@@ -487,7 +506,7 @@ export const fixtureBridge: Bridge = {
   },
   sharePull: async (repo) => ({ repo, url: `https://github.com/${repo}`, folder: shares.joined.find((j) => j.repo === repo)?.folder ?? "", sent: 0, received: 1, unchanged: 3, skipped: [], invited: [] }),
   publishFile: async (file, remove) => {
-    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
     const found = shares.published.find((p) => p.file === file);
     if (remove) {
       if (!found) throw new Error(`${file} has no public link`);

@@ -1,4 +1,4 @@
-import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
@@ -30,6 +30,8 @@ export interface Bridge {
   githubStart(share: boolean): Promise<DeviceCode>;
   githubPoll(deviceCode: string, interval: number): Promise<GithubPoll>;
   githubSignOut(): Promise<void>;
+  githubStartFork(): Promise<DeviceCode>;
+  githubFork(): Promise<GithubFork>;
   shares(): Promise<SharesView>;
   shareFolder(folder: string, invite: string[]): Promise<SyncReport>;
   shareSend(folder: string): Promise<SyncReport>;

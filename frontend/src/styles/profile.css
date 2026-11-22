@@ -1,0 +1,95 @@
+.cv-prefs-group.github[hidden] {
+  display: none;
+}
+
+.account-plan {
+  line-height: 1.5;
+}
+
+.account-revoke,
+.fork {
+  display: none;
+}
+
+.account[data-account="on"] .account-revoke {
+  display: block;
+  line-height: 1.5;
+}
+
+.account[data-account="on"] .fork {
+  display: grid;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-2);
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px solid var(--edge);
+}
+
+.fork-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+
+.fork [data-fork-say] {
+  display: none;
+  line-height: 1.5;
+}
+
+.fork[data-fork="idle"] [data-fork-say="idle"],
+.fork[data-fork="confirm"] [data-fork-say="confirm"],
+.fork[data-fork="busy"] [data-fork-say="busy"],
+.fork[data-fork="error"] [data-fork-say="error"],
+.fork[data-fork="done"] [data-fork-say="done"] {
+  display: block;
+}
+
+.fork[data-fork="confirm"][data-fork-scope="have"] .fork-consent {
+  display: none;
+}
+
+.fork-done {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.fork-line {
+  overflow-wrap: anywhere;
+}
+
+.fork-steps {
+  display: grid;
+  gap: var(--sp-1);
+  margin: 0;
+  padding-inline-start: 1.25em;
+}
+
+.fork-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  min-block-size: 32px;
+}
+
+.fork-acts > .btn {
+  display: none;
+}
+
+.fork[data-fork="idle"] .fork-start,
+.fork[data-fork="error"] .fork-start,
+.fork[data-fork="error"] .fork-cancel,
+.fork[data-fork="confirm"][data-fork-scope="need"] .fork-approve,
+.fork[data-fork="confirm"][data-fork-scope="have"] .fork-go,
+.fork[data-fork="confirm"] .fork-cancel,
+.fork[data-fork="done"] .fork-ext {
+  display: inline-flex;
+}
+
+.fork-acts > .btn[hidden] {
+  display: none;
+}
+
+.profile-foot {
+  margin-block-start: var(--sp-2);
+  line-height: 1.5;
+}

@@ -444,6 +444,17 @@
               <label class="menu-check"><span>Open FormPortal when I log in</span><input type="checkbox" class="switch" data-pref="open_at_login" /></label>
             </section>
             <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Version</h3>
+              <p class="cv-prefs-line">FormPortal %fact:version% <span class="fine" translate="no">by nodemode.ai</span></p>
+              <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Check &amp; repair</h3>
+              <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
+              <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
+              <ul class="repair-list" data-repair-list></ul>
+            </section>
+            <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Notifications</h3>
               <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
               <p class="fine">Pop up a notice for:</p>
@@ -544,25 +555,8 @@
         </section>
 
         <section class="cv-prefs-sec" data-prefs-panel="account" role="tabpanel" aria-labelledby="prefs-head-account">
-          <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-seclabel">Account</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-seclabel">Profile</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
           <div class="cv-prefs-secbody" id="prefs-body-account">
-            <section class="cv-prefs-group">
-            <h3 class="cv-prefs-label">GitHub</h3>
-            <p class="fine">Optional. Installing, updating and everything else in FormPortal work without an account. Signing in uses your own GitHub account, for sharing from Files.</p>
-            <div class="account" data-account="checking">
-              <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not signed in.</span><span class="account-say" data-say="unset">This FormPortal has no GitHub app set up, so signing in is not available.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Signed in as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
-              <p class="account-code mono" data-account-code aria-live="polite"></p>
-              <p class="fine account-scopes" data-account-scopes></p>
-              <div class="account-acts">
-                <button class="btn btn-primary account-in" type="button" data-account-in>Sign in with GitHub</button>
-                <button class="btn account-open" type="button" data-account-open>Open github.com</button>
-                <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
-                <button class="btn btn-primary account-share" type="button" data-account-share>Allow sharing</button>
-                <button class="btn account-out" type="button" data-account-out>Sign out</button>
-              </div>
-            </div>
-            <p class="fine">FormPortal asks only to read your profile when you sign in, and asks again for repository access the first time you share. Your sign-in is kept in this computer's keychain, never in a file; sign out to remove it.</p>
-            </section>
             <section class="cv-prefs-group" data-supporter>
               <h3 class="cv-prefs-label">Supporter</h3>
               <p class="fine">Optional. If you supported the Form apps on formai.studio, paste the code from the thanks page. The code says only that you supported us, and it stays on this computer.</p>
@@ -574,23 +568,57 @@
               <p class="fine supporter-say" role="status" data-supporter-say data-state="none">Not set</p>
               <p class="links"><a class="link" href="https://formai.studio/support/" data-web>Get a supporter code on formai.studio</a></p>
             </section>
+            <section class="cv-prefs-group github" data-github hidden>
+              <h3 class="cv-prefs-label">Connect to GitHub</h3>
+              <p class="fine">Optional. Installing, updating and everything else in FormPortal work without it. Connecting uses your own GitHub account, for sharing from Files and for your own fork of the extension registry.</p>
+              <div class="account" data-account="checking">
+                <p class="fine account-plan">What happens: FormPortal shows a code, you enter it on github.com and approve. GitHub is asked only to let FormPortal read your public profile (the read:user permission), to show who is connected. GitHub gives FormPortal a token, which is kept in this computer's keychain and nowhere else. Nothing goes to formai.studio or anyone else: FormPortal talks only to github.com and api.github.com, and only when you use sharing or the fork below.</p>
+                <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not connected.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Connected as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
+                <p class="account-code mono" data-account-code aria-live="polite"></p>
+                <p class="fine account-scopes" data-account-scopes></p>
+                <div class="account-acts">
+                  <button class="btn btn-primary account-in" type="button" data-account-in>Connect to GitHub</button>
+                  <button class="btn account-open" type="button" data-account-open>Open github.com</button>
+                  <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
+                  <button class="btn btn-primary account-share" type="button" data-account-share>Allow sharing</button>
+                  <button class="btn account-out" type="button" data-account-out>Disconnect</button>
+                </div>
+                <p class="fine account-revoke">Disconnect removes the token from this computer's keychain. To withdraw FormPortal's access on GitHub as well, revoke FormPortal under Settings, Applications, Authorized OAuth Apps on github.com. <a class="link" href="https://github.com/settings/applications" data-web>Open GitHub's application settings</a></p>
+                <div class="fork" data-fork="idle">
+                  <h4 class="fork-title">Extension registry fork</h4>
+                  <p class="fine fork-say" data-fork-say="idle">Optional. Makes your own copy (a fork) of nodemode-dev/form.ext-registry, the public registry of Form extensions, in your GitHub account, so you can submit an extension of your own.</p>
+                  <p class="fine fork-say" data-fork-say="confirm">If you continue, FormPortal asks GitHub to fork nodemode-dev/form.ext-registry into your GitHub account. The fork is a public repository in your name, which you can delete on github.com at any time. Forking needs GitHub's public_repo permission, which lets FormPortal create and change public repositories in your account; FormPortal uses it only to make this fork. Nothing else is created, changed or sent.</p>
+                  <p class="fine fork-say fork-consent" data-fork-say="confirm">GitHub has not given FormPortal that permission yet: approve it first with a new code, then fork.</p>
+                  <p class="fine fork-say" data-fork-say="busy">Forking on GitHub...</p>
+                  <p class="fine fork-say" data-fork-say="error" data-fork-error></p>
+                  <div class="fork-done" data-fork-say="done">
+                    <p class="fork-line"><span data-fork-made>Your fork is ready:</span> <a class="link mono" href="https://github.com/nodemode-dev/form.ext-registry" data-web data-fork-url></a></p>
+                    <ol class="fine fork-steps">
+                      <li>With form.ext: its Publish step has Submit to Registry, which writes extensions/&lt;id&gt;/ into a folder you choose, runs the registry's checks and shows the git and gh commands that open the pull request.</li>
+                      <li>By hand: clone your fork and add your extension as extensions/&lt;id&gt;/, where &lt;id&gt; is the id in its manifest, with its package, source, package.json, package-lock.json, README.md, CHANGELOG.md, LICENSE and a screenshot.</li>
+                      <li>Run python3 tools/check.py extensions/&lt;id&gt; and fix every error it prints.</li>
+                      <li>Commit on a branch, push it to your fork and open a pull request against main. Say what the extension does and why it asks for each permission.</li>
+                      <li>The owners review it; on merge it is built, signed and listed in FormPortal at its next index refresh.</li>
+                    </ol>
+                    <p class="links"><a class="link" href="https://github.com/nodemode-dev/form.ext-registry/blob/main/SUBMITTING.md" data-web>The registry's SUBMITTING.md</a></p>
+                  </div>
+                  <div class="fork-acts">
+                    <button class="btn fork-start" type="button" data-fork-start>Set up my extension registry fork</button>
+                    <button class="btn btn-primary fork-approve" type="button" data-fork-approve>Approve on GitHub</button>
+                    <button class="btn btn-primary fork-go" type="button" data-fork-go>Fork it now</button>
+                    <button class="btn fork-cancel" type="button" data-fork-cancel>Not now</button>
+                    <button class="btn fork-ext" type="button" data-fork-ext>Open form.ext</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <p class="fine profile-foot">* supporter code is stored locally, your profile is 100% local, also connecting to github is completely optional &amp; doesn't effect any core functionality of the app</p>
           </div>
         </section>
 
         <section class="cv-prefs-sec" data-prefs-panel="about" role="tabpanel" aria-labelledby="prefs-head-about">
           <button class="cv-prefs-sechead" type="button" id="prefs-head-about" data-prefs-fold="about" aria-expanded="true" aria-controls="prefs-body-about"><span class="cv-prefs-secicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-seclabel">About</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
           <div class="cv-prefs-secbody" id="prefs-body-about">
-            <section class="cv-prefs-group">
-              <h3 class="cv-prefs-label">Version</h3>
-              <p class="cv-prefs-line">FormPortal %fact:version% <span class="fine" translate="no">by nodemode.ai</span></p>
-              <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
-            </section>
-            <section class="cv-prefs-group">
-              <h3 class="cv-prefs-label">Check and repair</h3>
-              <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
-              <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
-              <ul class="repair-list" data-repair-list></ul>
-            </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Help</h3>
               <p class="links"><a class="link" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-dev/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-dev/formportal/discussions" data-web>Ask the community</a></p>
@@ -617,7 +645,7 @@
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="interface" title="Interface"><span class="cv-prefs-tabicon">%icon:pf-interface:ic-m%</span><span class="cv-prefs-tablabel">Interface</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="apps" title="Apps"><span class="cv-prefs-tabicon">%icon:apps:ic-m%</span><span class="cv-prefs-tablabel">Apps</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="catalogue" title="Catalogue"><span class="cv-prefs-tabicon">%icon:book:ic-m%</span><span class="cv-prefs-tablabel">Catalogue</span></button>
-          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Account"><span class="cv-prefs-tabicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-tablabel">Account</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Profile"><span class="cv-prefs-tabicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-tablabel">Profile</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="about" title="About"><span class="cv-prefs-tabicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-tablabel">About</span></button>
         </nav>
         <button class="cv-prefs-fold" type="button" data-prefs-rail-fold aria-expanded="true" aria-label="Collapse tabs" title="Collapse tabs">%icon:pf-fold:ic-s%</button>

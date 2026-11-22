@@ -8,6 +8,7 @@ pub const PREFIXES: &[&str] = &[
 ];
 pub const EXACT: &[&str] = &[
     "https://github.com/login/device",
+    "https://github.com/settings/applications",
     "https://formai.studio/",
     "https://www.youtube.com/@GetFormAI",
     "https://www.reddit.com/r/FormAI/",
@@ -34,5 +35,6 @@ fn shared_repository(url: &str) -> bool {
     let repo = repo.split(['#', '?']).next().unwrap_or_default();
     let owner_ok = !owner.is_empty() && owner.len() <= 39 && owner.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
     let library = repo.strip_prefix(PREFIX).is_some_and(|s| !s.is_empty() && s.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.')));
-    owner_ok && (repo == PUBLIC_REPO || library)
+    let fork = crate::github::REGISTRY.rsplit('/').next().is_some_and(|name| repo == name);
+    owner_ok && (repo == PUBLIC_REPO || library || fork)
 }
