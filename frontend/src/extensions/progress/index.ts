@@ -118,6 +118,11 @@ export const progress: Extension = {
       const ty = `${Math.round(Math.max(12, Math.min(top, room - height)))}px`;
       if (card.style.left !== tx) card.style.left = tx;
       if (card.style.top !== ty) card.style.top = ty;
+      fit();
+    };
+    const fit = () => {
+      const most = `${Math.max(160, Math.round(window.innerHeight - 12 - card.getBoundingClientRect().top))}px`;
+      if (card.style.maxBlockSize !== most) card.style.maxBlockSize = most;
     };
     const soon = () => {
       if (!framed) framed = requestAnimationFrame(place);
@@ -270,6 +275,7 @@ export const progress: Extension = {
         job.ended = performance.now();
       }
       paint(job);
+      if (event.phase === "end") fit();
     });
 
     engine.on("install", ({ key }) => {

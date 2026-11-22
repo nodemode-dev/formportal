@@ -210,6 +210,10 @@
   text-transform: uppercase;
 }
 
+html[data-rail="mini"] .side-app .side-bar {
+  display: none;
+}
+
 [data-install="busy"] .row-state [data-field="status"] {
   display: inline-block;
   min-inline-size: 8.6em;
