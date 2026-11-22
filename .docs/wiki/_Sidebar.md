@@ -4,7 +4,7 @@
 - [Agents](Agents)
 - [Releasing](Releasing)
 - [Organisations](Organisations)
-- [Accounts](Accounts)
+- [Connect to GitHub](Accounts)
 - [Sharing](Sharing)
 - [Files and Versions](Files-and-Versions)
 - [Fonts](Fonts)

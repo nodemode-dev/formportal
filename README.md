@@ -84,6 +84,10 @@
 
 Extensions for the Form apps that host them come from one place, [form.ext-registry](https://github.com/nodemode-dev/form.ext-registry), where each is reviewed, built and signed. FormPortal reads the registry's signed index and block list, checks them with registry keys only (`core/registry_keys.txt`, plus `FORMEXT_REGISTRY_PUBKEY` for testing; the app catalogue's keys never verify extensions), and checks every package's SHA-256 and its publisher's signature before it installs. Each extension shows Verified and links its source in the registry. A blocked extension cannot be installed, and an installed one is turned off with a notice naming the reason. Until the owners add the registry key, a build refuses the index with "this build trusts no registry key yet"; while the registry is private, the page says "the registry is private or unreachable". Make an extension opens form.ext. See [Extensions Troubleshooting](.docs/wiki/Extensions-Troubleshooting.md).
 
+## What FormPortal keeps and sends
+
+No account and no telemetry: FormPortal sends no usage data and no identifiers. Your profile is kept only on this computer. A supporter code is kept locally and sent only to formai.studio, to be checked. Connecting GitHub is optional: the token is kept in the system keychain, used only against github.com and api.github.com, and asks for `read:user` to connect, `repo` only if you allow sharing, and `public_repo` only if you set up your own fork of form.ext-registry, which is made only when you confirm it. API keys for Pexels, Pixabay, Freesound and Google Fonts are kept in the keychain and sent only to their own service, and a stock or font search goes from this computer straight to that service. The templates list and files are plain requests to GitHub, made when you ask. The update checks fetch the signed catalogue from dl.formai.studio and each app's newest release from GitHub, and ask formai.studio what is on the way. [SECURITY.md](SECURITY.md) has the full statement, and what you take on when you connect FormPortal to GitHub, an agent or an outside API.
+
 ## Everything in the box
 
 <table>
