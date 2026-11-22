@@ -95,21 +95,21 @@ engine.command("catalog.load", () =>
     if (done.length) await refresh();
     engine.setLater(await bridge.laterList());
     const name = (id: string) => engine.name(id);
-    const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)} ${d.to}${d.channel === "stable" ? "" : ` (${d.channel})`}`);
-    const failed = done.filter((d) => d.error).map((d) => `${name(d.product)}: ${d.error}`);
-    const waiting = Array.from(engine.installs.values()).filter((r) => {
+    const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)}${d.channel === "stable" ? "" : ` (${d.channel})`} ${d.from} → ${d.to}`);
+    const failed = done.filter((d) => d.error).map((d) => `${t("Could not update {list}.", { list: name(d.product) })}\n${d.error}`);
+    const waiting = Array.from(engine.installs.values()).flatMap((r) => {
       const v = engine.view(r.product, r.channel);
-      return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version);
-    }).length;
+      return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version) ? [`${name(r.product)}${r.channel === "stable" ? "" : ` (${r.channel})`} ${r.version} → ${v.version}`] : [];
+    });
     const self = await selfOffer().catch(() => null);
     const parts = [
-      ok.length ? t("Updated {list}.", { list: ok.join(", ") }) : "",
-      failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : "",
-      waiting ? (waiting === 1 ? t("1 update is waiting in Updates.") : t("{n} updates are waiting in Updates.", { n: waiting })) : "",
+      ok.length ? [t("Updated:"), ...ok].join("\n") : "",
+      waiting.length ? [waiting.length === 1 ? t("1 update is waiting in Updates:") : t("{n} updates are waiting in Updates:", { n: waiting.length }), ...waiting].join("\n") : "",
       self?.available ? t("FormPortal {version} is available.", { version: self.available }) : "",
     ].filter(Boolean);
     const act = self?.available ? { label: selfLabel(self), command: "self.install" } : undefined;
-    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates", act);
+    if (engine.state.prefs.notices && parts.length) engine.setNotice(parts.join("\n"), "info", "updates", act);
+    if (failed.length) engine.setNotice(failed.join("\n"), "fault", "updates");
   }),
 );
 
@@ -183,9 +183,10 @@ engine.command("later.check", () =>
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
     engine.setLater(await bridge.laterList());
-    const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.to}`);
-    const failed = done.filter((d) => d.error).map((d) => `${engine.name(d.product)}: ${d.error}`);
-    if (ok.length || failed.length) engine.setNotice([ok.length ? t("Updated {list} now that it is closed.", { list: ok.join(", ") }) : "", failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : ""].filter(Boolean).join(" "), failed.length ? "fault" : "info", "updates");
+    const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.from} → ${d.to}`);
+    const failed = done.filter((d) => d.error).map((d) => `${t("Could not update {list}.", { list: engine.name(d.product) })}\n${d.error}`);
+    if (ok.length) engine.setNotice([t("Updated after closing:"), ...ok].join("\n"), "info", "updates");
+    if (failed.length) engine.setNotice(failed.join("\n"), "fault", "updates");
   }, "updates"),
 );
 

@@ -579,6 +579,10 @@ export const fixtureBridge: Bridge = {
       const putOff = later.has(k);
       const open = (params.get("open") ?? "").split(",").includes(record.product);
       if (!(automatic || putOff) || (putOff && open)) continue;
+      if ((params.get("fail") ?? "").split(",").includes(record.product)) {
+        done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: `${record.product}-${release.version}-macos-arm64.dmg does not match the catalogue: expected SHA-256 7d0372d3fb5c59e1dd80fea0bc8655b397adb351e296161f20dac18cd5973269, found a3371971d8281fe352d0e318d48f911a6ecac6a4b35f57a697e5e82d7055f053. It was not installed` });
+        continue;
+      }
       await fixtureBridge.install(record.product, record.channel, (f) => progress(record.product, record.channel, f));
       later.delete(k);
       done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: null });
