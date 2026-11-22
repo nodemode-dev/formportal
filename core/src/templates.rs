@@ -258,7 +258,7 @@ impl Portal {
         let found: String = hasher.finalize().iter().map(|b| format!("{b:02x}")).collect();
         if found != item.sha256.to_lowercase() {
             let _ = fs::remove_file(&part);
-            return Err(CoreError::Invalid(format!("{} does not match the templates list (expected SHA-256 {}, found {found}), so nothing was kept", item.name, item.sha256)));
+            return Err(CoreError::Invalid(format!("{} does not match the templates list, so nothing was kept (expected SHA-256 {}, found {found})", item.name, item.sha256)));
         }
         let dir = self.templates_folder()?.join(&app);
         fs::create_dir_all(&dir)?;
