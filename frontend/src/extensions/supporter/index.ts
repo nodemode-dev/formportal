@@ -1,14 +1,19 @@
+import registry from "../../../../catalog/products.json";
 import { pickBridge } from "../../bridge/index.ts";
 import type { Engine } from "../../engine/index.ts";
 import type { SupporterTile, SupporterView, UpcomingView } from "../../engine/types.ts";
 import { language, t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
+import { UNDATED } from "../live/index.ts";
 
 const NAMES_KEY = "formportal.site";
 const LIVE_KEY = "formportal.live";
 const MOST = 40;
 
 const stamp = (text: string | null): number => (text ? Date.parse(text) : Number.NaN);
+const PRODUCTS: { id: string; name: string; alt_of?: string }[] = registry.products;
+const fold = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, "");
+const known = (name: string) => PRODUCTS.find((p) => fold(p.name) === fold(name) || p.id === fold(name));
 
 export const supporter: Extension = {
   id: "supporter",
@@ -30,11 +35,36 @@ export const supporter: Extension = {
       if (node && node.getAttribute(name) !== value) node.setAttribute(name, value);
     };
 
+    const faces = document.querySelector<HTMLTemplateElement>("[data-soon-faces]")?.content ?? null;
+    const slot = (tile: Element, cls: string, after: Element | null): HTMLElement => {
+      const have = tile.querySelector<HTMLElement>(`:scope > .${cls}`);
+      if (have) return have;
+      const made = document.createElement("span");
+      made.className = cls;
+      if (after) after.after(made);
+      else tile.append(made);
+      return made;
+    };
+    const face = (tile: HTMLElement, id: string) => {
+      if ((tile.dataset.face ?? "") === id) return;
+      tile.querySelector(":scope > .soon-face")?.remove();
+      const art = id ? faces?.querySelector(`[data-face="${id}"]`) : null;
+      if (art) tile.querySelector(".soon-mark")?.after(art.cloneNode(true));
+      if (art) tile.dataset.face = id;
+      else delete tile.dataset.face;
+    };
     const names = (group: Element | null, list: string[]) => {
       const nodes = Array.from(group?.querySelectorAll<HTMLElement>(".soon-name") ?? []);
       nodes.forEach((node, i) => {
         if (!fallback.has(node)) fallback.set(node, node.textContent ?? "");
-        put(node, list[i] ?? fallback.get(node) ?? "");
+        const tile = node.closest<HTMLElement>(".soon-tile");
+        const given = list[i];
+        const app = given === undefined ? undefined : known(given);
+        put(node, given ?? fallback.get(node) ?? "");
+        if (!tile) return;
+        face(tile, app?.id ?? "");
+        const line = app ? (app.alt_of ? t("Instead of {x}", { x: app.alt_of }) : t("A FormAI original")) : "";
+        if (line || tile.querySelector(":scope > .soon-line")) put(slot(tile, "soon-line", node), line);
       });
     };
 
@@ -60,8 +90,7 @@ export const supporter: Extension = {
     };
 
     const more = (view: UpcomingView) => {
-      if (!view.known) return;
-      const n = Math.max(0, Math.min(MOST, view.undated + view.supporters));
+      const n = Math.max(0, Math.min(MOST, Math.max(view.known ? view.undated : 0, UNDATED)));
       attr(root, "data-soon-more", String(n));
       try {
         const kept = JSON.parse(localStorage.getItem(LIVE_KEY) ?? "null");

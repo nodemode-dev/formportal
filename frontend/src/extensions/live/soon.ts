@@ -37,6 +37,16 @@ export function onTheWay(bundled: number[]): void {
   const put = (node: Element | null, text: string) => {
     if (node && node.textContent !== text) node.textContent = text;
   };
+  const heading = document.querySelector<HTMLElement>("#h-soon");
+  const name = (title: string) => {
+    if (heading?.dataset.state === title) return;
+    const text = title === "request" ? t("Request") : title === "horizon" ? t("New app on the horizon") : t("On the way");
+    const node = heading?.firstChild;
+    if (node instanceof Text) {
+      if (node.nodeValue !== text) node.nodeValue = text;
+    } else put(heading, text);
+    if (heading) heading.dataset.state = title;
+  };
   const apps = (n: number) => (n === 1 ? t("1 app") : t("{n} apps", { n }));
   const day = (at: string) => new Date(at).toLocaleDateString(language(), { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 
@@ -91,7 +101,7 @@ export function onTheWay(bundled: number[]): void {
   const siteDays = (view: UpcomingView) => {
     const extra = view.dated.filter((d) => {
       const at = Date.parse(d.at);
-      return d.sealed ? !sealedAt.includes(at) : !bundled.includes(at);
+      return d.sealed ? !sealedAt.includes(at) : d.count > 0 && !bundled.includes(at);
     });
     const keys = new Set(extra.map((d) => `${d.sealed ? "s" : "d"}${d.at}`));
     for (const [key, li] of shown) {
@@ -121,12 +131,18 @@ export function onTheWay(bundled: number[]): void {
     flag("data-soon-unsealed", unsealed);
     flag("data-soon-ask", ask);
     if (view.known) siteDays(view);
+    const title = !ask ? "way" : shown.size > 0 ? "horizon" : "request";
+    name(title);
     window.clearTimeout(timer);
     if (since !== null && !ask) timer = window.setTimeout(() => void refresh(), Math.min(since + HOUR - Date.now() + 1000, POLL));
     try {
-      localStorage.setItem(KEY, JSON.stringify({ unsealed, ask }));
+      localStorage.setItem(KEY, JSON.stringify({ unsealed, ask, title }));
     } catch {}
   };
+  try {
+    const kept = JSON.parse(localStorage.getItem(KEY) ?? "null");
+    if (kept && typeof kept.title === "string") name(kept.title);
+  } catch {}
   const refresh = async () => {
     try {
       apply(await bridge.siteUpcoming());

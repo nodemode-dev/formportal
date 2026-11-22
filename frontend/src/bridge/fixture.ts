@@ -192,6 +192,8 @@ const SITE_TILES: { name: string; at: string | null }[] = [
   ...SITE_RELEASES.flatMap((g) => [...g.apps.filter((id) => id !== "formportal").map((id) => SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id), ...(g.names ?? [])].map((name) => ({ name, at: g.at as string | null }))),
   ...["FormDAM", "FormSculpt", "FormSurface", "FormWeb", "Planned app 1", "Planned app 2", "Planned app 3", "Planned app 4", "Planned app 5"].slice(0, SITE_UNDATED).map((name) => ({ name, at: null })),
   ...Array.from({ length: SITE_SUPPORTERS }, (_, i) => ({ name: `Codename ${i + 1}`, at: null })),
+  { name: "FormRig", at: "2027-01-15T17:00:00Z" },
+  { name: "Planned app 6", at: "2027-01-15T17:00:00Z" },
 ];
 let access: AgentAccess = new URLSearchParams(window.location.search).get("agents") === "broken" ? { outside_agents: "ask", stored: "allowed", seal: "broken", seal_broken: true } : { outside_agents: "ask", stored: "ask", seal: "none", seal_broken: false };
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
@@ -651,9 +653,10 @@ export const fixtureBridge: Bridge = {
   siteUpcoming: async () => {
     const now = Math.floor(Date.now() / 1000);
     if (SOON === "bundled") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: true, launched: null };
-    if (!SOON.startsWith("ask")) return { known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: null };
-    const dated = SOON === "ask-new" ? [{ at: "2027-01-15T17:00:00Z", count: 2 }] : [];
-    return { known: true, dated, undated: 0, supporters: 0, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
+    const undated = params.has("undated") ? SITE_UNDATED : 0;
+    if (!SOON.startsWith("ask")) return { known: true, dated: SITE_DATED, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: null };
+    const dated = SOON === "ask-new" ? [{ at: "2027-01-15T17:00:00Z", count: 2 }] : SOON === "ask-out" ? [{ at: "2027-01-15T17:00:00Z", count: 0 }] : [];
+    return { known: true, dated, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
   },
   ...templatesFixture,
   supporterCheck: async (code) => {

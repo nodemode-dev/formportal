@@ -7,7 +7,9 @@ import { onTheWay } from "./soon.ts";
 const KEY = "formportal.live";
 const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const IDS = registry.products.map((p) => p.id).filter((id) => id !== "formai");
-const RELEASES: { at: string; apps: string[]; names?: string[]; sealed?: boolean }[] = schedule.releases;
+const LISTED: { at: string | null; apps: string[]; names?: string[]; sealed?: boolean }[] = schedule.releases;
+const RELEASES = LISTED.filter((g): g is typeof g & { at: string } => typeof g.at === "string");
+export const UNDATED = LISTED.filter((g) => g.at === null && !g.sealed).reduce((n, g) => n + g.apps.filter((id) => id !== "formportal").length + (g.names?.length ?? 0), 0);
 const GROUPS = RELEASES.filter((g) => !g.sealed).map((g) => ({
   at: Date.parse(g.at),
   apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => IDS.includes(id)),

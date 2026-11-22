@@ -53,8 +53,13 @@ fn on_the_way(portal: &Portal, shown: &[String]) -> Vec<Value> {
             })
         })
         .collect();
-    let more = site.undated as usize + site.supporters as usize;
-    if site.known && more > 0 {
+    let bundled: usize = groups
+        .iter()
+        .filter(|g| g.get("at").is_some_and(Value::is_null) && g.get("sealed").and_then(Value::as_bool) != Some(true))
+        .map(|g| g.get("apps").and_then(Value::as_array).map_or(0, |a| a.iter().filter(|id| id.as_str() != Some("formportal")).count()) + g.get("names").and_then(Value::as_array).map_or(0, Vec::len))
+        .sum();
+    let more = if site.known { (site.undated as usize).max(bundled) } else { bundled };
+    if more > 0 {
         let mut group = json!({ "opens": null, "apps": more });
         if let Some(names) = named(None, more) {
             group["names"] = names;
