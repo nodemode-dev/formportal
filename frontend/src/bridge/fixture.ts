@@ -7,7 +7,7 @@ import learnPortal from "../../../core/data/learn-portal.json";
 import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, WebFontSource, WebFontFamily,FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
@@ -77,6 +77,41 @@ const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ prov
 const providerKnown = (provider: string): void => {
   if (!PROVIDER_KEYS.includes(provider)) throw new Error(`FormPortal keeps an API key only for ${PROVIDER_KEYS.join(", ")}`);
 };
+type WebRow = [string, string, string, string, number[], boolean, string | null, string, string];
+const webFonts: Record<WebFontSource, WebRow[]> = {
+  fontsource: [
+    ["abel", "Abel", "sans-serif", "latin", [400], false, "OFL-1.1", "Copyright 2011 Matthew Desmond", "dm-sans/DMSans-Variable.ttf"],
+    ["archivo", "Archivo", "sans-serif", "latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2019 The Archivo Project Authors", "manrope/Manrope-Variable.ttf"],
+    ["bebas-neue", "Bebas Neue", "display", "latin,latin-ext", [400], false, "OFL-1.1", "Copyright 2019 The Bebas Neue Project Authors", "syne/Syne-Variable.ttf"],
+    ["cormorant-garamond", "Cormorant Garamond", "serif", "cyrillic,latin,latin-ext,vietnamese", [300, 400, 500, 600, 700], true, "OFL-1.1", "Copyright 2015 The Cormorant Project Authors", "fraunces/Fraunces-Variable.ttf"],
+    ["fira-code", "Fira Code", "monospace", "cyrillic,greek,latin,latin-ext", [300, 400, 500, 600, 700], false, "OFL-1.1", "Copyright 2014 The Fira Code Project Authors", "jetbrains-mono/JetBrainsMono-Variable.ttf"],
+    ["ibm-plex-sans", "IBM Plex Sans", "sans-serif", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700], true, "OFL-1.1", "Copyright 2017 IBM Corp.", "inter/Inter-Variable.ttf"],
+    ["merriweather", "Merriweather", "serif", "cyrillic,latin,latin-ext,vietnamese", [300, 400, 700, 900], true, "OFL-1.1", "Copyright 2016 The Merriweather Project Authors", "lora/Lora-Variable.ttf"],
+    ["noto-sans-jp", "Noto Sans JP", "sans-serif", "japanese,latin", [100, 300, 400, 500, 700, 900], false, "OFL-1.1", "Copyright 2014-2021 Adobe", "inter/Inter-Variable.ttf"],
+    ["pacifico", "Pacifico", "handwriting", "cyrillic,latin,latin-ext,vietnamese", [400], false, "OFL-1.1", "Copyright 2018 The Pacifico Project Authors", "caveat/Caveat-Variable.ttf"],
+    ["roboto-mono", "Roboto Mono", "monospace", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700], true, "Apache-2.0", "Copyright 2015 Google Inc.", "ibm-plex-mono/IBMPlexMono-Regular.ttf"],
+    ["ubuntu", "Ubuntu", "sans-serif", "cyrillic,greek,latin,latin-ext", [300, 400, 500, 700], true, "UFL-1.0", "Copyright 2011 Canonical Ltd.", "dm-sans/DMSans-Variable.ttf"],
+    ["work-sans", "Work Sans", "sans-serif", "latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700, 800, 900], true, null, "", "space-grotesk/SpaceGrotesk-Variable.ttf"],
+  ],
+  google: [
+    ["roboto", "Roboto", "sans-serif", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 300, 400, 500, 700, 900], true, "OFL-1.1", "Copyright 2011 Google Inc.", "inter/Inter-Variable.ttf"],
+    ["open-sans", "Open Sans", "sans-serif", "cyrillic,greek,hebrew,latin,latin-ext,vietnamese", [300, 400, 500, 600, 700, 800], true, "OFL-1.1", "Copyright 2020 The Open Sans Project Authors", "manrope/Manrope-Variable.ttf"],
+    ["playfair-display", "Playfair Display", "serif", "cyrillic,latin,latin-ext,vietnamese", [400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2017 The Playfair Display Project Authors", "fraunces/Fraunces-Variable.ttf"],
+    ["source-code-pro", "Source Code Pro", "monospace", "cyrillic,greek,latin,latin-ext,vietnamese", [200, 300, 400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2010 Adobe", "jetbrains-mono/JetBrainsMono-Variable.ttf"],
+    ["dancing-script", "Dancing Script", "handwriting", "latin,latin-ext,vietnamese", [400, 500, 600, 700], false, "OFL-1.1", "Copyright 2016 The Dancing Script Project Authors", "caveat/Caveat-Variable.ttf"],
+    ["oswald", "Oswald", "sans-serif", "cyrillic,latin,latin-ext,vietnamese", [200, 300, 400, 500, 600, 700], false, "OFL-1.1", "Copyright 2016 The Oswald Project Authors", "space-grotesk/SpaceGrotesk-Variable.ttf"],
+    ["lobster", "Lobster", "display", "cyrillic,latin,latin-ext,vietnamese", [400], false, "OFL-1.1", "Copyright 2010 Pablo Impallari", "bricolage-grotesque/BricolageGrotesque-Variable.ttf"],
+    ["eb-garamond", "EB Garamond", "serif", "cyrillic,greek,latin,latin-ext,vietnamese", [400, 500, 600, 700, 800], true, "OFL-1.1", "Copyright 2017 The EB Garamond Project Authors", "lora/Lora-Variable.ttf"],
+  ],
+};
+const webFamilies = (source: WebFontSource): WebFontFamily[] => webFonts[source].map(([id, family, category, subsets, weights, italic]) => ({ id, family, category, subsets: subsets.split(","), weights, italic, variable: weights.length > 3 }));
+const webRow = (source: WebFontSource, id: string): WebRow => {
+  if (source === "google" && !providerKept.has("google-fonts")) throw new Error("Google Fonts is off until you give FormPortal your Google Fonts API key");
+  const row = webFonts[source].find((r) => r[0] === id);
+  if (!row) throw new Error(`${id} is not in ${source === "google" ? "Google Fonts" : "Fontsource"}'s catalogue`);
+  return row;
+};
+if (new URLSearchParams(window.location.search).has("fontkey")) providerKept.add("google-fonts");
 const shares: SharesView = { shared: [], joined: [], published: [], invitations: [{ id: 7, repo: "riley/formportal-library-launch-film", from: "riley" }] };
 const repairFindings: RepairFinding[] = params.has("repair")
   ? [
@@ -432,6 +467,35 @@ export const fixtureBridge: Bridge = {
     for (let i = fontsIn.length - 1; i >= 0; i -= 1) {
       const f = fontsIn[i];
       if ((f.family === family || f.family_id === family) && (!style || f.style === style)) fontsIn.splice(i, 1);
+    }
+  },
+  fontWeb: async (source) => {
+    await pause(400);
+    const on = source === "fontsource" || providerKept.has("google-fonts");
+    return { source, on, families: on ? webFamilies(source) : [] };
+  },
+  fontWebFamily: async (source, id) => {
+    await pause(300);
+    const [, family, category, subsets, weights, italic, licence, credit] = webRow(source, id);
+    const faces = weights.flatMap((weight) => (italic ? [false, true] : [false]).map((it) => ({ weight, italic: it, style: `${weight}${it ? " Italic" : ""}` })));
+    const ok = licence !== null && ["OFL-1.1", "Apache-2.0", "MIT"].includes(licence);
+    return { source, id, family, category, licence, licence_url: licence === "OFL-1.1" ? "https://openfontlicense.org" : null, credit: credit || null, subset: source === "fontsource" ? subsets.split(",").includes("latin") ? "latin" : subsets.split(",")[0] : null, faces, installable: ok };
+  },
+  fontWebPreview: async (source, id) => {
+    const file = webRow(source, id)[8];
+    await pause(900);
+    const bytes = new Uint8Array(await (await fetch(`/store/fonts/${file}`)).arrayBuffer());
+    let text = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    return btoa(text);
+  },
+  fontWebInstall: async (source, id) => {
+    await pause(500);
+    const [, family, , , weights, italic, licence] = webRow(source, id);
+    if (licence === null || !["OFL-1.1", "Apache-2.0", "MIT"].includes(licence)) throw new Error(licence === null ? `${family} cannot be installed: its licence is not stated` : `${family} is licensed ${licence}; FormPortal installs fonts licensed OFL-1.1, Apache-2.0 or MIT`);
+    for (const weight of weights) for (const it of italic ? [false, true] : [false]) {
+      const style = `${weight}${it ? " Italic" : ""}`;
+      if (!fontsIn.some((f) => f.family_id === `${source}:${id}` && f.style === style)) fontsIn.push({ family, style, family_id: `${source}:${id}`, file: `~/.local/share/fonts/FormPortal/FormPortal-${family.replace(/ /g, "-")}-${style.replace(/ /g, "-")}.ttf`, sha256: "d".repeat(64), source, licence });
     }
   },
   appAgents: async (product, channel) => {

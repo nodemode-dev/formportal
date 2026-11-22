@@ -1,0 +1,109 @@
+.font-web-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-block-end: var(--sp-3);
+}
+
+.font-web-subset {
+  inline-size: auto;
+  min-inline-size: 150px;
+}
+
+.font-web-sample {
+  flex: 1 1 220px;
+  inline-size: auto;
+}
+
+.font-web-line {
+  min-block-size: 1.5em;
+  margin-block-end: var(--sp-3);
+}
+
+.font-key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  margin-block-end: var(--sp-4);
+}
+
+.font-key-input {
+  flex: 0 1 320px;
+  inline-size: auto;
+}
+
+.font-key-note {
+  flex-basis: 100%;
+}
+
+.font-web-row .acts > [data-font-web-act="remove"] {
+  display: none;
+}
+
+.font-web-row[data-have="all"] .acts > [data-font-web-act="remove"] {
+  display: inline-flex;
+}
+
+.font-web-row[data-have="all"] [data-font-web-act="install"] {
+  display: none;
+}
+
+.font-web-detail {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--sp-2);
+  padding-block: var(--sp-2) var(--sp-1);
+  padding-inline-start: calc(var(--tile) + var(--sp-4));
+}
+
+.font-web-weights {
+  justify-self: start;
+  flex-wrap: wrap;
+}
+
+.font-sample {
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--web-face, var(--font-ui)), var(--font-ui);
+  font-weight: var(--web-weight, 400);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.3;
+  transition: opacity 160ms ease;
+}
+
+.font-web-row[data-face-ready] .font-sample {
+  opacity: 1;
+}
+
+.font-sample-s {
+  block-size: 22px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.font-sample-m {
+  block-size: 34px;
+  font-size: 24px;
+  line-height: 34px;
+}
+
+.font-sample-l {
+  block-size: 56px;
+  font-size: 40px;
+  line-height: 56px;
+}
+
+.font-web-install {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  min-block-size: var(--control-h-compact);
+}
+
+.font-web-more {
+  margin-block-start: var(--sp-3);
+}

@@ -2,6 +2,7 @@ import type { FontFamilyEntry, InstalledFont } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 import { storeNote } from "../storenote.ts";
+import { setupWeb } from "./web.ts";
 
 const set = (root: HTMLElement, field: string, text: string) => {
   const node = root.querySelector<HTMLElement>(`[data-field='${field}']`);
@@ -159,5 +160,6 @@ export const fonts: Extension = {
     engine.on("route", ({ route }) => {
       if (route === "fonts") void engine.dispatch("fonts.load");
     });
+    setupWeb(engine, pane);
   },
 };
