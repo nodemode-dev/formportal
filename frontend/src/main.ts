@@ -35,6 +35,7 @@ import { versions } from "./extensions/versions/index.ts";
 import { progress } from "./extensions/progress/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 import { templates } from "./extensions/templates/index.ts";
+import { keys } from "./extensions/keys/index.ts";
 
 const revealLate = window.setTimeout(revealApp, 900);
 
@@ -47,6 +48,7 @@ engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === 
 [live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, ownAgents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
 register(templates);
 register(progress);
+register(keys);
 activateAll(engine);
 
 interface Target {

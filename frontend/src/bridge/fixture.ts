@@ -89,7 +89,22 @@ if (githubMode === "on" || githubMode === "forked") github.account = { login: "o
 if (githubMode === "forked") github.forked = true;
 const PROVIDER_KEYS = ["pexels", "pixabay", "freesound", "google-fonts"];
 const providerKept = new Set<string>();
-const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ provider, present: providerKept.has(provider) }));
+const providerFour = new Map<string, string>();
+const providerHeld = new Set<string>();
+const providerWhere = new URLSearchParams(window.location.search).get("keystore") === "file" ? "file" : "system";
+for (const p of (new URLSearchParams(window.location.search).get("keys") ?? "").split(",").filter(Boolean)) {
+  providerKept.add(p);
+  providerFour.set(p, "k3y9");
+}
+const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ provider, present: providerKept.has(provider), last4: providerFour.get(provider) ?? null, kept: providerKept.has(provider) ? providerWhere : null }));
+const providerUse = (provider: string) => {
+  if (!providerKept.has(provider) || providerHeld.has(provider)) return;
+  providerHeld.add(provider);
+  if (providerWhere === "system") {
+    const w = window as unknown as { __keychainReads?: number };
+    w.__keychainReads = (w.__keychainReads ?? 0) + 1;
+  }
+};
 const providerKnown = (provider: string): void => {
   if (!PROVIDER_KEYS.includes(provider)) throw new Error(`FormPortal keeps an API key only for ${PROVIDER_KEYS.join(", ")}`);
 };
@@ -518,6 +533,7 @@ export const fixtureBridge: Bridge = {
     ((window as unknown as { __fontWebCalls?: string[] }).__fontWebCalls ??= []).push(source);
     await pause(400);
     if (params.get("fontweb") === "down") throw new Error("the font source cannot be reached (browser mode, ?fontweb=down)");
+    if (source === "google") providerUse("google-fonts");
     const on = source === "fontsource" || providerKept.has("google-fonts");
     return { source, on, families: on ? webFamilies(source) : [] };
   },
@@ -689,15 +705,22 @@ export const fixtureBridge: Bridge = {
     if ([...kept].length > 256) throw new Error("an API key is never longer than 256 characters");
     if (!/^[\x21-\x7e]+$/.test(kept)) throw new Error("an API key is letters, digits and punctuation, with no spaces");
     providerKept.add(provider);
+    providerHeld.add(provider);
+    providerFour.set(provider, kept.length >= 8 ? kept.slice(-4) : "");
     return providerStates();
   },
   clearProviderKey: async (provider) => {
     providerKnown(provider);
     providerKept.delete(provider);
+    providerHeld.delete(provider);
+    providerFour.delete(provider);
     return providerStates();
   },
   stockSources: async () => stockFixture.sources(providerKept),
-  stockSearch: (source, kind, query, page) => stockFixture.search(providerKept, source, kind, query, page),
+  stockSearch: (source, kind, query, page) => {
+    providerUse(source);
+    return stockFixture.search(providerKept, source, kind, query, page);
+  },
   stockPreview: (id, which) => stockFixture.preview(id, which),
   stockSave: (id, progress) => stockFixture.save(id, savedMedia, progress),
   stockReveal: async () => undefined,

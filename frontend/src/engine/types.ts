@@ -310,6 +310,8 @@ export interface GithubStatus {
 export interface KeyState {
   provider: string;
   present: boolean;
+  last4?: string | null;
+  kept?: "system" | "file" | "page" | null;
 }
 
 export type StockKind = "image" | "video" | "audio";

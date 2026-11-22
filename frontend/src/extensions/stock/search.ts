@@ -2,14 +2,8 @@ import type { Engine } from "../../engine/index.ts";
 import type { StockItem, StockKind, StockSource } from "../../engine/types.ts";
 import { pickBridge } from "../../bridge/index.ts";
 import { t } from "../../i18n/index.ts";
+import { KEYS_EVENT } from "../keys/index.ts";
 
-const OFFERS: Record<string, string> = {
-  pexels: "Photos and video",
-  pixabay: "Images and video",
-  openverse: "Images and audio",
-  freesound: "Sounds",
-  ccmixter: "Music",
-};
 const PER: Record<string, number> = { pexels: 24, pixabay: 24, openverse: 20, freesound: 24, ccmixter: 24 };
 const KIND_WORD: Record<StockKind, string> = { image: "images", video: "video", audio: "audio" };
 const THUMBS_AT_ONCE = 6;
@@ -53,7 +47,6 @@ interface Cell {
 export function stockSearch(engine: Engine): void {
   const bridge = pickBridge();
   const pane = q<HTMLElement>(document, "[data-pane='stock']");
-  const list = q<HTMLUListElement>(document, "[data-stock-src-list]");
   const form = q<HTMLFormElement>(document, "[data-stock-form]");
   const input = q<HTMLInputElement>(document, "[data-stock-query]");
   const chips = q<HTMLElement>(document, "[data-stock-chips]");
@@ -61,12 +54,11 @@ export function stockSearch(engine: Engine): void {
   const grid = q<HTMLUListElement>(document, "[data-stock-grid]");
   const more = q<HTMLButtonElement>(document, "[data-stock-more]");
   const dlg = q<HTMLDialogElement>(document, "[data-stock-view]");
-  if (!pane || !list || !form || !input || !chips || !status || !grid || !more || !dlg) return;
+  if (!pane || !form || !input || !chips || !status || !grid || !more || !dlg) return;
 
   let sources: StockSource[] = [];
   let kind: StockKind = "image";
   const left = new Set<string>();
-  const rows = new Map<string, HTMLLIElement>();
   const chipFor = new Map<string, HTMLButtonElement>();
   const cells: Cell[] = [];
   let used = 0;
@@ -90,72 +82,6 @@ export function stockSearch(engine: Engine): void {
   const usable = (s: StockSource) => s.on && s.kinds.includes(kind);
   const chosen = () => sources.filter((s) => usable(s) && !left.has(s.id));
 
-  const row = (s: StockSource) => {
-    let r = rows.get(s.id);
-    if (!r) {
-      r = document.createElement("li");
-      r.className = "stock-src";
-      r.dataset.src = s.id;
-      r.innerHTML =
-        '<div class="stock-src-main"><span class="stock-src-name"></span><span class="stock-src-kinds fine"></span><span class="stock-src-state"></span></div><p class="fine stock-src-why"></p><form class="stock-src-key"><input type="password" autocomplete="off" spellcheck="false" maxlength="256" /><button class="btn" type="submit" data-key-save></button><button class="btn" type="button" data-key-remove></button><button class="link-btn" type="button" data-key-get></button></form>';
-      setText(q(r, ".stock-src-name"), s.name);
-      setText(q(r, ".stock-src-kinds"), t(OFFERS[s.id] ?? ""));
-      const keyForm = q<HTMLFormElement>(r, ".stock-src-key");
-      const field = q<HTMLInputElement>(r, "input");
-      const saveBtn = q<HTMLButtonElement>(r, "[data-key-save]");
-      const removeBtn = q<HTMLButtonElement>(r, "[data-key-remove]");
-      const getBtn = q<HTMLButtonElement>(r, "[data-key-get]");
-      setText(saveBtn, t("Save"));
-      setText(removeBtn, t("Remove"));
-      setText(getBtn, t("Get a free key"));
-      if (field) {
-        field.placeholder = t("Paste your {name} API key", { name: s.name });
-        field.setAttribute("aria-label", t("{name} API key", { name: s.name }));
-      }
-      if (!s.needs_key) show(keyForm, false);
-      keyForm?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const key = field?.value ?? "";
-        void (async () => {
-          try {
-            await bridge.setProviderKey(s.id, key);
-            if (field) field.value = "";
-            engine.setNotice(t("Your {name} key is kept in this computer's keychain.", { name: s.name }), "info", "library");
-            await refresh();
-          } catch (err) {
-            engine.setNotice(err instanceof Error ? err.message : String(err), "fault", "library");
-          }
-        })();
-      });
-      removeBtn?.addEventListener("click", () => {
-        void (async () => {
-          try {
-            await bridge.clearProviderKey(s.id);
-            engine.setNotice(t("Your {name} key is removed from this computer's keychain.", { name: s.name }), "info", "library");
-            await refresh();
-          } catch (err) {
-            engine.setNotice(err instanceof Error ? err.message : String(err), "fault", "library");
-          }
-        })();
-      });
-      getBtn?.addEventListener("click", () => {
-        if (s.key_page) void engine.dispatch("web.open", s.key_page);
-      });
-      rows.set(s.id, r);
-      list.append(r);
-    }
-    r.toggleAttribute("data-on", s.on);
-    setText(q(r, ".stock-src-state"), s.on ? t("On") : t("Off"));
-    const why = !s.needs_key ? t("No key needed.") : s.on ? t("Your key is kept in this computer's keychain.") : t("Off until you add your own free {name} API key.", { name: s.name });
-    setText(q(r, ".stock-src-why"), why);
-    show(q<HTMLElement>(r, "[data-key-remove]"), s.needs_key && s.on);
-    const field = q<HTMLInputElement>(r, "input");
-    if (field) {
-      const ph = s.on ? t("Replace the kept key") : t("Paste your {name} API key", { name: s.name });
-      if (field.placeholder !== ph) field.placeholder = ph;
-    }
-  };
-
   const chip = (s: StockSource) => {
     let c = chipFor.get(s.id);
     if (!c) {
@@ -164,6 +90,11 @@ export function stockSearch(engine: Engine): void {
       c.className = "stock-chip";
       c.textContent = s.name;
       c.addEventListener("click", () => {
+        const now = sources.find((x) => x.id === s.id) ?? s;
+        if (now.needs_key && !now.on) {
+          void engine.dispatch("prefs.open", "keys");
+          return;
+        }
         if (left.has(s.id)) left.delete(s.id);
         else left.add(s.id);
         paintChips();
@@ -172,24 +103,25 @@ export function stockSearch(engine: Engine): void {
       chipFor.set(s.id, c);
       chips.append(c);
     }
+    const keyless = s.needs_key && !s.on;
     const can = usable(s);
     const on = can && !left.has(s.id);
-    if (c.disabled === can) c.disabled = !can;
+    if (c.disabled === (can || keyless)) c.disabled = !(can || keyless);
+    if (c.hasAttribute("data-needs-key") !== keyless) c.toggleAttribute("data-needs-key", keyless);
+    setText(c, keyless ? `${s.name} · ${t("add a key")}` : s.name);
     if (c.getAttribute("aria-pressed") !== String(on)) c.setAttribute("aria-pressed", String(on));
-    const tip = !s.on ? t("Off until you add your own free {name} API key.", { name: s.name }) : !s.kinds.includes(kind) ? t("{name} offers no {kind} through its API.", { name: s.name, kind: t(KIND_WORD[kind]) }) : "";
+    const tip = keyless ? t("{name} needs your own free API key: add it in Preferences, Keys.", { name: s.name }) : !s.kinds.includes(kind) ? t("{name} offers no {kind} through its API.", { name: s.name, kind: t(KIND_WORD[kind]) }) : "";
     if (c.title !== tip) c.title = tip;
   };
   const paintChips = () => sources.forEach(chip);
 
   const refresh = async () => {
-    try {
-      sources = await bridge.stockSources();
-      sources.forEach(row);
-      paintChips();
-    } finally {
-      if (!pane.hasAttribute("data-sources")) pane.toggleAttribute("data-sources", true);
-    }
+    sources = await bridge.stockSources();
+    paintChips();
   };
+  document.addEventListener(KEYS_EVENT, () => {
+    if (loaded) void refresh().catch(() => undefined);
+  });
 
   const cell = (): Cell => {
     const li = document.createElement("li");
@@ -401,7 +333,7 @@ export function stockSearch(engine: Engine): void {
     if (!pick.length) {
       trim();
       const off = sources.filter((s) => s.kinds.includes(kind) && !s.on).map((s) => s.name);
-      setText(status, off.length ? t("No source that is on offers {kind}. Add a key for {names} under Your sources.", { kind: t(KIND_WORD[kind]), names: off.join(", ") }) : t("Choose at least one source."));
+      setText(status, off.length ? t("No source that is on offers {kind}. Add a key for {names} in Preferences, Keys.", { kind: t(KIND_WORD[kind]), names: off.join(", ") }) : t("Choose at least one source."));
       show(more, false);
       return;
     }

@@ -1,10 +1,10 @@
 import { pickBridge } from "../../bridge/index.ts";
 import type { Engine } from "../../engine/index.ts";
-import type { InstalledFont, WebFontCatalogue, WebFontDetail, WebFontFamily, WebFontSource } from "../../engine/types.ts";
+import type { InstalledFont, KeyState, WebFontCatalogue, WebFontDetail, WebFontFamily, WebFontSource } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
+import { KEYS_EVENT } from "../keys/index.ts";
 
 const KEY = "google-fonts";
-const KEY_PAGE = "https://console.cloud.google.com/apis/credentials";
 const STEP = 40;
 
 const put = (node: Element | null | undefined, text: string) => {
@@ -26,17 +26,14 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
   const subsetPick = pane.querySelector<HTMLSelectElement>("[data-font-web-subset]");
   const sample = pane.querySelector<HTMLInputElement>("[data-font-web-sample]");
   const line = pane.querySelector<HTMLElement>("[data-font-web-line]");
-  const keyBox = pane.querySelector<HTMLElement>("[data-font-key]");
-  const keyInput = pane.querySelector<HTMLInputElement>("[data-font-key-input]");
-  const keyRemove = pane.querySelector<HTMLButtonElement>("[data-font-key-remove]");
   const more = pane.querySelector<HTMLButtonElement>("[data-font-web-more]");
   const empty = pane.querySelector<HTMLElement>("[data-font-web-empty]");
   const query = pane.querySelector<HTMLInputElement>("[data-fonts-query]");
   const bar = pane.querySelector<HTMLElement>("[data-font-web-bar]");
   const region = pane.querySelector<HTMLElement>("[data-font-web-region]");
-  const keyToggle = pane.querySelector<HTMLButtonElement>("[data-font-key-toggle]");
+  const keyOpen = pane.querySelector<HTMLButtonElement>("[data-font-key-open]");
   const googleBrowse = pane.querySelector<HTMLButtonElement>("[data-font-src='google']");
-  if (!box || !list || !mine || !tpl || !subsetPick || !sample || !line || !keyBox || !keyInput || !keyRemove || !more || !empty || !bar || !region || !keyToggle || !googleBrowse) return;
+  if (!box || !list || !mine || !tpl || !subsetPick || !sample || !line || !more || !empty || !bar || !region || !keyOpen || !googleBrowse) return;
 
   let source: WebFontSource | null = null;
   let limit = STEP;
@@ -67,7 +64,7 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
             : t("Google Fonts is off. It needs your own API key from Google Cloud.");
     put(line, text);
     flag(googleBrowse, "hidden", !keyKept);
-    keyRemove.disabled = !keyKept;
+    flag(keyOpen, "hidden", keyKept);
   };
 
   const subsets = () => {
@@ -349,25 +346,13 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     if (source === "google") source = null;
     present();
   };
-  keyToggle.addEventListener("click", () => {
-    const open = keyBox.hidden;
-    keyBox.hidden = !open;
-    keyToggle.setAttribute("aria-expanded", String(open));
-  });
-  pane.querySelector("[data-font-key-save]")?.addEventListener("click", () => {
-    const value = keyInput.value;
-    void keys(bridge.setProviderKey(KEY, value)).then(() => {
-      if (!keyKept) return;
-      keyInput.value = "";
-      forget();
+  keyOpen.addEventListener("click", () => void engine.dispatch("prefs.open", "keys"));
+  document.addEventListener(KEYS_EVENT, (event) => {
+    const had = keyKept;
+    void keys(Promise.resolve((event as CustomEvent<KeyState[]>).detail)).then(() => {
+      if (had !== keyKept) forget();
     });
   });
-  keyRemove.addEventListener("click", () => {
-    void keys(bridge.clearProviderKey(KEY)).then(() => {
-      if (!keyKept) forget();
-    });
-  });
-  pane.querySelector("[data-font-key-get]")?.addEventListener("click", () => void bridge.openWeb(KEY_PAGE).catch(fault));
 
   engine.on("fonts", ({ view }) => {
     installed = view.installed;

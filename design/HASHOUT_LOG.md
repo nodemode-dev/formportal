@@ -7,6 +7,13 @@ Last updated: 2026-11-22 · v0.71.2 no design source changed (the version only);
 
 ---
 
+## after v0.71.2 · a key icon for Preferences, Keys {#pf-key}
+- refers-to: design/icons.json :: `pf-key`
+- kind: feature
+- logged: after v0.71.2 · 2026-11-22
+
+Hand-drawn in the set's own 24 px grid and stroke: a ring and a shaft with two teeth, `currentColor`, used for the Keys tab and section head.
+
 ## after v0.71.0 · SubForm is FormSubstrate; FormPublisher, FormCAD and FormMorpheus follow the owner's words {#substrate}
 - refers-to: catalog/products.json :: `formsubstrate` (was `subform`), `formpublisher`, `formcad`, `formmorpheus` · catalog/apps/formsubstrate.json (git mv from subform.json), formslot.json · catalog/schedule.json :: Group 7 · design/app-hues.json :: `formsubstrate`, `formpublisher` · frontend/public/apps/formsubstrate.webp, formsubstrate-light.webp, frontend/public/heroes/formsubstrate.webp, formsubstrate-light.webp (git mv) · frontend/markup.ts :: `CATEGORY` · LICENSES.md :: the FormPublisher icon row
 - kind: change
