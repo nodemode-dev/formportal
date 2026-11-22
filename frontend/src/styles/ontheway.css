@@ -1,3 +1,12 @@
+.waves {
+  --wave-min: 136px;
+  align-items: start;
+}
+
+.waves > li {
+  min-block-size: var(--wave-min);
+}
+
 .wave-site {
   padding: 14px;
   border: 1px dashed var(--fp-edge-2);
