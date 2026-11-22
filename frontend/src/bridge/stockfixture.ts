@@ -118,7 +118,7 @@ export const stockFixture = {
     const s = SOURCES.find((x) => x.id === source);
     if (!s) throw new Error(`${source} is not a stock source FormPortal searches`);
     if (!s.kinds.includes(kind)) throw new Error(`${s.name} offers no ${kind} through its API`);
-    if (s.needs_key && !kept.has(s.id)) throw new Error(`${s.name} needs your own API key; add it under Your sources`);
+    if (s.needs_key && !kept.has(s.id)) throw new Error(`${s.name} needs your own API key; add it in Preferences, Keys`);
     const q = query.trim();
     if (!q) throw new Error("type what to look for first");
     await pause(350 + (hash(source + q) % 700));

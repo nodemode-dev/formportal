@@ -34,7 +34,7 @@ the ways something outside it could get in:
 - **Links and hand-offs**: a link or a web page opening something, or handing a file
   to an app, without the person agreeing.
 - **Organisation policy**: getting past a policy an organisation has set.
-- **Keys and tokens** kept in the system keychain: anything that leaks them.
+- **Keys and tokens** kept in the system keychain or in FormPortal's user-only key file: anything that leaks them.
 
 Bugs that need someone to already control your machine, or to run a modified build
 of FormPortal, are ordinary bugs: please open an issue for those.
@@ -55,8 +55,12 @@ leaves this computer.
 - **GitHub, if you connect it** (optional; Preferences, Profile, Connect to GitHub):
   FormPortal signs in with GitHub's device flow, and the token GitHub gives it is kept
   in the system keychain (Keychain on macOS, Credential Manager on Windows, the Secret
-  Service on Linux) under `FormPortal GitHub`, never in a file. It is never shown to
-  the window, never logged, never put in an error message, and sent only to
+  Service on Linux) under `FormPortal GitHub`, or, on a computer with no keychain
+  FormPortal can use, in `keys-private.json` in FormPortal's folder, a file only you
+  can read (see Keys below). Profile shows who is connected from `keys.json`, which
+  holds your GitHub name and never the token; the token is read only when sharing or
+  the fork needs it. It is never shown to the window, never logged, never put in an
+  error message, and sent only to
   `github.com` and `api.github.com`, with a time limit on every request. The scopes:
   - `read:user` when you connect, to show who is connected;
   - `repo` only if you choose Allow sharing, for sharing a Files folder as a private
@@ -64,12 +68,19 @@ leaves this computer.
   - `public_repo` only if you choose Set up my extension registry fork and approve it,
     to fork `nodemode-dev/form.ext-registry` into your account. That fork is made only
     when you then choose Fork it now; nothing is forked, created or written before.
-  Disconnect removes the token from the keychain; revoke FormPortal under Settings,
-  Applications on github.com to withdraw its access there too.
-- **API keys for outside services** (Pexels, Pixabay, Freesound, Google Fonts), if you
-  give one, are kept in the system keychain under `FormPortal keys` and sent only to
-  the service they belong to. They are never shown to the window, never logged and
-  never written to a file. Openverse, ccMixter and Fontsource need no key.
+  Disconnect removes the token from the keychain and the file; revoke FormPortal under
+  Settings, Applications on github.com to withdraw its access there too.
+- **Keys** (Preferences, Keys): API keys for Pexels, Pixabay, Freesound and Google
+  Fonts, if you give one, are kept in the system keychain under `FormPortal keys`, or,
+  where there is no keychain FormPortal can use (or it fails), in `keys-private.json`
+  in FormPortal's folder, readable only by you (0600 on macOS and Linux; your own
+  profile folder on Windows). The panel says which of the two holds each key, and a
+  key in the file moves to the keychain the first time a feature uses it. The keychain
+  is asked only when you save or remove a key, or use a feature that needs it; opening
+  FormPortal or any page reads `keys.json`, which records which keys are kept and
+  their last four characters, never a key. A key is sent only to the service it
+  belongs to, and never shown to the window or logged. Openverse, ccMixter and
+  Fontsource need no key.
 - **Stock** (Stock & templates): a search goes from this computer straight to the
   sources you chose (`api.pexels.com`, `pixabay.com`, `api.openverse.org`,
   `freesound.org`, `ccmixter.org`). The thumbnails, previews and files you save are

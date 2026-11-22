@@ -1878,7 +1878,7 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 
 /* Stock and templates */
 
-[data-pane="stock"]:not([data-ready]) .block {
+[data-pane="stock"]:not([data-ready]) :is(.block, .tpl) {
   display: none;
 }
 

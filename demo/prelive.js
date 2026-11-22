@@ -1,5 +1,10 @@
 (function () {
   try {
+    var soon = JSON.parse(localStorage.getItem("formportal.soon") || "null");
+    if (soon && soon.unsealed === true) document.documentElement.setAttribute("data-soon-unsealed", "");
+    if (soon && soon.ask === true) document.documentElement.setAttribute("data-soon-ask", "");
+  } catch (e) {}
+  try {
     var kept = JSON.parse(localStorage.getItem("formportal.live") || "null");
     if (!kept || typeof kept.live !== "string" || !Array.isArray(kept.soon)) return;
     var d = document.documentElement;

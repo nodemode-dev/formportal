@@ -2,7 +2,21 @@
 
 Living log for demo 2. Source files stay comment-free; what they would have said lives here.
 
-Built against: v0.70.0 · 2026-11-20
+Built against: v0.71.3 · 2026-11-22
+
+## Rebuilt after v0.71.2 {#rebuild-0-71-3}
+- refers-to: demos/updates/index.html · demos/updates/assets/ · demos/updates/README.md
+- kind: change
+- logged: after v0.71.2 · 2026-11-22
+
+Rebuilt with the command in README.md for Preferences, Keys (../../demo/HASHOUT_LOG.md#rebuild-0-71-3); the key calls come from demo 1's `outside.ts` and are kept in the page's memory.
+
+## Rebuilt after v0.71.1 {#rebuild-0-71-2}
+- refers-to: demos/updates/vite.config.mjs :: `resolveId`, the release-notes patch removed · demos/updates/src/bridge.ts :: `demoBridge` · demos/updates/src/demo.css · demos/updates/raw.d.ts · demos/updates/index.html · demos/updates/assets/ · demos/updates/apps/formsubstrate*.webp, formpublisher*.webp (subform*.webp removed)
+- kind: fix
+- logged: after v0.71.1 · 2026-11-22
+
+Rebuilt with the command in README.md at the 0.71 interface, with demo 1's bridge redirect, and the bridge now spreads demo 1's outside answers (`src/outside.ts`) after the fixture. 0.71's rows carry their own What changed, opening in place under the row, so the build's patch that added a `<details class="row-notes">` to every Updates row and the demo.css rules for it are gone: left in, they took the interface's class name and made every row two lines taller with an empty fold. `raw.d.ts` declares `import.meta.env.DEV` for the type check. Updates, What changed opened by a click, and Trust: layout shift 0, no console error, no outside request.
 
 ## Rebuilt after v0.70.0 {#rebuild-0-70-1}
 - refers-to: demos/updates/index.html · demos/updates/assets/portal.js

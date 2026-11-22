@@ -8,7 +8,7 @@ use serde_json::{json, Value};
 use sha1::{Digest, Sha1};
 
 use crate::error::{CoreError, Result};
-use crate::github::{signed_in, token, Signed, SHARE_SCOPE};
+use crate::github::{signed_in, Signed, SHARE_SCOPE};
 use crate::Portal;
 
 pub const PREFIX: &str = "formportal-library-";
@@ -271,7 +271,7 @@ impl Portal {
     pub fn shares(&self) -> Result<SharesView> {
         let state = self.share_state()?;
         let mut invitations = Vec::new();
-        if crate::github::client_id().is_some() && matches!(token(), Ok(Some(_))) {
+        if crate::github::client_id().is_some() && crate::github::token_at_hand().is_some() {
             let s = signed_in(None)?;
             let (status, v) = s.call("GET", "/user/repository_invitations?per_page=100", None)?;
             if status == 200 {

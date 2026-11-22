@@ -21,9 +21,6 @@ const pkg = loadJson(resolve(FRONTEND, "package.json"));
 const icons = loadJson(resolve(DESIGN, "icons.json"));
 const facts = { version: pkg.version };
 const built = buildPortal(FRONTEND, CATALOG, DESIGN);
-built.parts.updates = built.parts.updates.map((row) =>
-  row.replace(/<\/li>$/, '<details class="row-notes"><summary>What changed</summary><div class="notes-text" data-field="notes"></div></details></li>'),
-);
 
 const trust = readFileSync(resolve(HERE, "src/trust.html"), "utf8");
 const [trustPane, trustRest] = trust.split('<aside class="tr-card"');
@@ -64,7 +61,7 @@ function portalPlugin() {
     name: "formportal-updates-demo",
     enforce: "pre",
     resolveId(source, importer) {
-      if (importer && importer.endsWith("/frontend/src/main.ts") && source === "./bridge/index.ts") return resolve(HERE, "src/pickbridge.ts");
+      if (importer && importer.includes("/frontend/src/") && !importer.includes("/frontend/src/bridge/") && /(^|\/)bridge\/index\.ts$/.test(source)) return resolve(HERE, "src/pickbridge.ts");
       return null;
     },
     transform(code, id) {

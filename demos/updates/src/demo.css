@@ -45,60 +45,6 @@
   display: none;
 }
 
-.list-updates .row {
-  grid-template-rows: auto auto;
-}
-
-.row-notes {
-  grid-column: 1 / -1;
-  display: none;
-  margin-block-start: 6px;
-  padding-inline-start: 56px;
-  color: var(--fp-ink-2);
-  font-size: 12.5px;
-}
-
-.row[data-install="update"] > .row-notes {
-  display: block;
-}
-
-.row-notes > summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--fp-ink-3);
-  font-size: 12px;
-  cursor: pointer;
-  list-style: none;
-}
-
-.row-notes > summary::-webkit-details-marker {
-  display: none;
-}
-
-.row-notes > summary::before {
-  content: "";
-  inline-size: 6px;
-  block-size: 6px;
-  border-inline-end: 1.5px solid currentColor;
-  border-block-end: 1.5px solid currentColor;
-  transform: rotate(-45deg);
-}
-
-.row-notes[open] > summary::before {
-  transform: rotate(45deg);
-}
-
-.row-notes > summary:hover {
-  color: var(--fp-ink);
-}
-
-.row-notes .notes-text {
-  max-inline-size: 78ch;
-  margin-block-start: 6px;
-  line-height: 1.5;
-}
-
 .tr-page {
   gap: 30px;
 }

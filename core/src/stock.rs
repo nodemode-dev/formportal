@@ -475,7 +475,7 @@ pub fn search(source_id: &str, kind: &str, query: &str, page: u32) -> Result<Sto
     }
     let page = page.clamp(1, PAGE_LIMIT);
     let key = match s.provider {
-        Some(p) => Some(keys::get(p).ok_or_else(|| CoreError::Refused(format!("{} needs your own API key; add it under Your sources", s.name)))?),
+        Some(p) => Some(keys::get(p).ok_or_else(|| CoreError::Refused(format!("{} needs your own API key; add it in Preferences, Keys", s.name)))?),
         None => None,
     };
     let slot = format!("{}|{kind}|{}|{page}", s.id, query.to_lowercase());

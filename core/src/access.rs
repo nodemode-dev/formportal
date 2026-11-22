@@ -122,6 +122,22 @@ fn keychain_key(create: bool) -> std::result::Result<Option<Vec<u8>>, ()> {
     }
 }
 
+fn seal_key(create: bool) -> std::result::Result<Option<Vec<u8>>, ()> {
+    if cfg!(feature = "seal-stand-in") {
+        return keychain_key(create);
+    }
+    static HELD: std::sync::Mutex<Option<std::result::Result<Option<Vec<u8>>, ()>>> = std::sync::Mutex::new(None);
+    let mut held = HELD.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some(known) = held.as_ref() {
+        if !(create && matches!(known, Ok(None))) {
+            return known.clone();
+        }
+    }
+    let fresh = keychain_key(create);
+    *held = Some(fresh.clone());
+    fresh
+}
+
 fn stored(root: &Path) -> Option<Stored> {
     let text = fs::read_to_string(root.join(ACCESS_FILE)).ok()?;
     serde_json::from_str::<Stored>(&text).ok().filter(|s| s.format == FORMAT)
@@ -134,7 +150,7 @@ pub fn read(root: &Path) -> Access {
         return Access { outside_agents: Choice::Ask, stored: Choice::Ask, seal, seal_broken: present };
     };
     let choice = record.outside_agents;
-    let key = match keychain_key(false) {
+    let key = match seal_key(false) {
         Ok(key) => key,
         Err(()) => {
             let honoured = if choice == Choice::Blocked { Choice::Blocked } else { Choice::Ask };
@@ -154,7 +170,7 @@ pub fn read(root: &Path) -> Access {
 
 pub fn set(root: &Path, choice: Choice) -> Result<Access> {
     fs::create_dir_all(root)?;
-    let seal = keychain_key(true).ok().flatten().and_then(|key| mac(&key, choice)).map(|m| hex(&m.finalize().into_bytes()));
+    let seal = seal_key(true).ok().flatten().and_then(|key| mac(&key, choice)).map(|m| hex(&m.finalize().into_bytes()));
     let record = Stored { format: FORMAT.to_string(), format_version: 1, outside_agents: choice, seal };
     let text = serde_json::to_string_pretty(&record).map_err(|e| CoreError::Invalid(e.to_string()))? + "\n";
     let staging = root.join(format!("{ACCESS_FILE}.tmp"));

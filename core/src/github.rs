@@ -117,7 +117,6 @@ fn text(v: &Value, key: &str) -> String {
 
 pub fn start(scope: &str) -> Result<DeviceCode> {
     let client = need_client()?;
-    token()?;
     let v = post_form(&format!("{}/login/device/code", web()), &[("client_id", &client), ("scope", scope)])?;
     if let Some(error) = v.get("error").and_then(Value::as_str) {
         return Err(CoreError::Account(match error {
@@ -143,7 +142,7 @@ pub fn poll(device_code: &str, interval: u64) -> Result<Poll> {
     let v = post_form(&format!("{}/login/oauth/access_token", web()), &[("client_id", &client), ("device_code", device_code), ("grant_type", GRANT)])?;
     if let Some(token) = v.get("access_token").and_then(Value::as_str).filter(|t| !t.is_empty()) {
         let account = whoami(token)?;
-        store(token)?;
+        store(token, &account)?;
         return Ok(Poll::SignedIn { account });
     }
     match v.get("error").and_then(Value::as_str).unwrap_or("") {
@@ -185,6 +184,9 @@ pub struct Signed {
 pub fn signed_in(scope: Option<&str>) -> Result<Signed> {
     let token = token()?.ok_or_else(|| CoreError::Account("you are not connected; connect from Preferences, Profile, Connect to GitHub first".to_string()))?;
     let account = whoami(&token)?;
+    if let Ok(meta) = serde_json::to_value(&account) {
+        let _ = crate::keys::set_meta(SLOT.name, &meta);
+    }
     if let Some(scope) = scope {
         let covered = account.scopes.iter().any(|s| s == scope || (scope == FORK_SCOPE && s == SHARE_SCOPE));
         if !covered && scope == FORK_SCOPE {
@@ -254,37 +256,37 @@ impl Signed {
     }
 }
 
-fn entry() -> Result<keyring::Entry> {
-    keyring::Entry::new(KEYCHAIN_SERVICE, KEYCHAIN_USER).map_err(keychain)
-}
+const SLOT: crate::keys::Slot<'static> = crate::keys::Slot { service: KEYCHAIN_SERVICE, account: KEYCHAIN_USER, name: "github" };
 
-fn keychain(e: keyring::Error) -> CoreError {
-    CoreError::Account(format!("the system keychain is not available ({e}); FormPortal does not keep a GitHub sign-in anywhere else"))
-}
-
-fn store(token: &str) -> Result<()> {
-    entry()?.set_password(token).map_err(keychain)
+fn store(token: &str, account: &Account) -> Result<()> {
+    let meta = serde_json::to_value(account).map_err(|e| CoreError::State(e.to_string()))?;
+    crate::keys::put(SLOT, token, Some(&meta)).map(|_| ())
 }
 
 pub fn token() -> Result<Option<String>> {
-    match entry()?.get_password() {
-        Ok(t) => Ok(Some(t)),
-        Err(keyring::Error::NoEntry) => Ok(None),
-        Err(e) => Err(keychain(e)),
-    }
+    Ok(crate::keys::fetch(SLOT))
+}
+
+pub fn connected() -> bool {
+    crate::keys::summary(SLOT.name).0
+}
+
+pub fn token_at_hand() -> Option<String> {
+    crate::keys::held(SLOT.name)
 }
 
 pub fn status() -> Result<Status> {
     if client_id().is_none() {
         return Ok(Status { configured: false, account: None });
     }
-    let Some(token) = token()? else { return Ok(Status { configured: true, account: None }) };
-    Ok(Status { configured: true, account: Some(whoami(&token)?) })
+    if !connected() {
+        return Ok(Status { configured: true, account: None });
+    }
+    let account = crate::keys::meta(SLOT.name).and_then(|m| serde_json::from_value::<Account>(m).ok());
+    Ok(Status { configured: true, account })
 }
 
 pub fn sign_out() -> Result<()> {
-    match entry()?.delete_credential() {
-        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
-        Err(e) => Err(keychain(e)),
-    }
+    crate::keys::forget(SLOT);
+    Ok(())
 }

@@ -99,7 +99,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
+  min-block-size: var(--control-h-compact);
   margin-block: var(--sp-3) var(--sp-2);
+}
+
+.stock-chip[data-needs-key] {
+  border-style: dashed;
+  color: var(--ink-faint);
 }
 
 .stock-chip {
