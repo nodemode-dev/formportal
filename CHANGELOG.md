@@ -8,17 +8,18 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 
 - Stock & templates searches Pexels, Pixabay, Openverse, Freesound and ccMixter for images, video and audio. Pexels, Pixabay and Freesound need your own free API key, pasted under Your sources; Openverse and ccMixter need none. Results fill a steady grid, and each opens in a viewer with its licence, its credit line and Save. Saved items go to your Library with a text file beside each holding the title, author, source, page and licence. Non-commercial (NC) and no-derivatives (ND) items are shown with that limit in plain words. From Freesound, Save keeps the high-quality preview MP3, because the original file needs a sign-in its API keys cannot give.
 - Templates and demos for every public Form app, one section per app, from the public repository nodemode-dev/formai-templates on GitHub. Nothing is fetched until you choose Get the list; each file is downloaded only when you choose Download (or Download all for an app), kept only if its SHA-256 matches the list, and saved in a Templates folder that Files also shows. Show in folder, and Open in the app when it is installed.
-- Fonts can come from Fontsource, with no account, and from Google Fonts, with your own API key. Preview a family in its own face with your own sample line, see its licence, and install it; a family is installed only when its source states OFL-1.1, Apache-2.0 or MIT, and the licence is saved beside the files.
+- Fonts can come from Fontsource, with no account, and from Google Fonts, with your own API key. Nothing is asked of either until you press Browse Fontsource or Browse Google Fonts on the Fonts page. Preview a family in its own face with your own sample line, see its licence, and install it; a family is installed only when its source states OFL-1.1, Apache-2.0 or MIT, and the licence is saved beside the files.
 - API keys you give FormPortal are kept in the system keychain, never in a file, never logged, and sent only to the service they belong to.
 - An install or a going back shows a card under the app's row that ticks each check as the engine really does it: the catalogue's signature again, the file for this computer, the address, the download, the SHA-256, unpacking, and moving into place (or, going back, finding the kept version, swapping it and holding automatic updates). All the numbers shows the file, sizes, addresses, both SHA-256 values, where it was installed and how long it took. A finished card stays until you close it.
-- Files: a project's name opens an inspector with its path, preview, size, kinds, versions kept and the last kept SHA-256, and Keep as a new version.
-- On the way can show a sealed day: its date and a seal, nothing else. After the launch is complete, a tile offers Request a new Form App, which opens a prefilled GitHub discussion in your browser; FormPortal sends nothing itself.
-- The sidebar has the social links under Preferences: formai.studio, YouTube, r/FormAI, Reddit, Instagram, Threads, TikTok, X and Discord, with Help last. In the folded rail they turn one at a time like a wheel.
+- Files: a project's name opens an inspector with its path, preview, size, kind, versions kept, the last kept SHA-256 and the SHA-256 of the file as it is now, saying whether they match. A text project shows its lines and words and its first lines. Download copies the project into your Downloads folder under a free name (a folder project as a zip), with Show in folder; Keep as a new version keeps one at once.
+- On the way can show a sealed day: its date and a seal, nothing else. A supporter's tiles show each app's icon, name and what it stands in for ("Instead of ...", or "A FormAI original"). Date to come appears only for apps the schedule lists without a date. The last tile is always Request a new Form App, which opens a prefilled GitHub discussion in your browser; FormPortal sends nothing itself. After the launch the section is titled Request, or New app on the horizon while a new app is announced.
+- The sidebar has the social links under Preferences: formai.studio, YouTube, r/FormAI, Reddit, Discord, Instagram, Threads, TikTok and X, with Help last. In the folded rail they turn one at a time like a wheel.
 - Profile can set up your own fork of form.ext-registry on GitHub, after you connect GitHub and approve the public_repo permission, with the steps to submit an extension.
 
 ### Improved
 
-- Every app row on Updates and Apps is one line high. The installed version sits in a pill in the app's own colour with the download size, right beside the buttons; the whole tagline is in the line's tooltip.
+- Every app row on Updates and Apps is one line high. The installed version sits in a pill in the app's own colour, reading "installed v0.30.0 | 142 MB" with the download size, right beside the buttons; the whole tagline is in the line's tooltip, and the description uses the row's whole width. While an app installs or updates, its row keeps its buttons (disabled) and nothing in it moves.
+- On the way's tiles are as tall as their own content.
 - What changed opens in place under the row, set as headings, lists and paragraphs, without moving the rows above.
 - Notices show five lines at most and scroll beyond that, lay out one app per line with its versions, keep long values such as a SHA-256 on one line, and leave by themselves after 5 seconds unless the pointer or the keyboard is on them. Updates are never red: only a failure is, and each failed update is its own notice.
 - The "..." menu is a small panel in FormPortal's own look, with the keyboard able to move through it.
@@ -33,6 +34,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 - The tutorial Try a beta beside stable is greyed until a Form app has a beta.
 - The sidebar's title block is tighter, and its icons take the accent colour.
 - README and SECURITY list every host FormPortal itself may contact, and what goes to each.
+- FormPortal asks formai.studio what is on the way once at start, and again only when you show Home and the last answer is 15 minutes old or more. It no longer asks every 15 minutes in the background.
+- FormPublisher is in the app list, and FormREC is written as the website writes it.
 
 ### Fixed
 
@@ -42,9 +45,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 
 - The stock sources, Fontsource, Google Fonts, the templates download and GitHub's connect and fork were built to each service's documentation and have not yet been tried against the live services. The keychain has not yet been tried on a real system either.
 - Connect to GitHub does not appear in this build: it shows only once FormPortal is built with its GitHub app's id.
-- The Files inspector has no Download button, no line and word counts and no text preview yet, because the engine cannot yet do those.
 - A fork that GitHub had to name differently (for example form.ext-registry-1) is shown, but its address does not open from FormPortal.
-- Fontsource's catalogue is read from api.fontsource.org each time FormPortal starts, not only when you open Fonts.
+- The website's `/api/upcoming` answered with an error when version 0.71.0 of the site was first deployed on 21 November, and a site fix (0.71.1) is on its way. Until it is live, FormPortal shows its built-in schedule under On the way, and the supporter view cannot be checked against the live site.
 - In a small window, a notice can cover the bottom of the install card.
 - The Spanish has not been read by a native speaker.
 - The desktop window was not built for this release on the machine that prepared it, and nothing was run on macOS or Windows, or in WebKit.

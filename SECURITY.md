@@ -74,9 +74,12 @@ leaves this computer.
   media servers, or for Openverse the site that holds the original (Flickr, Wikimedia
   Commons and others). Those requests carry no key. Answers are kept in memory for
   24 hours; FormPortal does not keep what you search for anywhere else.
-- **Fonts**: FormPortal reads Fontsource's public catalogue from `api.fontsource.org`
-  when it starts and keeps it in memory for 30 minutes; a family's licence and files
-  come from `cdn.jsdelivr.net`. Google Fonts is used only with your own key:
+- **Fonts**: nothing is asked of a font source until you press Browse Fontsource or
+  Browse Google Fonts on the Fonts page. Browse Fontsource reads Fontsource's public
+  catalogue from `api.fontsource.org`; a family's licence and files come from
+  `cdn.jsdelivr.net`. A catalogue read is kept in memory for the rest of the run, so
+  switching sources or coming back to Fonts asks nothing again. Google Fonts is used
+  only with your own key:
   the catalogue comes from `www.googleapis.com`, the files from `fonts.gstatic.com`,
   and each family's licence from Fontsource's copy at `cdn.jsdelivr.net`. A family is
   installed only when its licence is stated and is OFL-1.1, Apache-2.0 or MIT.
@@ -87,9 +90,10 @@ leaves this computer.
   size and SHA-256 match the list.
 - **Update checks**: while FormPortal is open, it fetches the signed catalogue from
   `dl.formai.studio` and each app's newest release manifest from its GitHub releases,
-  and asks formai.studio (`/api/upcoming`) what is on the way, at most every 15
-  minutes. These requests carry nothing about you or your computer beyond what any web
-  request carries.
+  and asks formai.studio (`/api/upcoming`) what is on the way: once when FormPortal
+  starts, and again only when you show Home and the last answer is 15 minutes old or
+  more. There is no timer asking in the background. These requests carry nothing
+  about you or your computer beyond what any web request carries.
 - **Links** in the window open in your own browser, and only addresses on FormPortal's
   list (`core/src/links.rs`) open; FormPortal itself makes no request for them. These
   include the nine social links in the sidebar (formai.studio, YouTube, two Reddit
