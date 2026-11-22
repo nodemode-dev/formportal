@@ -107,3 +107,14 @@
 .font-web-more {
   margin-block-start: var(--sp-3);
 }
+
+.font-web .list:empty {
+  display: none;
+}
+
+.font-web-mine-title {
+  margin-block: var(--sp-5) var(--sp-3);
+  color: var(--ink-soft);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}

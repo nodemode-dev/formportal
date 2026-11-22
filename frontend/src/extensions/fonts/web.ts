@@ -255,6 +255,8 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
       const styles = fonts.length === 1 ? t("1 style") : t("{n} styles", { n: fonts.length });
       put(li.querySelector(".row-sub"), [t("From {source}", { source: from }), fonts[0].licence ?? "", styles].filter(Boolean).join(" · "));
     }
+    const title = pane.querySelector("[data-font-web-mine-title]");
+    if (title) flag(title, "hidden", groups.size === 0);
   };
 
   const load = async (from: WebFontSource, again = false) => {
