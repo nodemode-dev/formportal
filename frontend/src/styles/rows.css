@@ -33,7 +33,7 @@
 }
 
 .app-row .row-state {
-  align-content: flex-start;
+  align-content: center;
   min-block-size: 38px;
 }
 
@@ -68,14 +68,6 @@
   white-space: normal;
 }
 
-.row-notes-in > :first-child {
-  margin-block-start: 12px;
-}
-
-.row-notes-in > :last-child {
-  margin-block-end: 4px;
-}
-
 .row-notes-in .rn-p,
 .row-notes-in .rn-list > li {
   font-size: 12.5px;
@@ -99,6 +91,15 @@
 .row-notes-in .rn-list {
   margin: 0 0 8px;
   padding-inline-start: 1.15em;
+  list-style: disc outside;
+}
+
+.row-notes-in > :first-child {
+  margin-block-start: 12px;
+}
+
+.row-notes-in > :last-child {
+  margin-block-end: 6px;
 }
 
 .row-notes-in .rn-list > li {
@@ -130,6 +131,8 @@
 }
 
 .canvas-cat-title {
+  font-family: var(--font-ui);
+  font-weight: 600;
   text-transform: none;
   letter-spacing: 0.01em;
   font-size: 12px;
@@ -157,6 +160,22 @@
 @media (max-width: 1000px) {
   .rows > .app-row {
     grid-template-columns: 40px minmax(0, 1fr) auto auto;
+  }
+
+  .rows > .app-row[data-install="update"] .row-state {
+    display: flex;
+    grid-column: 2 / -1;
+    grid-row: 2;
+    min-block-size: 0;
+    padding-block-start: 6px;
+  }
+
+  .rows > .app-row[data-install="update"] .st-more {
+    flex: 0 1 auto;
+  }
+
+  .rows > .app-row > .row-notes {
+    grid-row: 3;
   }
 }
 
