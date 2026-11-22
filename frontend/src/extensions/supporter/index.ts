@@ -20,7 +20,6 @@ export const supporter: Extension = {
     const check = box?.querySelector<HTMLButtonElement>("[data-supporter-check]") ?? null;
     const forget = box?.querySelector<HTMLButtonElement>("[data-supporter-forget]") ?? null;
     const say = box?.querySelector<HTMLElement>("[data-supporter-say]") ?? null;
-    const dated = Array.from(document.querySelectorAll<HTMLElement>("[data-soon-group][data-soon-at]"));
     const extra = document.querySelector<HTMLElement>("[data-soon-extra]");
     const fallback = new WeakMap<Element, string>();
 
@@ -40,7 +39,7 @@ export const supporter: Extension = {
     };
 
     const place = (tiles: SupporterTile[]) => {
-      for (const group of dated) {
+      for (const group of document.querySelectorAll<HTMLElement>("[data-soon-at]")) {
         const when = stamp(group.getAttribute("data-soon-at"));
         names(
           group,

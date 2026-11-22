@@ -56,6 +56,7 @@ export function onTheWay(bundled: number[]): void {
       const n = document.createElement("span");
       const tiles = document.createElement("ul");
       li.className = "wave-site";
+      li.dataset.soonAt = d.at;
       n.className = "wave-n";
       tiles.className = "wave-tiles soon-tiles";
       head.append(n);
@@ -79,7 +80,10 @@ export function onTheWay(bundled: number[]): void {
       mark.className = "soon-mark";
       mark.setAttribute("aria-hidden", "true");
       mark.textContent = "?";
-      seal.append(mark);
+      const name = document.createElement("span");
+      name.className = "soon-name";
+      name.textContent = "Form?";
+      seal.append(mark, name);
       tiles.append(seal);
     }
   };
