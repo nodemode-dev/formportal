@@ -5,7 +5,84 @@ import type { Extension } from "../registry.ts";
 import hues from "../../../../design/app-hues.json";
 
 const KEEP = 30;
-const SHOW_MS = 6000;
+const SHOW_MS = 5000;
+const STACK = 3;
+const MONO = 24;
+const SHORTEN = 40;
+const ROW = /^(.+) (\S+) → (\S+)$/;
+const SVG = "http://www.w3.org/2000/svg";
+
+const still = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const arrow = (path: string) => {
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  const p = document.createElementNS(SVG, "path");
+  p.setAttribute("d", path);
+  p.setAttribute("fill", "none");
+  p.setAttribute("stroke", "currentColor");
+  p.setAttribute("stroke-width", "1.6");
+  p.setAttribute("stroke-linecap", "round");
+  p.setAttribute("stroke-linejoin", "round");
+  svg.append(p);
+  return svg;
+};
+
+const words = (into: HTMLElement, line: string, short: boolean) => {
+  for (const part of line.split(/(\s+)/)) {
+    const m = /^(\S*?)([.,;:)]*)$/.exec(part);
+    const word = m?.[1] ?? part;
+    if (word.length < MONO) {
+      into.append(part);
+      continue;
+    }
+    const code = document.createElement("code");
+    code.className = "notice-val";
+    if (short && word.length > SHORTEN) {
+      code.textContent = `${word.slice(0, 10)}…${word.slice(-8)}`;
+      code.title = word;
+    } else code.textContent = word;
+    into.append(code, m?.[2] ?? "");
+  }
+};
+
+const fill = (into: HTMLElement, text: string, fault: boolean, short: boolean) => {
+  const lines = text
+    .split("\n")
+    .flatMap((l) => (fault ? l.split(/(?<=[.!?])\s+(?=\p{Lu})/u) : [l]))
+    .map((l) => l.trim())
+    .filter(Boolean);
+  let rows: HTMLElement | null = null;
+  for (const line of lines) {
+    const row = ROW.exec(line);
+    if (row) {
+      if (!rows) {
+        rows = document.createElement("span");
+        rows.className = "notice-rows";
+        into.append(rows);
+      }
+      const r = document.createElement("span");
+      r.className = "notice-row";
+      for (const [cls, value] of [["notice-app", row[1]], ["notice-from", row[2]], ["", ""], ["notice-to", row[3]]] as const) {
+        const cell = document.createElement("span");
+        if (cls) {
+          cell.className = cls;
+          cell.textContent = value;
+        } else cell.append(arrow("M3 8h9M8.5 4.5 12 8l-3.5 3.5"));
+        r.append(cell);
+      }
+      rows.append(r);
+      continue;
+    }
+    rows = null;
+    const span = document.createElement("span");
+    span.className = "notice-line";
+    words(span, fault && !/[.!?:]$/.test(line) ? `${line}.` : line, short);
+    into.append(span);
+  }
+  return lines.filter((l) => ROW.test(l)).length;
+};
 
 export const notices: Extension = {
   id: "notices",
@@ -53,24 +130,43 @@ export const notices: Extension = {
       return best?.id ?? null;
     };
 
+    const leave = (item: HTMLElement, now = false) => {
+      if (item.dataset.leaving !== undefined) return;
+      item.dataset.leaving = "";
+      window.clearTimeout(Number(item.dataset.timer));
+      if (item.contains(document.activeElement)) bell.focus({ preventScroll: true });
+      const gone = () => item.remove();
+      if (now && still()) return gone();
+      const fade = item.animate([{ opacity: 1 }, { opacity: 0, transform: still() ? "none" : "translateY(6px)" }], { duration: 160, easing: "ease-in", fill: "forwards" });
+      fade.onfinish = () => {
+        if (still() || !item.previousElementSibling) return gone();
+        const gap = parseFloat(getComputedStyle(toasts).rowGap) || 0;
+        item.style.overflow = "hidden";
+        item.animate([{ blockSize: `${item.offsetHeight}px`, marginBlockStart: "0px" }, { blockSize: "0px", paddingBlock: "0px", borderWidth: "0px", marginBlockStart: `${-gap}px` }], { duration: 160, easing: "ease-out", fill: "forwards" }).onfinish = gone;
+      };
+    };
+
     const toast = (text: string, tone: "info" | "fault", action?: NoticeAction) => {
       const item = document.createElement("div");
       item.className = "toast";
       item.dataset.tone = tone;
-      const app = tone === "fault" ? null : appOf(text);
+      item.setAttribute("role", tone === "fault" ? "alert" : "status");
+      const body = document.createElement("p");
+      const listed = fill(body, text, tone === "fault", true);
+      const app = tone === "fault" || listed > 1 ? null : appOf(text);
       if (app) {
         item.dataset.app = app;
         item.style.setProperty("--hue", (hues as Record<string, string>)[app] ?? "");
       }
-      item.setAttribute("role", tone === "fault" ? "alert" : "status");
-      const body = document.createElement("p");
-      body.textContent = text;
+      const more = document.createElement("span");
+      more.className = "toast-more";
+      more.append(arrow("M4 6l4 4 4-4"));
       const close = document.createElement("button");
       close.type = "button";
       close.className = "toast-close";
       close.setAttribute("aria-label", t("Dismiss"));
       close.textContent = t("Dismiss");
-      close.addEventListener("click", () => item.remove());
+      close.addEventListener("click", () => leave(item, true));
       item.append(body);
       if (action) {
         const act = document.createElement("button");
@@ -78,16 +174,38 @@ export const notices: Extension = {
         act.className = "toast-act";
         act.textContent = action.label;
         act.addEventListener("click", () => {
-          item.remove();
+          leave(item, true);
           void engine.dispatch(action.command, action.arg);
         });
         item.append(act);
       }
-      item.append(close);
-      const showing = toasts.firstElementChild as HTMLElement | null;
-      if (showing?.dataset.tone === "fault" && tone === "info") return;
-      toasts.replaceChildren(item);
-      if (tone === "info") window.setTimeout(() => item.remove(), SHOW_MS);
+      item.append(close, more);
+      const rest = () => {
+        const on = body.scrollTop + body.clientHeight < body.scrollHeight - 1;
+        if (item.hasAttribute("data-more") !== on) item.toggleAttribute("data-more", on);
+      };
+      body.addEventListener("scroll", rest, { passive: true });
+      const arm = () => {
+        window.clearTimeout(Number(item.dataset.timer));
+        item.dataset.timer = String(window.setTimeout(() => leave(item), SHOW_MS));
+      };
+      const hold = () => window.clearTimeout(Number(item.dataset.timer));
+      item.addEventListener("pointerenter", hold);
+      item.addEventListener("pointerleave", () => {
+        if (!item.contains(document.activeElement)) arm();
+      });
+      item.addEventListener("focusin", hold);
+      item.addEventListener("focusout", (event) => {
+        if (!item.contains(event.relatedTarget as Node | null) && !item.matches(":hover")) arm();
+      });
+      toasts.prepend(item);
+      if (body.scrollHeight > body.clientHeight + 1) body.tabIndex = 0;
+      rest();
+      const live = Array.from(toasts.children).filter((c) => (c as HTMLElement).dataset.leaving === undefined) as HTMLElement[];
+      for (const old of live.slice(STACK)) leave(old);
+      if (!still()) item.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 200, easing: "ease-out" });
+      else item.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120 });
+      arm();
     };
 
     let showing = "all";
@@ -132,7 +250,7 @@ export const notices: Extension = {
       when.dateTime = now.toISOString();
       when.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       const body = document.createElement("p");
-      body.textContent = text;
+      fill(body, text, tone === "fault", false);
       if (action) {
         const act = document.createElement("button");
         act.type = "button";
@@ -146,9 +264,10 @@ export const notices: Extension = {
       }
       entry.append(when, body);
       list.prepend(entry);
-      while (list.children.length > KEEP) list.lastElementChild?.remove();
+      while (list.children.length > KEEP) (Array.from(list.children).reverse().find((c) => (c as HTMLElement).dataset.tone !== "fault") ?? list.lastElementChild)?.remove();
       if (panel.hidden) root.setAttribute("data-unread", "");
       if (tone === "fault" || !(engine.state.prefs.quiet ?? []).includes(category)) toast(text, tone, action);
     });
+    if (import.meta.env.DEV) Object.assign(window, { __notice: engine.setNotice.bind(engine) });
   },
 };
