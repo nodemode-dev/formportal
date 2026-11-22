@@ -144,10 +144,11 @@ export const templates: Extension = {
         if (!quiet) engine.setNotice(t("{name} is saved in {path}.", { name: item.name, path: done.path }), "info", "library");
         return true;
       } catch (e) {
-        const why = e instanceof Error ? e.message : String(e);
+        const full = e instanceof Error ? e.message : String(e);
+        const why = full.replace(/ \(expected SHA-256 [0-9a-fA-F]+, found [0-9a-fA-F]+\)$/, ".");
         row?.toggleAttribute("data-fault", true);
         write(state, why);
-        if (state) state.title = why;
+        if (state) state.title = full;
         engine.setNotice(why.startsWith(item.name) ? t("Not downloaded: {why}", { why }) : t("{name} was not downloaded: {why}", { name: item.name, why }), "fault", "library");
         return false;
       } finally {
