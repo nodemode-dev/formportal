@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::download::{download, fetch_bytes};
+use crate::download::{download_stepped, fetch_bytes};
 use crate::error::{CoreError, Result};
 use crate::{agents, installers, launch, process};
 use crate::releases::{COMPILER_CATALOG, STORE_CATALOG};
@@ -326,6 +326,21 @@ impl Portal {
         }
     }
 
+    pub fn recheck_kept(&self, url: &str, allow_unsigned: bool) -> Result<bool> {
+        let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
+        let (body, signature) = if url.starts_with("http://") || url.starts_with("https://") {
+            let dir = self.root.join("catalog");
+            (fs::read(dir.join("apps.json"))?, fs::read_to_string(dir.join("apps.json.sig")).ok())
+        } else {
+            (fs::read(&url)?, fs::read_to_string(format!("{url}.sig")).ok())
+        };
+        match signature {
+            Some(signature) => verify(&body, signature.trim(), &keys).map(|_| true),
+            None if allow_unsigned => Ok(false),
+            None => Err(CoreError::Signature("it is not signed".to_string())),
+        }
+    }
+
     pub fn catalog_kept(&self, url: &str, allow_unsigned: bool) -> Result<Catalog> {
         let (url, allow_unsigned, keys) = self.source(url, allow_unsigned)?;
         if !(url.starts_with("http://") || url.starts_with("https://")) {
@@ -402,14 +417,25 @@ impl Portal {
         self.install_with(product, channel, version, artifact, agents.as_ref(), progress)
     }
 
+    #[allow(clippy::too_many_arguments)]
+    pub fn install_from_stepped(&self, catalog: &Catalog, product: &str, channel: Channel, version: &str, artifact: &Artifact, progress: &mut dyn FnMut(u64, u64), step: &mut dyn FnMut(&'static str, String)) -> Result<Install> {
+        let agents = catalog.release_of(product, channel, version).and_then(|r| r.agents.clone());
+        self.install_with_stepped(product, channel, version, artifact, agents.as_ref(), progress, step)
+    }
+
     pub fn install_with(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, agents: Option<&ReleaseAgents>, progress: &mut dyn FnMut(u64, u64)) -> Result<Install> {
+        self.install_with_stepped(product, channel, version, artifact, agents, progress, &mut |_, _| {})
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn install_with_stepped(&self, product: &str, channel: Channel, version: &str, artifact: &Artifact, agents: Option<&ReleaseAgents>, progress: &mut dyn FnMut(u64, u64), step: &mut dyn FnMut(&'static str, String)) -> Result<Install> {
         if let Some(managed) = self.policy()? {
             managed.policy.allows(product, channel)?;
         }
         if !plain_name(product) || !plain_name(version) {
             return Err(CoreError::Invalid(format!("{product:?} {version:?} is not a plain product and version name")));
         }
-        let file = download(artifact, &self.root.join("downloads"), progress)?;
+        let file = download_stepped(artifact, &self.root.join("downloads"), progress, step)?;
         let base = self.root.join("apps").join(product).join(channel_name(channel));
         let target = base.join(version);
         let staging = base.join(format!("{version}.tmp"));
@@ -442,6 +468,7 @@ impl Portal {
                 }
             }
         }
+        step("unpack", staging.to_string_lossy().into_owned());
         if target.exists() {
             let open = process::under(&target);
             if !open.is_empty() {
@@ -485,6 +512,7 @@ impl Portal {
             }
         };
         state.save(&self.root)?;
+        step("place", install.previous.as_ref().map(|p| p.version.clone()).unwrap_or_default());
         let _ = fs::remove_file(&file);
         self.sweep(&base, &install);
         Ok(install)
@@ -608,6 +636,10 @@ impl Portal {
     }
 
     pub fn rollback(&self, product: &str, channel: Channel) -> Result<Install> {
+        self.rollback_stepped(product, channel, &mut |_, _| {})
+    }
+
+    pub fn rollback_stepped(&self, product: &str, channel: Channel, step: &mut dyn FnMut(&'static str, String)) -> Result<Install> {
         let mut state = self.state()?;
         let index = state.position(product, channel).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
         let existing = state.installs[index].clone();
@@ -615,13 +647,16 @@ impl Portal {
         if !previous.path.exists() {
             return Err(CoreError::NotInstalled(format!("{product} {}", previous.version)));
         }
+        step("find", previous.path.to_string_lossy().into_owned());
         let older = version_newer(&existing.current.version, &previous.version);
         let swapped = Install { product: existing.product, channel, current: previous, previous: Some(existing.current) };
         state.installs[index] = swapped.clone();
         state.save(&self.root)?;
+        step("swap", swapped.previous.as_ref().map(|p| p.version.clone()).unwrap_or_default());
         if older {
             self.hold(product, channel)?;
             self.set_later(product, channel, false)?;
+            step("hold", String::new());
         }
         Ok(swapped)
     }

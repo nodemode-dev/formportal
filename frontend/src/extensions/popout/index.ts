@@ -76,6 +76,51 @@ export const popout: Extension = {
       },
       true,
     );
+    const stops = (panel: HTMLElement) =>
+      Array.from(panel.querySelectorAll<HTMLElement>("button, select, input, a[href]")).filter((node) => !(node as HTMLButtonElement).disabled && node.getClientRects().length > 0);
+    let byKey: HTMLDetailsElement | null = null;
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        const at = event.target instanceof HTMLElement ? event.target : null;
+        const drop = at?.closest<HTMLDetailsElement>("details.drop-more");
+        const { summary, panel } = drop ? parts(drop) : { summary: null, panel: null };
+        if (!drop || !summary || !panel || event.altKey || event.metaKey || event.ctrlKey) return;
+        if (at === summary) {
+          if (["Enter", " "].includes(event.key) && !drop.open) byKey = drop;
+          if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+          event.preventDefault();
+          byKey = drop;
+          if (!drop.open) drop.open = true;
+          else stops(panel)[event.key === "ArrowUp" ? stops(panel).length - 1 : 0]?.focus();
+          return;
+        }
+        if (!drop.open || !panel.contains(at)) return;
+        if (event.key === "Enter" && at instanceof HTMLInputElement && at.type === "checkbox") {
+          event.preventDefault();
+          at.click();
+          return;
+        }
+        const list = stops(panel);
+        const now = list.indexOf(at as HTMLElement);
+        const next = event.key === "ArrowDown" ? now + 1 : event.key === "ArrowUp" ? now - 1 : event.key === "Home" ? 0 : event.key === "End" ? list.length - 1 : null;
+        if (next === null || list.length === 0) return;
+        event.preventDefault();
+        list[(next + list.length) % list.length]?.focus();
+      },
+      true,
+    );
+    document.addEventListener(
+      "toggle",
+      (event) => {
+        const drop = event.target;
+        if (!(drop instanceof HTMLDetailsElement) || drop !== byKey) return;
+        byKey = null;
+        const panel = parts(drop).panel;
+        if (drop.open && panel) stops(panel)[0]?.focus({ preventScroll: true });
+      },
+      true,
+    );
     document.addEventListener(
       "click",
       (event) => {

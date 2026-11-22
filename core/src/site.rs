@@ -27,6 +27,8 @@ const MOST_TILES: usize = 200;
 pub struct Day {
     pub at: String,
     pub count: u32,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub sealed: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -37,6 +39,8 @@ pub struct Upcoming {
     pub undated: u32,
     #[serde(default)]
     pub supporters: u32,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub complete: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -73,6 +77,8 @@ struct Kept {
     upcoming: Option<KeptUpcoming>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     supporter: Option<KeptSupporter>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    launched: Option<u64>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -83,6 +89,7 @@ pub struct UpcomingView {
     pub supporters: u32,
     pub checked: u64,
     pub stale: bool,
+    pub launched: Option<u64>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -200,9 +207,7 @@ fn digest(code: &str) -> String {
 pub fn code_ok(code: &str) -> bool {
     let parts: Vec<&str> = code.split('.').collect();
     parts.len() == 4
-        && parts[0] == "d1"
-        && !parts[1].is_empty()
-        && parts[1].len() <= 20
+        && ((parts[0] == "d1" && !parts[1].is_empty() && parts[1].len() <= 20) || (parts[0] == "v1" && parts[1].len() == 10))
         && parts[1].bytes().all(|b| b.is_ascii_digit())
         && parts[2].len() == 32
         && parts[2].bytes().all(|b| b.is_ascii_hexdigit())
@@ -246,9 +251,19 @@ fn read_upcoming(answer: &Value) -> Upcoming {
     let dated = answer
         .get("dated")
         .and_then(Value::as_array)
-        .map(|list| list.iter().filter_map(|d| Some(Day { at: stamp(d.get("at"))?, count: number(d.get("count")) })).filter(|d| d.count > 0).take(64).collect())
+        .map(|list| {
+            list.iter()
+                .filter_map(|d| {
+                    let sealed = d.get("sealed").and_then(Value::as_bool) == Some(true);
+                    Some(Day { at: stamp(d.get("at"))?, count: if sealed { 1 } else { number(d.get("count")) }, sealed })
+                })
+                .filter(|d| d.count > 0)
+                .take(64)
+                .collect()
+        })
         .unwrap_or_default();
-    Upcoming { dated, undated: number(answer.get("undated")), supporters: number(answer.get("supporters")) }
+    let complete = answer.get("launch").and_then(|l| l.get("complete")).and_then(Value::as_bool) == Some(true);
+    Upcoming { dated, undated: number(answer.get("undated")), supporters: number(answer.get("supporters")), complete }
 }
 
 fn clean(name: &str) -> String {
@@ -262,6 +277,9 @@ fn read_tiles(answer: &Value) -> Vec<Tile> {
         .map(|list| {
             list.iter()
                 .filter_map(|t| {
+                    if t.get("sealed").and_then(Value::as_bool) == Some(true) {
+                        return None;
+                    }
                     let name = clean(t.get("name").and_then(Value::as_str)?);
                     (!name.is_empty()).then(|| Tile { name, at: stamp(t.get("at")) })
                 })
@@ -271,16 +289,17 @@ fn read_tiles(answer: &Value) -> Vec<Tile> {
         .unwrap_or_default()
 }
 
-fn upcoming_view(kept: &KeptUpcoming, stale: bool) -> UpcomingView {
-    UpcomingView { known: kept.checked > 0, dated: kept.data.dated.clone(), undated: kept.data.undated, supporters: kept.data.supporters, checked: kept.checked, stale }
+fn upcoming_view(kept: &KeptUpcoming, stale: bool, launched: Option<u64>) -> UpcomingView {
+    UpcomingView { known: kept.checked > 0, dated: kept.data.dated.clone(), undated: kept.data.undated, supporters: kept.data.supporters, checked: kept.checked, stale, launched }
 }
 
 pub fn upcoming(root: &Path) -> UpcomingView {
     let at = now();
     let kept = load(root);
+    let launched = kept.launched;
     if let Some(have) = &kept.upcoming {
         if at < have.checked + UPCOMING_FRESH || at < have.tried + RETRY {
-            return upcoming_view(have, at >= have.checked + UPCOMING_FRESH);
+            return upcoming_view(have, at >= have.checked + UPCOMING_FRESH, launched);
         }
     }
     let answer = base().and_then(|site| match exchange(&format!("{site}/api/upcoming"), None) {
@@ -289,15 +308,19 @@ pub fn upcoming(root: &Path) -> UpcomingView {
     });
     match answer {
         Some(data) => {
+            let first = launched.or(data.complete.then_some(at));
             let fresh = KeptUpcoming { checked: at, tried: at, data };
-            let view = upcoming_view(&fresh, false);
-            update(root, |k| k.upcoming = Some(fresh));
+            let view = upcoming_view(&fresh, false, first);
+            update(root, |k| {
+                k.upcoming = Some(fresh);
+                k.launched = k.launched.or(first);
+            });
             view
         }
         None => {
             let mut have = kept.upcoming.unwrap_or_default();
             have.tried = at;
-            let view = upcoming_view(&have, true);
+            let view = upcoming_view(&have, true, launched);
             update(root, |k| k.upcoming.get_or_insert_with(KeptUpcoming::default).tried = at);
             view
         }

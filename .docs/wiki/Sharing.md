@@ -1,6 +1,6 @@
 # Sharing
 
-From v0.48.0, FormPortal shares through your own GitHub account. There is no FormPortal server: what you share lives in repositories you own, and you can see, change or delete them on github.com like any other. Signing in is described in [Accounts](Accounts); sharing needs the repository access FormPortal asks for when you sign in with sharing allowed.
+From v0.48.0, FormPortal shares through your own GitHub account. There is no FormPortal server: what you share lives in repositories you own, and you can see, change or delete them on github.com like any other. Connecting is described in [Connect to GitHub](Accounts); sharing needs the repository access FormPortal asks for when you connect with sharing allowed.
 
 ## Share a folder
 

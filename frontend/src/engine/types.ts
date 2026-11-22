@@ -171,8 +171,39 @@ export interface InstalledFont {
   family_id: string | null;
   file: string;
   sha256: string;
-  source: "index" | "own";
+  source: "index" | "own" | "fontsource" | "google";
   licence: string | null;
+}
+
+export type WebFontSource = "fontsource" | "google";
+
+export interface WebFontFamily {
+  id: string;
+  family: string;
+  category: string;
+  subsets: string[];
+  weights: number[];
+  italic: boolean;
+  variable: boolean;
+}
+
+export interface WebFontCatalogue {
+  source: WebFontSource;
+  on: boolean;
+  families: WebFontFamily[];
+}
+
+export interface WebFontDetail {
+  source: WebFontSource;
+  id: string;
+  family: string;
+  category: string;
+  licence: string | null;
+  licence_url: string | null;
+  credit: string | null;
+  subset: string | null;
+  faces: { weight: number; italic: boolean; style: string }[];
+  installable: boolean;
 }
 
 export interface FontsView {
@@ -217,6 +248,24 @@ export interface FileVersion {
   reason: string;
 }
 
+export interface TextFacts {
+  lines: number;
+  words: number;
+  whole: boolean;
+  first_lines: string;
+}
+
+export interface FileHash {
+  sha256: string | null;
+  bytes: number;
+  limit: number;
+}
+
+export interface Downloaded {
+  path: string;
+  zipped: boolean;
+}
+
 export interface StorageView {
   formportal: { what: string; path: string; bytes: number }[];
   formportal_bytes: number;
@@ -258,6 +307,53 @@ export interface GithubStatus {
   account: GithubAccount | null;
 }
 
+export interface KeyState {
+  provider: string;
+  present: boolean;
+}
+
+export type StockKind = "image" | "video" | "audio";
+
+export interface StockSource {
+  id: string;
+  name: string;
+  kinds: StockKind[];
+  needs_key: boolean;
+  key_page: string | null;
+  home: string;
+  on: boolean;
+}
+
+export interface StockItem {
+  id: string;
+  source: string;
+  source_name: string;
+  kind: StockKind;
+  title: string;
+  author: string;
+  author_url: string | null;
+  page_url: string;
+  licence: string;
+  licence_url: string | null;
+  nc: boolean;
+  nd: boolean;
+  width: number | null;
+  height: number | null;
+  seconds: number | null;
+  thumb: boolean;
+  credit: string;
+  file_note: string;
+}
+
+export interface StockPage {
+  source: string;
+  kind: StockKind;
+  query: string;
+  page: number;
+  more: boolean;
+  items: StockItem[];
+}
+
 export interface DeviceCode {
   device_code: string;
   user_code: string;
@@ -267,6 +363,12 @@ export interface DeviceCode {
 }
 
 export type GithubPoll = { state: "waiting"; interval: number } | { state: "signed-in"; account: GithubAccount };
+
+export interface GithubFork {
+  repo: string;
+  url: string;
+  existed: boolean;
+}
 
 export interface SharedFolder {
   folder: string;
@@ -471,6 +573,7 @@ export interface ChannelView {
 export interface UpcomingDay {
   at: string;
   count: number;
+  sealed?: boolean;
 }
 
 export interface UpcomingView {
@@ -480,6 +583,7 @@ export interface UpcomingView {
   supporters: number;
   checked: number;
   stale: boolean;
+  launched?: number | null;
 }
 
 export interface SupporterTile {
@@ -494,4 +598,66 @@ export interface SupporterView {
   upcoming: SupporterTile[];
   checked: number;
   stale: boolean;
+}
+
+export interface TemplateItem {
+  id: string;
+  kind: "template" | "demo";
+  name: string;
+  description: string;
+  path: string;
+  bytes: number;
+  sha256: string;
+  licence: string;
+  credit: string;
+  preview?: string | null;
+}
+
+export interface TemplateApp {
+  id: string;
+  name: string;
+  licence: string;
+  version: string;
+  items: TemplateItem[];
+}
+
+export interface TemplateIndex {
+  format: string;
+  format_version: number;
+  generated: string;
+  apps: TemplateApp[];
+}
+
+export interface TemplatesView {
+  index: TemplateIndex;
+  fetched: number;
+  folder: string;
+  downloaded: Record<string, string>;
+}
+
+export interface TemplateDownload {
+  id: string;
+  app: string;
+  path: string;
+  unpacked: boolean;
+}
+
+export type JobStep = "signature" | "pick" | "address" | "download" | "sha256" | "unpack" | "place" | "find" | "swap" | "hold";
+
+export interface StepReport {
+  step: JobStep;
+  detail: string;
+}
+
+export interface JobEvent {
+  key: string;
+  product: string;
+  channel: Channel;
+  phase: "start" | "step" | "end";
+  kind?: "install" | "rollback";
+  version?: string;
+  newest?: boolean;
+  step?: JobStep;
+  detail?: string;
+  error?: string | null;
 }

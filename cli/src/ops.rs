@@ -21,18 +21,29 @@ fn on_the_way(portal: &Portal, shown: &[String]) -> Vec<Value> {
         let when = at.and_then(formportal_core::site::parse_time);
         tiles.as_ref().map(|list| json!(list.iter().filter(|t| t.at.as_deref().and_then(formportal_core::site::parse_time) == when && (at.is_none() == t.at.is_none())).take(limit).map(|t| t.name.as_str()).collect::<Vec<_>>()))
     };
+    let site = portal.upcoming();
+    let unsealed = site.known && !site.dated.iter().any(|d| d.sealed);
+    let at_now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
     let mut out: Vec<Value> = groups
         .iter()
         .filter_map(|g| {
             let at = g.get("at").and_then(Value::as_str)?;
-            let left = g
+            if g.get("sealed").and_then(Value::as_bool) == Some(true) {
+                return (!unsealed).then(|| json!({ "opens": at, "apps": 1, "sealed": true }));
+            }
+            let ids: Vec<&str> = g
                 .get("apps")
                 .and_then(Value::as_array)?
                 .iter()
                 .filter_map(Value::as_str)
                 .map(|id| ALIAS.iter().find(|(theirs, _)| *theirs == id).map_or(id, |(_, ours)| *ours))
-                .filter(|id| *id != "formai" && known.iter().any(|k| k == id) && !shown.iter().any(|s| s == id))
-                .count();
+                .filter(|id| *id != "formai")
+                .collect();
+            let mut left = ids.iter().filter(|id| known.iter().any(|k| k == *id) && !shown.iter().any(|s| s == *id)).count();
+            let extra = ids.iter().filter(|id| !known.iter().any(|k| k == *id)).count() + g.get("names").and_then(Value::as_array).map_or(0, Vec::len);
+            if left > 0 || formportal_core::site::parse_time(at).is_some_and(|due| at_now < due) {
+                left += extra;
+            }
             (left > 0).then(|| {
                 let mut group = json!({ "opens": at, "apps": left });
                 if let Some(names) = named(Some(at), left) {
@@ -42,9 +53,13 @@ fn on_the_way(portal: &Portal, shown: &[String]) -> Vec<Value> {
             })
         })
         .collect();
-    let site = portal.upcoming();
-    let more = site.undated as usize + site.supporters as usize;
-    if site.known && more > 0 {
+    let bundled: usize = groups
+        .iter()
+        .filter(|g| g.get("at").is_some_and(Value::is_null) && g.get("sealed").and_then(Value::as_bool) != Some(true))
+        .map(|g| g.get("apps").and_then(Value::as_array).map_or(0, |a| a.iter().filter(|id| id.as_str() != Some("formportal")).count()) + g.get("names").and_then(Value::as_array).map_or(0, Vec::len))
+        .sum();
+    let more = if site.known { (site.undated as usize).max(bundled) } else { bundled };
+    if more > 0 {
         let mut group = json!({ "opens": null, "apps": more });
         if let Some(names) = named(None, more) {
             group["names"] = names;

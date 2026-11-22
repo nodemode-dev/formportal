@@ -1,5 +1,6 @@
 import { t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
+import { Wheel } from "./wheel.ts";
 
 const WIDTH = "formportal.side";
 const RAIL = "formportal.rail";
@@ -34,11 +35,13 @@ export const side: Extension = {
       }
       fold.setAttribute("aria-expanded", String(!mini()));
     };
+    let railed = () => {};
     const setMini = (on: boolean) => {
       if (mini() === on) return;
       if (on) root.setAttribute("data-rail", "mini");
       else root.removeAttribute("data-rail");
       label();
+      railed();
     };
 
     fold.addEventListener("click", () => {
@@ -93,61 +96,128 @@ export const side: Extension = {
       keep();
     });
 
-    const mine = nav.querySelector<HTMLElement>(".nav-mine");
-    if (mine) {
-      const more = () => {
-        const above = mine.scrollTop > 1;
-        const below = mine.scrollTop + mine.clientHeight < mine.scrollHeight - 1;
-        const say = above && below ? "both" : above ? "above" : below ? "below" : "";
-        if ((mine.dataset.more ?? "") === say) return;
-        if (say) mine.dataset.more = say;
-        else delete mine.dataset.more;
-      };
-      const rows = Array.from(mine.children) as HTMLElement[];
-      let turned = 0;
-      const turn = (count: number) => {
-        let at = 0;
-        for (const row of rows) {
-          const want = row.offsetParent !== null && at++ < count ? "1" : "";
-          if (row.style.order !== want) row.style.order = want;
-        }
-        turned = count;
-      };
-      const wrap = () => {
-        const shown = rows.filter((row) => row.offsetParent !== null);
-        const look = getComputedStyle(mine);
-        const pitch = shown.length > 1 ? shown[0].offsetHeight + (Number.parseFloat(look.rowGap) || 0) : 0;
-        const reach = mine.scrollHeight - mine.clientHeight;
-        const slack = Math.min(pitch, (reach - pitch) / 2);
-        if (pitch <= 0 || slack < 4) {
-          if (turned) turn(0);
-          if (mine.hasAttribute("data-wrap")) mine.removeAttribute("data-wrap");
-          return;
-        }
-        const starting = !mine.hasAttribute("data-wrap");
-        if (starting) mine.setAttribute("data-wrap", "");
-        const count = shown.length;
-        let top = starting && mine.scrollTop < 1 ? -(Number.parseFloat(look.getPropertyValue("--sp-5")) || 0) : mine.scrollTop;
-        let next = turned % count;
-        if (top > reach - slack || top < slack) {
-          const steps = Math.round((top - reach / 2) / pitch) || (top < slack ? -1 : 1);
-          next = (((next + steps) % count) + count) % count;
-          top -= steps * pitch;
-        }
-        if (next === turned && !starting) return;
-        turn(next);
-        mine.scrollTop = top;
-      };
-      const settle = () => {
-        wrap();
-        more();
-      };
-      mine.addEventListener("scroll", settle, { passive: true });
-      const watch = new ResizeObserver(settle);
-      watch.observe(mine);
-      for (const row of rows) watch.observe(row);
-      settle();
+    const WAIT = 1670;
+    const PICK = ".nav-item, .soc-link";
+    const tip = document.createElement("div");
+    tip.className = "side-tip";
+    tip.id = "side-tip";
+    tip.setAttribute("role", "tooltip");
+    document.body.append(tip);
+    const targets = Array.from(nav.querySelectorAll<HTMLElement>(PICK));
+    const lent = new Set<HTMLElement>();
+    for (const el of targets) {
+      if (el.title) {
+        el.dataset.tip = el.title;
+        el.removeAttribute("title");
+      }
+      if (!el.hasAttribute("aria-label") && el.dataset.tip) lent.add(el);
     }
+    const names = () => {
+      for (const el of lent) {
+        if (mini()) el.setAttribute("aria-label", el.dataset.tip ?? "");
+        else el.removeAttribute("aria-label");
+      }
+    };
+    const eligible = (el: HTMLElement | null) => (el && nav.contains(el) && el.dataset.tip && (mini() || el.classList.contains("soc-link")) ? el : null);
+    const at = (x: number, y: number) => eligible((document.elementFromPoint(x, y) as HTMLElement | null)?.closest<HTMLElement>(PICK) ?? null);
+    let over: HTMLElement | null = null;
+    let shown: HTMLElement | null = null;
+    let timer = 0;
+    let px = -1;
+    let py = -1;
+    const hide = () => {
+      window.clearTimeout(timer);
+      timer = 0;
+      if (!shown) return;
+      shown.removeAttribute("aria-describedby");
+      shown = null;
+      tip.removeAttribute("data-on");
+    };
+    const show = (el: HTMLElement) => {
+      const box = el.getBoundingClientRect();
+      const say = el.dataset.tip ?? "";
+      if (tip.textContent !== say) tip.textContent = say;
+      tip.style.setProperty("--tx", `${Math.round(box.right + 8)}px`);
+      tip.style.setProperty("--ty", `${Math.round(box.top + box.height / 2)}px`);
+      tip.setAttribute("data-on", "");
+      el.setAttribute("aria-describedby", tip.id);
+      shown = el;
+    };
+    let wheels: Wheel[] = [];
+    const still = () => !wheels.some((w) => w.busy);
+    const arm = () => {
+      window.clearTimeout(timer);
+      timer = 0;
+      const el = over;
+      if (!el || !still()) return;
+      timer = window.setTimeout(() => {
+        timer = 0;
+        if (over === el && still() && el.isConnected) show(el);
+      }, WAIT);
+    };
+    const rested = () => {
+      over = px >= 0 ? at(px, py) : null;
+      arm();
+    };
+    nav.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      px = event.clientX;
+      py = event.clientY;
+      const el = eligible((event.target as HTMLElement).closest<HTMLElement>(PICK));
+      if (el === over) return;
+      hide();
+      over = el;
+      arm();
+    });
+    nav.addEventListener("pointerleave", () => {
+      over = null;
+      px = py = -1;
+      hide();
+    });
+    nav.addEventListener("pointerdown", hide);
+    let calm = 0;
+    nav.addEventListener(
+      "scroll",
+      () => {
+        hide();
+        window.clearTimeout(calm);
+        calm = window.setTimeout(rested, 150);
+      },
+      { passive: true },
+    );
+    nav.addEventListener("focusin", (event) => {
+      const el = eligible((event.target as HTMLElement).closest<HTMLElement>(PICK));
+      if (!el || !el.matches(":focus-visible")) return;
+      hide();
+      show(el);
+    });
+    nav.addEventListener("focusout", hide);
+
+    const mine = nav.querySelector<HTMLElement>(".nav-mine");
+    const rows = mine ? (Array.from(mine.children) as HTMLElement[]) : [];
+    const fade = () => (mine ? Number.parseFloat(getComputedStyle(mine).getPropertyValue("--sp-5")) || 0 : 0);
+    const apps = mine ? new Wheel(mine, rows, { centred: false, snap: false, lead: fade, onMove: hide, onRest: rested }) : null;
+    const socBox = nav.querySelector<HTMLElement>("[data-soc-wheel]");
+    const soc = socBox ? new Wheel(socBox, Array.from(socBox.children) as HTMLElement[], { centred: true, snap: true, onMove: hide, onRest: rested }) : null;
+    wheels = [apps, soc].filter((w): w is Wheel => w !== null);
+    const settle = () => {
+      for (const w of wheels) w.measure();
+    };
+    railed = () => {
+      hide();
+      over = null;
+      names();
+      soc?.enable(mini());
+      soc?.home();
+      settle();
+    };
+    soc?.enable(mini());
+    names();
+    const watch = new ResizeObserver(settle);
+    if (mine) watch.observe(mine);
+    for (const row of rows) watch.observe(row);
+    if (socBox) watch.observe(socBox);
+    settle();
 
     label();
   },

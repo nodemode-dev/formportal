@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use sha2::{Digest, Sha256};
 
-use crate::error::{CoreError, Result};
+use crate::error::{CoreError, Result, Unserved};
 use crate::Artifact;
 
 const CHUNK: usize = 64 * 1024;
@@ -58,29 +58,98 @@ pub fn sha256_file(path: &Path) -> Result<String> {
     Ok(hasher.finalize().iter().map(|b| format!("{b:02x}")).collect())
 }
 
+fn fetcher() -> &'static ureq::Agent {
+    static AGENT: std::sync::OnceLock<ureq::Agent> = std::sync::OnceLock::new();
+    AGENT.get_or_init(|| ureq::AgentBuilder::new().redirects(0).build())
+}
+
+fn hop(from: &str, location: &str) -> Option<String> {
+    if location.contains("://") {
+        return Some(location.to_string());
+    }
+    let path = location.strip_prefix('/')?;
+    let start = from.find("://")? + 3;
+    let end = from[start..].find('/').map_or(from.len(), |i| start + i);
+    Some(format!("{}/{path}", &from[..end]))
+}
+
+fn answer(artifact: &Artifact, name: &str, have: u64) -> Result<ureq::Response> {
+    let unserved = |why| CoreError::NotServed { file: name.to_string(), answer: why };
+    let mut url = artifact.url.clone();
+    for _ in 0..6 {
+        check_url(&url)?;
+        let mut request = fetcher().get(&url);
+        if have > 0 {
+            request = request.set("Range", &format!("bytes={have}-"));
+        }
+        let response = match request.call() {
+            Ok(response) => response,
+            Err(ureq::Error::Status(404 | 410, _)) => return Err(unserved(Unserved::Missing)),
+            Err(e) => return Err(CoreError::Http(e.to_string())),
+        };
+        let status = response.status();
+        if (300..400).contains(&status) {
+            match response.header("Location").and_then(|location| hop(&url, location)) {
+                Some(next) => {
+                    url = next;
+                    continue;
+                }
+                None => return Err(unserved(Unserved::Other)),
+            }
+        }
+        if status != 200 && status != 206 {
+            return Err(unserved(Unserved::Other));
+        }
+        let kind = response.header("Content-Type").unwrap_or("").split(';').next().unwrap_or("").trim().to_ascii_lowercase();
+        if kind == "text/html" || kind == "application/xhtml+xml" {
+            return Err(unserved(Unserved::Page));
+        }
+        let expected = if status == 206 { artifact.bytes.saturating_sub(have) } else { artifact.bytes };
+        let sent = response.header("Content-Length").and_then(|v| v.trim().parse::<u64>().ok());
+        if artifact.bytes > 0 && sent.is_some_and(|n| n.abs_diff(expected) > expected / 2) {
+            return Err(unserved(Unserved::Other));
+        }
+        return Ok(response);
+    }
+    Err(unserved(Unserved::Other))
+}
+
 pub fn download(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u64)) -> Result<PathBuf> {
+    download_stepped(artifact, dir, progress, &mut |_, _| {})
+}
+
+pub fn download_stepped(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u64), step: &mut dyn FnMut(&'static str, String)) -> Result<PathBuf> {
     if crate::store::is_bundled(&artifact.url) {
+        step("address", artifact.url.clone());
         let bytes = crate::store::read(&artifact.url).ok_or_else(|| CoreError::Unavailable(format!("{} is not in this build's starter library", artifact.file)))?;
         fs::create_dir_all(dir)?;
         let name = Path::new(&artifact.file).file_name().ok_or_else(|| CoreError::Url(artifact.file.clone()))?.to_string_lossy().to_string();
         let done = dir.join(&name);
         fs::write(&done, &bytes)?;
+        step("download", bytes.len().to_string());
         let found = sha256_file(&done)?;
         if found != artifact.sha256 {
             let _ = fs::remove_file(&done);
             return Err(CoreError::Hash { file: name, expected: artifact.sha256.clone(), found });
         }
+        step("sha256", found);
         progress(bytes.len() as u64, bytes.len() as u64);
         return Ok(done);
     }
     check_url(&artifact.url)?;
+    step("address", artifact.url.clone());
     fs::create_dir_all(dir)?;
     let name = Path::new(&artifact.file).file_name().ok_or_else(|| CoreError::Url(artifact.file.clone()))?.to_string_lossy().to_string();
     let done = dir.join(&name);
     let part = dir.join(format!("{name}.part"));
-    if done.is_file() && sha256_file(&done)? == artifact.sha256 {
-        progress(artifact.bytes, artifact.bytes);
-        return Ok(done);
+    if done.is_file() {
+        let kept = sha256_file(&done)?;
+        if kept == artifact.sha256 {
+            step("download", fs::metadata(&done).map(|m| m.len()).unwrap_or(artifact.bytes).to_string());
+            step("sha256", kept);
+            progress(artifact.bytes, artifact.bytes);
+            return Ok(done);
+        }
     }
     let mut have = fs::metadata(&part).map(|m| m.len()).unwrap_or(0);
     if have > artifact.bytes {
@@ -88,11 +157,7 @@ pub fn download(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u
         have = 0;
     }
     if artifact.bytes == 0 || have < artifact.bytes {
-        let mut request = ureq::get(&artifact.url);
-        if have > 0 {
-            request = request.set("Range", &format!("bytes={have}-"));
-        }
-        let response = request.call().map_err(|e| CoreError::Http(e.to_string()))?;
+        let response = answer(artifact, &name, have)?;
         if response.status() != 206 {
             have = 0;
         }
@@ -117,11 +182,13 @@ pub fn download(artifact: &Artifact, dir: &Path, progress: &mut dyn FnMut(u64, u
         }
         out.flush()?;
     }
+    step("download", fs::metadata(&part).map(|m| m.len()).unwrap_or(have).to_string());
     let found = sha256_file(&part)?;
     if found != artifact.sha256 {
         fs::remove_file(&part)?;
         return Err(CoreError::Hash { file: artifact.file.clone(), expected: artifact.sha256.clone(), found });
     }
+    step("sha256", found);
     fs::rename(&part, &done)?;
     Ok(done)
 }

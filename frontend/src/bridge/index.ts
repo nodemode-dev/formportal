@@ -1,4 +1,8 @@
-import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { KeyState } from "../engine/types.ts";
+import type { SavedMedia, StockKind, StockPage, StockSource } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
+import type { Downloaded, FileHash, TextFacts } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -17,9 +21,9 @@ export interface Bridge {
   selfUpdateCheck(): Promise<SelfUpdate>;
   selfUpdateInstall(): Promise<void>;
   installs(): Promise<InstallRecord[]>;
-  install(product: string, channel: Channel, progress: (fraction: number) => void, version?: string): Promise<InstallRecord>;
+  install(product: string, channel: Channel, progress: (fraction: number) => void, version?: string, step?: (report: StepReport) => void): Promise<InstallRecord>;
   open(product: string, channel: Channel): Promise<void>;
-  rollback(product: string, channel: Channel): Promise<InstallRecord>;
+  rollback(product: string, channel: Channel, step?: (report: StepReport) => void): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;
   onLink(handler: (target: string) => void): void;
   stillOpen(product: string, channel: Channel): Promise<number[]>;
@@ -29,6 +33,8 @@ export interface Bridge {
   githubStart(share: boolean): Promise<DeviceCode>;
   githubPoll(deviceCode: string, interval: number): Promise<GithubPoll>;
   githubSignOut(): Promise<void>;
+  githubStartFork(): Promise<DeviceCode>;
+  githubFork(): Promise<GithubFork>;
   shares(): Promise<SharesView>;
   shareFolder(folder: string, invite: string[]): Promise<SyncReport>;
   shareSend(folder: string): Promise<SyncReport>;
@@ -61,6 +67,10 @@ export interface Bridge {
   fontPick(): Promise<string | null>;
   fontAdd(path: string, rightsConfirmed: boolean): Promise<void>;
   fontRemove(family: string, style?: string): Promise<void>;
+  fontWeb(source: import("../engine/types.ts").WebFontSource): Promise<import("../engine/types.ts").WebFontCatalogue>;
+  fontWebFamily(source: import("../engine/types.ts").WebFontSource, id: string): Promise<import("../engine/types.ts").WebFontDetail>;
+  fontWebPreview(source: import("../engine/types.ts").WebFontSource, id: string, weight: number, italic: boolean): Promise<string>;
+  fontWebInstall(source: import("../engine/types.ts").WebFontSource, id: string): Promise<void>;
   appAgents(product: string, channel: Channel): Promise<AgentsView>;
   connectAgents(product: string, channel: Channel, disconnect: boolean): Promise<AgentClient[]>;
   ownAgents(): Promise<import("../engine/types.ts").OwnAgent[]>;
@@ -71,6 +81,23 @@ export interface Bridge {
   setAgentAccess(choice: AgentChoice): Promise<AgentAccess>;
   siteUpcoming(): Promise<UpcomingView>;
   supporterCheck(code: string | null): Promise<SupporterView>;
+  providerKeys(): Promise<KeyState[]>;
+  setProviderKey(provider: string, key: string): Promise<KeyState[]>;
+  clearProviderKey(provider: string): Promise<KeyState[]>;
+  templatesKept(): Promise<import("../engine/types.ts").TemplatesView | null>;
+  templatesFetch(): Promise<import("../engine/types.ts").TemplatesView>;
+  templatesDownload(id: string): Promise<import("../engine/types.ts").TemplateDownload>;
+  templatesPreview(path: string): Promise<string>;
+  templatesReveal(path: string): Promise<void>;
+  stockSources(): Promise<StockSource[]>;
+  stockSearch(source: string, kind: StockKind, query: string, page: number): Promise<StockPage>;
+  stockPreview(id: string, which: "thumb" | "view"): Promise<string>;
+  stockSave(id: string, progress: (fraction: number) => void): Promise<SavedMedia>;
+  stockReveal(path: string): Promise<void>;
+  fileText(path: string): Promise<TextFacts | null>;
+  fileHash(path: string): Promise<FileHash>;
+  fileDownload(path: string): Promise<Downloaded>;
+  fileDownloadReveal(path: string): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
 }
 

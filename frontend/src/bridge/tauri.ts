@@ -1,4 +1,8 @@
-import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { KeyState } from "../engine/types.ts";
+import type { SavedMedia, StockPage, StockSource } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
+import type { Downloaded, FileHash, TextFacts } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -46,6 +50,20 @@ const record = (raw: RawInstall): InstallRecord => ({
   sha256: raw.current.sha256 ?? null,
 });
 
+interface RawStep {
+  product: string;
+  channel: Channel;
+  step: StepReport["step"];
+  detail: string;
+}
+
+const steps = async (product: string, channel: Channel, step?: (report: StepReport) => void): Promise<() => void> =>
+  step
+    ? tauri().event.listen<RawStep>("install-step", ({ payload }) => {
+        if (payload.product === product && payload.channel === channel) step({ step: payload.step, detail: payload.detail });
+      })
+    : () => {};
+
 export const tauriBridge: Bridge = {
   source: "live",
   platform: () => tauri().core.invoke<Platform>("platform"),
@@ -83,20 +101,29 @@ export const tauriBridge: Bridge = {
       });
   },
   installs: async () => (await tauri().core.invoke<RawInstall[]>("installs")).map(record),
-  install: async (product, channel, progress, version) => {
+  install: async (product, channel, progress, version, step) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) => {
       if (payload.product === product && payload.channel === channel) progress(payload.total > 0 ? payload.have / payload.total : 0);
     });
+    const unstep = await steps(product, channel, step);
     try {
       return record(await tauri().core.invoke<RawInstall>("install", { product, channel, url: catalogUrl(), allowUnsigned: allowUnsigned(), version: version ?? null }));
     } finally {
       stop();
+      unstep();
     }
   },
   open: async (product, channel) => {
     await tauri().core.invoke<number>("open", { product, channel });
   },
-  rollback: async (product, channel) => record(await tauri().core.invoke<RawInstall>("rollback", { product, channel })),
+  rollback: async (product, channel, step) => {
+    const unstep = await steps(product, channel, step);
+    try {
+      return record(await tauri().core.invoke<RawInstall>("rollback", { product, channel }));
+    } finally {
+      unstep();
+    }
+  },
   remove: async (product, channel) => {
     await tauri().core.invoke<null>("remove", { product, channel });
   },
@@ -108,6 +135,38 @@ export const tauriBridge: Bridge = {
   setAgentAccess: (choice) => tauri().core.invoke<AgentAccess>("set_agent_access", { choice }),
   siteUpcoming: () => tauri().core.invoke<UpcomingView>("site_upcoming"),
   supporterCheck: (code) => tauri().core.invoke<SupporterView>("supporter_check", { code }),
+  providerKeys: () => tauri().core.invoke<KeyState[]>("provider_keys"),
+  setProviderKey: (provider, key) => tauri().core.invoke<KeyState[]>("provider_key_set", { provider, key }),
+  clearProviderKey: (provider) => tauri().core.invoke<KeyState[]>("provider_key_clear", { provider }),
+  templatesKept: () => tauri().core.invoke<import("../engine/types.ts").TemplatesView | null>("templates_kept"),
+  templatesFetch: () => tauri().core.invoke<import("../engine/types.ts").TemplatesView>("templates_fetch"),
+  templatesDownload: (id) => tauri().core.invoke<import("../engine/types.ts").TemplateDownload>("templates_download", { id }),
+  templatesPreview: (path) => tauri().core.invoke<string>("templates_preview", { path }),
+  templatesReveal: async (path) => {
+    await tauri().core.invoke("templates_reveal", { path });
+  },
+  stockSources: () => tauri().core.invoke<StockSource[]>("stock_sources"),
+  stockSearch: (source, kind, query, page) => tauri().core.invoke<StockPage>("stock_search", { source, kind, query, page }),
+  stockPreview: (id, which) => tauri().core.invoke<string>("stock_preview", { id, which }),
+  stockSave: async (id, progress) => {
+    const stop = await tauri().event.listen<{ id: string; have: number; total: number }>("stock-progress", ({ payload }) => {
+      if (payload.id === id) progress(payload.total > 0 ? payload.have / payload.total : 0);
+    });
+    try {
+      return await tauri().core.invoke<SavedMedia>("stock_save", { id });
+    } finally {
+      stop();
+    }
+  },
+  stockReveal: async (path) => {
+    await tauri().core.invoke<null>("stock_reveal", { path });
+  },
+  fileText: (path) => tauri().core.invoke<TextFacts | null>("file_text", { path }),
+  fileHash: (path) => tauri().core.invoke<FileHash>("file_hash", { path }),
+  fileDownload: (path) => tauri().core.invoke<Downloaded>("file_download", { path }),
+  fileDownloadReveal: async (path) => {
+    await tauri().core.invoke<null>("file_download_reveal", { path });
+  },
   autoUpdate: async (progress) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>
       progress(payload.product, payload.channel, payload.total > 0 ? payload.have / payload.total : 0),
@@ -137,6 +196,8 @@ export const tauriBridge: Bridge = {
   githubSignOut: async () => {
     await tauri().core.invoke<null>("github_sign_out");
   },
+  githubStartFork: () => tauri().core.invoke<DeviceCode>("github_start_fork"),
+  githubFork: () => tauri().core.invoke<GithubFork>("github_fork"),
   shares: () => tauri().core.invoke<SharesView>("shares_view"),
   shareFolder: (folder, invite) => tauri().core.invoke<SyncReport>("share_folder", { folder, invite }),
   shareSend: (folder) => tauri().core.invoke<SyncReport>("share_send", { folder }),
@@ -175,6 +236,12 @@ export const tauriBridge: Bridge = {
   fonts: () => tauri().core.invoke<FontsView>("fonts_view", { url: catalogUrl(), allowUnsigned: allowUnsigned() }),
   fontInstall: async (id, style) => {
     await tauri().core.invoke("font_install", { id, style: style ?? null, url: catalogUrl(), allowUnsigned: allowUnsigned() });
+  },
+  fontWeb: (source) => tauri().core.invoke("font_web", { source }),
+  fontWebFamily: (source, id) => tauri().core.invoke("font_web_family", { source, id }),
+  fontWebPreview: (source, id, weight, italic) => tauri().core.invoke<string>("font_web_preview", { source, id, weight, italic }),
+  fontWebInstall: async (source, id) => {
+    await tauri().core.invoke("font_web_install", { source, id });
   },
   fontPick: () => tauri().core.invoke<string | null>("font_pick"),
   fontAdd: async (path, rightsConfirmed) => {

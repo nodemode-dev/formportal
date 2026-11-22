@@ -7,8 +7,12 @@ import learnPortal from "../../../core/data/learn-portal.json";
 import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
-import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, WebFontSource, WebFontFamily,FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { KeyState } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
+import { templatesFixture } from "./fixture-templates.ts";
+import { stockFixture } from "./stockfixture.ts";
 
 function browserPlatform(): Platform {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
@@ -21,6 +25,8 @@ function browserPlatform(): Platform {
 }
 
 const catalog = apps as unknown as Catalog;
+const SOON = new URLSearchParams(window.location.search).get("soon") ?? "sealed";
+if (SOON.startsWith("ask")) for (const p of registry.products) if (p.id !== "formai" && !catalog.products.some((c) => c.id === p.id)) catalog.products.push({ ...(catalog.products.find((c) => c.id === "formcut") ?? catalog.products[0]), id: p.id, name: p.name });
 const installed = new Map<string, InstallRecord>();
 for (const item of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",").filter(Boolean)) {
   const [product, wanted] = item.split("@");
@@ -29,17 +35,30 @@ for (const item of (new URLSearchParams(window.location.search).get("installed")
   if (version) installed.set(`${product}:stable`, { product, channel: "stable", version, previous: null });
 }
 const pause = (ms: number) => new Promise<void>((done) => window.setTimeout(done, ms));
+const failure = (step: StepReport["step"], file: string, sha256: string): string =>
+  step === "sha256"
+    ? `${file} does not match the catalogue: expected SHA-256 ${sha256}, found ${"0".repeat(64)}. It was not installed (browser mode, ?fail=sha256)`
+    : step === "signature"
+      ? "the catalogue's signature is not valid: it is not signed (browser mode, ?fail=signature)"
+      : `the download did not complete: no network (browser mode, ?fail=${step})`;
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
 const SAMPLE = "/home/you/Documents/Form";
 const folders: FolderView[] = new URLSearchParams(window.location.search).has("files") ? [{ path: SAMPLE, keep_versions: true, exists: true, files: 0, bytes: 0 }] : [];
 const day = 86400;
+const SAMPLE_TEXT = "# Shot list\n\nNorthern coast, four days on the road.\n\n- Hamnoy village at blue hour\n- Mountain lake, first light\n- Lighthouse at dusk\n- Slow waves on the shore\n- Drone pass over the headland\n";
 const stamp = Math.floor(Date.parse("2026-10-12T09:00:00Z") / 1000);
 const sampleFiles = (folder: string): ProjectFile[] => [
   { path: `${folder}/Trailer.fc`, name: "Trailer.fc", folder, product: "formcut", bytes: 18_400_000, modified: stamp, versions: 4, preview: `${folder}/Trailer.fc.preview.webp` },
   { path: `${folder}/Posters/Launch poster.fmv`, name: "Launch poster.fmv", folder, product: "formvis", bytes: 52_300_000, modified: stamp - day, versions: 2 },
   { path: `${folder}/Audio/Interview mix.fmw`, name: "Interview mix.fmw", folder, product: "formwav", bytes: 9_100_000, modified: stamp - 3 * day, versions: 1 },
   { path: `${folder}/Cutdowns/Teaser 15s.fc`, name: "Teaser 15s.fc", folder, product: "formcut", bytes: 4_200_000, modified: stamp - 9 * day, versions: 1 },
+  { path: `${folder}/Northern coast/shot-list.fcel`, name: "shot-list.fcel", folder, product: "formcel", bytes: new TextEncoder().encode(SAMPLE_TEXT).length, modified: stamp - 2 * day, versions: 2 },
 ];
+const sampleHash = async (path: string) => {
+  const text = path.endsWith(".fcel") ? SAMPLE_TEXT : path;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+};
 const kept = new Map<string, FileVersion[]>();
 const versionsOf = (path: string, count: number): FileVersion[] => {
   if (!kept.has(path)) kept.set(path, Array.from({ length: count }, (_, i) => ({ id: `${stamp - i * day}-${(i + 1).toString(16).padStart(12, "0")}`, at: stamp - i * day, size: 1000 * (count - i), sha256: "0".repeat(64), reason: i === count - 1 ? "first seen" : "changed since the last version" })));
@@ -64,7 +83,51 @@ type FixtureTutorial = { id: string; product: string; title: string; summary: st
 const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutorial[]), sampleTutorial];
 const progress = new Map<string, Set<number>>();
 const later = new Set<string>();
-const github: { account: GithubAccount | null; polls: number; share: boolean } = { account: null, polls: 0, share: false };
+const github: { account: GithubAccount | null; polls: number; share: boolean; fork: boolean; forked: boolean } = { account: null, polls: 0, share: false, fork: false, forked: false };
+const githubMode = new URLSearchParams(window.location.search).get("github") ?? "";
+if (githubMode === "on" || githubMode === "forked") github.account = { login: "octo-tester", name: "Octo Tester", scopes: ["read:user"] };
+if (githubMode === "forked") github.forked = true;
+const PROVIDER_KEYS = ["pexels", "pixabay", "freesound", "google-fonts"];
+const providerKept = new Set<string>();
+const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ provider, present: providerKept.has(provider) }));
+const providerKnown = (provider: string): void => {
+  if (!PROVIDER_KEYS.includes(provider)) throw new Error(`FormPortal keeps an API key only for ${PROVIDER_KEYS.join(", ")}`);
+};
+type WebRow = [string, string, string, string, number[], boolean, string | null, string, string];
+const webFonts: Record<WebFontSource, WebRow[]> = {
+  fontsource: [
+    ["abel", "Abel", "sans-serif", "latin", [400], false, "OFL-1.1", "Copyright 2011 Matthew Desmond", "dm-sans/DMSans-Variable.ttf"],
+    ["archivo", "Archivo", "sans-serif", "latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2019 The Archivo Project Authors", "manrope/Manrope-Variable.ttf"],
+    ["bebas-neue", "Bebas Neue", "display", "latin,latin-ext", [400], false, "OFL-1.1", "Copyright 2019 The Bebas Neue Project Authors", "syne/Syne-Variable.ttf"],
+    ["cormorant-garamond", "Cormorant Garamond", "serif", "cyrillic,latin,latin-ext,vietnamese", [300, 400, 500, 600, 700], true, "OFL-1.1", "Copyright 2015 The Cormorant Project Authors", "fraunces/Fraunces-Variable.ttf"],
+    ["fira-code", "Fira Code", "monospace", "cyrillic,greek,latin,latin-ext", [300, 400, 500, 600, 700], false, "OFL-1.1", "Copyright 2014 The Fira Code Project Authors", "jetbrains-mono/JetBrainsMono-Variable.ttf"],
+    ["ibm-plex-sans", "IBM Plex Sans", "sans-serif", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700], true, "OFL-1.1", "Copyright 2017 IBM Corp.", "inter/Inter-Variable.ttf"],
+    ["merriweather", "Merriweather", "serif", "cyrillic,latin,latin-ext,vietnamese", [300, 400, 700, 900], true, "OFL-1.1", "Copyright 2016 The Merriweather Project Authors", "lora/Lora-Variable.ttf"],
+    ["noto-sans-jp", "Noto Sans JP", "sans-serif", "japanese,latin", [100, 300, 400, 500, 700, 900], false, "OFL-1.1", "Copyright 2014-2021 Adobe", "inter/Inter-Variable.ttf"],
+    ["pacifico", "Pacifico", "handwriting", "cyrillic,latin,latin-ext,vietnamese", [400], false, "OFL-1.1", "Copyright 2018 The Pacifico Project Authors", "caveat/Caveat-Variable.ttf"],
+    ["roboto-mono", "Roboto Mono", "monospace", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700], true, "Apache-2.0", "Copyright 2015 Google Inc.", "ibm-plex-mono/IBMPlexMono-Regular.ttf"],
+    ["ubuntu", "Ubuntu", "sans-serif", "cyrillic,greek,latin,latin-ext", [300, 400, 500, 700], true, "UFL-1.0", "Copyright 2011 Canonical Ltd.", "dm-sans/DMSans-Variable.ttf"],
+    ["work-sans", "Work Sans", "sans-serif", "latin,latin-ext,vietnamese", [100, 200, 300, 400, 500, 600, 700, 800, 900], true, null, "", "space-grotesk/SpaceGrotesk-Variable.ttf"],
+  ],
+  google: [
+    ["roboto", "Roboto", "sans-serif", "cyrillic,greek,latin,latin-ext,vietnamese", [100, 300, 400, 500, 700, 900], true, "OFL-1.1", "Copyright 2011 Google Inc.", "inter/Inter-Variable.ttf"],
+    ["open-sans", "Open Sans", "sans-serif", "cyrillic,greek,hebrew,latin,latin-ext,vietnamese", [300, 400, 500, 600, 700, 800], true, "OFL-1.1", "Copyright 2020 The Open Sans Project Authors", "manrope/Manrope-Variable.ttf"],
+    ["playfair-display", "Playfair Display", "serif", "cyrillic,latin,latin-ext,vietnamese", [400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2017 The Playfair Display Project Authors", "fraunces/Fraunces-Variable.ttf"],
+    ["source-code-pro", "Source Code Pro", "monospace", "cyrillic,greek,latin,latin-ext,vietnamese", [200, 300, 400, 500, 600, 700, 800, 900], true, "OFL-1.1", "Copyright 2010 Adobe", "jetbrains-mono/JetBrainsMono-Variable.ttf"],
+    ["dancing-script", "Dancing Script", "handwriting", "latin,latin-ext,vietnamese", [400, 500, 600, 700], false, "OFL-1.1", "Copyright 2016 The Dancing Script Project Authors", "caveat/Caveat-Variable.ttf"],
+    ["oswald", "Oswald", "sans-serif", "cyrillic,latin,latin-ext,vietnamese", [200, 300, 400, 500, 600, 700], false, "OFL-1.1", "Copyright 2016 The Oswald Project Authors", "space-grotesk/SpaceGrotesk-Variable.ttf"],
+    ["lobster", "Lobster", "display", "cyrillic,latin,latin-ext,vietnamese", [400], false, "OFL-1.1", "Copyright 2010 Pablo Impallari", "bricolage-grotesque/BricolageGrotesque-Variable.ttf"],
+    ["eb-garamond", "EB Garamond", "serif", "cyrillic,greek,latin,latin-ext,vietnamese", [400, 500, 600, 700, 800], true, "OFL-1.1", "Copyright 2017 The EB Garamond Project Authors", "lora/Lora-Variable.ttf"],
+  ],
+};
+const webFamilies = (source: WebFontSource): WebFontFamily[] => webFonts[source].map(([id, family, category, subsets, weights, italic]) => ({ id, family, category, subsets: subsets.split(","), weights, italic, variable: weights.length > 3 }));
+const webRow = (source: WebFontSource, id: string): WebRow => {
+  if (source === "google" && !providerKept.has("google-fonts")) throw new Error("Google Fonts is off until you give FormPortal your Google Fonts API key");
+  const row = webFonts[source].find((r) => r[0] === id);
+  if (!row) throw new Error(`${id} is not in ${source === "google" ? "Google Fonts" : "Fontsource"}'s catalogue`);
+  return row;
+};
+if (new URLSearchParams(window.location.search).has("fontkey")) providerKept.add("google-fonts");
 const shares: SharesView = { shared: [], joined: [], published: [], invitations: [{ id: 7, repo: "riley/formportal-library-launch-film", from: "riley" }] };
 const repairFindings: RepairFinding[] = params.has("repair")
   ? [
@@ -91,8 +154,8 @@ const agentsFor = (product: string, channel: Channel): AgentClient[] =>
   (["claude", "codex", "cursor", "antigravity"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
 
 for (const seed of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",")) {
-  const [product, version] = seed.split(":");
-  if (product && version) installed.set(key(product, "stable"), { product, channel: "stable", version, previous: null });
+  const [product, version, previous] = seed.split(":");
+  if (product && version) installed.set(key(product, "stable"), { product, channel: "stable", version, previous: previous ?? null });
 }
 
 const extInstalled = new Map<string, InstalledExtension>();
@@ -122,15 +185,19 @@ const SUPPORTER_FIXTURE_CODE = "d1.0.00000000000000000000000000000000.AAAAAAAAAA
 const SITE_ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const SITE_UNDATED = 9;
 const SITE_SUPPORTERS = 11;
-const SITE_DATED = schedule.releases.map((g) => ({ at: g.at, count: g.apps.length }));
+const SITE_RELEASES = schedule.releases as { at: string; apps: string[]; names?: string[]; sealed?: boolean }[];
+const SITE_DATED = SITE_RELEASES.map((g) => (g.sealed ? { at: g.at, count: 1, sealed: true } : { at: g.at, count: g.apps.length + (g.names?.length ?? 0) }));
 const SITE_NAMES = new Map(registry.products.map((p) => [p.id, p.name]));
 const SITE_TILES: { name: string; at: string | null }[] = [
-  ...schedule.releases.flatMap((g) => g.apps.filter((id) => id !== "formportal").map((id) => ({ name: SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id, at: g.at as string | null }))),
+  ...SITE_RELEASES.flatMap((g) => [...g.apps.filter((id) => id !== "formportal").map((id) => SITE_NAMES.get(SITE_ALIAS[id] ?? id) ?? id), ...(g.names ?? [])].map((name) => ({ name, at: g.at as string | null }))),
   ...["FormDAM", "FormSculpt", "FormSurface", "FormWeb", "Planned app 1", "Planned app 2", "Planned app 3", "Planned app 4", "Planned app 5"].slice(0, SITE_UNDATED).map((name) => ({ name, at: null })),
   ...Array.from({ length: SITE_SUPPORTERS }, (_, i) => ({ name: `Codename ${i + 1}`, at: null })),
+  { name: "FormRig", at: "2027-01-15T17:00:00Z" },
+  { name: "Planned app 6", at: "2027-01-15T17:00:00Z" },
 ];
 let access: AgentAccess = new URLSearchParams(window.location.search).get("agents") === "broken" ? { outside_agents: "ask", stored: "allowed", seal: "broken", seal_broken: true } : { outside_agents: "ask", stored: "ask", seal: "none", seal_broken: false };
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
+if (params.has("supporter")) prefs = { ...prefs, supporter_code: SUPPORTER_FIXTURE_CODE };
 
 function missing(product: string): Error {
   return new Error(`${product} is not installed`);
@@ -229,35 +296,56 @@ export const fixtureBridge: Bridge = {
       const release = [latest, ...(latest?.history ?? [])].find((x) => x?.version === r.version);
       return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: release?.artifacts[0]?.sha256 ?? "0".repeat(64) };
     }),
-  install: async (product, channel, progress, version) => {
+  install: async (product, channel, progress, version, step) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
     const release = version ? [latest, ...(latest?.history ?? [])].find((r) => r?.version === version) : latest;
     if (!release) throw new Error(`the catalogue offers this computer nothing for ${product}${version ? ` ${version}` : ""}`);
-    for (let step = 1; step <= 10; step += 1) {
-      await pause(90);
-      progress(step / 10);
+    const fail = params.get("fail");
+    const report = async (name: StepReport["step"], detail: string, wait: number) => {
+      await pause(step ? wait : 0);
+      if (fail === name) throw new Error(failure(name, artifact.file, artifact.sha256));
+      step?.({ step: name, detail });
+    };
+    const artifact = release.artifacts.find((a) => a.platform === browserPlatform().os) ?? release.artifacts[0];
+    await report("signature", "signed", 500);
+    await report("pick", artifact.file, 400);
+    await report("address", artifact.url, 400);
+    for (let tick = 1; tick <= 10; tick += 1) {
+      await pause(step ? 280 : 90);
+      progress(tick / 10);
     }
+    await report("download", String(artifact.bytes), 0);
+    await report("sha256", artifact.sha256, 600);
+    await report("unpack", `/home/you/.local/share/formportal/apps/${product}/${channel}/${release.version}.tmp`, 700);
     const before = installed.get(key(product, channel));
     if (version && latest && versionNewer(latest.version, release.version) && prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) {
       prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
     }
     const kept = before && before.version !== release.version ? before.version : (before?.previous ?? null);
     const record: InstallRecord = { product, channel, version: release.version, previous: prefs.keep_previous ? kept : null };
+    await pause(step ? 500 : 0);
     installed.set(key(product, channel), record);
+    step?.({ step: "place", detail: record.previous ?? "" });
     return record;
   },
   open: async (product, channel) => {
     if (!installed.has(key(product, channel))) throw missing(product);
   },
-  rollback: async (product, channel) => {
+  rollback: async (product, channel, step) => {
     const record = installed.get(key(product, channel));
     if (!record || !record.previous) throw missing(`an earlier version of ${product}`);
+    await pause(step ? 600 : 0);
+    step?.({ step: "find", detail: `/home/you/.local/share/formportal/apps/${product}/${channel}/${record.previous}` });
     const swapped: InstallRecord = { product, channel, version: record.previous, previous: record.version };
+    await pause(step ? 600 : 0);
+    installed.set(key(product, channel), swapped);
+    step?.({ step: "swap", detail: record.version });
     if (versionNewer(record.version, record.previous)) {
       if (prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
       later.delete(key(product, channel));
+      await pause(step ? 500 : 0);
+      step?.({ step: "hold", detail: "" });
     }
-    installed.set(key(product, channel), swapped);
     return swapped;
   },
   remove: async (product, channel) => {
@@ -289,6 +377,7 @@ export const fixtureBridge: Bridge = {
     folders.splice(at, 1);
   },
   fileOpen: async (path) => {
+    if (path.startsWith(`${SAMPLE}/Templates/`)) return path.split("/")[6] ?? "";
     const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
     if (!file) throw new Error(`${path} does not exist`);
     if (!installed.has(key(file.product, "stable"))) throw new Error(`${file.product}, which opens ${path.slice(path.lastIndexOf("."))} files, is not installed`);
@@ -420,6 +509,36 @@ export const fixtureBridge: Bridge = {
       if ((f.family === family || f.family_id === family) && (!style || f.style === style)) fontsIn.splice(i, 1);
     }
   },
+  fontWeb: async (source) => {
+    ((window as unknown as { __fontWebCalls?: string[] }).__fontWebCalls ??= []).push(source);
+    await pause(400);
+    const on = source === "fontsource" || providerKept.has("google-fonts");
+    return { source, on, families: on ? webFamilies(source) : [] };
+  },
+  fontWebFamily: async (source, id) => {
+    await pause(300);
+    const [, family, category, subsets, weights, italic, licence, credit] = webRow(source, id);
+    const faces = weights.flatMap((weight) => (italic ? [false, true] : [false]).map((it) => ({ weight, italic: it, style: `${weight}${it ? " Italic" : ""}` })));
+    const ok = licence !== null && ["OFL-1.1", "Apache-2.0", "MIT"].includes(licence);
+    return { source, id, family, category, licence, licence_url: licence === "OFL-1.1" ? "https://openfontlicense.org" : null, credit: credit || null, subset: source === "fontsource" ? subsets.split(",").includes("latin") ? "latin" : subsets.split(",")[0] : null, faces, installable: ok };
+  },
+  fontWebPreview: async (source, id) => {
+    const file = webRow(source, id)[8];
+    await pause(900);
+    const bytes = new Uint8Array(await (await fetch(`/store/fonts/${file}`)).arrayBuffer());
+    let text = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    return btoa(text);
+  },
+  fontWebInstall: async (source, id) => {
+    await pause(500);
+    const [, family, , , weights, italic, licence] = webRow(source, id);
+    if (licence === null || !["OFL-1.1", "Apache-2.0", "MIT"].includes(licence)) throw new Error(licence === null ? `${family} cannot be installed: its licence is not stated` : `${family} is licensed ${licence}; FormPortal installs fonts licensed OFL-1.1, Apache-2.0 or MIT`);
+    for (const weight of weights) for (const it of italic ? [false, true] : [false]) {
+      const style = `${weight}${it ? " Italic" : ""}`;
+      if (!fontsIn.some((f) => f.family_id === `${source}:${id}` && f.style === style)) fontsIn.push({ family, style, family_id: `${source}:${id}`, file: `~/.local/share/fonts/FormPortal/FormPortal-${family.replace(/ /g, "-")}-${style.replace(/ /g, "-")}.ttf`, sha256: "d".repeat(64), source, licence });
+    }
+  },
   appAgents: async (product, channel) => {
     const surface = installed.has(key(product, channel)) && (new URLSearchParams(window.location.search).get("agents") ?? "").split(",").includes(product);
     return { surface, server_name: channel === "stable" ? product : `${product}-${channel}`, clients: surface ? agentsFor(product, channel) : [] };
@@ -448,20 +567,36 @@ export const fixtureBridge: Bridge = {
   githubStart: async (share) => {
     github.polls = 0;
     github.share = share;
+    github.fork = false;
     return { device_code: "fixture-device-code", user_code: "WDJB-MJHT", verification_uri: "https://github.com/login/device", expires_in: 900, interval: 1 };
   },
   githubPoll: async (_code, interval) => {
     github.polls += 1;
     if (github.polls < 3) return { state: "waiting", interval };
-    github.account = { login: "octo-tester", name: "Octo Tester", scopes: github.share ? ["read:user", "repo"] : ["read:user"] };
+    github.account = { login: "octo-tester", name: "Octo Tester", scopes: github.share ? ["read:user", "repo"] : github.fork ? ["read:user", "public_repo"] : ["read:user"] };
     return { state: "signed-in", account: github.account };
   },
   githubSignOut: async () => {
     github.account = null;
   },
+  githubStartFork: async () => {
+    github.polls = 0;
+    github.share = false;
+    github.fork = true;
+    return { device_code: "fixture-device-code", user_code: "WDJB-MJHT", verification_uri: "https://github.com/login/device", expires_in: 900, interval: 1 };
+  },
+  githubFork: async () => {
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
+    if (!github.account.scopes.some((s) => s === "public_repo" || s === "repo")) throw new Error("GitHub sign-in: forking the extension registry needs the public_repo permission; choose Set up my extension registry fork in Preferences, Profile and approve it on GitHub");
+    await new Promise((done) => window.setTimeout(done, 600));
+    const existed = github.forked;
+    github.forked = true;
+    const repo = `${github.account.login}/form.ext-registry`;
+    return { repo, url: `https://github.com/${repo}`, existed };
+  },
   shares: async () => ({ ...shares, invitations: github.account && params.has("shared") ? shares.invitations : [] }),
   shareFolder: async (folder, invite) => {
-    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
     const repo = `${github.account.login}/formportal-library-${folder.split(/[\\/]/).pop()?.toLowerCase().replace(/[^a-z0-9]+/g, "-") ?? "library"}`;
     const url = `https://github.com/${repo}`;
     const row = shares.shared.find((s) => s.folder === folder) ?? { folder, repo, url, invited: [] as string[] };
@@ -480,7 +615,7 @@ export const fixtureBridge: Bridge = {
   },
   sharePull: async (repo) => ({ repo, url: `https://github.com/${repo}`, folder: shares.joined.find((j) => j.repo === repo)?.folder ?? "", sent: 0, received: 1, unchanged: 3, skipped: [], invited: [] }),
   publishFile: async (file, remove) => {
-    if (!github.account) throw new Error("GitHub sign-in: you are not signed in; sign in from Preferences, Account first");
+    if (!github.account) throw new Error("GitHub sign-in: you are not connected; connect from Preferences, Profile, Connect to GitHub first");
     const found = shares.published.find((p) => p.file === file);
     if (remove) {
       if (!found) throw new Error(`${file} has no public link`);
@@ -515,7 +650,16 @@ export const fixtureBridge: Bridge = {
     access = { outside_agents: choice, stored: choice, seal: "sealed", seal_broken: false };
     return { ...access };
   },
-  siteUpcoming: async () => ({ known: true, dated: SITE_DATED, undated: SITE_UNDATED, supporters: SITE_SUPPORTERS, checked: Math.floor(Date.now() / 1000), stale: false }),
+  siteUpcoming: async () => {
+    (window as unknown as { __siteUpcomingCalls: number }).__siteUpcomingCalls = ((window as unknown as { __siteUpcomingCalls?: number }).__siteUpcomingCalls ?? 0) + 1;
+    const now = Math.floor(Date.now() / 1000);
+    if (SOON === "bundled") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: true, launched: null };
+    const undated = params.has("undated") ? SITE_UNDATED : 0;
+    if (!SOON.startsWith("ask")) return { known: true, dated: SITE_DATED, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: null };
+    const dated = SOON === "ask-new" ? [{ at: "2027-01-15T17:00:00Z", count: 2 }] : SOON === "ask-out" ? [{ at: "2027-01-15T17:00:00Z", count: 0 }] : [];
+    return { known: true, dated, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
+  },
+  ...templatesFixture,
   supporterCheck: async (code) => {
     const given = code === null ? (prefs.supporter_code ?? "") : code.trim();
     if (code === "") {
@@ -527,6 +671,46 @@ export const fixtureBridge: Bridge = {
     prefs = { ...prefs, supporter_code: given };
     return { state: "supporter", supporter: true, until: new Date(Date.now() + 90 * 86400000).toISOString().replace(/\.\d+Z$/, "Z"), upcoming: SITE_TILES, checked: Math.floor(Date.now() / 1000), stale: false };
   },
+  providerKeys: async () => providerStates(),
+  setProviderKey: async (provider, key) => {
+    providerKnown(provider);
+    const kept = key.trim();
+    if (kept === "") throw new Error("there is no key to keep");
+    if ([...kept].length > 256) throw new Error("an API key is never longer than 256 characters");
+    if (!/^[\x21-\x7e]+$/.test(kept)) throw new Error("an API key is letters, digits and punctuation, with no spaces");
+    providerKept.add(provider);
+    return providerStates();
+  },
+  clearProviderKey: async (provider) => {
+    providerKnown(provider);
+    providerKept.delete(provider);
+    return providerStates();
+  },
+  stockSources: async () => stockFixture.sources(providerKept),
+  stockSearch: (source, kind, query, page) => stockFixture.search(providerKept, source, kind, query, page),
+  stockPreview: (id, which) => stockFixture.preview(id, which),
+  stockSave: (id, progress) => stockFixture.save(id, savedMedia, progress),
+  stockReveal: async () => undefined,
+  fileText: async (path) => {
+    await pause(350);
+    if (!folders.flatMap((f) => sampleFiles(f.path)).some((f) => f.path === path)) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    if (!path.endsWith(".fcel")) return null;
+    return { lines: SAMPLE_TEXT.split("\n").filter((l, i, all) => i < all.length - 1 || l).length, words: SAMPLE_TEXT.split(/\s+/).filter(Boolean).length, whole: true, first_lines: SAMPLE_TEXT.split("\n").slice(0, 12).join("\n").trimEnd() };
+  },
+  fileHash: async (path) => {
+    await pause(700);
+    const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
+    if (!file) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    const limit = params.has("hashlimit") ? 1_000_000 : 2 * 1024 * 1024 * 1024;
+    return { sha256: file.bytes <= limit ? await sampleHash(path) : null, bytes: file.bytes, limit };
+  },
+  fileDownload: async (path) => {
+    await pause(400);
+    const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
+    if (!file) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    return { path: `/home/you/Downloads/${file.name}`, zipped: false };
+  },
+  fileDownloadReveal: async () => undefined,
   autoUpdate: async (progress) => {
     const done: UpdateOutcome[] = [];
     for (const record of Array.from(installed.values())) {
@@ -538,6 +722,10 @@ export const fixtureBridge: Bridge = {
       const putOff = later.has(k);
       const open = (params.get("open") ?? "").split(",").includes(record.product);
       if (!(automatic || putOff) || (putOff && open)) continue;
+      if ((params.get("fail") ?? "").split(",").includes(record.product)) {
+        done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: `${record.product}-${release.version}-macos-arm64.dmg does not match the catalogue: expected SHA-256 7d0372d3fb5c59e1dd80fea0bc8655b397adb351e296161f20dac18cd5973269, found a3371971d8281fe352d0e318d48f911a6ecac6a4b35f57a697e5e82d7055f053. It was not installed` });
+        continue;
+      }
       await fixtureBridge.install(record.product, record.channel, (f) => progress(record.product, record.channel, f));
       later.delete(k);
       done.push({ product: record.product, channel: record.channel, from: record.version, to: release.version, error: null });

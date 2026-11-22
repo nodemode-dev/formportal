@@ -32,7 +32,9 @@ import { home } from "./extensions/home/index.ts";
 import { demos } from "./extensions/demos/index.ts";
 import { popout } from "./extensions/popout/index.ts";
 import { versions } from "./extensions/versions/index.ts";
+import { progress } from "./extensions/progress/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
+import { templates } from "./extensions/templates/index.ts";
 
 const revealLate = window.setTimeout(revealApp, 900);
 
@@ -43,6 +45,8 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
 [live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, ownAgents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
+register(templates);
+register(progress);
 activateAll(engine);
 
 interface Target {
@@ -95,21 +99,21 @@ engine.command("catalog.load", () =>
     if (done.length) await refresh();
     engine.setLater(await bridge.laterList());
     const name = (id: string) => engine.name(id);
-    const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)} ${d.to}${d.channel === "stable" ? "" : ` (${d.channel})`}`);
-    const failed = done.filter((d) => d.error).map((d) => `${name(d.product)}: ${d.error}`);
-    const waiting = Array.from(engine.installs.values()).filter((r) => {
+    const ok = done.filter((d) => !d.error).map((d) => `${name(d.product)}${d.channel === "stable" ? "" : ` (${d.channel})`} ${d.from} → ${d.to}`);
+    const failed = done.filter((d) => d.error).map((d) => `${t("Could not update {list}.", { list: name(d.product) })}\n${d.error}`);
+    const waiting = Array.from(engine.installs.values()).flatMap((r) => {
       const v = engine.view(r.product, r.channel);
-      return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version);
-    }).length;
+      return v.availability === "available" && v.version !== null && versionNewer(v.version, r.version) ? [`${name(r.product)}${r.channel === "stable" ? "" : ` (${r.channel})`} ${r.version} → ${v.version}`] : [];
+    });
     const self = await selfOffer().catch(() => null);
     const parts = [
-      ok.length ? t("Updated {list}.", { list: ok.join(", ") }) : "",
-      failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : "",
-      waiting ? (waiting === 1 ? t("1 update is waiting in Updates.") : t("{n} updates are waiting in Updates.", { n: waiting })) : "",
+      ok.length ? [t("Updated:"), ...ok].join("\n") : "",
+      waiting.length ? [waiting.length === 1 ? t("1 update is waiting in Updates:") : t("{n} updates are waiting in Updates:", { n: waiting.length }), ...waiting].join("\n") : "",
       self?.available ? t("FormPortal {version} is available.", { version: self.available }) : "",
     ].filter(Boolean);
     const act = self?.available ? { label: selfLabel(self), command: "self.install" } : undefined;
-    if (engine.state.prefs.notices || failed.length) engine.setNotice(parts.join(" "), failed.length ? "fault" : "info", "updates", act);
+    if (engine.state.prefs.notices && parts.length) engine.setNotice(parts.join("\n"), "info", "updates", act);
+    if (failed.length) engine.setNotice(failed.join("\n"), "fault", "updates");
   }),
 );
 
@@ -125,12 +129,20 @@ engine.command("app.install", (arg) =>
   guard(async () => {
     const { product, channel, version } = arg as Target & { version?: string };
     engine.setProgress(product, channel, 0);
+    const job = { key: engine.key(product, channel), product, channel };
+    engine.emit("job", { ...job, phase: "start", kind: "install", version: version ?? engine.view(product, channel).version ?? "", newest: !version });
+    let failed: string | null = null;
     try {
-      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction), version);
+      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction), version, (s) => engine.emit("job", { ...job, phase: "step", step: s.step, detail: s.detail }));
+    } catch (e) {
+      failed = e instanceof Error ? e.message : String(e);
+      throw e;
     } finally {
       engine.setProgress(product, channel, null);
+      if (failed !== null) engine.emit("job", { ...job, phase: "end", error: failed });
     }
     await refresh();
+    engine.emit("job", { ...job, phase: "end", error: null });
     const label = engine.name(product);
     const open = await bridge.stillOpen(product, channel);
     const installed = engine.installs.get(engine.key(product, channel))?.version ?? version ?? "";
@@ -183,9 +195,10 @@ engine.command("later.check", () =>
     for (const d of done) engine.setProgress(d.product, d.channel, null);
     if (done.length) await refresh();
     engine.setLater(await bridge.laterList());
-    const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.to}`);
-    const failed = done.filter((d) => d.error).map((d) => `${engine.name(d.product)}: ${d.error}`);
-    if (ok.length || failed.length) engine.setNotice([ok.length ? t("Updated {list} now that it is closed.", { list: ok.join(", ") }) : "", failed.length ? t("Could not update {list}.", { list: failed.join("; ") }) : ""].filter(Boolean).join(" "), failed.length ? "fault" : "info", "updates");
+    const ok = done.filter((d) => !d.error).map((d) => `${engine.name(d.product)} ${d.from} → ${d.to}`);
+    const failed = done.filter((d) => d.error).map((d) => `${t("Could not update {list}.", { list: engine.name(d.product) })}\n${d.error}`);
+    if (ok.length) engine.setNotice([t("Updated after closing:"), ...ok].join("\n"), "info", "updates");
+    if (failed.length) engine.setNotice(failed.join("\n"), "fault", "updates");
   }, "updates"),
 );
 
@@ -261,8 +274,17 @@ engine.command("app.rollback", (arg) =>
   guard(async () => {
     const { product, channel } = arg as Target;
     const before = engine.installs.get(engine.key(product, channel))?.version ?? "";
-    const now = await bridge.rollback(product, channel);
+    const job = { key: engine.key(product, channel), product, channel };
+    engine.emit("job", { ...job, phase: "start", kind: "rollback", version: engine.installs.get(job.key)?.previous ?? "" });
+    let now;
+    try {
+      now = await bridge.rollback(product, channel, (s) => engine.emit("job", { ...job, phase: "step", step: s.step, detail: s.detail }));
+    } catch (e) {
+      engine.emit("job", { ...job, phase: "end", error: e instanceof Error ? e.message : String(e) });
+      throw e;
+    }
     await refresh();
+    engine.emit("job", { ...job, phase: "end", error: null });
     engine.setPrefs(await bridge.preferences());
     const vars = { app: `${engine.name(product)}${channel === "stable" ? "" : ` ${channel}`}`, version: now.version };
     const stays = versionNewer(before, now.version) && !engine.automatic(product, channel);
@@ -662,7 +684,7 @@ engine.command("account.start", async (arg) => {
   const run = ++accountRun;
   engine.emit("account", { status: null, code: null, busy: true, error: null });
   try {
-    const code = await bridge.githubStart(Boolean(arg));
+    const code = arg === "fork" ? await bridge.githubStartFork() : await bridge.githubStart(Boolean(arg));
     if (run !== accountRun) return;
     engine.emit("account", { status: null, code, busy: false, error: null });
     const until = Date.now() + code.expires_in * 1000;
@@ -677,7 +699,7 @@ engine.command("account.start", async (arg) => {
       else {
         accountRun += 1;
         engine.emit("account", { status: { configured: true, account: poll.account }, code: null, busy: false, error: null });
-        engine.setNotice(t("Signed in to GitHub as {login}.", { login: poll.account.login }), "info", "system");
+        engine.setNotice(t("Connected to GitHub as {login}.", { login: poll.account.login }), "info", "system");
         return;
       }
     }
@@ -695,6 +717,7 @@ engine.command("account.signOut", async () => {
   accountRun += 1;
   try {
     await bridge.githubSignOut();
+    engine.setNotice(t("Disconnected from GitHub. The token is gone from this computer's keychain; to withdraw FormPortal's access on GitHub too, revoke it under Settings, Applications on github.com."), "info", "system");
     await engine.dispatch("account.check");
   } catch (e) {
     accountFail(e);

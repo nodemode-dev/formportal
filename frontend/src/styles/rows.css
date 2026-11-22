@@ -1,0 +1,236 @@
+.rows > .app-row {
+  --hue-ink: var(--hue);
+  grid-template-columns: 40px clamp(150px, 18vw, 230px) minmax(0, 1fr) auto auto auto;
+  row-gap: 0;
+}
+
+.rows > .app-row[data-install="none"] > .row-state {
+  min-inline-size: 114px;
+}
+
+@media (min-width: 1001px) {
+  .rows > .app-row > .row-state {
+    display: grid;
+  }
+
+  .rows > .app-row[data-rest="ready"]:not([data-notes-open]) > .row-sum {
+    grid-row: 1;
+    grid-column: 3 / 5;
+  }
+
+  .rows > .app-row[data-rest="ready"]:not([data-notes-open]) > .row-state {
+    grid-row: 1;
+    grid-column: 4;
+  }
+
+  .rows > .app-row[data-rest="ready"][data-install="busy"]:not([data-notes-open]) > .row-state {
+    inline-size: 114px;
+  }
+
+  .rows > .app-row[data-rest="ready"][data-install="busy"]:not([data-notes-open]) > .row-sum {
+    padding-inline-end: 130px;
+  }
+}
+
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts > [data-act="install"] {
+  display: none;
+}
+
+.rows > .app-row[data-install="busy"][data-rest="update"]:not([data-blocked]) > .acts > [data-act="update"],
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts > [data-act="open"] {
+  display: inline-flex;
+}
+
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts .drop-more {
+  display: block;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+:root[data-theme="light"] .rows > .app-row {
+  --hue-ink: color-mix(in oklab, var(--hue) 68%, #26241d);
+}
+
+.app-row .row-id > .sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-row .row-name {
+  max-inline-size: 100%;
+}
+
+.app-row .row-state .st-ver,
+.app-row[data-install="ready"] .row-state .st-text {
+  display: none;
+}
+
+.app-row[data-install="update"] .row-state .st-text {
+  color: var(--hue-ink);
+}
+
+.rows > .app-row[data-install="update"] .st-more,
+.rows > .app-row[data-notes-open]:not([data-install="busy"]) .st-more {
+  display: flex;
+}
+
+.app-row .row-state {
+  align-content: center;
+  min-block-size: 38px;
+}
+
+.row-pill {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  block-size: 24px;
+  margin-inline-end: -10px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in oklab, var(--hue-ink) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--hue) 12%, transparent);
+  color: var(--hue-ink);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.row-pill:has(.pill-ver:empty) {
+  visibility: hidden;
+}
+
+.row-pill .pill-ver {
+  color: color-mix(in oklab, var(--hue-ink) 78%, var(--fp-ink));
+  font-weight: 540;
+}
+
+.row-notes-in {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.row-notes > .notes-text {
+  margin: 0;
+  white-space: normal;
+}
+
+.row-notes-in .rn-p,
+.row-notes-in .rn-list > li {
+  font-size: 12.5px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.row-notes-in .rn-p {
+  margin: 0 0 8px;
+}
+
+.row-notes-in .rn-head {
+  margin: 14px 0 6px;
+  color: var(--fp-ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.row-notes-in .rn-list {
+  margin: 0 0 8px;
+  padding-inline-start: 1.15em;
+  list-style: disc outside;
+}
+
+.row-notes-in > :first-child {
+  margin-block-start: 12px;
+}
+
+.row-notes-in > :last-child {
+  margin-block-end: 6px;
+}
+
+.row-notes-in .rn-list > li {
+  margin: 0 0 4px;
+  padding-inline-start: 0.2em;
+}
+
+.row-notes-in .rn-list > li::marker {
+  color: var(--hue-ink);
+}
+
+.rows > .app-row[data-notes-open]::before {
+  opacity: 1;
+}
+
+.canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.canvas-title {
+  margin: 0 0 -6px 2px;
+  color: var(--fp-ink);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.canvas-cat-title {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 12px;
+  color: var(--fp-ink-2);
+}
+
+.tutorial[data-held] {
+  order: 1;
+  opacity: 0.5;
+}
+
+.tutorial[data-held] .tutorial-head {
+  cursor: default;
+}
+
+.tutorial-held {
+  color: var(--fp-ink-3);
+  font-size: 12px;
+}
+
+.tutorial-held:empty {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .rows > .app-row {
+    grid-template-columns: 40px minmax(0, 1fr) auto auto;
+  }
+
+  .rows > .app-row:is([data-install="update"], [data-install="busy"][data-rest="update"]) .row-state {
+    display: flex;
+    grid-column: 2 / -1;
+    grid-row: 2;
+    align-content: flex-start;
+    min-block-size: 32px;
+    padding-block-start: 6px;
+  }
+
+  .rows > .app-row[data-install="update"] .st-more {
+    flex: 0 1 auto;
+  }
+
+  .rows > .app-row > .row-notes {
+    grid-row: 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-notes,
+  .row[data-notes-open] > .row-notes {
+    transition: none;
+  }
+}

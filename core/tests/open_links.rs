@@ -63,7 +63,7 @@ fn anything_else_is_refused() {
     for url in [
         "http://formai.studio/download/",
         "http://github.com/nodemode-dev/formportal",
-        "https://formai.studio/",
+        "https://formai.studio/anything",
         "https://formai.studio.example.com/download/",
         "https://formai.studio.example.com/support/",
         "https://github.com/someone/anything",

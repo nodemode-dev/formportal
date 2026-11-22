@@ -2,11 +2,19 @@ import registry from "../../../../catalog/products.json";
 import schedule from "../../../../catalog/schedule.json";
 import type { Engine } from "../../engine/index.ts";
 import type { Extension } from "../registry.ts";
+import { onTheWay } from "./soon.ts";
 
 const KEY = "formportal.live";
 const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const IDS = registry.products.map((p) => p.id).filter((id) => id !== "formai");
-const GROUPS = schedule.releases.map((g) => ({ at: Date.parse(g.at), apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => IDS.includes(id)) }));
+const LISTED: { at: string | null; apps: string[]; names?: string[]; sealed?: boolean }[] = schedule.releases;
+const RELEASES = LISTED.filter((g): g is typeof g & { at: string } => typeof g.at === "string");
+export const UNDATED = LISTED.filter((g) => g.at === null && !g.sealed).reduce((n, g) => n + g.apps.filter((id) => id !== "formportal").length + (g.names?.length ?? 0), 0);
+const GROUPS = RELEASES.filter((g) => !g.sealed).map((g) => ({
+  at: Date.parse(g.at),
+  apps: g.apps.map((id) => ALIAS[id] ?? id).filter((id) => IDS.includes(id)),
+  extra: g.apps.filter((id) => id !== "formportal" && !IDS.includes(ALIAS[id] ?? id)).length + (g.names?.length ?? 0),
+}));
 
 export function isLive(engine: Engine, id: string): boolean {
   for (const channel of ["stable", "beta"] as const) {
@@ -38,11 +46,14 @@ export const live: Extension = {
         return;
       }
       const shown = IDS.filter((id) => isLive(engine, id));
-      const soon = GROUPS.map((g) => g.apps.filter((id) => !shown.includes(id)).length);
+      const now = Date.now();
+      const soon = GROUPS.map((g) => {
+        const left = g.apps.filter((id) => !shown.includes(id)).length;
+        return left > 0 || now < g.at ? left + g.extra : 0;
+      });
       write("data-live", shown.join(" "));
       soon.forEach((n, i) => write(`data-soon-g${i}`, String(n)));
       write("data-soon-left", String(soon.reduce((a, b) => a + b, 0)));
-      const now = Date.now();
       for (const el of groups) {
         const due = now >= (GROUPS[Number(el.dataset.soonGroup)]?.at ?? Infinity);
         if (el.hasAttribute("data-due") !== due) el.toggleAttribute("data-due", due);
@@ -55,5 +66,6 @@ export const live: Extension = {
     engine.on("source", apply);
     engine.on("install", apply);
     engine.on("policy", apply);
+    onTheWay(engine, RELEASES.filter((g) => !g.sealed).map((g) => Date.parse(g.at)));
   },
 };

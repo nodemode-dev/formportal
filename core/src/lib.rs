@@ -15,6 +15,7 @@ pub mod github;
 pub mod media;
 pub mod extensions;
 pub mod installers;
+pub mod keys;
 pub mod later;
 pub mod launch;
 pub mod learn;
@@ -33,7 +34,9 @@ pub mod share;
 pub mod signature;
 pub mod site;
 pub mod state;
+pub mod stock;
 pub mod store;
+pub mod templates;
 pub mod web;
 
 pub use error::CoreError;

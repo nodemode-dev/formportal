@@ -1,0 +1,99 @@
+.toast {
+  position: relative;
+}
+
+.toast > p {
+  max-block-size: calc(5 * 1.45em);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  line-height: 1.45;
+  scrollbar-width: none;
+}
+
+.toast > p::-webkit-scrollbar {
+  display: none;
+}
+
+.toast > p:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+.notice-line {
+  display: block;
+  max-inline-size: 64ch;
+  text-wrap: balance;
+  text-wrap: pretty;
+}
+
+.notice-val {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.notice-rows {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) repeat(3, auto);
+  justify-content: start;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.notice-row {
+  display: contents;
+}
+
+.notice-app {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notice-from,
+.notice-to {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.notice-from {
+  opacity: 0.72;
+}
+
+.notice-row svg {
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
+  opacity: 0.7;
+}
+
+.toast-more {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-end: 8px;
+  inline-size: 14px;
+  block-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.toast[data-more] .toast-more {
+  opacity: 0.85;
+}
+
+.toast-more svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-more {
+    transition: none;
+  }
+}

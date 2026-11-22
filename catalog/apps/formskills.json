@@ -1,7 +1,7 @@
 {
-  "id": "formskill",
+  "id": "formskills",
   "name": "FormSkills",
-  "version": "0.7.6",
+  "version": "0.11.0",
   "repo": "https://github.com/nodemode-dev/formskills",
   "kind": "Viewer of released agent skills",
   "title": "every FormAI app's released skills in one place",
@@ -60,7 +60,7 @@
   },
   "releases": [
     {"version": "0.7.5", "date": "2026-11-03", "items": ["The installers and the app metadata name NodeAgentc, Inc. as the publisher, with the licence (GPL-3.0-only)", "Nothing in the app changes"]},
-    {"version": "0.7.4", "date": "2026-11-02", "items": ["The family catalogue is read from the public download store, dl.formai.studio/catalog/apps.json, with its signature beside it", "This build trusts the family's production catalogue key, so a catalogue FormCompiler signs is used", "The list of apps that ship skills is regenerated from FormCompiler 0.6.1: FormPromo is added under Media"]},
+    {"version": "0.7.4", "date": "2026-11-02", "items": ["The family catalogue is read from the public download store, dl.formai.studio/catalog/apps.json, with its signature beside it", "This build trusts the family's production catalogue key, so a catalogue formcompiler signs is used", "The list of apps that ship skills is regenerated from formcompiler 0.6.1: FormPromo is added under Media"]},
     {"version": "0.7.3", "date": "2026-10-26", "items": ["A test suite checks that only skills the signed catalogue releases are shown", "It checks that a downloaded set matches its release's SHA-256 and unpacks only inside its folder", "It checks the SKILL.md format at its limits, that sub-skill and reference links resolve, and that reading a file stays inside the skills folder", "The suite runs on every change; nothing in the app changes"]}
   ],
   "shots_wanted": [
@@ -72,13 +72,13 @@
   ],
   "sources": ["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", ".docs/wiki/Home.md", ".docs/wiki/Getting-Started.md", ".docs/wiki/Architecture.md", "NOTICE.md", "src-tauri/tauri.conf.json", "frontend/package.json", "frontend/index.html", "core/data/apps.json", "git remote"],
   "captures": {
-    "apps": {"file": "/media/formskill/ui-library-2.webp", "width": 2400, "height": 1500, "alt": "The FormVis app card selected, listing its four released skills with their descriptions", "size": ""},
-    "reader": {"file": "/media/formskill/ui-hero-2.webp", "light": "/media/formskill/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
-    "search": {"file": "/media/formskill/ui-search-2.webp", "width": 2400, "height": 1500, "alt": "Search results for the word mask across every app's skills, best match first", "size": ""},
-    "editor": {"file": "/media/formskill/ui-hero-2.webp", "light": "/media/formskill/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
-    "editor-copy": {"file": "/media/formskill/ui-editor-2.webp", "width": 2400, "height": 1500, "alt": "An edited copy of a released skill with the Markdown source on the left and a live preview on the right", "size": ""},
-    "check": {"file": "/media/formskill/ui-check-2.webp", "width": 2400, "height": 1500, "alt": "A format check reporting that formvis-driving passes, with name and description lengths", "size": ""},
-    "install": {"file": "/media/formskill/ui-install-1.webp", "light": "/media/formskill/ui-install-light-1.webp", "width": 2400, "height": 1500, "alt": "FormSkills' Install page for every formMCP skill: Claude Code ticked, Codex and Cursor unticked, Just me, in every project chosen over One project folder, and the skills going to ~/.claude/skills above the Install button", "size": ""}
+    "apps": {"file": "/media/formskills/ui-library-2.webp", "width": 2400, "height": 1500, "alt": "The FormVis app card selected, listing its four released skills with their descriptions", "size": ""},
+    "reader": {"file": "/media/formskills/ui-hero-2.webp", "light": "/media/formskills/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
+    "search": {"file": "/media/formskills/ui-search-2.webp", "width": 2400, "height": 1500, "alt": "Search results for the word mask across every app's skills, best match first", "size": ""},
+    "editor": {"file": "/media/formskills/ui-hero-2.webp", "light": "/media/formskills/ui-hero-light-2.webp", "width": 2400, "height": 1500, "alt": "FormSkills reading the layers-and-masks sub-skill of formvis-driving, with the skill's files listed beside the formatted text", "size": ""},
+    "editor-copy": {"file": "/media/formskills/ui-editor-2.webp", "width": 2400, "height": 1500, "alt": "An edited copy of a released skill with the Markdown source on the left and a live preview on the right", "size": ""},
+    "check": {"file": "/media/formskills/ui-check-2.webp", "width": 2400, "height": 1500, "alt": "A format check reporting that formvis-driving passes, with name and description lengths", "size": ""},
+    "install": {"file": "/media/formskills/ui-install-3.webp", "light": "/media/formskills/ui-install-light-3.webp", "width": 2400, "height": 1500, "alt": "FormSkills' install demo: the skills it installed for Claude Code, Codex and Cursor, each with Update and Remove and a newer release marked, and what an update changes for formportal-harness", "size": ""}
   },
   "credit": "Screenshot content: the released skills of the FormAI apps, read from local checkouts of their repositories."
 }

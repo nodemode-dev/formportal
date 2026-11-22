@@ -1,0 +1,315 @@
+{
+  "id": "formext",
+  "name": "form.ext",
+  "version": "0.10.0",
+  "repo": "https://github.com/nodemode-dev/form.ext",
+  "kind": "Extension studio for the Form apps",
+  "title": "an extension studio for every Form app",
+  "summary": "form.ext is the Form family's extension studio: start from a working project, try it in a simulated app, check it against the contract, then run it in the real app, sign it and publish it.",
+  "lede": "form.ext is the studio where you make extensions for the Form apps. You pick an app, start from a project that already works, edit it with its manifest kept in sync, try it in a simulated copy of the app, check it against the Form Extension Contract, then run it in the real app, sign the package and publish it. When it is ready, it goes to the form.ext registry, the public repository where every official Form extension is reviewed and from which FormPortal's Extensions page installs. The window, a command line and an MCP server share one engine, so people and agents make extensions the same way.",
+  "replaces": "",
+  "project": "",
+  "runs_on": "macOS, Windows and Linux",
+  "checks": [
+    "Starts from a working project: three starters for each of the twelve Form apps that read the app's document and run a real command from day one.",
+    "Previews the extension in a simulated copy of its app, with the contract's own bridge, a realistic document, events and consent.",
+    "Checks the manifest and the code the way a host and its sandbox will, and says what to change, line by line.",
+    "Builds a deterministic .formpkg, signs it with your Ed25519 publisher key and prepares it to publish."
+  ],
+  "facts": [
+    {
+      "dt": "Interface",
+      "dd": "Vanilla TypeScript and Vite, with a CodeMirror 6 editor"
+    },
+    {
+      "dt": "Engine",
+      "dd": "Python and FastAPI on 127.0.0.1:8640, shared by the window, the command line and the MCP server"
+    },
+    {
+      "dt": "Shell",
+      "dd": "Tauri 2, with the Form Extension Contract kit vendored unchanged in contract/"
+    },
+    {
+      "dt": "Agents",
+      "dd": "33 MCP tools, with the same commands on the command line"
+    },
+    {
+      "dt": "Repository",
+      "dd": "nodemode-dev/form.ext, GPL-3.0-only; the SDK, the starters and the contract kit stay under Apache-2.0"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "start",
+      "kicker": "Start",
+      "title": "A project that already works",
+      "text": "Pick one of the twelve Form apps, pick a starter and name it. The project reads the open document and runs a command, with the SDK beside it.",
+      "shot": "new"
+    },
+    {
+      "id": "preview",
+      "kicker": "Preview and Check",
+      "title": "Try it before the app",
+      "text": "Preview runs the extension in a simulated app, with every message between the extension and the host logged. Check reads the manifest and the code the way a host and its sandbox will.",
+      "shot": "editor"
+    },
+    {
+      "id": "ship",
+      "kicker": "Run and publish",
+      "title": "Into the real app, then out",
+      "text": "Run in App loads the extension live in the installed app. Package builds the same bytes every time, Sign adds your key, and Publish prepares the submission.",
+      "shot": "package"
+    },
+    {
+      "id": "registry",
+      "kicker": "The form.ext registry",
+      "title": "Where official extensions live",
+      "text": "The form.ext registry is the public repository nodemode-dev/form.ext-registry, the single source of officially registered extensions for the Form apps. Each extension in it is a whole source project in its own folder. On every merge the registry builds each one into a reproducible .formpkg, signs it with the nodemode publisher key and publishes a signed index that marks it verified. FormPortal's Extensions page reads that index and installs from it. https://github.com/nodemode-dev/form.ext-registry",
+      "shot": ""
+    },
+    {
+      "id": "submit",
+      "kicker": "Submit your own",
+      "title": "From form.ext, or by hand",
+      "text": "In form.ext, Publish has Submit to Registry: it writes the extension's folder, runs the registry's own checks and opens the pull request through gh, or shows the commands to run. By hand, fork the registry, add the extension as extensions/<id>/ with its built package, its source, a README with a screenshot and a Permissions section, a CHANGELOG and a LICENSE, run python3 tools/check.py on the folder and open a pull request against main. https://github.com/nodemode-dev/form.ext-registry/blob/main/SUBMITTING.md",
+      "shot": ""
+    },
+    {
+      "id": "checks",
+      "kicker": "Before it is listed",
+      "title": "Seven checks, then a review",
+      "text": "Every pull request must pass seven checks: the Form Extension Contract, a raised version for any change, a build that gives the same bytes twice, no eval, no network use except the SDK's under the network permission and the person's consent, no remote code, no obfuscation and no secrets, permissions that match exactly what the code uses, a README, a licence and a changelog, and an id and version not on the block list. An owner then reads the code, tries the extension in its app and approves it or asks for changes. An extension found breaking the rules later is blocked and turned off in every app. https://github.com/nodemode-dev/form.ext-registry/blob/main/POLICY.md",
+      "shot": ""
+    }
+  ],
+  "features": [
+    {
+      "id": "apps",
+      "icon": "apps",
+      "title": "Every Form app",
+      "text": "Starters for all twelve host apps, each a panel, a command or both.",
+      "bullets": [
+        "FormVis, FormCut, FormWav, FormPDF, FormDeck, FormLit, form.md, FormEncoder, FormVFX, FormMCP, FormTray and FormSkills",
+        "Three starters for each app: panel, command and panel with commands"
+      ],
+      "shot": "new"
+    },
+    {
+      "id": "studio",
+      "icon": "code",
+      "title": "The Studio",
+      "text": "One window per project, with the manifest form and the JSON kept in sync both ways.",
+      "bullets": [
+        "Files and Library, a CodeMirror editor and a Manifest, Permissions and Check inspector",
+        "Problems, Host calls, Output and Terminal below",
+        "The toolbar runs Check, Preview, Run in App and Package; Publish is beside it"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "preview",
+      "icon": "play",
+      "title": "Preview in a simulated app",
+      "text": "Preview runs the extension in a simulated host for its app, using the contract's own bridge.",
+      "bullets": [
+        "A realistic document, an event injector and consent toggles",
+        "A log of every message between the extension and the host"
+      ],
+      "shot": "editor"
+    },
+    {
+      "id": "check",
+      "icon": "check",
+      "title": "Check against the contract",
+      "text": "Check reads schema and package rules, what an API 1 host accepts, and lint for what the sandbox blocks.",
+      "bullets": [
+        "Inline script, direct network use, eval, browser storage and missing files",
+        "Permissions used but not declared",
+        "Check on save, or press F7; click a problem to open the line"
+      ],
+      "shot": "check"
+    },
+    {
+      "id": "package",
+      "icon": "box",
+      "title": "Package, reproduce, sign",
+      "text": "The kit's deterministic .formpkg, with its SHA-256 and size.",
+      "bullets": [
+        "A byte-for-byte reproducibility check",
+        "Ed25519 publisher keys kept in Form.ext's data folder"
+      ],
+      "shot": "package"
+    },
+    {
+      "id": "run",
+      "icon": "laptop",
+      "title": "Run in the real app",
+      "text": "Run in App writes the app's dev.json in FormPortal's folder so the installed app loads the extension live.",
+      "bullets": [
+        "Shows which Form apps are installed, and opens them",
+        "The extension appears in the app's Extensions menu, marked Development"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "library",
+      "icon": "extensions",
+      "title": "Library and publishing",
+      "text": "Import or inspect any .formpkg, compare two builds, and start from form.ext-registry's verified extensions.",
+      "bullets": [
+        "The registry's signed index is read, and its signature checked",
+        "Publish writes the extensions index entry and a submission folder, sends the package to FormPortal, or submits the project to the registry"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "terminal",
+      "icon": "terminal",
+      "title": "Terminal and Claude Code",
+      "text": "A real shell in the open project's folder, a Claude Code tab and a Chat tab.",
+      "bullets": [
+        "Claude Code starts with formext and formMCP already connected",
+        "Mod+J opens the Terminal"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "mcp",
+      "icon": "plug",
+      "title": "Built for agents",
+      "text": "The window, the command line and the MCP server call one engine, so an agent and a person see the same projects.",
+      "bullets": [
+        "27 MCP tools: status, docs, templates, new, read, write, manifest, validate, preview, package, sign, verify, run_in_app, publish, submit and more",
+        "formext mcp runs on stdio for Claude Code, Codex, Cursor and Antigravity",
+        "Every change an agent makes appears in the open window at once"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "demo",
+      "icon": "globe",
+      "title": "A demo that runs offline",
+      "text": "demo/index.html runs the real interface in any browser, with an engine written for the page.",
+      "bullets": [
+        "Golden Hour, Mail Merge and Rating Desk open in a sample workspace",
+        "The app opens the same demo in its own window, on its own sample disk"
+      ],
+      "shot": "home"
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Node 20.19 or newer",
+      "Python 3.12",
+      "git",
+      "Rust stable and the Tauri prerequisites, only for the desktop window"
+    ],
+    "install": "git clone git@github.com:nodemode-dev/form.ext.git\ncd form.ext\n./formext_oc_install\nWindows: formext_oc_install.bat",
+    "run": "./formext\n./formext cli new \"Beat Board\" --app formwav --starter panel\n./formext cli validate beat-board\nWindows: formext.bat",
+    "desktop": "./build_app\nWindows: build_app.bat",
+    "agents": "./formext mcp runs an MCP server on stdio, and ./formext cli has one command per tool. .mcp.json, .codex/config.toml and .cursor/mcp.json are already wired in the repository, and ./formext agents install sets Claude Code, Codex, Cursor and Antigravity up for your account. See AGENTS.md.",
+    "topics": [
+      {
+        "title": "Manual",
+        "text": "docs/MANUAL.md walks through the window, Preview, Check, Run in App, Package and Sign, Publish, the command line and the MCP server."
+      },
+      {
+        "title": "Extension Contract",
+        "text": "contract/CONTRACT.md is the Form Extension Contract the studio checks against, and docs/apps has one extension API page for each of the twelve apps."
+      },
+      {
+        "title": "Ports and data",
+        "text": "The interface is on port 5640 and the engine on 8640 (FORMEXT_PORT). FORMEXT_HOME moves the data folder."
+      },
+      {
+        "title": "Doctor",
+        "text": "./formext doctor checks the toolchain, the installs and the ports."
+      },
+      {
+        "title": "Status",
+        "text": "Available. Run in App and Send to FormPortal need FormPortal and the Form apps installed on the same computer."
+      },
+      {
+        "title": "Releases",
+        "text": "Form.ext builds are compiled and released from FormCompiler; the repository holds the source."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.3.0",
+      "date": "2026-11-09",
+      "items": [
+        "The browser demo opens inside the app, from Home's Demos section and Help, on its own sample disk",
+        "The icon at the top left now centres over the icons below it when the sidebar is collapsed"
+      ]
+    },
+    {
+      "version": "0.2.3",
+      "date": "2026-11-09",
+      "items": [
+        "The Library's registry shelf reads form.ext-registry: the build trusts the registry's index key, so the signed index and block list are read"
+      ]
+    },
+    {
+      "version": "0.2.2",
+      "date": "2026-11-08",
+      "items": [
+        "Fixed: the Intel Mac desktop build's engine could not load package signing, so Library, Package, Publish and Run in App failed to start"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "docs/MANUAL.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "src-tauri/tauri.conf.json",
+    "src-tauri/Cargo.toml"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formext/ui-hero-2.webp", "light": "/media/formext/ui-hero-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Form.ext Studio with a FormLit extension, Keyword Stamp, previewed in a simulated FormLit beside its manifest: the keyword panel is open on three selected photos, consent is allowed, and the Host calls log lists each message between the extension and the host",
+      "size": ""
+    },
+    "home": {
+      "file": "/media/formext/ui-home-2.webp", "light": "/media/formext/ui-home-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Form.ext Home: the demo card, five recent extension projects for FormLit, FormCut, FormVis and FormPDF as cards, and a grid of the twelve Form apps with three starters each",
+      "size": ""
+    },
+    "new": {
+      "file": "/media/formext/ui-new-2.webp", "light": "/media/formext/ui-new-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The New Extension page with the twelve Form apps as cards, FormPDF selected, its three starters with Panel with commands chosen, the name and description filled in, and a summary of what the starter asks for and adds",
+      "size": ""
+    },
+    "check": {
+      "file": "/media/formext/ui-check-2.webp", "light": "/media/formext/ui-check-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Check on a FormPDF extension: the inspector counts two errors, and the Problems list names a blocked fetch call and a localStorage use in app.js, each with its line, its rule and the fix to make",
+      "size": ""
+    },
+    "package": {
+      "file": "/media/formext/ui-package-2.webp", "light": "/media/formext/ui-package-light-2.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Package and Sign dialog: a built .formpkg with its SHA-256, size and file count, marked signed by a publisher key, with the reproducibility check and the index entry below",
+      "size": ""
+    }
+  },
+  "credit": "The captures show Form.ext running from source with its own starter projects, in its dark or light look to match this page; Check is shown on a project with two deliberate faults."
+}

@@ -25,6 +25,64 @@ const WORDS: Record<Channel, Record<ChannelView["availability"], string>> = {
   },
 };
 
+const pillSizeText = (bytes: number): string => {
+  const mb = Math.max(1, Math.round(bytes / 1_000_000));
+  return mb >= 1000 ? t("{n} GB", { n: (bytes / 1_000_000_000).toFixed(2) }) : t("{n} MB", { n: mb });
+};
+
+const PILL_MARK = "\u0001";
+
+const NOTE_HEADS =new Set(["new", "improved", "changed", "fixed", "known issues", "under the hood", "unchanged", "removed", "security"]);
+
+const renderNotes = (node: HTMLElement, text: string) => {
+  if (node.dataset.src === text) return;
+  node.dataset.src = text;
+  const out: HTMLElement[] = [];
+  let list: HTMLUListElement | null = null;
+  let para: HTMLParagraphElement | null = null;
+  let item: HTMLLIElement | null = null;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) {
+      para = null;
+      item = null;
+      continue;
+    }
+    const bare = line.replace(/:$/, "");
+    if (NOTE_HEADS.has(bare.toLowerCase()) || /^[A-Z][A-Za-z]{1,19}:?$/.test(line)) {
+      const head = document.createElement("h4");
+      head.className = "rn-head";
+      head.textContent = bare;
+      out.push(head);
+      list = null;
+      para = null;
+      item = null;
+    } else if (/^[-*] /.test(line)) {
+      if (!list) {
+        list = document.createElement("ul");
+        list.className = "rn-list";
+        out.push(list);
+      }
+      item = document.createElement("li");
+      item.textContent = line.slice(2);
+      list.append(item);
+      para = null;
+    } else if (item && /^\s/.test(raw)) {
+      item.textContent = `${item.textContent} ${line}`;
+    } else if (para) {
+      para.textContent = `${para.textContent} ${line}`;
+    } else {
+      para = document.createElement("p");
+      para.className = "rn-p";
+      para.textContent = line;
+      out.push(para);
+      list = null;
+      item = null;
+    }
+  }
+  node.replaceChildren(...out);
+};
+
 export const apps: Extension = {
   id: "apps",
   setup(engine) {
@@ -50,6 +108,13 @@ export const apps: Extension = {
       const blocked = engine.blocked(product, channel);
       if (row.hasAttribute("data-blocked") !== blocked) row.toggleAttribute("data-blocked", blocked);
       row.setAttribute("data-availability", view.availability);
+      const cell = row.classList.contains("app-row") ? row.querySelector<HTMLElement>(":scope > .row-state") : null;
+      if (cell && state === "busy" && row.dataset.install !== "busy" && row.dataset.rest !== "ready") cell.style.minInlineSize = `${cell.getBoundingClientRect().width}px`;
+      if (cell && state !== "busy" && cell.style.minInlineSize) cell.style.removeProperty("min-inline-size");
+      if (state !== "busy" && row.dataset.rest !== state) row.dataset.rest = state;
+      if (cell) row.querySelectorAll<HTMLButtonElement>(":scope > .acts > [data-act]").forEach((button) => {
+        if (button.disabled !== (state === "busy")) button.disabled = state === "busy";
+      });
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
       const back = record?.previous ? t("Go back to {version}", { version: record.previous }) : t("Go back to the version before");
@@ -79,9 +144,28 @@ export const apps: Extension = {
       const own = mine ? engine.artifactFor(mine) : null;
       field("size", sizeText((own ?? view.artifact)?.bytes ?? 0));
       field("update-size", state === "update" && view.artifact ? sizeText(view.artifact.bytes) : "");
+      const pillVersion = record?.version ?? (view.availability === "available" ? view.version : null);
+      const pillBytes = record ? own?.bytes : view.artifact?.bytes;
+      const pillSize = pillBytes ? pillSizeText(pillBytes) : "";
+      const pillText = !pillVersion
+        ? ""
+        : record
+          ? pillSize
+            ? t("installed {version} | {size}", { version: PILL_MARK, size: pillSize })
+            : t("installed {version}", { version: PILL_MARK })
+          : pillSize
+            ? t("{version} | {size}", { version: PILL_MARK, size: pillSize })
+            : PILL_MARK;
+      const [lead = "", tail = ""] = pillText.split(PILL_MARK);
+      const pill = row.querySelector<HTMLElement>("[data-field='pill']");
+      write(pill?.querySelector<HTMLElement>("[data-pill='lead']") ?? null, lead);
+      write(pill?.querySelector<HTMLElement>("[data-pill='ver']") ?? null, pillVersion ? `v${pillVersion}` : "");
+      write(pill?.querySelector<HTMLElement>("[data-pill='tail']") ?? null, tail);
       row.toggleAttribute("data-notes", Boolean(release?.notes));
       field("date", release ? release.published.slice(0, 10) : "");
-      field("notes", release?.notes ?? "");
+      const notesNode = row.querySelector<HTMLElement>("[data-field='notes']");
+      if (notesNode?.classList.contains("row-notes-in")) renderNotes(notesNode, release?.notes ?? "");
+      else field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
       const all = release ? [release, ...(release.history ?? [])].filter((r) => engine.artifactFor(r) !== null) : [];
       const label = (r: (typeof all)[number]) => `${r.version} · ${r.published.slice(0, 10)}${r.version === record?.version ? ` ${t("(installed)")}` : ""}`;

@@ -22,6 +22,14 @@ struct Progress {
     total: u64,
 }
 
+#[derive(Clone, Serialize)]
+struct Step {
+    product: String,
+    channel: Channel,
+    step: &'static str,
+    detail: String,
+}
+
 fn hub() -> Portal {
     Portal::new(Portal::default_root())
 }
@@ -76,6 +84,8 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
         let catalog = recent_catalog(&hub, &url, allow_unsigned).map_err(text)?;
+        let signed = hub.recheck_kept(&url, allow_unsigned).map_err(text)?;
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step: "signature", detail: if signed { "signed" } else { "unsigned" }.to_string() });
         let view = catalog.view(&product, channel, Platform::current());
         let asked = version.is_some();
         let (version, artifact) = match version.as_deref() {
@@ -91,13 +101,16 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
                 (version, artifact)
             }
         };
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step: "pick", detail: artifact.file.clone() });
         let mut last = u64::MAX;
-        let done = hub.install_from(&catalog, &product, channel, version, artifact, &mut |have, total| {
+        let done = hub.install_from_stepped(&catalog, &product, channel, version, artifact, &mut |have, total| {
             let step = (have * 100).checked_div(total).unwrap_or(0);
             if step != last {
                 last = step;
                 let _ = app.emit("install-progress", Progress { product: product.clone(), channel, have, total });
             }
+        }, &mut |step, detail| {
+            let _ = app.emit("install-step", Step { product: product.clone(), channel, step, detail });
         })
         .map_err(text)?;
         if asked {
@@ -258,6 +271,26 @@ fn font_remove(family: String, style: Option<String>) -> Result<usize, String> {
 }
 
 #[tauri::command]
+async fn font_web(source: String) -> Result<formportal_core::fonts::WebCatalogue, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_catalogue(&source).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_family(source: String, id: String) -> Result<formportal_core::fonts::WebFamilyDetail, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_family(&source, &id).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_preview(source: String, id: String, weight: u16, italic: bool) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::fonts::web_preview(&source, &id, weight, italic).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn font_web_install(source: String, id: String) -> Result<Vec<formportal_core::fonts::InstalledFont>, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().install_web_font(&source, &id).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
 async fn media_view(url: String, allow_unsigned: bool) -> Result<serde_json::Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
@@ -295,6 +328,37 @@ async fn media_thumb(url: String) -> Result<String, String> {
     tauri::async_runtime::spawn_blocking(move || hub().thumbnail_data_url(&url).map_err(text))
     .await
     .map_err(text)?
+}
+
+#[tauri::command]
+fn templates_kept() -> Result<Option<formportal_core::templates::TemplatesView>, String> {
+    hub().templates_kept().map_err(text)
+}
+
+#[tauri::command]
+async fn templates_fetch() -> Result<formportal_core::templates::TemplatesView, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_fetch().map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn templates_download(id: String) -> Result<formportal_core::templates::TemplateDownload, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_download(&id, &mut |_, _| {}).map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+async fn templates_preview(path: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().templates_preview(&path).map_err(text))
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn templates_reveal(path: String) -> Result<(), String> {
+    hub().templates_reveal(std::path::Path::new(&path)).map_err(text)
 }
 
 fn ctx(url: String, allow_unsigned: bool) -> formportal_cli::ops::Ctx {
@@ -440,8 +504,10 @@ async fn open(product: String, channel: Channel) -> Result<u32, String> {
 }
 
 #[tauri::command]
-fn rollback(product: String, channel: Channel) -> Result<Install, String> {
-    hub().rollback(&product, channel).map_err(text)
+fn rollback(app: AppHandle, product: String, channel: Channel) -> Result<Install, String> {
+    hub().rollback_stepped(&product, channel, &mut |step, detail| {
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step, detail });
+    }).map_err(text)
 }
 
 #[tauri::command]
@@ -493,6 +559,26 @@ async fn repair(url: String, allow_unsigned: bool, fix: bool) -> Result<formport
 #[tauri::command]
 fn file_preview(path: String) -> Result<String, String> {
     hub().preview_data_url(std::path::Path::new(&path)).map_err(text)
+}
+
+#[tauri::command]
+async fn file_text(path: String) -> Result<Option<formportal_core::files::TextFacts>, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_text(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn file_hash(path: String) -> Result<formportal_core::files::FileHash, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_hash(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn file_download(path: String) -> Result<formportal_core::files::Downloaded, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_download(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+fn file_download_reveal(path: String) -> Result<(), String> {
+    formportal_core::files::show_download(std::path::Path::new(&path)).map_err(text)
 }
 
 #[tauri::command]
@@ -673,6 +759,70 @@ async fn github_sign_out() -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn provider_keys() -> Vec<formportal_core::keys::KeyState> {
+    tauri::async_runtime::spawn_blocking(formportal_core::keys::list).await.unwrap_or_default()
+}
+
+#[tauri::command]
+async fn provider_key_set(provider: String, key: String) -> Result<Vec<formportal_core::keys::KeyState>, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::keys::set(&provider, &key).map(|()| formportal_core::keys::list()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn provider_key_clear(provider: String) -> Result<Vec<formportal_core::keys::KeyState>, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::keys::clear(&provider).map(|()| formportal_core::keys::list()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_start_fork() -> Result<formportal_core::github::DeviceCode, String> {
+    use formportal_core::github::{start, FORK_SCOPE, SIGN_IN_SCOPE};
+    let scope = format!("{SIGN_IN_SCOPE} {FORK_SCOPE}");
+    tauri::async_runtime::spawn_blocking(move || start(&scope).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn github_fork() -> Result<formportal_core::github::Fork, String> {
+    tauri::async_runtime::spawn_blocking(|| formportal_core::github::fork_registry().map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn stock_sources() -> Vec<formportal_core::stock::SourceInfo> {
+    tauri::async_runtime::spawn_blocking(formportal_core::stock::sources).await.unwrap_or_default()
+}
+
+#[tauri::command]
+async fn stock_search(source: String, kind: String, query: String, page: u32) -> Result<formportal_core::stock::StockPage, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::stock::search(&source, &kind, &query, page).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn stock_preview(id: String, which: String) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || formportal_core::stock::preview_data_url(&id, &which).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn stock_save(app: AppHandle, id: String) -> Result<formportal_core::media::Saved, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let mut last = u64::MAX;
+        formportal_core::stock::save(&id, &mut |have, total| {
+            let step = (have * 100).checked_div(total).unwrap_or(0);
+            if step != last {
+                last = step;
+                let _ = app.emit("stock-progress", serde_json::json!({ "id": id, "have": have, "total": total }));
+            }
+        })
+        .map_err(text)
+    })
+    .await
+    .map_err(text)?
+}
+
+#[tauri::command]
+fn stock_reveal(path: String) -> Result<(), String> {
+    formportal_core::stock::show_in_folder(std::path::Path::new(&path)).map_err(text)
+}
+
+#[tauri::command]
 async fn shares_view() -> Result<formportal_core::share::SharesView, String> {
     tauri::async_runtime::spawn_blocking(|| hub().shares().map_err(text)).await.map_err(text)?
 }
@@ -848,6 +998,29 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             platform, catalog, catalog_kept, installs, install, open, rollback, remove, launch_link, updates, auto_update, preferences, set_preferences, agent_access, set_agent_access,
             extensions, extension_install, extension_remove, extension_enable, launch_package, self_update_check, self_update_install, still_open, open_web, policy, app_agents, connect_agents, own_agents, connect_own, files_scan, folder_pick, folder_add, folder_remove, file_open, file_versions, storage, fonts_view, font_install, font_pick, font_add, font_remove, media_view, media_save, media_remove, media_thumb, learn_view, learn_mark, assistant_agents, assistant_ask, repair, later_list, update_later, web_plan, web_fetch, file_preview, github_status, github_start, github_poll, github_sign_out, shares_view, share_folder, share_send, share_accept, share_pull, publish_file, site_upcoming, supporter_check,
+            provider_keys,
+            provider_key_set,
+            provider_key_clear,
+            github_start_fork,
+            github_fork,
+            font_web,
+            font_web_family,
+            font_web_preview,
+            font_web_install,
+            templates_kept,
+            templates_fetch,
+            templates_download,
+            templates_preview,
+            templates_reveal,
+            stock_sources,
+            stock_search,
+            stock_preview,
+            stock_save,
+            stock_reveal,
+            file_text,
+            file_hash,
+            file_download,
+            file_download_reveal,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())

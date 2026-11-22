@@ -434,6 +434,178 @@ impl Portal {
     }
 }
 
+pub const TEXT_LIMIT: u64 = 64 * 1024;
+const TEXT_LINES: usize = 12;
+const TEXT_LINE_CHARS: usize = 160;
+pub const HASH_LIMIT: u64 = 2 * 1024 * 1024 * 1024;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct TextFacts {
+    pub lines: usize,
+    pub words: usize,
+    pub whole: bool,
+    pub first_lines: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct FileHash {
+    pub sha256: Option<String>,
+    pub bytes: u64,
+    pub limit: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct Downloaded {
+    pub path: PathBuf,
+    pub zipped: bool,
+}
+
+pub fn downloads_folder() -> PathBuf {
+    let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE")).map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
+    home.join("Downloads")
+}
+
+fn free_name(dir: &Path, name: &str) -> PathBuf {
+    let first = dir.join(name);
+    if fs::symlink_metadata(&first).is_err() {
+        return first;
+    }
+    let (stem, ext) = match name.rfind('.') {
+        Some(at) if at > 0 => (&name[..at], &name[at..]),
+        _ => (name, ""),
+    };
+    (2..10_000).map(|n| dir.join(format!("{stem} ({n}){ext}"))).find(|p| fs::symlink_metadata(p).is_err()).unwrap_or_else(|| dir.join(format!("{stem} ({}){ext}", now())))
+}
+
+fn zip_folder(src: &Path, target: &Path) -> Result<()> {
+    use std::io::Write;
+    let file = fs::OpenOptions::new().write(true).create_new(true).open(target)?;
+    let mut zip = zip::ZipWriter::new(file);
+    let options = zip::write::SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let base = src.parent().unwrap_or(src);
+    let mut stack = vec![src.to_path_buf()];
+    while let Some(dir) = stack.pop() {
+        let mut entries: Vec<_> = fs::read_dir(&dir)?.flatten().collect();
+        entries.sort_by_key(|e| e.file_name());
+        for entry in entries {
+            let path = entry.path();
+            let meta = fs::symlink_metadata(&path)?;
+            let name = path.strip_prefix(base).map(|p| p.to_string_lossy().replace('\\', "/")).unwrap_or_default();
+            if meta.is_dir() {
+                zip.add_directory(format!("{name}/"), options).map_err(|e| CoreError::Archive(e.to_string()))?;
+                stack.push(path);
+            } else if meta.is_file() {
+                zip.start_file(name, options).map_err(|e| CoreError::Archive(e.to_string()))?;
+                std::io::copy(&mut fs::File::open(&path)?, &mut zip)?;
+            }
+        }
+    }
+    zip.finish().map_err(|e| CoreError::Archive(e.to_string()))?.flush()?;
+    Ok(())
+}
+
+impl Portal {
+    fn scanned_project(&self, path: &Path, extensions: &BTreeMap<String, String>) -> Result<PathBuf> {
+        let refuse = || CoreError::Invalid(format!("{} is not a project in one of FormPortal's folders", path.display()));
+        let meta = fs::symlink_metadata(path).map_err(|_| refuse())?;
+        if !(meta.is_file() || meta.is_dir()) {
+            return Err(refuse());
+        }
+        let real = fs::canonicalize(path).map_err(|_| refuse())?;
+        let ext = real.extension().map(|e| format!(".{}", e.to_string_lossy().to_lowercase())).unwrap_or_default();
+        if !extensions.contains_key(&ext) {
+            return Err(refuse());
+        }
+        for folder in self.folders()? {
+            let Ok(root) = fs::canonicalize(&folder.path) else { continue };
+            let Ok(rest) = real.strip_prefix(&root) else { continue };
+            let parts: Vec<String> = rest.components().map(|c| c.as_os_str().to_string_lossy().to_string()).collect();
+            if !parts.is_empty() && parts.len() as u32 <= SCAN_DEPTH + 1 && parts.iter().all(|p| !p.starts_with('.')) {
+                return Ok(real);
+            }
+        }
+        Err(refuse())
+    }
+
+    pub fn file_text(&self, path: &Path, extensions: &BTreeMap<String, String>) -> Result<Option<TextFacts>> {
+        use std::io::Read;
+        let path = self.scanned_project(path, extensions)?;
+        if !path.is_file() {
+            return Ok(None);
+        }
+        let total = fs::metadata(&path)?.len();
+        let mut bytes = Vec::with_capacity(total.min(TEXT_LIMIT) as usize);
+        fs::File::open(&path)?.take(TEXT_LIMIT).read_to_end(&mut bytes)?;
+        let whole = total <= TEXT_LIMIT;
+        if bytes.contains(&0) {
+            return Ok(None);
+        }
+        let text = match std::str::from_utf8(&bytes) {
+            Ok(text) => text,
+            Err(e) if !whole && e.error_len().is_none() => std::str::from_utf8(&bytes[..e.valid_up_to()]).unwrap_or_default(),
+            Err(_) => return Ok(None),
+        };
+        let lines = if text.is_empty() { 0 } else { text.lines().count() };
+        let words = text.split_whitespace().count();
+        let first_lines = text
+            .lines()
+            .take(TEXT_LINES)
+            .map(|l| if l.chars().count() > TEXT_LINE_CHARS { format!("{}...", l.chars().take(TEXT_LINE_CHARS).collect::<String>()) } else { l.to_string() })
+            .collect::<Vec<_>>()
+            .join("\n");
+        Ok(Some(TextFacts { lines, words, whole, first_lines }))
+    }
+
+    pub fn file_hash(&self, path: &Path, extensions: &BTreeMap<String, String>) -> Result<FileHash> {
+        let path = self.scanned_project(path, extensions)?;
+        if !path.is_file() {
+            return Ok(FileHash { sha256: None, bytes: bytes_under(&path), limit: HASH_LIMIT });
+        }
+        let bytes = fs::metadata(&path)?.len();
+        let sha256 = if bytes <= HASH_LIMIT { Some(sha256_file(&path)?) } else { None };
+        Ok(FileHash { sha256, bytes, limit: HASH_LIMIT })
+    }
+
+    pub fn file_download(&self, path: &Path, extensions: &BTreeMap<String, String>) -> Result<Downloaded> {
+        let path = self.scanned_project(path, extensions)?;
+        let dir = downloads_folder();
+        fs::create_dir_all(&dir)?;
+        let name = path.file_name().map(|n| n.to_string_lossy().to_string()).ok_or_else(|| CoreError::Invalid("the project has no name".to_string()))?;
+        if path.is_dir() {
+            let target = free_name(&dir, &format!("{name}.zip"));
+            if let Err(e) = zip_folder(&path, &target) {
+                let _ = fs::remove_file(&target);
+                return Err(e);
+            }
+            return Ok(Downloaded { path: target, zipped: true });
+        }
+        let target = free_name(&dir, &name);
+        let mut from = fs::File::open(&path)?;
+        let mut to = fs::OpenOptions::new().write(true).create_new(true).open(&target)?;
+        if let Err(e) = std::io::copy(&mut from, &mut to) {
+            drop(to);
+            let _ = fs::remove_file(&target);
+            return Err(e.into());
+        }
+        Ok(Downloaded { path: target, zipped: false })
+    }
+}
+
+pub fn show_download(path: &Path) -> Result<()> {
+    let dir = fs::canonicalize(downloads_folder()).map_err(|_| CoreError::Invalid("there is no Downloads folder".to_string()))?;
+    let real = fs::canonicalize(path).map_err(|_| CoreError::Invalid(format!("{} is not in your Downloads folder", path.display())))?;
+    if real.parent() != Some(dir.as_path()) {
+        return Err(CoreError::Invalid(format!("{} is not in your Downloads folder", path.display())));
+    }
+    #[cfg(target_os = "macos")]
+    let spawned = std::process::Command::new("open").arg("-R").arg(&real).spawn();
+    #[cfg(target_os = "windows")]
+    let spawned = std::process::Command::new("explorer").arg(format!("/select,{}", real.display())).spawn();
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let spawned = std::process::Command::new("xdg-open").arg(&dir).spawn();
+    spawned.map(|_| ()).map_err(|e| CoreError::Unavailable(format!("the folder could not be shown ({e})")))
+}
+
 fn walk(dir: &Path, depth: u32, extensions: &BTreeMap<String, String>, out: &mut Vec<(PathBuf, String, fs::Metadata)>, truncated: &mut bool) {
     let Ok(entries) = fs::read_dir(dir) else { return };
     let mut entries: Vec<_> = entries.flatten().collect();

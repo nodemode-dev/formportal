@@ -1,0 +1,299 @@
+.drop-more > .menu {
+  --popout-gap: 6px;
+  min-inline-size: 0;
+  inline-size: 15.5rem;
+  padding: 4px;
+  gap: 0;
+  border: 1px solid var(--fp-edge-2);
+  border-radius: 10px;
+  background: var(--fp-raise);
+  box-shadow: var(--shadow-tile);
+  color: var(--fp-ink);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.drop-more > .menu .drop-item {
+  min-block-size: 30px;
+  padding-inline: 10px;
+  border-radius: 6px;
+  color: var(--fp-ink);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.drop-more > .menu .drop-item:hover,
+.drop-more > .menu .drop-item:focus-visible,
+.drop-more > .menu .menu-check:focus-within {
+  outline: none;
+  background: var(--fp-ctl);
+}
+
+.drop-more > .menu .menu-check {
+  gap: 12px;
+  min-block-size: 30px;
+}
+
+.drop-more > .menu .switch {
+  inline-size: 26px;
+  block-size: 16px;
+  border-radius: 8px;
+  background: var(--fp-ctl);
+  box-shadow: inset 0 0 0 1px var(--fp-edge-2);
+}
+
+.drop-more > .menu .switch::after {
+  inset-block-start: 3px;
+  inset-inline-start: 3px;
+  inline-size: 10px;
+  block-size: 10px;
+  background: var(--fp-ink-2);
+  box-shadow: none;
+}
+
+.drop-more > .menu .switch:checked {
+  background: var(--accent-color);
+  box-shadow: none;
+}
+
+.drop-more > .menu .switch:checked::after {
+  background: var(--text-on-accent);
+  transform: translateX(10px);
+}
+
+.drop-more > .menu .switch:focus-visible {
+  outline: 2px solid var(--accent-color-dim);
+  outline-offset: 2px;
+}
+
+.drop-more > .menu .menu-versions {
+  gap: 4px;
+  margin-block: 2px;
+  padding: 6px 10px 8px;
+  border-block: 1px solid var(--fp-edge);
+}
+
+.drop-more > .menu .menu-check + .menu-versions {
+  margin-block-start: 2px;
+}
+
+.drop-more > .menu .menu-label {
+  color: var(--fp-ink-3);
+  font-size: 11.5px;
+}
+
+.drop-more > .menu .menu-pick {
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-select {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.drop-more > .menu .menu-select > .field {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 28px;
+  padding-inline: 8px 24px;
+  border-radius: 7px;
+  background: var(--fp-ctl);
+  box-shadow: inset 0 0 0 1px var(--fp-edge);
+  color: var(--fp-ink);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.drop-more > .menu .menu-select > .field:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--accent-color);
+}
+
+.menu-chev {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 6px;
+  inline-size: 14px;
+  block-size: 14px;
+  color: var(--fp-ink-2);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.drop-more > .menu .drop-go {
+  flex: none;
+  inline-size: auto;
+  min-block-size: 28px;
+  block-size: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--fp-edge-2);
+  border-radius: 7px;
+  background: var(--fp-ctl);
+  font-size: 12.5px;
+}
+
+.drop-more > .menu .menu-danger,
+.drop-more > .menu .menu-ask {
+  color: var(--fault);
+}
+
+.drop-more > .menu .menu-ask {
+  gap: 6px;
+  min-block-size: 30px;
+  padding-inline: 10px 0;
+  font-size: 13px;
+}
+
+.drop-more > .menu .menu-ask > .btn {
+  block-size: 26px;
+  min-block-size: 26px;
+  padding: 0 9px;
+}
+
+.file-inspect {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fp-ink);
+  font-family: inherit;
+  line-height: inherit;
+  text-align: start;
+  text-decoration: underline transparent;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.file-inspect:hover,
+.file-inspect:focus-visible {
+  outline: none;
+  text-decoration-color: currentColor;
+}
+
+.prefs.inspect {
+  inline-size: min(560px, 92vw);
+  max-block-size: min(860px, 94vh);
+  overflow-y: auto;
+}
+
+.inspect-shot {
+  block-size: 168px;
+  border: 1px solid var(--fp-edge);
+  border-radius: 10px;
+  background: var(--fp-ctl) center / contain no-repeat;
+}
+
+.inspect-shot[hidden] {
+  display: none;
+}
+
+.inspect-facts {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-block: 1px solid var(--fp-edge);
+}
+
+.inspect-facts > div {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding-block: 7px;
+}
+
+.inspect-facts > div + div {
+  border-block-start: 1px solid var(--fp-edge);
+}
+
+.inspect-facts dt {
+  color: var(--fp-ink-3);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inspect-facts dd {
+  margin: 0;
+  min-block-size: 1.3em;
+  color: var(--fp-ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.inspect-hash {
+  min-block-size: 2.6em;
+  font-size: 12px;
+}
+
+.inspect-now > .inspect-hash {
+  display: block;
+  min-block-size: 3em;
+  line-height: 1.5;
+}
+
+.inspect-now > .fine {
+  display: block;
+  min-block-size: 1.5em;
+  color: var(--fp-ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.inspect-text {
+  box-sizing: border-box;
+  block-size: 132px;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: auto;
+  border: 1px solid var(--fp-edge);
+  border-radius: 10px;
+  background: var(--fp-ctl);
+  color: var(--fp-ink);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.inspect-text[data-note] {
+  display: grid;
+  place-items: center;
+  color: var(--fp-ink-3);
+  font-family: inherit;
+}
+
+.inspect-text[hidden] {
+  display: none;
+}
+
+.inspect-said {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 1.6em;
+  margin: 0;
+}
+
+.inspect-said > .fine {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspect-said[data-fault] > .fine {
+  color: var(--fault);
+}
+
+.ext .drop-more > .menu {
+  inline-size: auto;
+  min-inline-size: 17rem;
+  padding: 8px;
+}

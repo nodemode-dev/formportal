@@ -11,6 +11,18 @@
     <script src="/prelive.js"></script>
     <link rel="stylesheet" href="/src/styles/main.css" />
     <link rel="stylesheet" href="/src/styles/portal.css" />
+    <link rel="stylesheet" href="/src/styles/layout.css" />
+    <link rel="stylesheet" href="/src/styles/side.css" />
+    <link rel="stylesheet" href="/src/styles/rows.css" />
+    <link rel="stylesheet" href="/src/styles/menus.css" />
+    <link rel="stylesheet" href="/src/styles/progress.css" />
+    <link rel="stylesheet" href="/src/styles/notices.css" />
+    <link rel="stylesheet" href="/src/styles/ontheway.css" />
+    <link rel="stylesheet" href="/src/styles/apppages.css" />
+    <link rel="stylesheet" href="/src/styles/stock.css" />
+    <link rel="stylesheet" href="/src/styles/fonts.css" />
+    <link rel="stylesheet" href="/src/styles/templates.css" />
+    <link rel="stylesheet" href="/src/styles/profile.css" />
     <link rel="stylesheet" href="/src/styles/live.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
@@ -66,8 +78,21 @@
             <!-- @portal:sidemine -->
           </ul>
           <div class="nav-foot">
-            <button class="nav-item" type="button" data-prefs-open title="Preferences"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.43 5.69l.22-2.18h2.7l.22 2.18a6.5 6.5 0 0 1 1.78.74l1.7-1.39 1.91 1.91-1.39 1.7a6.5 6.5 0 0 1 .74 1.78l2.18.22v2.7l-2.18.22a6.5 6.5 0 0 1-.74 1.78l1.39 1.7-1.91 1.91-1.7-1.39a6.5 6.5 0 0 1-1.78.74l-.22 2.18h-2.7l-.22-2.18a6.5 6.5 0 0 1-1.78-.74l-1.7 1.39-1.91-1.91 1.39-1.7a6.5 6.5 0 0 1-.74-1.78l-2.18-.22v-2.7l2.18-.22a6.5 6.5 0 0 1 .74-1.78l-1.39-1.7 1.91-1.91 1.7 1.39a6.5 6.5 0 0 1 1.78-.74z"/><circle cx="12" cy="12" r="2.6"/></svg><span class="nav-label">Preferences</span></button>
-            <a class="nav-item" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web title="Help"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.5v.5M12 16.8v.2"/></svg><span class="nav-label">Help</span></a>
+            <button class="nav-item" type="button" data-prefs-open title="Preferences"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" stroke="none" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Preferences</span></button>
+            <div class="soc" data-soc>
+              <div class="soc-wheel" data-soc-wheel>
+                <a class="soc-link" href="https://formai.studio/" data-web aria-label="Official Site · formai.studio" title="Official Site · formai.studio"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.969 4.327L21.358 4.327Q22.261 4.327 22.717 4.979Q23.168 5.623 22.901 6.514Q22.644 7.371 21.862 7.972Q21.077 8.576 20.214 8.576L5.825 8.576Q4.922 8.576 4.466 7.924Q4.015 7.28 4.282 6.389Q4.539 5.532 5.321 4.931Q6.106 4.327 6.969 4.327ZM5.379 9.876L14.305 9.876Q15.208 9.876 15.664 10.527Q16.115 11.172 15.848 12.062Q15.591 12.919 14.809 13.52Q14.024 14.124 13.161 14.124L4.234 14.124Q3.331 14.124 2.876 13.473Q2.424 12.828 2.691 11.938Q2.949 11.081 3.73 10.48Q4.515 9.876 5.379 9.876ZM6.969 5.368Q6.46 5.368 5.955 5.756Q5.44 6.152 5.279 6.688Q5.156 7.096 5.319 7.328Q5.464 7.535 5.825 7.535L20.214 7.535Q20.723 7.535 21.228 7.147Q21.743 6.751 21.904 6.215Q22.027 5.807 21.864 5.575Q21.719 5.368 21.358 5.368ZM3.786 15.424L6.525 15.424Q7.428 15.424 7.884 16.076Q8.335 16.72 8.068 17.611Q7.811 18.468 7.029 19.069Q6.244 19.673 5.381 19.673L2.642 19.673Q1.739 19.673 1.283 19.021Q0.832 18.377 1.099 17.486Q1.356 16.629 2.138 16.028Q2.923 15.424 3.786 15.424ZM5.379 10.916Q4.869 10.916 4.364 11.304Q3.849 11.701 3.688 12.237Q3.566 12.645 3.728 12.876Q3.873 13.084 4.234 13.084L13.161 13.084Q13.671 13.084 14.175 12.696Q14.691 12.299 14.851 11.763Q14.974 11.355 14.811 11.124Q14.666 10.916 14.305 10.916ZM3.786 16.465Q3.277 16.465 2.772 16.853Q2.257 17.249 2.096 17.785Q1.973 18.193 2.136 18.425Q2.281 18.632 2.642 18.632L5.381 18.632Q5.891 18.632 6.395 18.244Q6.91 17.848 7.071 17.312Q7.194 16.904 7.031 16.672Q6.886 16.465 6.525 16.465Z"/></svg></a>
+                <a class="soc-link" href="https://www.youtube.com/@GetFormAI" data-web aria-label="YouTube" title="YouTube"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.6-2.7z"/></svg></a>
+                <a class="soc-link" href="https://www.reddit.com/r/FormAI/" data-web aria-label="r/FormAI" title="r/FormAI"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.8 15.6v-4.4a2.4 2.4 0 0 1 2.4-2.4M15.6 8.4l-2.8 7.2"/></svg></a>
+                <a class="soc-link" href="https://www.reddit.com/user/nodemode_ai/" data-web aria-label="Reddit" title="Reddit"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14.6" rx="7.6" ry="5"/><circle cx="4.6" cy="10.6" r="1.6"/><circle cx="19.4" cy="10.6" r="1.6"/><circle cx="17.6" cy="4.6" r="1.4"/><path d="M12 9.6V4.4l4.2.6M9.4 16.9c1.6.9 3.6.9 5.2 0"/><path stroke-width="2.6" d="M9.3 13.8v.01M14.7 13.8v.01"/></svg></a>
+                <a class="soc-link" href="https://discord.gg/uXqSJevSd" data-web aria-label="Discord" title="Discord"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5.4a15 15 0 0 0-4.2 1.3C2.6 10 2 13.2 2.2 16.3c1.6 1.2 3.2 1.9 4.8 2.3l1.2-2M15 5.4a15 15 0 0 1 4.2 1.3c2.2 3.3 2.8 6.5 2.6 9.6-1.6 1.2-3.2 1.9-4.8 2.3l-1.2-2M7 16.2c3.3 1.4 6.7 1.4 10 0M7.6 7.6c2.9-1 5.9-1 8.8 0"/><path stroke-width="2.8" d="M9.3 12.4v.5M14.7 12.4v.5"/></svg></a>
+                <a class="soc-link" href="https://www.instagram.com/nodemode.ai/" data-web aria-label="Instagram" title="Instagram"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path stroke-width="2.6" d="M17.2 6.8v.01"/></svg></a>
+                <a class="soc-link" href="https://www.threads.com/@nodemode.ai" data-web aria-label="Threads" title="Threads"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M15.6 8.6v4.6a2.4 2.4 0 0 0 4.8 0V12a8.4 8.4 0 1 0-3.3 6.7"/></svg></a>
+                <a class="soc-link" href="https://www.tiktok.com/@nodemode_ai" data-web aria-label="TikTok" title="TikTok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3.8v11.4a3.3 3.3 0 1 1-3.3-3.3M13 3.8c.5 2.7 2.5 4.6 5.2 4.8"/></svg></a>
+                <a class="soc-link" href="https://x.com/nodemode_ai" data-web aria-label="X · [formally Twitter]" title="X · [formally Twitter]"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 4.2h4.3l11.3 15.6h-4.3zM19.6 4.2l-6.5 7.1M4.4 19.8l6.5-7.1"/></svg></a>
+              </div>
+              <a class="soc-link soc-help" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web aria-label="Help" title="Help"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.5v.5M12 16.8v.2"/></svg></a>
+            </div>
           </div>
         </nav>
         <div class="side-edge" role="separator" aria-orientation="vertical" aria-label="Resize the side panel" title="Drag to resize the side panel" data-side-edge></div>
@@ -125,6 +150,17 @@
                 <ul class="waves">
                   <!-- @portal:soon -->
                 </ul>
+                <dialog class="prefs versions request" data-request aria-labelledby="h-request">
+                  <form class="versions-frame request-form" novalidate>
+                    <h2 id="h-request" class="prefs-title">Request a new Form App</h2>
+                    <label class="request-field"><span class="request-label">App name</span><input class="request-input" type="text" maxlength="80" required autocomplete="off" spellcheck="false" data-request-name /></label>
+                    <label class="request-field"><span class="request-label">What you use it for <span class="fine">(optional)</span></span><textarea class="request-input" rows="4" maxlength="1000" data-request-use></textarea></label>
+                    <label class="request-field"><span class="request-label">Link to the app <span class="fine">(optional)</span></span><input class="request-input" type="url" maxlength="300" inputmode="url" autocomplete="off" spellcheck="false" data-request-link placeholder="https://" /></label>
+                    <p class="fine request-say" data-request-say aria-live="polite">&nbsp;</p>
+                    <p class="fine">Your request becomes a public discussion on GitHub. FormPortal sends nothing itself: it opens the page in your browser with your words filled in, and you press Start discussion there.</p>
+                    <footer class="agent-acts"><button class="btn btn-primary" type="submit" data-request-go disabled>Open on GitHub</button><button class="btn" type="button" data-request-cancel>Cancel</button></footer>
+                  </form>
+                </dialog>
               </section>
             </div>
           </section>
@@ -210,7 +246,7 @@
               <template id="file-row">
                 <li class="row file">
                   <span class="tile" aria-hidden="true" data-field="short"></span>
-                  <div class="row-main"><span class="row-name-text" data-field="name"></span><p class="row-sub" data-field="where"></p></div>
+                  <div class="row-main"><button class="row-name-text file-inspect" type="button" data-file-act="inspect" data-field="name"></button><p class="row-sub" data-field="where"></p></div>
                   <p class="row-state"><span class="state-text" data-field="when"></span><span class="state-ver" data-field="meta"></span></p>
                   <div class="acts acts-files">
                     <button class="btn btn-primary" type="button" data-file-act="open">Open</button>
@@ -258,6 +294,55 @@
                 <ul class="list" data-font-own></ul>
                 <p class="empty" data-font-own-empty>Add a TTF or OTF you have the right to use, and FormPortal installs it for you the same way.</p>
               </section>
+              <section class="block font-web" data-font-web>
+                <header class="block-head"><h2 class="block-title">Fontsource and Google Fonts</h2><span class="block-note" data-font-web-count></span></header>
+                <p class="fine font-web-intro">Fontsource and Google Fonts are two public catalogues of open fonts. The list comes from Fontsource's public catalogue and, with your own key, from Google's Fonts API, and nothing is requested from either until you press a button.</p>
+                <div class="font-web-ask">
+                  <div class="seg" role="group" aria-label="Font source">
+                    <button class="seg-item" type="button" data-font-src="fontsource" aria-pressed="false">Browse Fontsource</button>
+                    <button class="seg-item" type="button" data-font-src="google" aria-pressed="false" hidden>Browse Google Fonts</button>
+                  </div>
+                  <button class="link-btn" type="button" data-font-key-toggle aria-expanded="false">Google Fonts key</button>
+                </div>
+                <div class="font-key" data-font-key hidden>
+                  <input class="field font-key-input" type="password" data-font-key-input placeholder="Google Fonts API key" aria-label="Google Fonts API key" autocomplete="off" spellcheck="false" />
+                  <button class="btn btn-primary" type="button" data-font-key-save>Save</button>
+                  <button class="btn" type="button" data-font-key-remove>Remove</button>
+                  <button class="link-btn" type="button" data-font-key-get>Make a key in Google Cloud</button>
+                  <p class="fine font-key-note">The key is kept in this computer's system keychain and sent only to Google's API.</p>
+                </div>
+                <p class="fine font-web-line" data-font-web-line></p>
+                <div class="font-web-bar" data-font-web-bar hidden>
+                  <select class="field font-web-subset" data-font-web-subset aria-label="Language subset"><option value="">Every subset</option></select>
+                  <input class="field font-web-sample" type="text" data-font-web-sample placeholder="Type your own sample line" aria-label="Sample line" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="font-web-region" data-font-web-region hidden>
+                  <p class="empty" data-font-web-empty hidden></p>
+                  <ul class="list" data-font-web-list></ul>
+                  <button class="btn font-web-more" type="button" data-font-web-more hidden>Show more families</button>
+                </div>
+                <h3 class="font-web-mine-title" data-font-web-mine-title hidden>Installed from Fontsource and Google Fonts</h3>
+                <ul class="list" data-font-web-installed></ul>
+              </section>
+              <template id="font-web-row">
+                <li class="row font font-web-row">
+                  <span class="tile tile-font" aria-hidden="true">Aa</span>
+                  <div class="row-main"><span class="row-name-text" data-field="family"></span><p class="row-sub" data-field="meta"></p></div>
+                  <p class="row-state"><span class="state-text" data-field="state"></span></p>
+                  <div class="acts acts-files">
+                    <button class="btn" type="button" data-font-web-act="preview" aria-expanded="false">Preview</button>
+                    <button class="btn" type="button" data-font-web-act="remove">Remove</button>
+                  </div>
+                  <div class="font-web-detail" data-font-web-detail hidden>
+                    <p class="fine font-web-licence" data-field="licence"></p>
+                    <div class="seg font-web-weights" role="group" aria-label="Weight" data-font-web-weights></div>
+                    <p class="font-sample font-sample-s" data-sample></p>
+                    <p class="font-sample font-sample-m" data-sample></p>
+                    <p class="font-sample font-sample-l" data-sample></p>
+                    <div class="font-web-install"><button class="btn btn-primary" type="button" data-font-web-act="install">Install family</button><span class="fine" data-field="note"></span></div>
+                  </div>
+                </li>
+              </template>
               <template id="font-row">
                 <li class="row font">
                   <span class="tile tile-font" aria-hidden="true">Aa</span>
@@ -280,22 +365,31 @@
           <section class="pane" data-pane="stock" data-title="Stock &amp; templates" data-kind="all" aria-label="Stock and templates">
             <div class="page">
               <header class="page-head"><div><h1 class="h1">Stock &amp; templates</h1><p class="sub">Photos, footage, sound and templates you are free to use, saved with their credit.</p></div></header>
-              <div class="toolbar">
+              <section class="block stock-sources" data-stock-sources>
+                <header class="block-head"><h2 class="block-title">Your sources</h2></header>
+                <p class="fine stock-privacy">Keys are kept in the system keychain of this computer, never in a file. A search goes from this computer straight to the source you chose and nowhere else; FormPortal collects nothing.</p>
+                <ul class="stock-src-list" data-stock-src-list></ul>
+              </section>
+              <form class="toolbar stock-bar" data-stock-form>
                 <label class="search search-local">
                   <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <input type="search" data-media-query placeholder="Search images, video, audio and templates" aria-label="Search stock and templates" autocomplete="off" spellcheck="false" />
+                  <input type="search" data-stock-query placeholder="Search free images, video and audio" aria-label="Search stock" maxlength="100" autocomplete="off" spellcheck="false" />
                 </label>
                 <div class="seg" role="group" aria-label="Kind">
-                  <button class="seg-item" type="button" data-media-kind="all" aria-pressed="true">All</button>
-                  <button class="seg-item" type="button" data-media-kind="image" aria-pressed="false">Images</button>
-                  <button class="seg-item" type="button" data-media-kind="video" aria-pressed="false">Video</button>
-                  <button class="seg-item" type="button" data-media-kind="audio" aria-pressed="false">Audio</button>
-                  <button class="seg-item" type="button" data-media-kind="template" aria-pressed="false">Templates</button>
+                  <button class="seg-item" type="button" data-stock-kind="image" aria-pressed="true">Images</button>
+                  <button class="seg-item" type="button" data-stock-kind="video" aria-pressed="false">Video</button>
+                  <button class="seg-item" type="button" data-stock-kind="audio" aria-pressed="false">Audio</button>
                 </div>
-              </div>
-              <p class="fine fonts-note">Openly licensed (CC0, CC BY, CC BY-SA and open software licences), free, no account. Saved items go to your Library with their credit line; a template is copied into your projects folder and opens in its app.</p>
-              <p class="store-note" data-store-note hidden></p>
+                <button class="btn btn-primary" type="submit">Search</button>
+              </form>
+              <div class="stock-chips" role="group" aria-label="Sources" data-stock-chips></div>
+              <p class="fine stock-status" data-stock-status aria-live="polite"></p>
+              <ul class="stock-grid" data-stock-grid></ul>
+              <div class="stock-more"><button class="btn" type="button" data-stock-more hidden>More</button></div>
               <section class="block">
+                <header class="block-head"><h2 class="block-title">Included with FormPortal</h2></header>
+                <p class="fine fonts-note">Openly licensed (CC0, CC BY, CC BY-SA and open software licences), free, no account. Saved items go to your Library with their credit line; a template is copied into your projects folder and opens in its app.</p>
+                <p class="store-note" data-store-note hidden></p>
                 <ul class="media-grid" data-media-grid></ul>
                 <p class="empty" data-media-error hidden></p>
               </section>
@@ -317,6 +411,39 @@
                   </div>
                 </li>
               </template>
+              <dialog class="stock-view" data-stock-view aria-labelledby="h-stock-view">
+                <div class="stock-stage" data-view-stage>
+                  <img class="stock-stage-img" data-view-img alt="" hidden />
+                  <video class="stock-stage-video" data-view-video controls playsinline preload="metadata" hidden></video>
+                  <div class="stock-player" data-view-audio hidden>
+                    <button class="btn stock-play" type="button" data-audio-play aria-label="Play"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path data-icon-play d="M8 5.5v13l10-6.5z" fill="currentColor"/><path data-icon-pause d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z" fill="currentColor" hidden/></svg></button>
+                    <input class="stock-seek" type="range" min="0" max="1000" step="1" value="0" data-audio-seek aria-label="Position" />
+                    <span class="mono stock-time" data-audio-time>0:00 / 0:00</span>
+                  </div>
+                  <p class="stock-wait" data-view-wait>Loading the preview</p>
+                  <button class="stock-step stock-prev" type="button" data-view-step="-1" aria-label="Previous result"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="stock-step stock-next" type="button" data-view-step="1" aria-label="Next result"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </div>
+                <div class="stock-side">
+                  <div class="stock-side-head">
+                    <h2 class="block-title" id="h-stock-view" data-view-title></h2>
+                    <button class="stock-close" type="button" data-view-close aria-label="Close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+                  </div>
+                  <p class="stock-by"><span data-view-by-label>By</span> <button class="link-btn" type="button" data-view-author></button><span data-view-author-text></span> <span class="stock-on" data-view-source></span></p>
+                  <p class="stock-licence"><span class="stock-lic" data-view-licence></span> <button class="link-btn" type="button" data-view-licence-link>Licence text</button></p>
+                  <p class="fine stock-limit" data-view-limit hidden></p>
+                  <p class="fine stock-credit" data-view-credit></p>
+                  <p class="fine" data-view-file></p>
+                  <div class="stock-side-acts">
+                    <button class="btn btn-primary" type="button" data-view-save>Save</button>
+                    <button class="btn" type="button" data-view-show hidden>Show in folder</button>
+                    <button class="link-btn" type="button" data-view-page>Open its page</button>
+                  </div>
+                  <div class="stock-progress" data-view-progress hidden><span data-view-bar></span></div>
+                  <p class="fine stock-view-note" data-view-note aria-live="polite"></p>
+                </div>
+              </dialog>
+              <div id="templates-mount"></div>
             </div>
           </section>
 
@@ -420,6 +547,17 @@
               <label class="menu-check"><span>Open FormPortal when I log in</span><input type="checkbox" class="switch" data-pref="open_at_login" /></label>
             </section>
             <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Version</h3>
+              <p class="cv-prefs-line">FormPortal %fact:version% <span class="fine" translate="no">by nodemode.ai</span></p>
+              <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
+            </section>
+            <section class="cv-prefs-group">
+              <h3 class="cv-prefs-label">Check &amp; repair</h3>
+              <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
+              <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
+              <ul class="repair-list" data-repair-list></ul>
+            </section>
+            <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Notifications</h3>
               <label class="menu-check"><span>Tell me what was updated</span><input type="checkbox" class="switch" data-pref="notices" checked /></label>
               <p class="fine">Pop up a notice for:</p>
@@ -520,25 +658,8 @@
         </section>
 
         <section class="cv-prefs-sec" data-prefs-panel="account" role="tabpanel" aria-labelledby="prefs-head-account">
-          <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-seclabel">Account</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-seclabel">Profile</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
           <div class="cv-prefs-secbody" id="prefs-body-account">
-            <section class="cv-prefs-group">
-            <h3 class="cv-prefs-label">GitHub</h3>
-            <p class="fine">Optional. Installing, updating and everything else in FormPortal work without an account. Signing in uses your own GitHub account, for sharing from Files.</p>
-            <div class="account" data-account="checking">
-              <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not signed in.</span><span class="account-say" data-say="unset">This FormPortal has no GitHub app set up, so signing in is not available.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Signed in as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
-              <p class="account-code mono" data-account-code aria-live="polite"></p>
-              <p class="fine account-scopes" data-account-scopes></p>
-              <div class="account-acts">
-                <button class="btn btn-primary account-in" type="button" data-account-in>Sign in with GitHub</button>
-                <button class="btn account-open" type="button" data-account-open>Open github.com</button>
-                <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
-                <button class="btn btn-primary account-share" type="button" data-account-share>Allow sharing</button>
-                <button class="btn account-out" type="button" data-account-out>Sign out</button>
-              </div>
-            </div>
-            <p class="fine">FormPortal asks only to read your profile when you sign in, and asks again for repository access the first time you share. Your sign-in is kept in this computer's keychain, never in a file; sign out to remove it.</p>
-            </section>
             <section class="cv-prefs-group" data-supporter>
               <h3 class="cv-prefs-label">Supporter</h3>
               <p class="fine">Optional. If you supported the Form apps on formai.studio, paste the code from the thanks page. The code says only that you supported us, and it stays on this computer.</p>
@@ -550,23 +671,57 @@
               <p class="fine supporter-say" role="status" data-supporter-say data-state="none">Not set</p>
               <p class="links"><a class="link" href="https://formai.studio/support/" data-web>Get a supporter code on formai.studio</a></p>
             </section>
+            <section class="cv-prefs-group github" data-github hidden>
+              <h3 class="cv-prefs-label">Connect to GitHub</h3>
+              <p class="fine">Optional. Installing, updating and everything else in FormPortal work without it. Connecting uses your own GitHub account, for sharing from Files and for your own fork of the extension registry.</p>
+              <div class="account" data-account="checking">
+                <p class="fine account-plan">What happens: FormPortal shows a code, you enter it on github.com and approve. GitHub is asked only to let FormPortal read your public profile (the read:user permission), to show who is connected. GitHub gives FormPortal a token, which is kept in this computer's keychain and nowhere else. Nothing goes to formai.studio or anyone else: FormPortal talks only to github.com and api.github.com, and only when you use sharing or the fork below.</p>
+                <p class="account-line"><span class="account-say" data-say="checking">Checking...</span><span class="account-say" data-say="off">Not connected.</span><span class="account-say" data-say="code">On GitHub, enter this code:</span><span class="account-say" data-say="on">Connected as <b data-account-login></b>.</span><span class="account-say" data-say="error" data-account-error></span></p>
+                <p class="account-code mono" data-account-code aria-live="polite"></p>
+                <p class="fine account-scopes" data-account-scopes></p>
+                <div class="account-acts">
+                  <button class="btn btn-primary account-in" type="button" data-account-in>Connect to GitHub</button>
+                  <button class="btn account-open" type="button" data-account-open>Open github.com</button>
+                  <button class="btn account-cancel" type="button" data-account-cancel>Cancel</button>
+                  <button class="btn btn-primary account-share" type="button" data-account-share>Allow sharing</button>
+                  <button class="btn account-out" type="button" data-account-out>Disconnect</button>
+                </div>
+                <p class="fine account-revoke">Disconnect removes the token from this computer's keychain. To withdraw FormPortal's access on GitHub as well, revoke FormPortal under Settings, Applications, Authorized OAuth Apps on github.com. <a class="link" href="https://github.com/settings/applications" data-web>Open GitHub's application settings</a></p>
+                <div class="fork" data-fork="idle">
+                  <h4 class="fork-title">Extension registry fork</h4>
+                  <p class="fine fork-say" data-fork-say="idle">Optional. Makes your own copy (a fork) of nodemode-dev/form.ext-registry, the public registry of Form extensions, in your GitHub account, so you can submit an extension of your own.</p>
+                  <p class="fine fork-say" data-fork-say="confirm">If you continue, FormPortal asks GitHub to fork nodemode-dev/form.ext-registry into your GitHub account. The fork is a public repository in your name, which you can delete on github.com at any time. Forking needs GitHub's public_repo permission, which lets FormPortal create and change public repositories in your account; FormPortal uses it only to make this fork. Nothing else is created, changed or sent.</p>
+                  <p class="fine fork-say fork-consent" data-fork-say="confirm">GitHub has not given FormPortal that permission yet: approve it first with a new code, then fork.</p>
+                  <p class="fine fork-say" data-fork-say="busy">Forking on GitHub...</p>
+                  <p class="fine fork-say" data-fork-say="error" data-fork-error></p>
+                  <div class="fork-done" data-fork-say="done">
+                    <p class="fork-line"><span data-fork-made>Your fork is ready:</span> <a class="link mono" href="https://github.com/nodemode-dev/form.ext-registry" data-web data-fork-url></a></p>
+                    <ol class="fine fork-steps">
+                      <li>With form.ext: its Publish step has Submit to Registry, which writes extensions/&lt;id&gt;/ into a folder you choose, runs the registry's checks and shows the git and gh commands that open the pull request.</li>
+                      <li>By hand: clone your fork and add your extension as extensions/&lt;id&gt;/, where &lt;id&gt; is the id in its manifest, with its package, source, package.json, package-lock.json, README.md, CHANGELOG.md, LICENSE and a screenshot.</li>
+                      <li>Run python3 tools/check.py extensions/&lt;id&gt; and fix every error it prints.</li>
+                      <li>Commit on a branch, push it to your fork and open a pull request against main. Say what the extension does and why it asks for each permission.</li>
+                      <li>The owners review it; on merge it is built, signed and listed in FormPortal at its next index refresh.</li>
+                    </ol>
+                    <p class="links"><a class="link" href="https://github.com/nodemode-dev/form.ext-registry/blob/main/SUBMITTING.md" data-web>The registry's SUBMITTING.md</a></p>
+                  </div>
+                  <div class="fork-acts">
+                    <button class="btn fork-start" type="button" data-fork-start>Set up my extension registry fork</button>
+                    <button class="btn btn-primary fork-approve" type="button" data-fork-approve>Approve on GitHub</button>
+                    <button class="btn btn-primary fork-go" type="button" data-fork-go>Fork it now</button>
+                    <button class="btn fork-cancel" type="button" data-fork-cancel>Not now</button>
+                    <button class="btn fork-ext" type="button" data-fork-ext>Open form.ext</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <p class="fine profile-foot">* supporter code is stored locally, your profile is 100% local, also connecting to github is completely optional &amp; doesn't effect any core functionality of the app</p>
           </div>
         </section>
 
         <section class="cv-prefs-sec" data-prefs-panel="about" role="tabpanel" aria-labelledby="prefs-head-about">
           <button class="cv-prefs-sechead" type="button" id="prefs-head-about" data-prefs-fold="about" aria-expanded="true" aria-controls="prefs-body-about"><span class="cv-prefs-secicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-seclabel">About</span><span class="cv-prefs-chev">%icon:chevron-down:ic-s%</span></button>
           <div class="cv-prefs-secbody" id="prefs-body-about">
-            <section class="cv-prefs-group">
-              <h3 class="cv-prefs-label">Version</h3>
-              <p class="cv-prefs-line">FormPortal %fact:version% <span class="fine" translate="no">by nodemode.ai</span></p>
-              <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
-            </section>
-            <section class="cv-prefs-group">
-              <h3 class="cv-prefs-label">Check and repair</h3>
-              <p class="fine">Checks every app FormPortal installed and its own folders: apps whose files went missing, earlier versions that are gone, unfinished installs, leftovers and old downloads. Nothing outside FormPortal's folder is touched.</p>
-              <div class="self-update"><button class="btn" type="button" data-repair-check>Check now</button><button class="btn btn-primary" type="button" data-repair-fix hidden>Repair</button><span class="fine" data-repair-status></span></div>
-              <ul class="repair-list" data-repair-list></ul>
-            </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Help</h3>
               <p class="links"><a class="link" href="https://github.com/nodemode-dev/formportal/tree/main/.docs/wiki" data-web>Guide</a><a class="link" href="https://github.com/nodemode-dev/formportal/blob/main/CHANGELOG.md" data-web>What changed</a><a class="link" href="https://github.com/nodemode-dev/formportal/issues/new" data-web>Report a problem</a><a class="link" href="https://github.com/nodemode-dev/formportal/discussions" data-web>Ask the community</a></p>
@@ -593,7 +748,7 @@
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="interface" title="Interface"><span class="cv-prefs-tabicon">%icon:pf-interface:ic-m%</span><span class="cv-prefs-tablabel">Interface</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="apps" title="Apps"><span class="cv-prefs-tabicon">%icon:apps:ic-m%</span><span class="cv-prefs-tablabel">Apps</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="catalogue" title="Catalogue"><span class="cv-prefs-tabicon">%icon:book:ic-m%</span><span class="cv-prefs-tablabel">Catalogue</span></button>
-          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Account"><span class="cv-prefs-tabicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-tablabel">Account</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Profile"><span class="cv-prefs-tabicon">%icon:pf-user:ic-m%</span><span class="cv-prefs-tablabel">Profile</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="about" title="About"><span class="cv-prefs-tabicon">%icon:pf-about:ic-m%</span><span class="cv-prefs-tablabel">About</span></button>
         </nav>
         <button class="cv-prefs-fold" type="button" data-prefs-rail-fold aria-expanded="true" aria-label="Collapse tabs" title="Collapse tabs">%icon:pf-fold:ic-s%</button>
@@ -608,6 +763,26 @@
         <p class="versions-new" data-versions-new><span class="fine">You saved it again; a new version was kept.</span><button class="link-btn" type="button" data-versions-show>Show it</button></p>
         <ol class="list versions-list" data-versions-list></ol>
         <footer class="agent-acts"><button class="btn" type="button" data-versions-save>Keep a version now</button><button class="btn" type="button" data-versions-close>Close</button></footer>
+      </div>
+    </dialog>
+
+    <dialog class="prefs versions inspect" data-inspect-dialog aria-labelledby="h-inspect">
+      <div class="versions-frame">
+        <header class="versions-head"><h2 id="h-inspect" class="prefs-title" data-inspect="name">File</h2><p class="fine mono" data-inspect="path"></p></header>
+        <div class="inspect-shot" data-inspect-shot hidden></div>
+        <dl class="inspect-facts">
+          <div><dt>Size</dt><dd class="mono" data-inspect="size"></dd></div>
+          <div><dt>Changed</dt><dd data-inspect="when"></dd></div>
+          <div><dt>Opens in</dt><dd data-inspect="app"></dd></div>
+          <div><dt>Kind</dt><dd class="mono" data-inspect="kind"></dd></div>
+          <div><dt>Text</dt><dd data-inspect="text"></dd></div>
+          <div><dt>Versions kept</dt><dd data-inspect="versions"></dd></div>
+          <div><dt>SHA-256 now</dt><dd class="inspect-now"><span class="mono inspect-hash" data-inspect="now"></span><span class="fine" data-inspect="same"></span></dd></div>
+          <div><dt>Last kept SHA-256</dt><dd class="mono inspect-hash" data-inspect="sha256"></dd></div>
+        </dl>
+        <pre class="inspect-text mono" data-inspect-text></pre>
+        <p class="inspect-said" data-inspect-said><span class="fine" data-inspect="said"></span><button class="link-btn" type="button" data-inspect-reveal hidden>Show in folder</button></p>
+        <footer class="agent-acts"><button class="btn" type="button" data-inspect-keep>Keep as a new version</button><button class="btn" type="button" data-inspect-download>Download</button><button class="btn" type="button" data-inspect-close>Close</button></footer>
       </div>
     </dialog>
 
