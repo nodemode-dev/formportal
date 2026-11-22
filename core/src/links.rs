@@ -6,7 +6,18 @@ pub const PREFIXES: &[&str] = &[
     "https://formai.studio/download/",
     "https://formai.studio/support/",
 ];
-pub const EXACT: &[&str] = &["https://github.com/login/device"];
+pub const EXACT: &[&str] = &[
+    "https://github.com/login/device",
+    "https://formai.studio/",
+    "https://www.youtube.com/@GetFormAI",
+    "https://www.reddit.com/r/FormAI/",
+    "https://www.reddit.com/user/nodemode_ai/",
+    "https://www.instagram.com/nodemode.ai/",
+    "https://www.threads.com/@nodemode.ai",
+    "https://www.tiktok.com/@nodemode_ai",
+    "https://x.com/nodemode_ai",
+    "https://discord.gg/uXqSJevSd",
+];
 const GITHUB: &str = "https://github.com/";
 
 pub fn may_open(url: &str) -> bool {
