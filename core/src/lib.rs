@@ -15,6 +15,7 @@ pub mod github;
 pub mod media;
 pub mod extensions;
 pub mod installers;
+pub mod keys;
 pub mod later;
 pub mod launch;
 pub mod learn;
