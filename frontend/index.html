@@ -294,17 +294,16 @@
                 <ul class="list" data-font-own></ul>
                 <p class="empty" data-font-own-empty>Add a TTF or OTF you have the right to use, and FormPortal installs it for you the same way.</p>
               </section>
-              <section class="block font-web" data-font-web data-source="fontsource">
+              <section class="block font-web" data-font-web>
                 <header class="block-head"><h2 class="block-title">Fontsource and Google Fonts</h2><span class="block-note" data-font-web-count></span></header>
-                <div class="font-web-bar">
+                <p class="fine font-web-intro">Fontsource and Google Fonts are two public catalogues of open fonts. The list comes from Fontsource's public catalogue and, with your own key, from Google's Fonts API, and nothing is requested from either until you press a button.</p>
+                <div class="font-web-ask">
                   <div class="seg" role="group" aria-label="Font source">
-                    <button class="seg-item" type="button" data-font-src="fontsource" aria-pressed="true">Fontsource</button>
-                    <button class="seg-item" type="button" data-font-src="google" aria-pressed="false">Google Fonts</button>
+                    <button class="seg-item" type="button" data-font-src="fontsource" aria-pressed="false">Browse Fontsource</button>
+                    <button class="seg-item" type="button" data-font-src="google" aria-pressed="false" hidden>Browse Google Fonts</button>
                   </div>
-                  <select class="field font-web-subset" data-font-web-subset aria-label="Language subset"><option value="">Every subset</option></select>
-                  <input class="field font-web-sample" type="text" data-font-web-sample placeholder="Type your own sample line" aria-label="Sample line" autocomplete="off" spellcheck="false" />
+                  <button class="link-btn" type="button" data-font-key-toggle aria-expanded="false">Google Fonts key</button>
                 </div>
-                <p class="fine font-web-line" data-font-web-line></p>
                 <div class="font-key" data-font-key hidden>
                   <input class="field font-key-input" type="password" data-font-key-input placeholder="Google Fonts API key" aria-label="Google Fonts API key" autocomplete="off" spellcheck="false" />
                   <button class="btn btn-primary" type="button" data-font-key-save>Save</button>
@@ -312,9 +311,16 @@
                   <button class="link-btn" type="button" data-font-key-get>Make a key in Google Cloud</button>
                   <p class="fine font-key-note">The key is kept in this computer's system keychain and sent only to Google's API.</p>
                 </div>
-                <ul class="list" data-font-web-list></ul>
-                <p class="empty" data-font-web-empty hidden></p>
-                <button class="btn font-web-more" type="button" data-font-web-more hidden>Show more families</button>
+                <p class="fine font-web-line" data-font-web-line></p>
+                <div class="font-web-bar" data-font-web-bar hidden>
+                  <select class="field font-web-subset" data-font-web-subset aria-label="Language subset"><option value="">Every subset</option></select>
+                  <input class="field font-web-sample" type="text" data-font-web-sample placeholder="Type your own sample line" aria-label="Sample line" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="font-web-region" data-font-web-region hidden>
+                  <p class="empty" data-font-web-empty hidden></p>
+                  <ul class="list" data-font-web-list></ul>
+                  <button class="btn font-web-more" type="button" data-font-web-more hidden>Show more families</button>
+                </div>
                 <h3 class="font-web-mine-title" data-font-web-mine-title hidden>Installed from Fontsource and Google Fonts</h3>
                 <ul class="list" data-font-web-installed></ul>
               </section>

@@ -1,3 +1,27 @@
+.font-web-intro {
+  max-inline-size: 72ch;
+  margin-block-end: var(--sp-3);
+}
+
+.font-web-ask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  margin-block-end: var(--sp-3);
+}
+
+.font-web-ask .link-btn {
+  margin-inline-start: auto;
+}
+
+.font-web-region {
+  block-size: clamp(320px, 62vh, 640px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
 .font-web-bar {
   display: flex;
   flex-wrap: wrap;

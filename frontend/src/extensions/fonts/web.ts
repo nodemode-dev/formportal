@@ -32,11 +32,16 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
   const more = pane.querySelector<HTMLButtonElement>("[data-font-web-more]");
   const empty = pane.querySelector<HTMLElement>("[data-font-web-empty]");
   const query = pane.querySelector<HTMLInputElement>("[data-fonts-query]");
-  if (!box || !list || !mine || !tpl || !subsetPick || !sample || !line || !keyBox || !keyInput || !keyRemove || !more || !empty) return;
+  const bar = pane.querySelector<HTMLElement>("[data-font-web-bar]");
+  const region = pane.querySelector<HTMLElement>("[data-font-web-region]");
+  const keyToggle = pane.querySelector<HTMLButtonElement>("[data-font-key-toggle]");
+  const googleBrowse = pane.querySelector<HTMLButtonElement>("[data-font-src='google']");
+  if (!box || !list || !mine || !tpl || !subsetPick || !sample || !line || !keyBox || !keyInput || !keyRemove || !more || !empty || !bar || !region || !keyToggle || !googleBrowse) return;
 
-  let source: WebFontSource = "fontsource";
+  let source: WebFontSource | null = null;
   let limit = STEP;
   let keyKept = false;
+  let keysKnown = false;
   let installed: InstalledFont[] = [];
   const catalogues = new Map<WebFontSource, WebFontCatalogue>();
   const failed = new Map<WebFontSource, string>();
@@ -52,24 +57,22 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
   const haveOf = (key: string) => installed.filter((f) => f.family_id === key);
 
   const describe = () => {
-    const cat = catalogues.get(source);
-    const text = loading.has(source)
-      ? t("Reading the {source} catalogue.", { source: sourceName(source) })
-      : failed.has(source)
-        ? t("{source} could not be read: {why}", { source: sourceName(source), why: failed.get(source) ?? "" })
-        : source === "google" && !cat?.on
-          ? t("Google Fonts is off. It needs your own API key from Google Cloud.")
-          : source === "google"
-            ? t("Google Fonts through your own key: FormPortal asks www.googleapis.com and fonts.gstatic.com, and reads each family's licence from Fontsource's copy at cdn.jsdelivr.net.")
-            : t("Fontsource's public catalogue, with no account: FormPortal asks api.fontsource.org and cdn.jsdelivr.net, and sends nothing about you.");
+    const text =
+      source === "google"
+        ? t("Google Fonts through your own key: FormPortal asks www.googleapis.com and fonts.gstatic.com, and reads each family's licence from Fontsource's copy at cdn.jsdelivr.net.")
+        : source === "fontsource"
+          ? t("Fontsource's public catalogue, with no account: FormPortal asks api.fontsource.org and cdn.jsdelivr.net, and sends nothing about you.")
+          : keyKept || !keysKnown
+            ? ""
+            : t("Google Fonts is off. It needs your own API key from Google Cloud.");
     put(line, text);
-    flag(keyBox, "hidden", source !== "google");
+    flag(googleBrowse, "hidden", !keyKept);
     keyRemove.disabled = !keyKept;
   };
 
   const subsets = () => {
     const all = new Set<string>();
-    for (const f of catalogues.get(source)?.families ?? []) for (const s of f.subsets) all.add(s);
+    for (const f of (source ? catalogues.get(source)?.families : undefined) ?? []) for (const s of f.subsets) all.add(s);
     const want = ["", ...Array.from(all).sort()];
     const have = Array.from(subsetPick.options).map((o) => o.value);
     if (want.join("|") === have.join("|")) return;
@@ -208,25 +211,37 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     const words = (query?.value ?? "").trim().toLowerCase().split(/\s+/).filter(Boolean);
     const cat = pane.dataset.category ?? "all";
     const sub = subsetPick.value;
-    const fams = catalogues.get(source)?.families ?? [];
+    const current = source;
+    const fams = (current ? catalogues.get(current)?.families : undefined) ?? [];
     const show = new Set<string>();
     let hits = 0;
     for (const f of fams) {
+      if (!current) break;
       const kind = f.category === "handwriting" ? "display" : f.category;
       const hit = words.every((w) => `${f.family} ${f.category}`.toLowerCase().includes(w)) && (cat === "all" || kind === cat) && (!sub || f.subsets.includes(sub));
       if (!hit) continue;
       hits += 1;
       if (hits <= limit) {
-        row(f, source);
-        show.add(`${source}:${f.id}`);
+        row(f, current);
+        show.add(`${current}:${f.id}`);
       }
     }
     for (const [k, r] of rows) if (r.hidden === show.has(k)) r.hidden = !show.has(k);
     flag(more, "hidden", hits <= limit);
-    const on = catalogues.get(source)?.on ?? false;
-    const none = on && hits === 0 && !loading.has(source);
-    flag(empty, "hidden", !none);
-    put(empty, none ? t("No family in {source} matches.", { source: sourceName(source) }) : "");
+    const on = (current ? catalogues.get(current)?.on : false) ?? false;
+    const wait = !current
+      ? ""
+      : loading.has(current)
+        ? t("Reading the {source} catalogue.", { source: sourceName(current) })
+        : failed.has(current)
+          ? t("{source} could not be read: {why}", { source: sourceName(current), why: failed.get(current) ?? "" })
+          : catalogues.has(current) && !on
+            ? t("Google Fonts is off. It needs your own API key from Google Cloud.")
+            : on && hits === 0
+              ? t("No family in {source} matches.", { source: sourceName(current) })
+              : "";
+    flag(empty, "hidden", !wait);
+    put(empty, wait);
     put(pane.querySelector("[data-font-web-count]"), on ? `${hits} ${hits === 1 ? "family" : "families"}` : "");
   };
 
@@ -259,11 +274,11 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     if (title) flag(title, "hidden", groups.size === 0);
   };
 
-  const load = async (from: WebFontSource, again = false) => {
-    if (loading.has(from) || (catalogues.has(from) && !again)) return;
+  const load = async (from: WebFontSource) => {
+    if (loading.has(from) || catalogues.has(from)) return;
     loading.add(from);
     failed.delete(from);
-    if (from === source) describe();
+    if (from === source) apply();
     try {
       catalogues.set(from, await bridge.fontWeb(from));
     } catch (e) {
@@ -272,6 +287,17 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
       loading.delete(from);
     }
     if (from !== source) return;
+    subsets();
+    apply();
+  };
+
+  const present = () => {
+    for (const b of pane.querySelectorAll<HTMLButtonElement>("[data-font-src]")) {
+      const on = String(b.dataset.fontSrc === source);
+      if (b.getAttribute("aria-pressed") !== on) b.setAttribute("aria-pressed", on);
+    }
+    flag(bar, "hidden", source === null);
+    flag(region, "hidden", source === null);
     describe();
     subsets();
     apply();
@@ -279,12 +305,9 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
 
   const choose = (to: WebFontSource) => {
     source = to;
-    box.dataset.source = to;
     limit = STEP;
-    for (const b of pane.querySelectorAll<HTMLButtonElement>("[data-font-src]")) b.setAttribute("aria-pressed", String(b.dataset.fontSrc === to));
-    describe();
-    subsets();
-    apply();
+    present();
+    region.scrollTop = 0;
     void load(to);
   };
 
@@ -294,6 +317,7 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     } catch (e) {
       fault(e);
     }
+    keysKnown = true;
     describe();
   };
 
@@ -318,22 +342,29 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     const text = sampleText();
     list.querySelectorAll("[data-font-web-detail]:not([hidden]) [data-sample]").forEach((p) => put(p, text));
   });
+  const forget = () => {
+    catalogues.delete("google");
+    failed.delete("google");
+    for (const k of Array.from(details.keys())) if (k.startsWith("google:")) details.delete(k);
+    if (source === "google") source = null;
+    present();
+  };
+  keyToggle.addEventListener("click", () => {
+    const open = keyBox.hidden;
+    keyBox.hidden = !open;
+    keyToggle.setAttribute("aria-expanded", String(open));
+  });
   pane.querySelector("[data-font-key-save]")?.addEventListener("click", () => {
     const value = keyInput.value;
     void keys(bridge.setProviderKey(KEY, value)).then(() => {
       if (!keyKept) return;
       keyInput.value = "";
-      for (const k of Array.from(details.keys())) if (k.startsWith("google:")) details.delete(k);
-      void load("google", true);
+      forget();
     });
   });
   keyRemove.addEventListener("click", () => {
     void keys(bridge.clearProviderKey(KEY)).then(() => {
-      if (keyKept) return;
-      catalogues.set("google", { source: "google", on: false, families: [] });
-      describe();
-      subsets();
-      apply();
+      if (!keyKept) forget();
     });
   });
   pane.querySelector("[data-font-key-get]")?.addEventListener("click", () => void bridge.openWeb(KEY_PAGE).catch(fault));
@@ -342,8 +373,7 @@ export function setupWeb(engine: Engine, pane: HTMLElement): void {
     installed = view.installed;
     for (const [k, r] of rows) stateOf(r, k);
     paintMine();
-    if (!catalogues.has(source)) void load(source);
   });
   void keys(bridge.providerKeys());
-  describe();
+  present();
 }
