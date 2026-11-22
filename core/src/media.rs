@@ -100,6 +100,14 @@ fn save_credits(dir: &Path, c: &Credits) -> Result<()> {
     Ok(())
 }
 
+pub fn remember_saved(saved: &Saved) -> Result<()> {
+    let lib = library_dir();
+    let mut c = credits(&lib)?;
+    c.saved.retain(|s| s.id != saved.id);
+    c.saved.push(saved.clone());
+    save_credits(&lib, &c)
+}
+
 impl Portal {
     pub fn media_index(&self, url: &str, allow_unsigned: bool) -> Result<MediaIndex> {
         let managed = self.policy()?;

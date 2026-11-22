@@ -34,6 +34,7 @@ pub mod share;
 pub mod signature;
 pub mod site;
 pub mod state;
+pub mod stock;
 pub mod store;
 pub mod templates;
 pub mod web;

@@ -6,6 +6,13 @@ pub const PREFIXES: &[&str] = &[
     "https://formai.studio/download/",
     "https://formai.studio/support/",
     "https://github.com/orgs/nodemode-dev/discussions/new?category=replicate-app-request&",
+    "https://www.pexels.com/",
+    "https://pixabay.com/",
+    "https://openverse.org/",
+    "https://freesound.org/",
+    "https://ccmixter.org/",
+    "https://creativecommons.org/licenses/",
+    "https://creativecommons.org/publicdomain/",
 ];
 pub const EXACT: &[&str] = &[
     "https://github.com/login/device",
