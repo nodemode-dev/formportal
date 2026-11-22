@@ -1,0 +1,100 @@
+.side .nav-mine {
+  overflow: clip;
+  touch-action: none;
+}
+
+.side .nav-mine > li {
+  transform: translate3d(0, var(--wy, 0px), 0);
+}
+
+.side .nav-mine[data-dragging],
+.side .soc-wheel[data-dragging] {
+  cursor: grabbing;
+}
+
+.side .nav-item:not(.nav-app):hover > .ic,
+.side .nav-item:not(.nav-app):focus-visible > .ic,
+.side-fold:hover {
+  color: var(--accent-color);
+}
+
+.soc {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 2px;
+  margin-block-start: var(--sp-1);
+}
+
+.soc-wheel {
+  display: contents;
+}
+
+.soc-link {
+  display: grid;
+  place-items: center;
+  block-size: 34px;
+  min-inline-size: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--accent-color);
+  text-decoration: none;
+  -webkit-user-drag: none;
+}
+
+.soc-link:hover {
+  background: var(--fp-raise);
+  color: var(--accent-color);
+}
+
+html[data-rail="mini"] .soc {
+  display: flex;
+  flex-direction: column;
+  margin-block-start: 2px;
+}
+
+html[data-rail="mini"] .soc-help {
+  order: -1;
+}
+
+html[data-rail="mini"] .soc-wheel {
+  position: relative;
+  display: block;
+  block-size: calc(3 * 34px + 2 * 2px);
+  row-gap: 2px;
+  overflow: clip;
+  touch-action: none;
+}
+
+html[data-rail="mini"] .soc-wheel > .soc-link {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(50% - 17px);
+  opacity: var(--wo, 1);
+  transform: translate3d(0, var(--wy, 0px), 0);
+}
+
+.side-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-tooltip);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--fp-edge-2);
+  border-radius: 6px;
+  background: var(--fp-pane);
+  color: var(--fp-ink);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(var(--tx, 0), var(--ty, 0)) translateY(-50%);
+  transition: opacity 120ms, visibility 0s 120ms;
+}
+
+.side-tip[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 120ms;
+}
