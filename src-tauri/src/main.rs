@@ -562,6 +562,26 @@ fn file_preview(path: String) -> Result<String, String> {
 }
 
 #[tauri::command]
+async fn file_text(path: String) -> Result<Option<formportal_core::files::TextFacts>, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_text(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn file_hash(path: String) -> Result<formportal_core::files::FileHash, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_hash(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+async fn file_download(path: String) -> Result<formportal_core::files::Downloaded, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().file_download(std::path::Path::new(&path), &exts()).map_err(text)).await.map_err(text)?
+}
+
+#[tauri::command]
+fn file_download_reveal(path: String) -> Result<(), String> {
+    formportal_core::files::show_download(std::path::Path::new(&path)).map_err(text)
+}
+
+#[tauri::command]
 fn later_list() -> Result<Vec<String>, String> {
     hub().later().map(|l| l.into_iter().collect()).map_err(text)
 }
@@ -997,6 +1017,10 @@ fn main() {
             stock_preview,
             stock_save,
             stock_reveal,
+            file_text,
+            file_hash,
+            file_download,
+            file_download_reveal,
             traffic_lights::set_window_title, reveal::app_ready, app_icon::set_app_icon
         ])
         .build(tauri::generate_context!())
