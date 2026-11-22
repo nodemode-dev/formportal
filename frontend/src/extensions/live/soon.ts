@@ -1,4 +1,5 @@
 import { pickBridge } from "../../bridge/index.ts";
+import type { Engine } from "../../engine/index.ts";
 import type { UpcomingDay, UpcomingView } from "../../engine/types.ts";
 import { language, t } from "../../i18n/index.ts";
 
@@ -23,7 +24,10 @@ const linkOk = (text: string): boolean => {
   }
 };
 
-export function onTheWay(bundled: number[]): void {
+let first: Promise<UpcomingView> | null = null;
+export const upcomingOnce = (): Promise<UpcomingView> => (first ??= pickBridge().siteUpcoming());
+
+export function onTheWay(engine: Engine, bundled: number[]): void {
   const bridge = pickBridge();
   const root = document.documentElement;
   const list = document.querySelector<HTMLElement>("[data-soon] .waves");
@@ -124,6 +128,7 @@ export function onTheWay(bundled: number[]): void {
   };
 
   let timer = 0;
+  let last: UpcomingView | null = null;
   const apply = (view: UpcomingView) => {
     const unsealed = view.known && !view.dated.some((d) => d.sealed);
     const since = typeof view.launched === "number" ? view.launched * 1000 : null;
@@ -134,7 +139,8 @@ export function onTheWay(bundled: number[]): void {
     const title = !ask ? "way" : shown.size > 0 ? "horizon" : "request";
     name(title);
     window.clearTimeout(timer);
-    if (since !== null && !ask) timer = window.setTimeout(() => void refresh(), Math.min(since + HOUR - Date.now() + 1000, POLL));
+    if (since !== null && !ask) timer = window.setTimeout(() => apply(view), since + HOUR - Date.now() + 1000);
+    last = view;
     try {
       localStorage.setItem(KEY, JSON.stringify({ unsealed, ask, title }));
     } catch {}
@@ -143,13 +149,24 @@ export function onTheWay(bundled: number[]): void {
     const kept = JSON.parse(localStorage.getItem(KEY) ?? "null");
     if (kept && typeof kept.title === "string") name(kept.title);
   } catch {}
-  const refresh = async () => {
+  let asked = Date.now();
+  const refresh = async (ask: Promise<UpcomingView>) => {
     try {
-      apply(await bridge.siteUpcoming());
+      apply(await ask);
     } catch {}
   };
-  void refresh();
-  window.setInterval(() => void refresh(), POLL);
+  void refresh(upcomingOnce());
+  const looked = () => {
+    if (engine.state.route !== "home") return;
+    if (Date.now() - asked < POLL) {
+      if (last) apply(last);
+      return;
+    }
+    asked = Date.now();
+    void refresh(bridge.siteUpcoming());
+  };
+  engine.on("route", looked);
+  window.addEventListener("focus", looked);
 
   const dialog = document.querySelector<HTMLDialogElement>("[data-request]");
   const opener = document.querySelector<HTMLButtonElement>("[data-soon-ask-open]");

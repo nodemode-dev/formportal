@@ -66,6 +66,6 @@ export const live: Extension = {
     engine.on("source", apply);
     engine.on("install", apply);
     engine.on("policy", apply);
-    onTheWay(RELEASES.filter((g) => !g.sealed).map((g) => Date.parse(g.at)));
+    onTheWay(engine, RELEASES.filter((g) => !g.sealed).map((g) => Date.parse(g.at)));
   },
 };

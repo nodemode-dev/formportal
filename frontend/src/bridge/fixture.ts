@@ -651,6 +651,7 @@ export const fixtureBridge: Bridge = {
     return { ...access };
   },
   siteUpcoming: async () => {
+    (window as unknown as { __siteUpcomingCalls: number }).__siteUpcomingCalls = ((window as unknown as { __siteUpcomingCalls?: number }).__siteUpcomingCalls ?? 0) + 1;
     const now = Math.floor(Date.now() / 1000);
     if (SOON === "bundled") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: true, launched: null };
     const undated = params.has("undated") ? SITE_UNDATED : 0;

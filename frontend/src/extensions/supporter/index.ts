@@ -5,6 +5,7 @@ import type { SupporterTile, SupporterView, UpcomingView } from "../../engine/ty
 import { language, t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 import { UNDATED } from "../live/index.ts";
+import { upcomingOnce } from "../live/soon.ts";
 
 const NAMES_KEY = "formportal.site";
 const LIVE_KEY = "formportal.live";
@@ -166,7 +167,7 @@ export const supporter: Extension = {
 
     void (async () => {
       try {
-        more(await bridge.siteUpcoming());
+        more(await upcomingOnce());
       } catch {}
       try {
         apply(await bridge.supporterCheck(null));
