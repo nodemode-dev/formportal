@@ -2,7 +2,7 @@
 
 Living log for demo 2. Source files stay comment-free; what they would have said lives here.
 
-Built against: v0.70.0 · 2026-11-20
+Built against: v0.71.2 · 2026-11-22
 
 ## Rebuilt after v0.71.1 {#rebuild-0-71-2}
 - refers-to: demos/updates/vite.config.mjs :: `resolveId`, the release-notes patch removed · demos/updates/src/bridge.ts :: `demoBridge` · demos/updates/src/demo.css · demos/updates/raw.d.ts · demos/updates/index.html · demos/updates/assets/ · demos/updates/apps/formsubstrate*.webp, formpublisher*.webp (subform*.webp removed)
