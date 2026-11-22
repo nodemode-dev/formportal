@@ -200,9 +200,7 @@ fn digest(code: &str) -> String {
 pub fn code_ok(code: &str) -> bool {
     let parts: Vec<&str> = code.split('.').collect();
     parts.len() == 4
-        && parts[0] == "d1"
-        && !parts[1].is_empty()
-        && parts[1].len() <= 20
+        && ((parts[0] == "d1" && !parts[1].is_empty() && parts[1].len() <= 20) || (parts[0] == "v1" && parts[1].len() == 10))
         && parts[1].bytes().all(|b| b.is_ascii_digit())
         && parts[2].len() == 32
         && parts[2].bytes().all(|b| b.is_ascii_hexdigit())
