@@ -55,10 +55,31 @@ export const svg = (name: string, cls = "ic") =>
 
 const esc = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const GROUPS: [string, string][] = [
-  ["adobe", "Instead of Adobe"],
-  ["other", "Everything around them"],
+const CATEGORIES: [string, string][] = [
+  ["image", "Image Editor Apps"],
+  ["design", "Design Editor Apps"],
+  ["document", "Document Editor Apps"],
+  ["video", "Video Editor Apps"],
+  ["audio", "Audio Editor Apps"],
+  ["3d", "3D Editor Apps"],
+  ["web", "Web Editor Apps"],
+  ["code", "Code Editor Apps"],
+  ["agentic", "Agentic Apps"],
+  ["tools", "Tooling & Utilities Apps"],
 ];
+const CATEGORY: Record<string, string> = {
+  formvis: "image", formlit: "image", formref: "image",
+  formdesign: "design", formpath: "design",
+  formmd: "document", formtxt: "document", formcel: "document", formpdf: "document", formslide: "document",
+  formcut: "video", formvfx: "video", formencoder: "video",
+  formwav: "audio",
+  formsculpt: "3d", formsurface: "3d", formfabric: "3d",
+  formweb: "web",
+  formext: "code",
+  format: "agentic", formmcp: "agentic", formskills: "agentic",
+  formdam: "tools", formtools: "tools", formtray: "tools",
+};
+const CATEGORY_FALLBACK = "tools";
 const ALIAS: Record<string, string> = { formportal: "formai", formdeck: "formslide", formskill: "formskills" };
 const ICON_FILE: Record<string, string> = { formai: "formportal", formslide: "formdeck" };
 const UPSTREAM: Record<string, string> = Object.fromEntries(Object.entries(ALIAS).map(([theirs, ours]) => [ours, theirs]));
@@ -155,13 +176,18 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   ];
 
   const changed = '<span class="st-more"><span class="mono" data-field="update-size"></span><button class="fold-head" type="button" data-notes-toggle aria-expanded="false">What changed</button></span>';
-  const rows = (p: App, channel: "stable" | "beta", waiting = false) =>
-    `<li class="row" data-row="${channel}" data-product="${p.id}" data-group="${group(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub">${line(p)}</p></div><p class="row-sum">${esc(p.summary)}</p><p class="row-state">${state}${waiting ? changed : ""}${bar}</p>${acts(true)}${waiting ? '<div class="row-notes notes-text" data-field="notes"></div>' : ""}</li>`;
+  const category = (p: App) => CATEGORY[p.id] ?? CATEGORY_FALLBACK;
+  const placed = Object.keys(CATEGORY);
+  const rank = (p: App) => (placed.includes(p.id) ? placed.indexOf(p.id) : placed.length);
+  const rows = (p: App, channel: "stable" | "beta") =>
+    `<li class="row app-row" data-row="${channel}" data-product="${p.id}" data-group="${category(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub" title="${line(p)}">${line(p)}</p></div><p class="row-sum" title="${esc(p.summary)}">${esc(p.summary)}</p><p class="row-state">${state}${changed}${bar}</p><span class="row-pill" data-field="pill"></span>${acts(true)}<div class="row-notes"><div class="row-notes-in notes-text" data-field="notes"></div></div></li>`;
 
-  const list = GROUPS.map(
-    ([g, title]) => `<section class="group" data-group-head="${g}"><h2 class="group-title">${title}</h2><ul class="rows">${apps.filter((p) => group(p) === g).map((p) => rows(p, "stable")).join("")}</ul></section>`,
-  );
-  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel, true)));
+  const sorted = [...apps].sort((a, b) => rank(a) - rank(b));
+  const filled = CATEGORIES.filter(([c]) => sorted.some((p) => category(p) === c));
+  const list = [
+    `<section class="group canvas"><h2 class="canvas-title">A tool for every canvas</h2>${filled.map(([c, title]) => `<section class="canvas-cat" data-group-head="${c}"><h3 class="group-title canvas-cat-title">${esc(title)}</h3><ul class="rows">${sorted.filter((p) => category(p) === c).map((p) => rows(p, "stable")).join("")}</ul></section>`).join("")}</section>`,
+  ];
+  const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel)));
 
   const pages = apps.map((p) => {
     const c = caps(p);
@@ -239,9 +265,9 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     `html[data-soon-unsealed] [data-soon-sealed], html:not([data-soon-ask]) [data-soon-ask-tile] { display: none; }`,
     `html[data-soon-left="0"][data-soon-more="0"]${sealed.length ? "[data-soon-unsealed]" : ""}:not([data-soon-ask]):not([data-soon-site]) [data-soon] { display: none; }`,
     ...extIds.map((id) => `[data-pane="extensions"][data-filter="${id}"] .ext:not([data-product="${id}"]) { display: none; }`),
-    ...GROUPS.map(([g]) => {
-      const none = apps.filter((p) => group(p) === g).map((p) => `:not([data-live~="${p.id}"])`).join("");
-      return `html${none} [data-group-head="${g}"] { display: none; }`;
+    ...CATEGORIES.map(([c]) => {
+      const none = apps.filter((p) => category(p) === c).map((p) => `:not([data-live~="${p.id}"])`).join("");
+      return `html${none} [data-group-head="${c}"] { display: none; }`;
     }),
   ].join("\n");
 

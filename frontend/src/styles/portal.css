@@ -952,14 +952,19 @@ button.fold-head {
 }
 
 .row-notes {
-  display: none;
+  display: grid;
+  grid-template-rows: 0fr;
   grid-column: 2 / -1;
   max-inline-size: 72ch;
   margin: 0;
+  visibility: hidden;
+  transition: grid-template-rows 220ms ease, visibility 0s linear 220ms;
 }
 
 .row[data-notes-open] > .row-notes {
-  display: block;
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 220ms ease;
 }
 
 /* home: the family */
