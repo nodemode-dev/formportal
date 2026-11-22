@@ -178,6 +178,8 @@
 
 .prefs.inspect {
   inline-size: min(560px, 92vw);
+  max-block-size: min(860px, 94vh);
+  overflow-y: auto;
 }
 
 .inspect-shot {
@@ -228,6 +230,66 @@
 .inspect-hash {
   min-block-size: 2.6em;
   font-size: 12px;
+}
+
+.inspect-now > .inspect-hash {
+  display: block;
+  min-block-size: 3em;
+  line-height: 1.5;
+}
+
+.inspect-now > .fine {
+  display: block;
+  min-block-size: 1.5em;
+  color: var(--fp-ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.inspect-text {
+  box-sizing: border-box;
+  block-size: 132px;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: auto;
+  border: 1px solid var(--fp-edge);
+  border-radius: 10px;
+  background: var(--fp-ctl);
+  color: var(--fp-ink);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.inspect-text[data-note] {
+  display: grid;
+  place-items: center;
+  color: var(--fp-ink-3);
+  font-family: inherit;
+}
+
+.inspect-text[hidden] {
+  display: none;
+}
+
+.inspect-said {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 1.6em;
+  margin: 0;
+}
+
+.inspect-said > .fine {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspect-said[data-fault] > .fine {
+  color: var(--fault);
 }
 
 .ext .drop-more > .menu {

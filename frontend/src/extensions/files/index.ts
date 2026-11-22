@@ -1,5 +1,6 @@
 import type { FileVersion, FolderView, ProjectFile } from "../../engine/types.ts";
 import { t } from "../../i18n/index.ts";
+import { pickBridge } from "../../bridge/index.ts";
 import type { Extension } from "../registry.ts";
 
 const size = (bytes: number) =>
@@ -71,11 +72,82 @@ export const files: Extension = {
       const node = inspector?.querySelector<HTMLElement>(`[data-inspect='${field}']`);
       if (node && node.textContent !== text) node.textContent = text;
     };
+    const bridge = pickBridge();
+    const textBox = inspector?.querySelector<HTMLElement>("[data-inspect-text]");
+    const said = inspector?.querySelector<HTMLElement>("[data-inspect-said]");
+    const reveal = inspector?.querySelector<HTMLButtonElement>("[data-inspect-reveal]");
+    const download = inspector?.querySelector<HTMLButtonElement>("[data-inspect-download]");
+    let asked = 0;
+    let nowHash: string | null | undefined;
+    let keptHash: string | null | undefined;
+    let saved = "";
+    const sameness = () => {
+      const text = nowHash === undefined || keptHash === undefined ? "" : !nowHash || !keptHash ? "" : nowHash === keptHash ? t("Same as the last kept version") : t("Changed since the last kept version");
+      fact("same", text);
+    };
+    const note = (text: string, isNote: boolean) => {
+      if (!textBox) return;
+      if (textBox.textContent !== text) textBox.textContent = text;
+      textBox.toggleAttribute("data-note", isNote);
+    };
+    const tell = (text: string, fault: boolean, path = "") => {
+      fact("said", text);
+      said?.toggleAttribute("data-fault", fault);
+      saved = path;
+      if (reveal && reveal.hidden !== !path) reveal.hidden = !path;
+    };
+    const facts = (path: string, file: ProjectFile) => {
+      const ask = ++asked;
+      nowHash = undefined;
+      keptHash = undefined;
+      fact("text", t("Looking"));
+      fact("now", t("Looking"));
+      fact("same", "");
+      if (textBox) {
+        textBox.hidden = Boolean(file.preview);
+        note(t("Looking"), true);
+      }
+      tell("", false);
+      if (download) download.disabled = false;
+      bridge.fileText(path).then(
+        (text) => {
+          if (ask !== asked) return;
+          if (!text) {
+            fact("text", t("Not a text file"));
+            note(t("No text preview for this kind of file"), true);
+            return;
+          }
+          const counts = `${text.lines === 1 ? t("1 line") : t("{n} lines", { n: text.lines })}, ${text.words === 1 ? t("1 word") : t("{n} words", { n: text.words })}`;
+          fact("text", text.whole ? counts : t("{counts} in the first 64 KB", { counts }));
+          if (text.first_lines) note(text.first_lines, false);
+          else note(t("The file is empty"), true);
+        },
+        (error: unknown) => {
+          if (ask !== asked) return;
+          fact("text", String(error instanceof Error ? error.message : error));
+          note("", true);
+        },
+      );
+      bridge.fileHash(path).then(
+        (hash) => {
+          if (ask !== asked) return;
+          nowHash = hash.sha256;
+          fact("now", hash.sha256 ?? t("Too large to hash here, over {size}", { size: size(hash.limit) }));
+          sameness();
+        },
+        (error: unknown) => {
+          if (ask !== asked) return;
+          nowHash = null;
+          fact("now", String(error instanceof Error ? error.message : error));
+        },
+      );
+    };
     const inspect = (path: string) => {
       const file = known.get(path);
       if (!inspector || !file) return;
       inspected = path;
       current = path;
+      facts(path, file);
       const dot = file.name.lastIndexOf(".");
       fact("name", file.name);
       fact("path", file.path);
@@ -266,6 +338,30 @@ export const files: Extension = {
       if (!inspector?.open || path !== inspected) return;
       fact("versions", list.length === 0 ? t("None kept yet") : list.length === 1 ? t("1 version") : t("{n} versions", { n: list.length }));
       fact("sha256", list[0]?.sha256 ?? t("None kept yet"));
+      keptHash = list[0]?.sha256 ?? null;
+      sameness();
+    });
+    download?.addEventListener("click", () => {
+      const path = inspected;
+      const ask = asked;
+      if (!path) return;
+      download.disabled = true;
+      tell(t("Copying to Downloads"), false);
+      bridge.fileDownload(path).then(
+        (done) => {
+          if (ask !== asked) return;
+          download.disabled = false;
+          tell(done.zipped ? t("Zipped into {path}", { path: done.path }) : t("Copied to {path}", { path: done.path }), false, done.path);
+        },
+        (error: unknown) => {
+          if (ask !== asked) return;
+          download.disabled = false;
+          tell(String(error instanceof Error ? error.message : error), true);
+        },
+      );
+    });
+    reveal?.addEventListener("click", () => {
+      if (saved) bridge.fileDownloadReveal(saved).catch((error: unknown) => tell(String(error instanceof Error ? error.message : error), true));
     });
     inspector?.querySelector("[data-inspect-keep]")?.addEventListener("click", () => inspected && void engine.dispatch("file.versions", { path: inspected, action: "save" }));
     inspector?.querySelector("[data-inspect-close]")?.addEventListener("click", () => inspector.close());
