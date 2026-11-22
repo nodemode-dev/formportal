@@ -191,7 +191,7 @@ html[data-side-drag] .shell {
   flex-direction: column;
   min-block-size: 0;
   inline-size: auto;
-  padding: 14px 10px 12px;
+  padding: var(--sp-2) 10px 12px;
   overflow: hidden auto;
   border-inline-end: 1px solid var(--fp-edge);
   background: var(--fp-side);
@@ -203,9 +203,9 @@ html[data-side-drag] .shell {
   flex: none;
   gap: var(--sp-2);
   box-sizing: content-box;
-  block-size: 36px;
-  margin: 0 0 var(--sp-3);
-  padding: 0 4px var(--sp-2) 6px;
+  block-size: var(--sp-6);
+  margin: 0 0 var(--sp-2);
+  padding: 0 4px var(--sp-1) 6px;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -352,7 +352,7 @@ html[data-side-drag] .shell {
 .nav-title {
   flex: none;
   block-size: var(--sp-4);
-  margin: var(--sp-4) 10px var(--sp-2);
+  margin: var(--sp-2) 10px var(--sp-2);
   color: var(--fp-ink-3);
   font-size: 11px;
   font-weight: 600;
