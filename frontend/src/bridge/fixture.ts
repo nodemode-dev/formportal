@@ -199,7 +199,7 @@ let access: AgentAccess = new URLSearchParams(window.location.search).get("agent
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
 if (params.has("supporter")) prefs = { ...prefs, supporter_code: SUPPORTER_FIXTURE_CODE };
 if (params.get("ask") === "on") prefs = { ...prefs, ask_site: true };
-const asked = (counter: "__siteUpcomingCalls" | "__supporterChecks") => {
+const asked = (counter: "__siteUpcomingCalls" | "__supporterChecks" | "__githubRequests") => {
   const w = window as unknown as Record<string, number | undefined>;
   w[counter] = (w[counter] ?? 0) + 1;
 };
@@ -569,8 +569,9 @@ export const fixtureBridge: Bridge = {
     if (!disconnect && (before === "open" || before === "stale")) ownSeen.set(client, "connected");
     return agentClients.clients.filter((row) => row.id === client).map(ownFor);
   },
-  githubStatus: async () => ({ configured: new URLSearchParams(window.location.search).has("github"), account: github.account }),
+  githubStatus: async () => ({ configured: githubMode !== "off", account: github.account }),
   githubStart: async (share) => {
+    asked("__githubRequests");
     github.polls = 0;
     github.share = share;
     github.fork = false;

@@ -10,6 +10,7 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 - FormPortal knows the launch is complete from the signed catalogue it already reads: every app of the built-in schedule is out, the sealed day has passed and a new app is in the catalogue. The section then becomes Request (or New app on the horizon) an hour later, as before, without asking formai.studio.
 - A kept supporter code is checked again at start only when Ask formai.studio what is on the way is on. Off, the kept answer is shown for 7 days after the last check (or until the code's end date, if sooner); after that Profile says so, and Check again asks formai.studio once.
 - `apps` on the command line and in the MCP server asks formai.studio only when given `--ask-site` (`ask_site`). `preferences` reads and sets `ask_site`.
+- Connect to GitHub appears in Preferences, Profile: this build carries FormPortal's GitHub app id. Nothing is sent to GitHub until you press Connect to GitHub.
 
 ## v0.71.0 · 2026-11-21
 
@@ -54,7 +55,6 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 ### Known issues
 
 - The stock sources, Fontsource, Google Fonts, the templates download and GitHub's connect and fork were built to each service's documentation and have not yet been tried against the live services. The keychain has not yet been tried on a real system either.
-- Connect to GitHub does not appear in this build: it shows only once FormPortal is built with its GitHub app's id.
 - A fork that GitHub had to name differently (for example form.ext-registry-1) is shown, but its address does not open from FormPortal.
 - The website's `/api/upcoming` answered with an error when version 0.71.0 of the site was first deployed on 21 November, and a site fix (0.71.1) is on its way. Until it is live, FormPortal shows its built-in schedule under On the way, and the supporter view cannot be checked against the live site.
 - In a small window, a notice can cover the bottom of the install card.
