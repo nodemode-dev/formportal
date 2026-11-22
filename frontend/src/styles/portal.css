@@ -568,9 +568,7 @@ html[data-rail="mini"] .side-app[data-install="busy"] .nav-item::after {
   display: flex;
   flex-direction: column;
   gap: 34px;
-  inline-size: min(100%, 1180px);
-  margin-inline: auto;
-  padding: 32px 40px 56px;
+  padding: 32px var(--page-gutter) 56px;
 }
 
 .page > * {
@@ -1653,9 +1651,7 @@ html:not([data-installed]) .list-updates {
   grid-template-rows: auto auto auto;
   align-items: end;
   column-gap: 32px;
-  inline-size: min(100%, 1180px);
-  margin-inline: auto;
-  padding: 18px 40px 0;
+  padding: 18px var(--page-gutter) 0;
 }
 
 .back {

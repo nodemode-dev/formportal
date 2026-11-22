@@ -480,9 +480,7 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 }
 
 .page {
-  inline-size: min(100%, 1040px);
-  margin-inline: auto;
-  padding: var(--sp-6) var(--sp-6) var(--sp-8);
+  padding: var(--sp-6) var(--page-gutter) var(--sp-8);
 }
 
 .lede {
