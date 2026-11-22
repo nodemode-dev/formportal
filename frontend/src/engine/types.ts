@@ -248,6 +248,24 @@ export interface FileVersion {
   reason: string;
 }
 
+export interface TextFacts {
+  lines: number;
+  words: number;
+  whole: boolean;
+  first_lines: string;
+}
+
+export interface FileHash {
+  sha256: string | null;
+  bytes: number;
+  limit: number;
+}
+
+export interface Downloaded {
+  path: string;
+  zipped: boolean;
+}
+
 export interface StorageView {
   formportal: { what: string; path: string; bytes: number }[];
   formportal_bytes: number;

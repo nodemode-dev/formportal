@@ -45,13 +45,20 @@ const key = (product: string, channel: Channel) => `${product}:${channel}`;
 const SAMPLE = "/home/you/Documents/Form";
 const folders: FolderView[] = new URLSearchParams(window.location.search).has("files") ? [{ path: SAMPLE, keep_versions: true, exists: true, files: 0, bytes: 0 }] : [];
 const day = 86400;
+const SAMPLE_TEXT = "# Shot list\n\nNorthern coast, four days on the road.\n\n- Hamnoy village at blue hour\n- Mountain lake, first light\n- Lighthouse at dusk\n- Slow waves on the shore\n- Drone pass over the headland\n";
 const stamp = Math.floor(Date.parse("2026-10-12T09:00:00Z") / 1000);
 const sampleFiles = (folder: string): ProjectFile[] => [
   { path: `${folder}/Trailer.fc`, name: "Trailer.fc", folder, product: "formcut", bytes: 18_400_000, modified: stamp, versions: 4, preview: `${folder}/Trailer.fc.preview.webp` },
   { path: `${folder}/Posters/Launch poster.fmv`, name: "Launch poster.fmv", folder, product: "formvis", bytes: 52_300_000, modified: stamp - day, versions: 2 },
   { path: `${folder}/Audio/Interview mix.fmw`, name: "Interview mix.fmw", folder, product: "formwav", bytes: 9_100_000, modified: stamp - 3 * day, versions: 1 },
   { path: `${folder}/Cutdowns/Teaser 15s.fc`, name: "Teaser 15s.fc", folder, product: "formcut", bytes: 4_200_000, modified: stamp - 9 * day, versions: 1 },
+  { path: `${folder}/Northern coast/shot-list.fcel`, name: "shot-list.fcel", folder, product: "formcel", bytes: new TextEncoder().encode(SAMPLE_TEXT).length, modified: stamp - 2 * day, versions: 2 },
 ];
+const sampleHash = async (path: string) => {
+  const text = path.endsWith(".fcel") ? SAMPLE_TEXT : path;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+};
 const kept = new Map<string, FileVersion[]>();
 const versionsOf = (path: string, count: number): FileVersion[] => {
   if (!kept.has(path)) kept.set(path, Array.from({ length: count }, (_, i) => ({ id: `${stamp - i * day}-${(i + 1).toString(16).padStart(12, "0")}`, at: stamp - i * day, size: 1000 * (count - i), sha256: "0".repeat(64), reason: i === count - 1 ? "first seen" : "changed since the last version" })));
@@ -679,6 +686,26 @@ export const fixtureBridge: Bridge = {
   stockPreview: (id, which) => stockFixture.preview(id, which),
   stockSave: (id, progress) => stockFixture.save(id, savedMedia, progress),
   stockReveal: async () => undefined,
+  fileText: async (path) => {
+    await pause(350);
+    if (!folders.flatMap((f) => sampleFiles(f.path)).some((f) => f.path === path)) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    if (!path.endsWith(".fcel")) return null;
+    return { lines: SAMPLE_TEXT.split("\n").filter((l, i, all) => i < all.length - 1 || l).length, words: SAMPLE_TEXT.split(/\s+/).filter(Boolean).length, whole: true, first_lines: SAMPLE_TEXT.split("\n").slice(0, 12).join("\n").trimEnd() };
+  },
+  fileHash: async (path) => {
+    await pause(700);
+    const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
+    if (!file) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    const limit = params.has("hashlimit") ? 1_000_000 : 2 * 1024 * 1024 * 1024;
+    return { sha256: file.bytes <= limit ? await sampleHash(path) : null, bytes: file.bytes, limit };
+  },
+  fileDownload: async (path) => {
+    await pause(400);
+    const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
+    if (!file) throw new Error(`${path} is not a project in one of FormPortal's folders`);
+    return { path: `/home/you/Downloads/${file.name}`, zipped: false };
+  },
+  fileDownloadReveal: async () => undefined,
   autoUpdate: async (progress) => {
     const done: UpdateOutcome[] = [];
     for (const record of Array.from(installed.values())) {

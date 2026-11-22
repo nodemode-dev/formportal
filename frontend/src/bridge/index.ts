@@ -2,6 +2,7 @@ import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, L
 import type { KeyState } from "../engine/types.ts";
 import type { SavedMedia, StockKind, StockPage, StockSource } from "../engine/types.ts";
 import type { StepReport } from "../engine/types.ts";
+import type { Downloaded, FileHash, TextFacts } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -93,6 +94,10 @@ export interface Bridge {
   stockPreview(id: string, which: "thumb" | "view"): Promise<string>;
   stockSave(id: string, progress: (fraction: number) => void): Promise<SavedMedia>;
   stockReveal(path: string): Promise<void>;
+  fileText(path: string): Promise<TextFacts | null>;
+  fileHash(path: string): Promise<FileHash>;
+  fileDownload(path: string): Promise<Downloaded>;
+  fileDownloadReveal(path: string): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
 }
 

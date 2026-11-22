@@ -2,6 +2,7 @@ import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, Age
 import type { KeyState } from "../engine/types.ts";
 import type { SavedMedia, StockPage, StockSource } from "../engine/types.ts";
 import type { StepReport } from "../engine/types.ts";
+import type { Downloaded, FileHash, TextFacts } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -159,6 +160,12 @@ export const tauriBridge: Bridge = {
   },
   stockReveal: async (path) => {
     await tauri().core.invoke<null>("stock_reveal", { path });
+  },
+  fileText: (path) => tauri().core.invoke<TextFacts | null>("file_text", { path }),
+  fileHash: (path) => tauri().core.invoke<FileHash>("file_hash", { path }),
+  fileDownload: (path) => tauri().core.invoke<Downloaded>("file_download", { path }),
+  fileDownloadReveal: async (path) => {
+    await tauri().core.invoke<null>("file_download_reveal", { path });
   },
   autoUpdate: async (progress) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>
