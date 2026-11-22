@@ -81,6 +81,11 @@ export interface Bridge {
   providerKeys(): Promise<KeyState[]>;
   setProviderKey(provider: string, key: string): Promise<KeyState[]>;
   clearProviderKey(provider: string): Promise<KeyState[]>;
+  templatesKept(): Promise<import("../engine/types.ts").TemplatesView | null>;
+  templatesFetch(): Promise<import("../engine/types.ts").TemplatesView>;
+  templatesDownload(id: string): Promise<import("../engine/types.ts").TemplateDownload>;
+  templatesPreview(path: string): Promise<string>;
+  templatesReveal(path: string): Promise<void>;
   autoUpdate(progress: (product: string, channel: Channel, fraction: number) => void): Promise<UpdateOutcome[]>;
 }
 

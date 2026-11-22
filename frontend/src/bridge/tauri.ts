@@ -112,6 +112,13 @@ export const tauriBridge: Bridge = {
   providerKeys: () => tauri().core.invoke<KeyState[]>("provider_keys"),
   setProviderKey: (provider, key) => tauri().core.invoke<KeyState[]>("provider_key_set", { provider, key }),
   clearProviderKey: (provider) => tauri().core.invoke<KeyState[]>("provider_key_clear", { provider }),
+  templatesKept: () => tauri().core.invoke<import("../engine/types.ts").TemplatesView | null>("templates_kept"),
+  templatesFetch: () => tauri().core.invoke<import("../engine/types.ts").TemplatesView>("templates_fetch"),
+  templatesDownload: (id) => tauri().core.invoke<import("../engine/types.ts").TemplateDownload>("templates_download", { id }),
+  templatesPreview: (path) => tauri().core.invoke<string>("templates_preview", { path }),
+  templatesReveal: async (path) => {
+    await tauri().core.invoke("templates_reveal", { path });
+  },
   autoUpdate: async (progress) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>
       progress(payload.product, payload.channel, payload.total > 0 ? payload.have / payload.total : 0),

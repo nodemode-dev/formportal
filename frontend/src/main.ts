@@ -33,6 +33,7 @@ import { demos } from "./extensions/demos/index.ts";
 import { popout } from "./extensions/popout/index.ts";
 import { versions } from "./extensions/versions/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
+import { templates } from "./extensions/templates/index.ts";
 
 const revealLate = window.setTimeout(revealApp, 900);
 
@@ -43,6 +44,7 @@ const shownName = (id: string) => (liveNow(id) ? engine.name(id) : t("a Form app
 engine.state.light = document.documentElement.getAttribute("data-theme") === "light";
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
 [live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, ownAgents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
+register(templates);
 activateAll(engine);
 
 interface Target {

@@ -10,6 +10,7 @@ import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, WebFontSource, WebFontFamily,FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
+import { templatesFixture } from "./fixture-templates.ts";
 
 function browserPlatform(): Platform {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
@@ -338,6 +339,7 @@ export const fixtureBridge: Bridge = {
     folders.splice(at, 1);
   },
   fileOpen: async (path) => {
+    if (path.startsWith(`${SAMPLE}/Templates/`)) return path.split("/")[6] ?? "";
     const file = folders.flatMap((f) => sampleFiles(f.path)).find((f) => f.path === path);
     if (!file) throw new Error(`${path} does not exist`);
     if (!installed.has(key(file.product, "stable"))) throw new Error(`${file.product}, which opens ${path.slice(path.lastIndexOf("."))} files, is not installed`);
@@ -616,6 +618,7 @@ export const fixtureBridge: Bridge = {
     const dated = SOON === "ask-new" ? [{ at: "2027-01-15T17:00:00Z", count: 2 }] : [];
     return { known: true, dated, undated: 0, supporters: 0, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
   },
+  ...templatesFixture,
   supporterCheck: async (code) => {
     const given = code === null ? (prefs.supporter_code ?? "") : code.trim();
     if (code === "") {

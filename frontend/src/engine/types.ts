@@ -539,3 +539,45 @@ export interface SupporterView {
   checked: number;
   stale: boolean;
 }
+
+export interface TemplateItem {
+  id: string;
+  kind: "template" | "demo";
+  name: string;
+  description: string;
+  path: string;
+  bytes: number;
+  sha256: string;
+  licence: string;
+  credit: string;
+  preview?: string | null;
+}
+
+export interface TemplateApp {
+  id: string;
+  name: string;
+  licence: string;
+  version: string;
+  items: TemplateItem[];
+}
+
+export interface TemplateIndex {
+  format: string;
+  format_version: number;
+  generated: string;
+  apps: TemplateApp[];
+}
+
+export interface TemplatesView {
+  index: TemplateIndex;
+  fetched: number;
+  folder: string;
+  downloaded: Record<string, string>;
+}
+
+export interface TemplateDownload {
+  id: string;
+  app: string;
+  path: string;
+  unpacked: boolean;
+}
