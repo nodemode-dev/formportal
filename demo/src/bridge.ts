@@ -12,8 +12,11 @@ import { loadSamples } from "./samples.ts";
 import { readFont } from "./sfnt.ts";
 import { download, encoder, pause, sha256 } from "./util.ts";
 import { readZip, writeZip } from "./zip.ts";
+import { outside } from "./outside.ts";
 
 export const state = { corrupt: false, tamper: false };
+
+const TEXT_LIMIT = 64 * 1024;
 
 const KEEP = "formportal.demo.installs";
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
@@ -163,6 +166,7 @@ function chooseFiles(options: { directory?: boolean; accept?: string }): Promise
 
 export const demoBridge: Bridge = {
   ...fixtureBridge,
+  ...outside,
   catalog: async () => trustedCatalogue(state.tamper),
   catalogKept: async () => trustedCatalogue(false),
   installs: async () => Array.from(installed.values()).map(plain),
@@ -372,4 +376,30 @@ export const demoBridge: Bridge = {
       }
     }
   },
+  fileText: async (path) => {
+    const file = lib.current(path);
+    if (!file) throw new Error(`${path} does not exist`);
+    const head = file.data.subarray(0, TEXT_LIMIT);
+    if (head.includes(0)) return null;
+    let text: string;
+    try {
+      text = new TextDecoder("utf-8", { fatal: true }).decode(head, { stream: file.data.length > TEXT_LIMIT });
+    } catch {
+      return null;
+    }
+    const lines = text.split("\n");
+    return { lines: lines.filter((l, i) => i < lines.length - 1 || l).length, words: text.split(/\s+/).filter(Boolean).length, whole: file.data.length <= TEXT_LIMIT, first_lines: lines.slice(0, 12).map((l) => l.slice(0, 160)).join("\n").trimEnd() };
+  },
+  fileHash: async (path) => {
+    const file = lib.current(path);
+    if (!file) throw new Error(`${path} does not exist`);
+    return { sha256: await sha256(file.data), bytes: file.data.length, limit: 2 * 1024 * 1024 * 1024 };
+  },
+  fileDownload: async (path) => {
+    const file = lib.current(path);
+    if (!file) throw new Error(`${path} does not exist`);
+    download(file.name, file.data, file.type);
+    return { path: `Downloads/${file.name}`, zipped: false };
+  },
+  fileDownloadReveal: async () => undefined,
 };

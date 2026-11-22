@@ -19,6 +19,7 @@ The other demos: `../../demo/index.html` (installs and files) and `../updates/in
 - Inter's "earlier build" is a recorded hash that does not match the index, to show the update path; the bytes registered are the current file.
 - Saved items, installed fonts from the index, tutorial progress and the two seeded apps are remembered in local storage; your own fonts, photographs and looks are not.
 - The font and stock indexes are the bundled starter library, not the formai.studio store.
+- Nothing on the page asks the outside world. A stock search, Browse Fontsource and Google Fonts, the templates list on GitHub, the extension registry and Connect to GitHub show their real screens and, when pressed, say that this demo does not connect to them; Check on a supporter code sends nothing and says formai.studio cannot be reached.
 
 ## Rebuild
 

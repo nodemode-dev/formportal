@@ -5,6 +5,7 @@ import { DEFAULT_PREFS, versionNewer } from "../../../frontend/src/engine/index.
 import type { Artifact, Catalog, Channel, InstallRecord, Preferences, PolicyView, Release, RepairFinding } from "../../../frontend/src/engine/types.ts";
 import registry from "../../../catalog/products.json";
 import { pause, sha256, sizeText } from "../../../demo/src/util.ts";
+import { outside } from "../../../demo/src/outside.ts";
 import { readPack } from "./pack.ts";
 import { checkEntries } from "./unpack.ts";
 import { begin, finish, note, stage } from "./trail.ts";
@@ -453,7 +454,7 @@ for (const [name, fn] of Object.entries(own)) {
   };
 }
 
-export const demoBridge: Bridge = { ...fixtureBridge, source: "fixture", ...(waited as Partial<Bridge>) };
+export const demoBridge: Bridge = { ...fixtureBridge, ...outside, source: "fixture", ...(waited as Partial<Bridge>) };
 
 export function currentPrefs(): Preferences {
   return prefs;

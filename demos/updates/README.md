@@ -7,7 +7,7 @@ The other demos: `../../demo/index.html` (installs and files) and `../library/in
 ## What you can do
 
 - **Update, Update all, Go back.** Press Update on FormVis, FormLit, FormSkills or FormCut. Each install runs the real order: read the catalogue, check its Ed25519 signature, check the address, download, compare the SHA-256, unpack into a staging folder, move it into place, keep the version it replaced. Go back to the version before swaps them again and holds automatic updates.
-- **What changed.** Every row with an update has a fold that shows the release notes, shortened from the apps' own change logs.
+- **What changed.** Every row with an update opens its release notes in place under the row, shortened from the apps' own change logs.
 - **Beta beside stable.** FormCut 2.6.0 and 2.7.0-beta.1 are installed side by side; each has its own row, version and menu.
 - **Update when I close it.** An app that is open (FormCut) is not replaced; the menu offers Update when I close it.
 - **Trust page.** Nine cases to try, each stopped by a named check: a catalogue changed after signing, a removed signature, a signature from an unknown key, a lost network (the kept copy is read again), a flipped byte, an http address, a package that writes outside its folder, a package with a link that points outside, and a deleted app folder repaired by SHA-256. Pause at each check holds the run at every step; Next check moves on. The Checks card at the bottom right follows any install from any page.
@@ -21,6 +21,7 @@ The other demos: `../../demo/index.html` (installs and files) and `../library/in
 - The page signs its catalogue with an Ed25519 key it makes on load (WebCrypto) and trusts it for the session. The key compiled into FormPortal belongs to the publisher and cannot sign this catalogue, so the signature proves the checking, not who published.
 - Release notes for FormVis, FormLit and FormSkills are shortened from their own CHANGELOG.md files; FormCut's 2.6.2 note summarises its release page.
 - Automatic updates start off so the page opens still. Installed apps are remembered in local storage; Reset the demo clears them.
+- Nothing on the page asks the outside world. The pages that would (the extension registry, Connect to GitHub) show their real screens and say that this demo does not connect to them; Check on a supporter code sends nothing and says formai.studio cannot be reached.
 
 ## Browser support
 

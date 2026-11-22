@@ -2,6 +2,13 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.2 · 2026-11-22
+
+### Improved
+
+- The three browser demos (Install and files, Updates and trust, Fonts and stock) show the 0.71 interface, with FormSubstrate and FormPublisher under their new names and icons. The Files inspector works on the demo's own files. Nothing in a demo asks the outside world: a stock search, the web font sources, the templates list, the extension registry and Connect to GitHub show their screens and say the demo does not connect, and On the way shows the built-in schedule.
+- Stock & templates shows its page in one piece once its sources are read, so nothing below them moves when they arrive.
+
 ## v0.71.1 · 2026-11-22
 
 ### Changed

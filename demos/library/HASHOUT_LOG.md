@@ -4,6 +4,13 @@ Living log for demo 3. Source files stay comment-free; what they would have said
 
 Built against: v0.70.0 · 2026-11-20
 
+## Rebuilt after v0.71.1 {#rebuild-0-71-2}
+- refers-to: demos/library/vite.config.mjs :: `resolveId` · demos/library/src/env.d.ts · demos/library/index.html · demos/library/assets/ · demos/library/apps/formsubstrate*.webp, formpublisher*.webp (subform*.webp removed)
+- kind: fix
+- logged: after v0.71.1 · 2026-11-22
+
+Rebuilt with the command in README.md at the 0.71 interface, with demo 1's bridge redirect and its outside answers (../../demo/HASHOUT_LOG.md#rebuild-0-71-2); this bridge already spreads demo 1's, so it gets them as they are. `env.d.ts` declares `import.meta.env.DEV`, which the 0.71 notices read and this folder's type check did not know. The demo opens on Stock & templates, where the 0.71 "Your sources" block above the search bar arrived after the bar was drawn and pushed it down (layout shift 0.33 under 4x throttle); the interface now keeps the page's body hidden until both the media index and the sources are read (frontend/HASHOUT_LOG.md#stock-whole), and the shift is 0.
+
 ## Rebuilt after v0.70.0 {#rebuild-0-70-1}
 - refers-to: demos/library/index.html · demos/library/assets/library.js
 - kind: explainer

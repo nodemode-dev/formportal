@@ -65,7 +65,7 @@ function portalPlugin() {
     name: "formportal-library",
     enforce: "pre",
     resolveId(source, importer) {
-      if (importer && importer.endsWith("/frontend/src/main.ts") && source === "./bridge/index.ts") return resolve(HERE, "src/pickbridge.ts");
+      if (importer && importer.includes("/frontend/src/") && !importer.includes("/frontend/src/bridge/") && /(^|\/)bridge\/index\.ts$/.test(source)) return resolve(HERE, "src/pickbridge.ts");
       return null;
     },
     transform(code, id) {
