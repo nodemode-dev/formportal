@@ -182,9 +182,13 @@ export function stockSearch(engine: Engine): void {
   const paintChips = () => sources.forEach(chip);
 
   const refresh = async () => {
-    sources = await bridge.stockSources();
-    sources.forEach(row);
-    paintChips();
+    try {
+      sources = await bridge.stockSources();
+      sources.forEach(row);
+      paintChips();
+    } finally {
+      if (!pane.hasAttribute("data-sources")) pane.toggleAttribute("data-sources", true);
+    }
   };
 
   const cell = (): Cell => {
@@ -704,7 +708,7 @@ export function stockSearch(engine: Engine): void {
 
   setText(status, t("Type what to look for, then Search."));
   let loaded = false;
-  engine.on("route", ({ route }) => {
+  const look = (route: string) => {
     if (route !== "stock") return;
     if (!loaded) {
       loaded = true;
@@ -712,5 +716,7 @@ export function stockSearch(engine: Engine): void {
         loaded = false;
       });
     }
-  });
+  };
+  engine.on("route", ({ route }) => look(route));
+  look(engine.state.route);
 }

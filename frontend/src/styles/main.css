@@ -1878,7 +1878,8 @@ html[data-launch="included"] .nav-item[data-route-to="included"] {
 
 /* Stock and templates */
 
-[data-pane="stock"]:not([data-ready]) .block {
+[data-pane="stock"]:not([data-ready]) .page > :not(.page-head),
+[data-pane="stock"]:not([data-sources]) .page > :not(.page-head) {
   display: none;
 }
 
