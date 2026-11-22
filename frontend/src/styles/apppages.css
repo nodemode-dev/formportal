@@ -1,0 +1,64 @@
+.ov-main .does + .h3 {
+  margin-block-start: 24px;
+}
+
+.chapters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter {
+  padding: 12px 14px;
+  border: 1px solid var(--fp-edge);
+  border-radius: 12px;
+  background: var(--fp-pane);
+}
+
+.chapter-kicker {
+  margin: 0 0 4px;
+  color: var(--fp-ink-3);
+  font: 10px/16px var(--fp-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chapter-title {
+  margin: 0 0 6px;
+  color: var(--fp-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.chapter-text {
+  margin: 0;
+  color: var(--fp-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.chapter-text .link {
+  display: inline-block;
+  margin-block-start: 6px;
+  text-decoration: underline;
+}
+
+.chips > .chip-size {
+  cursor: help;
+}
+
+.chips > .chip-size:has([data-field="size"]:empty),
+.facts dl > .facts-size:has([data-field="size"]:empty) {
+  display: none;
+}
+
+.facts-size-note {
+  display: block;
+  margin-block-start: 2px;
+}
+
+.vers-size-note {
+  margin: 4px 0 0;
+}
