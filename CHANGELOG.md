@@ -2,6 +2,53 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.0 · 2026-11-21
+
+### New
+
+- Stock & templates searches Pexels, Pixabay, Openverse, Freesound and ccMixter for images, video and audio. Pexels, Pixabay and Freesound need your own free API key, pasted under Your sources; Openverse and ccMixter need none. Results fill a steady grid, and each opens in a viewer with its licence, its credit line and Save. Saved items go to your Library with a text file beside each holding the title, author, source, page and licence. Non-commercial (NC) and no-derivatives (ND) items are shown with that limit in plain words. From Freesound, Save keeps the high-quality preview MP3, because the original file needs a sign-in its API keys cannot give.
+- Templates and demos for every public Form app, one section per app, from the public repository nodemode-dev/formai-templates on GitHub. Nothing is fetched until you choose Get the list; each file is downloaded only when you choose Download (or Download all for an app), kept only if its SHA-256 matches the list, and saved in a Templates folder that Files also shows. Show in folder, and Open in the app when it is installed.
+- Fonts can come from Fontsource, with no account, and from Google Fonts, with your own API key. Preview a family in its own face with your own sample line, see its licence, and install it; a family is installed only when its source states OFL-1.1, Apache-2.0 or MIT, and the licence is saved beside the files.
+- API keys you give FormPortal are kept in the system keychain, never in a file, never logged, and sent only to the service they belong to.
+- An install or a going back shows a card under the app's row that ticks each check as the engine really does it: the catalogue's signature again, the file for this computer, the address, the download, the SHA-256, unpacking, and moving into place (or, going back, finding the kept version, swapping it and holding automatic updates). All the numbers shows the file, sizes, addresses, both SHA-256 values, where it was installed and how long it took. A finished card stays until you close it.
+- Files: a project's name opens an inspector with its path, preview, size, kinds, versions kept and the last kept SHA-256, and Keep as a new version.
+- On the way can show a sealed day: its date and a seal, nothing else. After the launch is complete, a tile offers Request a new Form App, which opens a prefilled GitHub discussion in your browser; FormPortal sends nothing itself.
+- The sidebar has the social links under Preferences: formai.studio, YouTube, r/FormAI, Reddit, Instagram, Threads, TikTok, X and Discord, with Help last. In the folded rail they turn one at a time like a wheel.
+- Profile can set up your own fork of form.ext-registry on GitHub, after you connect GitHub and approve the public_repo permission, with the steps to submit an extension.
+
+### Improved
+
+- Every app row on Updates and Apps is one line high. The installed version sits in a pill in the app's own colour with the download size, right beside the buttons; the whole tagline is in the line's tooltip.
+- What changed opens in place under the row, set as headings, lists and paragraphs, without moving the rows above.
+- Notices show five lines at most and scroll beyond that, lay out one app per line with its versions, keep long values such as a SHA-256 on one line, and leave by themselves after 5 seconds unless the pointer or the keyboard is on them. Updates are never red: only a failure is, and each failed update is its own notice.
+- The "..." menu is a small panel in FormPortal's own look, with the keyboard able to move through it.
+- The Your apps list in the sidebar scrolls smoothly with a trackpad or a drag and no longer jumps back or shows a blank band. Sidebar tooltips wait until the pointer rests on an icon for a moment.
+- Every app page reads its own text and has a How it works section; form.ext and FormFabric have their screenshots. The size of an app is named as the download size.
+- The page fills the window at any width, with the same margin on both sides.
+
+### Changed
+
+- The Apps page is one section, A tool for every canvas, in ten categories.
+- Preferences, Account is now Profile, and its GitHub part is Connect to GitHub, with a plain statement of what is asked, what is kept and where it goes before you connect. Disconnect says how to withdraw FormPortal's access on github.com too. Version and Check & repair moved to General.
+- The tutorial Try a beta beside stable is greyed until a Form app has a beta.
+- The sidebar's title block is tighter, and its icons take the accent colour.
+- README and SECURITY list every host FormPortal itself may contact, and what goes to each.
+
+### Fixed
+
+- A file the download server does not have yet is reported as that ("The download server does not have [file] yet"), not as a file that does not match the catalogue. Nothing is written or installed in either case.
+
+### Known issues
+
+- The stock sources, Fontsource, Google Fonts, the templates download and GitHub's connect and fork were built to each service's documentation and have not yet been tried against the live services. The keychain has not yet been tried on a real system either.
+- Connect to GitHub does not appear in this build: it shows only once FormPortal is built with its GitHub app's id.
+- The Files inspector has no Download button, no line and word counts and no text preview yet, because the engine cannot yet do those.
+- A fork that GitHub had to name differently (for example form.ext-registry-1) is shown, but its address does not open from FormPortal.
+- Fontsource's catalogue is read from api.fontsource.org each time FormPortal starts, not only when you open Fonts.
+- In a small window, a notice can cover the bottom of the install card.
+- The Spanish has not been read by a native speaker.
+- The desktop window was not built for this release on the machine that prepared it, and nothing was run on macOS or Windows, or in WebKit.
+
 ## v0.70.2 · 2026-11-20
 
 - `formportal cli extension-install --path` (and the MCP tool `extension_install` with a path) follows the choice for outside agents, as installing, updating, rolling back and removing an app do: under Ask and Blocked it is refused with the same sentences, under Allowed it goes on to the usual package checks. Installing by id from the signed index is unchanged.
