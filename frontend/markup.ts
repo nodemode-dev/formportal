@@ -197,7 +197,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
       : `<div class="hero-shot hero-plate" aria-hidden="true">${icon(p.id, 120)}</div>`;
     const opensList = [...new Set([...(p.project_extensions ?? []), ...(c.project ? [c.project] : []), ...Object.entries(COMMON).filter(([, id]) => id === p.id).map(([ext]) => `.${ext}`)])].slice(0, 12);
     const does = (c.checks ?? []).slice(0, 6).map((t) => `<li>${esc(t)}</li>`).join("");
-    const linked = (text: string) => text.split(/(https:\/\/github\.com\/nodemode-dev\/[^\s<>"]+)/).map((part, i) => (i % 2 ? web(part, esc(part.replace("https://github.com/", "").replace("/blob/main/", "/"))) : esc(part))).join("");
+    const linked = (text: string) => text.split(/(https:\/\/github\.com\/nodemode-dev\/[^\s<>"]+)/).map((part, i) => (i % 2 ? web(part, esc(part.replace(/^https:\/\/github\.com\//, "").replace("/blob/main/", "/"))) : esc(part))).join("");
     const chapters = (c.chapters ?? []).map((ch) => `<li class="chapter"><p class="chapter-kicker">${esc(ch.kicker)}</p><h4 class="chapter-title">${esc(ch.title)}</h4><p class="chapter-text">${linked(ch.text)}</p></li>`).join("");
     const sizeNote = "This is the size of the download, not the space the app takes once installed.";
     const links = r ? `${web(`${r}#readme`, "Guide and docs")}${web("https://formai.studio/download/", "Every release")}${web(`${r}/issues/new`, "Report a problem")}${web(`${r}/discussions`, "Ask the community")}` : "";
