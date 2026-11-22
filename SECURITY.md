@@ -48,7 +48,10 @@ leaves this computer.
 - **Your profile** (Preferences, Profile) is kept only on this computer.
 - **The supporter code**, if you enter one, is kept in FormPortal's preferences on
   this computer and sent only to formai.studio (`/api/supporter/check`), to be checked:
-  when you choose Check, and otherwise at most once a day. The answer is kept beside it.
+  when you choose Check (or Check again), and otherwise once when FormPortal starts,
+  only if Ask formai.studio what is on the way is on. The answer is kept beside it, and
+  a supporter's upcoming names are shown for 7 days after the last check (or until the
+  code's own end date, if sooner); after that Profile says to press Check again.
 - **GitHub, if you connect it** (optional; Preferences, Profile, Connect to GitHub):
   FormPortal signs in with GitHub's device flow, and the token GitHub gives it is kept
   in the system keychain (Keychain on macOS, Credential Manager on Windows, the Secret
@@ -89,11 +92,16 @@ leaves this computer.
   from there only when you choose Download, with no account, and is kept only if its
   size and SHA-256 match the list.
 - **Update checks**: while FormPortal is open, it fetches the signed catalogue from
-  `dl.formai.studio` and each app's newest release manifest from its GitHub releases,
-  and asks formai.studio (`/api/upcoming`) what is on the way: once when FormPortal
-  starts, and again only when you show Home and the last answer is 15 minutes old or
-  more. There is no timer asking in the background. These requests carry nothing
-  about you or your computer beyond what any web request carries.
+  `dl.formai.studio` and each app's newest release manifest from its GitHub releases.
+  These requests carry nothing about you or your computer beyond what any web request
+  carries.
+- **What is on the way**: by default FormPortal asks formai.studio nothing about it
+  and shows the schedule it was built with, and it learns that the launch is complete
+  from the signed catalogue it reads anyway. Only if you turn on Preferences, General,
+  Ask formai.studio what is on the way does it ask formai.studio (`/api/upcoming`),
+  once each time it starts (and once when you turn the switch on), never again in that
+  run. The command line and the MCP server ask only when given `--ask-site`
+  (`ask_site`).
 - **Links** in the window open in your own browser, and only addresses on FormPortal's
   list (`core/src/links.rs`) open; FormPortal itself makes no request for them. These
   include the nine social links in the sidebar (formai.studio, YouTube, two Reddit

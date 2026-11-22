@@ -2,6 +2,15 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.1 · 2026-11-22
+
+### Changed
+
+- FormPortal asks formai.studio nothing about what is on the way unless you turn on Preferences, General, Ask formai.studio what is on the way. It is off by default, also when you update from an earlier FormPortal. Off, On the way shows the schedule FormPortal was built with, or the last answer it kept. On, FormPortal asks once each time it starts and never again in that run; turning the switch on asks once then. Showing Home or coming back to the window no longer asks anything.
+- FormPortal knows the launch is complete from the signed catalogue it already reads: every app of the built-in schedule is out, the sealed day has passed and a new app is in the catalogue. The section then becomes Request (or New app on the horizon) an hour later, as before, without asking formai.studio.
+- A kept supporter code is checked again at start only when Ask formai.studio what is on the way is on. Off, the kept answer is shown for 7 days after the last check (or until the code's end date, if sooner); after that Profile says so, and Check again asks formai.studio once.
+- `apps` on the command line and in the MCP server asks formai.studio only when given `--ask-site` (`ask_site`). `preferences` reads and sets `ask_site`.
+
 ## v0.71.0 · 2026-11-21
 
 ### New

@@ -858,13 +858,13 @@ async fn publish_file(file: String, remove: bool) -> Result<formportal_core::sha
 }
 
 #[tauri::command]
-async fn site_upcoming() -> Result<formportal_core::site::UpcomingView, String> {
-    tauri::async_runtime::spawn_blocking(|| hub().upcoming()).await.map_err(text)
+async fn site_upcoming(ask: Option<bool>) -> Result<formportal_core::site::UpcomingView, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().upcoming(ask.unwrap_or(false))).await.map_err(text)
 }
 
 #[tauri::command]
-async fn supporter_check(code: Option<String>) -> Result<formportal_core::site::SupporterView, String> {
-    tauri::async_runtime::spawn_blocking(move || hub().supporter(code).map_err(text)).await.map_err(text)?
+async fn supporter_check(code: Option<String>, ask: Option<bool>) -> Result<formportal_core::site::SupporterView, String> {
+    tauri::async_runtime::spawn_blocking(move || hub().supporter(code, ask.unwrap_or(false)).map_err(text)).await.map_err(text)?
 }
 
 fn sync_login() -> Result<(), String> {

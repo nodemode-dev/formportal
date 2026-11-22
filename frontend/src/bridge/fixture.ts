@@ -198,6 +198,11 @@ const SITE_TILES: { name: string; at: string | null }[] = [
 let access: AgentAccess = new URLSearchParams(window.location.search).get("agents") === "broken" ? { outside_agents: "ask", stored: "allowed", seal: "broken", seal_broken: true } : { outside_agents: "ask", stored: "ask", seal: "none", seal_broken: false };
 let prefs: Preferences ={ ...DEFAULT_PREFS, auto_update: new URLSearchParams(window.location.search).get("auto") !== "off", per_app: {} };
 if (params.has("supporter")) prefs = { ...prefs, supporter_code: SUPPORTER_FIXTURE_CODE };
+if (params.get("ask") === "on") prefs = { ...prefs, ask_site: true };
+const asked = (counter: "__siteUpcomingCalls" | "__supporterChecks") => {
+  const w = window as unknown as Record<string, number | undefined>;
+  w[counter] = (w[counter] ?? 0) + 1;
+};
 
 function missing(product: string): Error {
   return new Error(`${product} is not installed`);
@@ -481,8 +486,8 @@ export const fixtureBridge: Bridge = {
     return { client, answer: `This is the browser preview, so no agent ran. In the app, Claude Code would answer "${question.slice(0, 80)}" using FormPortal's reading tools.` };
   },
   fonts: async () => ({
-    index: { families: fontIndex },
-    index_error: null,
+    index: params.get("fontweb") === "down" ? null : { families: fontIndex },
+    index_error: params.get("fontweb") === "down" ? "the font index cannot be reached (browser mode, ?fontweb=down)" : null,
     installed: fontsIn.map((f) => ({ ...f })),
     updates: fontsIn.filter((f) => f.source === "index" && fontIndex.find((x) => x.id === f.family_id)?.styles.some((s) => s.style === f.style && s.sha256 !== f.sha256)).map((f) => ({ ...f })),
     folder: "~/.local/share/fonts/FormPortal",
@@ -512,6 +517,7 @@ export const fixtureBridge: Bridge = {
   fontWeb: async (source) => {
     ((window as unknown as { __fontWebCalls?: string[] }).__fontWebCalls ??= []).push(source);
     await pause(400);
+    if (params.get("fontweb") === "down") throw new Error("the font source cannot be reached (browser mode, ?fontweb=down)");
     const on = source === "fontsource" || providerKept.has("google-fonts");
     return { source, on, families: on ? webFamilies(source) : [] };
   },
@@ -650,9 +656,10 @@ export const fixtureBridge: Bridge = {
     access = { outside_agents: choice, stored: choice, seal: "sealed", seal_broken: false };
     return { ...access };
   },
-  siteUpcoming: async () => {
-    (window as unknown as { __siteUpcomingCalls: number }).__siteUpcomingCalls = ((window as unknown as { __siteUpcomingCalls?: number }).__siteUpcomingCalls ?? 0) + 1;
+  siteUpcoming: async (ask) => {
+    if (ask) asked("__siteUpcomingCalls");
     const now = Math.floor(Date.now() / 1000);
+    if (SOON === "catalog-done") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: false, launched: now - 2 * 3600 };
     if (SOON === "bundled") return { known: false, dated: [], undated: 0, supporters: 0, checked: 0, stale: true, launched: null };
     const undated = params.has("undated") ? SITE_UNDATED : 0;
     if (!SOON.startsWith("ask")) return { known: true, dated: SITE_DATED, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: null };
@@ -660,13 +667,15 @@ export const fixtureBridge: Bridge = {
     return { known: true, dated, undated, supporters: SITE_SUPPORTERS, checked: now, stale: false, launched: now - (SOON === "ask-soon" ? 30 * 60 : 2 * 3600) };
   },
   ...templatesFixture,
-  supporterCheck: async (code) => {
+  supporterCheck: async (code, ask) => {
     const given = code === null ? (prefs.supporter_code ?? "") : code.trim();
     if (code === "") {
       prefs = { ...prefs, supporter_code: null };
       return { state: "none", supporter: false, until: null, upcoming: [], checked: 0, stale: false };
     }
     if (given === "") return { state: "none", supporter: false, until: null, upcoming: [], checked: 0, stale: false };
+    if (code === null && !ask && params.get("supporter") === "expired") return { state: "unchecked", supporter: false, until: null, upcoming: [], checked: 0, stale: false };
+    if (code !== null || ask) asked("__supporterChecks");
     if (given !== SUPPORTER_FIXTURE_CODE) return { state: "no", supporter: false, until: null, upcoming: [], checked: Math.floor(Date.now() / 1000), stale: false };
     prefs = { ...prefs, supporter_code: given };
     return { state: "supporter", supporter: true, until: new Date(Date.now() + 90 * 86400000).toISOString().replace(/\.\d+Z$/, "Z"), upcoming: SITE_TILES, checked: Math.floor(Date.now() / 1000), stale: false };

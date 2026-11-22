@@ -12,16 +12,16 @@ fn released(catalog: &Catalog, id: &str) -> bool {
     [Channel::Stable, Channel::Beta].iter().any(|ch| matches!(catalog.view(id, *ch, Platform::current()).availability, Availability::Available | Availability::OtherPlatform))
 }
 
-fn on_the_way(portal: &Portal, shown: &[String]) -> Vec<Value> {
+fn on_the_way(portal: &Portal, shown: &[String], ask: bool) -> Vec<Value> {
     let known: Vec<String> = registry().iter().filter_map(|p| p.get("id").and_then(Value::as_str).map(str::to_string)).collect();
     let doc: Value = serde_json::from_str(SCHEDULE).unwrap_or(Value::Null);
     let groups = doc.get("releases").and_then(Value::as_array).cloned().unwrap_or_default();
-    let tiles = portal.supporter(None).ok().filter(|v| v.supporter).map(|v| v.upcoming);
+    let tiles = portal.supporter(None, ask).ok().filter(|v| v.supporter).map(|v| v.upcoming);
     let named = |at: Option<&str>, limit: usize| -> Option<Value> {
         let when = at.and_then(formportal_core::site::parse_time);
         tiles.as_ref().map(|list| json!(list.iter().filter(|t| t.at.as_deref().and_then(formportal_core::site::parse_time) == when && (at.is_none() == t.at.is_none())).take(limit).map(|t| t.name.as_str()).collect::<Vec<_>>()))
     };
-    let site = portal.upcoming();
+    let site = portal.upcoming(ask);
     let unsealed = site.known && !site.dated.iter().any(|d| d.sealed);
     let at_now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
     let mut out: Vec<Value> = groups
@@ -187,7 +187,7 @@ pub fn apps(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
         row.insert("channels".to_string(), Value::Object(channels));
         rows.push(Value::Object(row));
     }
-    let soon = if catalog.is_some() { on_the_way(&ctx.portal, &shown) } else { Vec::new() };
+    let soon = if catalog.is_some() { on_the_way(&ctx.portal, &shown, flag(args, "ask_site") == Some(true)) } else { Vec::new() };
     Ok(json!({ "catalog": note, "fixture": catalog.as_ref().map(|c| c.fixture), "apps": rows, "on_the_way": soon }))
 }
 
@@ -795,6 +795,7 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     set("notices", &mut prefs.notices);
     set("keep_previous", &mut prefs.keep_previous);
     set("open_at_login", &mut prefs.open_at_login);
+    set("ask_site", &mut prefs.ask_site);
     if let Some(map) = args.get("per_app").and_then(Value::as_object) {
         for (id, v) in map {
             match v.as_bool() {

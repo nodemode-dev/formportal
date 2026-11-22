@@ -5,7 +5,7 @@ import type { SupporterTile, SupporterView, UpcomingView } from "../../engine/ty
 import { language, t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
 import { UNDATED } from "../live/index.ts";
-import { upcomingOnce } from "../live/soon.ts";
+import { askSite, upcomingOnce } from "../live/soon.ts";
 
 const NAMES_KEY = "formportal.site";
 const LIVE_KEY = "formportal.live";
@@ -109,9 +109,12 @@ export const supporter: Extension = {
       if (view.state === "supporter") text = t("Supporter until {date}. Upcoming Form apps show their names.", { date: date(view.until) });
       else if (view.state === "no") text = t("That code is not a supporter code.");
       else if (view.state === "unreachable") text = t("formai.studio cannot be reached; the last answer is kept.");
+      else if (view.state === "unchecked") text = t("Your code is kept. Upcoming names show for 7 days after formai.studio confirms it: press Check again.");
       if (view.stale && view.state !== "unreachable") text = `${text} ${t("formai.studio cannot be reached; the last answer is kept.")}`;
       put(say, text);
       attr(say, "data-state", view.state);
+      const again = view.state === "supporter" || view.state === "unchecked";
+      if (check && check.hasAttribute("data-again") !== again) check.toggleAttribute("data-again", again);
     };
 
     const busy = (on: boolean) => {
@@ -137,7 +140,7 @@ export const supporter: Extension = {
     const run = async (code: string | null) => {
       busy(true);
       try {
-        const view = await bridge.supporterCheck(code);
+        const view = await bridge.supporterCheck(code, code !== "");
         apply(view);
         if (input && view.state !== "no" && input.value !== "") input.value = "";
         await keepPrefs();
@@ -170,7 +173,7 @@ export const supporter: Extension = {
         more(await upcomingOnce());
       } catch {}
       try {
-        apply(await bridge.supporterCheck(null));
+        apply(await bridge.supporterCheck(null, await askSite()));
       } catch {}
     })();
   },
