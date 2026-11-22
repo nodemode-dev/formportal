@@ -57,7 +57,7 @@
 }
 
 .drop-more > .menu .switch:checked::after {
-  background: var(--fp-pri-bg);
+  background: var(--text-on-accent);
   transform: translateX(10px);
 }
 
