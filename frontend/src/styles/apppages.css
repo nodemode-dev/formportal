@@ -59,6 +59,12 @@
   margin-block-start: 2px;
 }
 
+.facts-size-note,
+.vers-size-note {
+  color: var(--fp-ink-3);
+  font-size: 12px;
+}
+
 .vers-size-note {
   margin: 4px 0 0;
 }
