@@ -358,22 +358,31 @@
           <section class="pane" data-pane="stock" data-title="Stock &amp; templates" data-kind="all" aria-label="Stock and templates">
             <div class="page">
               <header class="page-head"><div><h1 class="h1">Stock &amp; templates</h1><p class="sub">Photos, footage, sound and templates you are free to use, saved with their credit.</p></div></header>
-              <div class="toolbar">
+              <section class="block stock-sources" data-stock-sources>
+                <header class="block-head"><h2 class="block-title">Your sources</h2></header>
+                <p class="fine stock-privacy">Keys are kept in the system keychain of this computer, never in a file. A search goes from this computer straight to the source you chose and nowhere else; FormPortal collects nothing.</p>
+                <ul class="stock-src-list" data-stock-src-list></ul>
+              </section>
+              <form class="toolbar stock-bar" data-stock-form>
                 <label class="search search-local">
                   <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <input type="search" data-media-query placeholder="Search images, video, audio and templates" aria-label="Search stock and templates" autocomplete="off" spellcheck="false" />
+                  <input type="search" data-stock-query placeholder="Search free images, video and audio" aria-label="Search stock" maxlength="100" autocomplete="off" spellcheck="false" />
                 </label>
                 <div class="seg" role="group" aria-label="Kind">
-                  <button class="seg-item" type="button" data-media-kind="all" aria-pressed="true">All</button>
-                  <button class="seg-item" type="button" data-media-kind="image" aria-pressed="false">Images</button>
-                  <button class="seg-item" type="button" data-media-kind="video" aria-pressed="false">Video</button>
-                  <button class="seg-item" type="button" data-media-kind="audio" aria-pressed="false">Audio</button>
-                  <button class="seg-item" type="button" data-media-kind="template" aria-pressed="false">Templates</button>
+                  <button class="seg-item" type="button" data-stock-kind="image" aria-pressed="true">Images</button>
+                  <button class="seg-item" type="button" data-stock-kind="video" aria-pressed="false">Video</button>
+                  <button class="seg-item" type="button" data-stock-kind="audio" aria-pressed="false">Audio</button>
                 </div>
-              </div>
-              <p class="fine fonts-note">Openly licensed (CC0, CC BY, CC BY-SA and open software licences), free, no account. Saved items go to your Library with their credit line; a template is copied into your projects folder and opens in its app.</p>
-              <p class="store-note" data-store-note hidden></p>
+                <button class="btn btn-primary" type="submit">Search</button>
+              </form>
+              <div class="stock-chips" role="group" aria-label="Sources" data-stock-chips></div>
+              <p class="fine stock-status" data-stock-status aria-live="polite"></p>
+              <ul class="stock-grid" data-stock-grid></ul>
+              <div class="stock-more"><button class="btn" type="button" data-stock-more hidden>More</button></div>
               <section class="block">
+                <header class="block-head"><h2 class="block-title">Included with FormPortal</h2></header>
+                <p class="fine fonts-note">Openly licensed (CC0, CC BY, CC BY-SA and open software licences), free, no account. Saved items go to your Library with their credit line; a template is copied into your projects folder and opens in its app.</p>
+                <p class="store-note" data-store-note hidden></p>
                 <ul class="media-grid" data-media-grid></ul>
                 <p class="empty" data-media-error hidden></p>
               </section>
@@ -395,6 +404,38 @@
                   </div>
                 </li>
               </template>
+              <dialog class="stock-view" data-stock-view aria-labelledby="h-stock-view">
+                <div class="stock-stage" data-view-stage>
+                  <img class="stock-stage-img" data-view-img alt="" hidden />
+                  <video class="stock-stage-video" data-view-video controls playsinline preload="metadata" hidden></video>
+                  <div class="stock-player" data-view-audio hidden>
+                    <button class="btn stock-play" type="button" data-audio-play aria-label="Play"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path data-icon-play d="M8 5.5v13l10-6.5z" fill="currentColor"/><path data-icon-pause d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z" fill="currentColor" hidden/></svg></button>
+                    <input class="stock-seek" type="range" min="0" max="1000" step="1" value="0" data-audio-seek aria-label="Position" />
+                    <span class="mono stock-time" data-audio-time>0:00 / 0:00</span>
+                  </div>
+                  <p class="stock-wait" data-view-wait>Loading the preview</p>
+                  <button class="stock-step stock-prev" type="button" data-view-step="-1" aria-label="Previous result"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="stock-step stock-next" type="button" data-view-step="1" aria-label="Next result"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </div>
+                <div class="stock-side">
+                  <div class="stock-side-head">
+                    <h2 class="block-title" id="h-stock-view" data-view-title></h2>
+                    <button class="stock-close" type="button" data-view-close aria-label="Close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+                  </div>
+                  <p class="stock-by"><span data-view-by-label>By</span> <button class="link-btn" type="button" data-view-author></button><span data-view-author-text></span> <span class="stock-on" data-view-source></span></p>
+                  <p class="stock-licence"><span class="stock-lic" data-view-licence></span> <button class="link-btn" type="button" data-view-licence-link>Licence text</button></p>
+                  <p class="fine stock-limit" data-view-limit hidden></p>
+                  <p class="fine stock-credit" data-view-credit></p>
+                  <p class="fine" data-view-file></p>
+                  <div class="stock-side-acts">
+                    <button class="btn btn-primary" type="button" data-view-save>Save</button>
+                    <button class="btn" type="button" data-view-show hidden>Show in folder</button>
+                    <button class="link-btn" type="button" data-view-page>Open its page</button>
+                  </div>
+                  <div class="stock-progress" data-view-progress hidden><span data-view-bar></span></div>
+                  <p class="fine stock-view-note" data-view-note aria-live="polite"></p>
+                </div>
+              </dialog>
               <div id="templates-mount"></div>
             </div>
           </section>

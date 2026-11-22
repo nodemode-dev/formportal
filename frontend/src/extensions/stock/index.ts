@@ -2,6 +2,7 @@ import type { MediaItem, SavedMedia } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 import { t } from "../../i18n/index.ts";
 import { storeNote } from "../storenote.ts";
+import { stockSearch } from "./search.ts";
 
 const KIND: Record<string, string> = { image: "Image", video: "Video", audio: "Audio", template: "Template" };
 
@@ -13,6 +14,7 @@ const set = (root: HTMLElement, field: string, text: string) => {
 export const stock: Extension = {
   id: "stock",
   setup(engine) {
+    stockSearch(engine);
     const pane = document.querySelector<HTMLElement>("[data-pane='stock']");
     const grid = document.querySelector<HTMLElement>("[data-media-grid]");
     const savedList = document.querySelector<HTMLElement>("[data-media-saved]");
