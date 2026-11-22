@@ -22,6 +22,14 @@ struct Progress {
     total: u64,
 }
 
+#[derive(Clone, Serialize)]
+struct Step {
+    product: String,
+    channel: Channel,
+    step: &'static str,
+    detail: String,
+}
+
 fn hub() -> Portal {
     Portal::new(Portal::default_root())
 }
@@ -76,6 +84,8 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
     tauri::async_runtime::spawn_blocking(move || {
         let hub = hub();
         let catalog = recent_catalog(&hub, &url, allow_unsigned).map_err(text)?;
+        let signed = hub.recheck_kept(&url, allow_unsigned).map_err(text)?;
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step: "signature", detail: if signed { "signed" } else { "unsigned" }.to_string() });
         let view = catalog.view(&product, channel, Platform::current());
         let asked = version.is_some();
         let (version, artifact) = match version.as_deref() {
@@ -91,13 +101,16 @@ async fn install(app: AppHandle, product: String, channel: Channel, url: String,
                 (version, artifact)
             }
         };
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step: "pick", detail: artifact.file.clone() });
         let mut last = u64::MAX;
-        let done = hub.install_from(&catalog, &product, channel, version, artifact, &mut |have, total| {
+        let done = hub.install_from_stepped(&catalog, &product, channel, version, artifact, &mut |have, total| {
             let step = (have * 100).checked_div(total).unwrap_or(0);
             if step != last {
                 last = step;
                 let _ = app.emit("install-progress", Progress { product: product.clone(), channel, have, total });
             }
+        }, &mut |step, detail| {
+            let _ = app.emit("install-step", Step { product: product.clone(), channel, step, detail });
         })
         .map_err(text)?;
         if asked {
@@ -491,8 +504,10 @@ async fn open(product: String, channel: Channel) -> Result<u32, String> {
 }
 
 #[tauri::command]
-fn rollback(product: String, channel: Channel) -> Result<Install, String> {
-    hub().rollback(&product, channel).map_err(text)
+fn rollback(app: AppHandle, product: String, channel: Channel) -> Result<Install, String> {
+    hub().rollback_stepped(&product, channel, &mut |step, detail| {
+        let _ = app.emit("install-step", Step { product: product.clone(), channel, step, detail });
+    }).map_err(text)
 }
 
 #[tauri::command]
