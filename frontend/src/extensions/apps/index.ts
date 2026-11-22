@@ -30,7 +30,9 @@ const pillSizeText = (bytes: number): string => {
   return mb >= 1000 ? t("{n} GB", { n: (bytes / 1_000_000_000).toFixed(2) }) : t("{n} MB", { n: mb });
 };
 
-const NOTE_HEADS = new Set(["new", "improved", "changed", "fixed", "known issues", "under the hood", "unchanged", "removed", "security"]);
+const PILL_MARK = "\u0001";
+
+const NOTE_HEADS =new Set(["new", "improved", "changed", "fixed", "known issues", "under the hood", "unchanged", "removed", "security"]);
 
 const renderNotes = (node: HTMLElement, text: string) => {
   if (node.dataset.src === text) return;
@@ -106,6 +108,13 @@ export const apps: Extension = {
       const blocked = engine.blocked(product, channel);
       if (row.hasAttribute("data-blocked") !== blocked) row.toggleAttribute("data-blocked", blocked);
       row.setAttribute("data-availability", view.availability);
+      const cell = row.classList.contains("app-row") ? row.querySelector<HTMLElement>(":scope > .row-state") : null;
+      if (cell && state === "busy" && row.dataset.install !== "busy" && row.dataset.rest !== "ready") cell.style.minInlineSize = `${cell.getBoundingClientRect().width}px`;
+      if (cell && state !== "busy" && cell.style.minInlineSize) cell.style.removeProperty("min-inline-size");
+      if (state !== "busy" && row.dataset.rest !== state) row.dataset.rest = state;
+      if (cell) row.querySelectorAll<HTMLButtonElement>(":scope > .acts > [data-act]").forEach((button) => {
+        if (button.disabled !== (state === "busy")) button.disabled = state === "busy";
+      });
       row.setAttribute("data-install", state);
       row.toggleAttribute("data-previous", Boolean(record?.previous) && state !== "busy");
       const back = record?.previous ? t("Go back to {version}", { version: record.previous }) : t("Go back to the version before");
@@ -138,18 +147,20 @@ export const apps: Extension = {
       const pillVersion = record?.version ?? (view.availability === "available" ? view.version : null);
       const pillBytes = record ? own?.bytes : view.artifact?.bytes;
       const pillSize = pillBytes ? pillSizeText(pillBytes) : "";
-      field(
-        "pill",
-        !pillVersion
-          ? ""
-          : record
-            ? pillSize
-              ? t("v{version} installed | {size}", { version: pillVersion, size: pillSize })
-              : t("v{version} installed", { version: pillVersion })
-            : pillSize
-              ? t("v{version} | {size}", { version: pillVersion, size: pillSize })
-              : t("v{version}", { version: pillVersion }),
-      );
+      const pillText = !pillVersion
+        ? ""
+        : record
+          ? pillSize
+            ? t("installed {version} | {size}", { version: PILL_MARK, size: pillSize })
+            : t("installed {version}", { version: PILL_MARK })
+          : pillSize
+            ? t("{version} | {size}", { version: PILL_MARK, size: pillSize })
+            : PILL_MARK;
+      const [lead = "", tail = ""] = pillText.split(PILL_MARK);
+      const pill = row.querySelector<HTMLElement>("[data-field='pill']");
+      write(pill?.querySelector<HTMLElement>("[data-pill='lead']") ?? null, lead);
+      write(pill?.querySelector<HTMLElement>("[data-pill='ver']") ?? null, pillVersion ? `v${pillVersion}` : "");
+      write(pill?.querySelector<HTMLElement>("[data-pill='tail']") ?? null, tail);
       row.toggleAttribute("data-notes", Boolean(release?.notes));
       field("date", release ? release.published.slice(0, 10) : "");
       const notesNode = row.querySelector<HTMLElement>("[data-field='notes']");

@@ -1,7 +1,50 @@
 .rows > .app-row {
   --hue-ink: var(--hue);
-  grid-template-columns: 40px minmax(150px, 230px) minmax(0, 1fr) minmax(110px, 170px) auto auto;
+  grid-template-columns: 40px clamp(150px, 18vw, 230px) minmax(0, 1fr) auto auto auto;
   row-gap: 0;
+}
+
+.rows > .app-row[data-install="none"] > .row-state {
+  min-inline-size: 114px;
+}
+
+@media (min-width: 1001px) {
+  .rows > .app-row > .row-state {
+    display: grid;
+  }
+
+  .rows > .app-row[data-rest="ready"]:not([data-notes-open]) > .row-sum {
+    grid-row: 1;
+    grid-column: 3 / 5;
+  }
+
+  .rows > .app-row[data-rest="ready"]:not([data-notes-open]) > .row-state {
+    grid-row: 1;
+    grid-column: 4;
+  }
+
+  .rows > .app-row[data-rest="ready"][data-install="busy"]:not([data-notes-open]) > .row-state {
+    inline-size: 114px;
+  }
+
+  .rows > .app-row[data-rest="ready"][data-install="busy"]:not([data-notes-open]) > .row-sum {
+    padding-inline-end: 130px;
+  }
+}
+
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts > [data-act="install"] {
+  display: none;
+}
+
+.rows > .app-row[data-install="busy"][data-rest="update"]:not([data-blocked]) > .acts > [data-act="update"],
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts > [data-act="open"] {
+  display: inline-flex;
+}
+
+.rows > .app-row[data-install="busy"]:is([data-rest="update"], [data-rest="ready"]) > .acts .drop-more {
+  display: block;
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 :root[data-theme="light"] .rows > .app-row {
@@ -54,8 +97,13 @@
   white-space: nowrap;
 }
 
-.row-pill:empty {
+.row-pill:has(.pill-ver:empty) {
   visibility: hidden;
+}
+
+.row-pill .pill-ver {
+  color: color-mix(in oklab, var(--hue-ink) 78%, var(--fp-ink));
+  font-weight: 540;
 }
 
 .row-notes-in {
@@ -162,11 +210,12 @@
     grid-template-columns: 40px minmax(0, 1fr) auto auto;
   }
 
-  .rows > .app-row[data-install="update"] .row-state {
+  .rows > .app-row:is([data-install="update"], [data-install="busy"][data-rest="update"]) .row-state {
     display: flex;
     grid-column: 2 / -1;
     grid-row: 2;
-    min-block-size: 0;
+    align-content: flex-start;
+    min-block-size: 32px;
     padding-block-start: 6px;
   }
 
