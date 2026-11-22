@@ -69,13 +69,13 @@
       <img src="docs/images/formportal-fonts.webp" alt="The Fonts page with open-licensed font families and Install family buttons" width="100%">
       <br><sub>Open-licensed fonts, installed for you alone.</sub>
       <h3>Fonts without an account</h3>
-      Twelve open families ship inside FormPortal, each shown in its own typeface; the formai.studio store adds more. Your own TTF and OTF files install the same way, with no administrator.
+      Twelve open families ship inside FormPortal, each shown in its own typeface; the formai.studio store adds more, and Fontsource and Google Fonts (with your own key) add their whole catalogues. Your own TTF and OTF files install the same way, with no administrator.
     </td>
     <td width="50%" valign="top">
       <img src="docs/images/formportal-stock.webp" alt="The Stock and templates page with openly licensed images and Form app templates" width="100%">
       <br><sub>Stock and templates, each saved with its credit line.</sub>
       <h3>Stock and templates</h3>
-      Public-domain photographs and Form app templates ship inside FormPortal, and the formai.studio store adds more. Each saves with its credit line, and a template opens in its app in one step.
+      Public-domain photographs and Form app templates ship inside FormPortal, and the formai.studio store adds more. Search Pexels, Pixabay, Openverse, Freesound and ccMixter for images, video and audio, and get the templates and demos of every public Form app from nodemode-dev/formai-templates. Each saves with its credit line, and a template opens in its app in one step.
     </td>
   </tr>
 </table>
@@ -86,7 +86,7 @@ Extensions for the Form apps that host them come from one place, [form.ext-regis
 
 ## What FormPortal keeps and sends
 
-No account and no telemetry: FormPortal sends no usage data and no identifiers. Your profile is kept only on this computer. A supporter code is kept locally and sent only to formai.studio, to be checked. Connecting GitHub is optional: the token is kept in the system keychain, used only against github.com and api.github.com, and asks for `read:user` to connect, `repo` only if you allow sharing, and `public_repo` only if you set up your own fork of form.ext-registry, which is made only when you confirm it. API keys for Pexels, Pixabay, Freesound and Google Fonts are kept in the keychain and sent only to their own service, and a stock or font search goes from this computer straight to that service. The templates list and files are plain requests to GitHub, made when you ask. The update checks fetch the signed catalogue from dl.formai.studio and each app's newest release from GitHub, and ask formai.studio what is on the way. [SECURITY.md](SECURITY.md) has the full statement, and what you take on when you connect FormPortal to GitHub, an agent or an outside API.
+No account and no telemetry: FormPortal sends no usage data and no identifiers. Your profile is kept only on this computer. A supporter code is kept locally and sent only to formai.studio, to be checked. Connecting GitHub is optional: the token is kept in the system keychain, used only against github.com and api.github.com, and asks for `read:user` to connect, `repo` only if you allow sharing, and `public_repo` only if you set up your own fork of form.ext-registry, which is made only when you confirm it. API keys for Pexels, Pixabay, Freesound and Google Fonts are kept in the keychain (never in a file, never logged) and sent only to their own service; Openverse, ccMixter and Fontsource need no key. A stock search goes from this computer straight to the sources you chose, and the previews and files you save come from the addresses their answers give. Fontsource's public font catalogue is read from api.fontsource.org when FormPortal starts, and a font family is installed only when its source states an open licence (OFL-1.1, Apache-2.0 or MIT), saved beside the files. The templates list comes from the public repository nodemode-dev/formai-templates on GitHub only when you choose Get the list or Check again, and each file only when you choose Download, kept only if its SHA-256 matches. Request a new Form App and the social links open in your browser; FormPortal sends nothing for them. The update checks fetch the signed catalogue from dl.formai.studio and each app's newest release from GitHub, and ask formai.studio what is on the way. [SECURITY.md](SECURITY.md) has the full statement, and what you take on when you connect FormPortal to GitHub, an agent or an outside API.
 
 ## Everything in the box
 

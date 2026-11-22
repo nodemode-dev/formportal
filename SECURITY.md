@@ -64,18 +64,48 @@ leaves this computer.
   Disconnect removes the token from the keychain; revoke FormPortal under Settings,
   Applications on github.com to withdraw its access there too.
 - **API keys for outside services** (Pexels, Pixabay, Freesound, Google Fonts), if you
-  give one, are kept in the system keychain and sent only to the service they belong
-  to. A stock or font search goes from this computer straight to the service you
-  chose; FormPortal does not see or keep what you search for anywhere else.
-- **Templates**: the templates list and the files you pick are plain requests to
-  GitHub, made only when you ask for them.
+  give one, are kept in the system keychain under `FormPortal keys` and sent only to
+  the service they belong to. They are never shown to the window, never logged and
+  never written to a file. Openverse, ccMixter and Fontsource need no key.
+- **Stock** (Stock & templates): a search goes from this computer straight to the
+  sources you chose (`api.pexels.com`, `pixabay.com`, `api.openverse.org`,
+  `freesound.org`, `ccmixter.org`). The thumbnails, previews and files you save are
+  then fetched by FormPortal from the addresses that answer gave: the service's own
+  media servers, or for Openverse the site that holds the original (Flickr, Wikimedia
+  Commons and others). Those requests carry no key. Answers are kept in memory for
+  24 hours; FormPortal does not keep what you search for anywhere else.
+- **Fonts**: FormPortal reads Fontsource's public catalogue from `api.fontsource.org`
+  when it starts and keeps it in memory for 30 minutes; a family's licence and files
+  come from `cdn.jsdelivr.net`. Google Fonts is used only with your own key:
+  the catalogue comes from `www.googleapis.com`, the files from `fonts.gstatic.com`,
+  and each family's licence from Fontsource's copy at `cdn.jsdelivr.net`. A family is
+  installed only when its licence is stated and is OFL-1.1, Apache-2.0 or MIT.
+- **Templates**: the list of templates and demos comes from the public repository
+  `nodemode-dev/formai-templates` at `raw.githubusercontent.com`, only when you choose
+  Get the list or Check again, and is then kept on this computer. Each file is fetched
+  from there only when you choose Download, with no account, and is kept only if its
+  size and SHA-256 match the list.
 - **Update checks**: while FormPortal is open, it fetches the signed catalogue from
   `dl.formai.studio` and each app's newest release manifest from its GitHub releases,
   and asks formai.studio (`/api/upcoming`) what is on the way, at most every 15
   minutes. These requests carry nothing about you or your computer beyond what any web
   request carries.
-- **Links** in the window, such as the social links in the sidebar, open in your own
-  browser; FormPortal itself makes no request for them.
+- **Links** in the window open in your own browser, and only addresses on FormPortal's
+  list (`core/src/links.rs`) open; FormPortal itself makes no request for them. These
+  include the nine social links in the sidebar (formai.studio, YouTube, two Reddit
+  pages, Instagram, Threads, TikTok, X and Discord), the stock sources' pages and key pages,
+  Creative Commons licence pages, Google Cloud's credentials page and GitHub's
+  application settings. Request a new Form App opens a GitHub discussion page in your
+  browser with your words filled in; FormPortal sends nothing itself, and nothing is
+  posted until you press Start discussion there.
+- **Every host FormPortal itself may contact**: `dl.formai.studio` and `formai.studio`
+  (the catalogue, the store, what is on the way, the supporter check); `github.com`,
+  `raw.githubusercontent.com` and the download hosts GitHub hands its release files
+  to (app releases, extensions from `nodemode-dev/form.ext-registry`, templates);
+  `api.github.com` (only if you connect GitHub); `api.fontsource.org`,
+  `cdn.jsdelivr.net`, `www.googleapis.com` and `fonts.gstatic.com` (fonts);
+  `api.pexels.com`, `pixabay.com`, `api.openverse.org`, `freesound.org`,
+  `ccmixter.org` and the media addresses their answers give (stock).
 
 ## Your choices, your responsibility
 
