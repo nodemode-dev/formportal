@@ -7,6 +7,13 @@ Last updated: 2026-11-21 · v0.71.0 FormPublisher in the registry, FormREC spell
 
 ---
 
+## v0.71.0 · FormPublisher's icon, and each app's "Instead of" line follows its repository {#abouts-and-publisher-icon}
+- refers-to: frontend/public/apps/formpublisher.webp, formpublisher-light.webp; catalog/products.json :: `alt_of` of formtools, formweb, formdesign, formdam, formslide, formsurface, formsculpt; `summary` of formpublisher; LICENSES.md :: the FormPublisher icon row
+- kind: fix
+- logged: v0.71.0 · 2026-11-21
+
+The owner, on seeing a supporter's On the way tiles: FormTools is not an original, FormWeb stands in for Figma, Framer and Webflow, "look at their repo abouts to see", and FormPublisher is an original tied to FormWeb for publishing sites, with its icons attached. The registry's `alt_of` was compared with the About line of every public app's repository on GitHub on 21 November and brought in line where it had fallen behind: FormTools (QuickLook, HandBrake and Permute; it had none, so a supporter's tile called it an original), FormWeb (Figma, Framer and Webflow), FormDesign (InDesign and Affinity), FormDAM (Apple Photos and Adobe Bridge), FormDeck (PowerPoint, Keynote and Google Slides), FormSurface (Substance 3D Painter), FormSculpt (Nomad Sculpt and ZBrush). The registry keeps its own "and" where the About lines write "&". FormWav keeps its note ("No standard app existed, so we built one") although its About says "instead of 13 different audio apps": that line was the owner's own and he named only the two. The private apps' lines could not be compared. FormPublisher's icons are the owner's 1024 px tiles scaled with Lanczos to 256 px WebP with alpha at quality 90, as FormRec's were; it has no entry in `app-hues.json` yet, so its name takes the default colour. The website's copy of the registry should take the same lines.
+
 ## v0.71.0 · FormPublisher is in the registry, FormREC is written as the website writes it {#publisher-registry}
 - refers-to: catalog/products.json :: `formpublisher`, `formrec`
 - kind: fix

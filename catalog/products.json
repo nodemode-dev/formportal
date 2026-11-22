@@ -91,7 +91,7 @@
     {
       "id": "formdesign",
       "name": "FormDesign",
-      "alt_of": "InDesign",
+      "alt_of": "InDesign and Affinity",
       "group": "adobe",
       "status": "available",
       "kind": "layout",
@@ -154,7 +154,7 @@
     {
       "id": "formdam",
       "name": "FormDAM",
-      "alt_of": "Apple Photos and DAM tools",
+      "alt_of": "Apple Photos and Adobe Bridge",
       "group": "other",
       "status": "available",
       "kind": "library",
@@ -166,7 +166,7 @@
     {
       "id": "formslide",
       "name": "FormDeck",
-      "alt_of": "PowerPoint and Google Slides",
+      "alt_of": "PowerPoint, Keynote and Google Slides",
       "group": "other",
       "status": "available",
       "kind": "slides",
@@ -178,7 +178,7 @@
     {
       "id": "formsurface",
       "name": "FormSurface",
-      "alt_of": "Substance Painter",
+      "alt_of": "Substance 3D Painter",
       "group": "adobe",
       "status": "available",
       "kind": "texture",
@@ -190,7 +190,7 @@
     {
       "id": "formweb",
       "name": "FormWeb",
-      "alt_of": "Framer",
+      "alt_of": "Figma, Framer and Webflow",
       "group": "other",
       "status": "available",
       "kind": "web",
@@ -322,7 +322,7 @@
     {
       "id": "formsculpt",
       "name": "FormSculpt",
-      "alt_of": "ZBrush",
+      "alt_of": "Nomad Sculpt and ZBrush",
       "group": "other",
       "status": "available",
       "kind": "sculpt",
@@ -501,6 +501,7 @@
     {
       "id": "formtools",
       "name": "FormTools",
+      "alt_of": "QuickLook, HandBrake and Permute",
       "note": "Media and file utilities, viewers and batch tools",
       "group": "other",
       "status": "available",
@@ -536,7 +537,7 @@
       "group": "other",
       "status": "in-development",
       "kind": "publisher",
-      "summary": "A new member of the Form family, in development.",
+      "summary": "Publishing for the sites you build in FormWeb, in development.",
       "identifier": "ai.nodemode.formpublisher",
       "repository": "https://github.com/nodemode-dev/formpublisher",
       "licence": "Apache-2.0"

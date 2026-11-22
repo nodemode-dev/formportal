@@ -35,7 +35,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 - The sidebar's title block is tighter, and its icons take the accent colour.
 - README and SECURITY list every host FormPortal itself may contact, and what goes to each.
 - FormPortal asks formai.studio what is on the way once at start, and again only when you show Home and the last answer is 15 minutes old or more. It no longer asks every 15 minutes in the background.
-- FormPublisher is in the app list, and FormREC is written as the website writes it.
+- FormPublisher is in the app list with its own icon, and FormREC is written as the website writes it.
+- Each app's "Instead of" line follows what its repository says today: FormTools (QuickLook, HandBrake and Permute), FormWeb (Figma, Framer and Webflow), FormDesign (InDesign and Affinity), FormDAM (Apple Photos and Adobe Bridge), FormDeck (PowerPoint, Keynote and Google Slides), FormSurface (Substance 3D Painter) and FormSculpt (Nomad Sculpt and ZBrush).
 
 ### Fixed
 
