@@ -1,4 +1,5 @@
 import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
+import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -108,6 +109,9 @@ export const tauriBridge: Bridge = {
   setAgentAccess: (choice) => tauri().core.invoke<AgentAccess>("set_agent_access", { choice }),
   siteUpcoming: () => tauri().core.invoke<UpcomingView>("site_upcoming"),
   supporterCheck: (code) => tauri().core.invoke<SupporterView>("supporter_check", { code }),
+  providerKeys: () => tauri().core.invoke<KeyState[]>("provider_keys"),
+  setProviderKey: (provider, key) => tauri().core.invoke<KeyState[]>("provider_key_set", { provider, key }),
+  clearProviderKey: (provider) => tauri().core.invoke<KeyState[]>("provider_key_clear", { provider }),
   autoUpdate: async (progress) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) =>
       progress(payload.product, payload.channel, payload.total > 0 ? payload.have / payload.total : 0),

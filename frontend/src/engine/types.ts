@@ -258,6 +258,11 @@ export interface GithubStatus {
   account: GithubAccount | null;
 }
 
+export interface KeyState {
+  provider: string;
+  present: boolean;
+}
+
 export interface DeviceCode {
   device_code: string;
   user_code: string;

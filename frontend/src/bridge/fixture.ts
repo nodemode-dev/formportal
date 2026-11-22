@@ -8,6 +8,7 @@ import storeFonts from "../../../core/data/store-fonts.json";
 import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
+import type { KeyState } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 function browserPlatform(): Platform {
@@ -65,6 +66,12 @@ const tutorials: FixtureTutorial[] = [...(learnPortal.tutorials as FixtureTutori
 const progress = new Map<string, Set<number>>();
 const later = new Set<string>();
 const github: { account: GithubAccount | null; polls: number; share: boolean } = { account: null, polls: 0, share: false };
+const PROVIDER_KEYS = ["pexels", "pixabay", "freesound", "google-fonts"];
+const providerKept = new Set<string>();
+const providerStates = (): KeyState[] => PROVIDER_KEYS.map((provider) => ({ provider, present: providerKept.has(provider) }));
+const providerKnown = (provider: string): void => {
+  if (!PROVIDER_KEYS.includes(provider)) throw new Error(`FormPortal keeps an API key only for ${PROVIDER_KEYS.join(", ")}`);
+};
 const shares: SharesView = { shared: [], joined: [], published: [], invitations: [{ id: 7, repo: "riley/formportal-library-launch-film", from: "riley" }] };
 const repairFindings: RepairFinding[] = params.has("repair")
   ? [
@@ -526,6 +533,21 @@ export const fixtureBridge: Bridge = {
     if (given !== SUPPORTER_FIXTURE_CODE) return { state: "no", supporter: false, until: null, upcoming: [], checked: Math.floor(Date.now() / 1000), stale: false };
     prefs = { ...prefs, supporter_code: given };
     return { state: "supporter", supporter: true, until: new Date(Date.now() + 90 * 86400000).toISOString().replace(/\.\d+Z$/, "Z"), upcoming: SITE_TILES, checked: Math.floor(Date.now() / 1000), stale: false };
+  },
+  providerKeys: async () => providerStates(),
+  setProviderKey: async (provider, key) => {
+    providerKnown(provider);
+    const kept = key.trim();
+    if (kept === "") throw new Error("there is no key to keep");
+    if ([...kept].length > 256) throw new Error("an API key is never longer than 256 characters");
+    if (!/^[\x21-\x7e]+$/.test(kept)) throw new Error("an API key is letters, digits and punctuation, with no spaces");
+    providerKept.add(provider);
+    return providerStates();
+  },
+  clearProviderKey: async (provider) => {
+    providerKnown(provider);
+    providerKept.delete(provider);
+    return providerStates();
   },
   autoUpdate: async (progress) => {
     const done: UpdateOutcome[] = [];
