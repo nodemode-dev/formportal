@@ -2,6 +2,19 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.3 · 2026-11-22
+
+### Changed
+
+- Your API keys (Pexels, Pixabay, Freesound, Google Fonts) are set in a new Preferences panel, Keys. It shows for each key what it is for, whether one is kept, its last four characters and where it is kept, with Save, Remove and Get a free key. Stock & templates and Fonts no longer hold key fields: a source chip that needs a key reads "add a key" and opens the panel, and Fonts has one button to it.
+- FormPortal asks the system keychain only when you save or remove a key or use a feature that needs it, and then once a session. Opening FormPortal, any page or Preferences reads a small index of which keys are kept, never a key.
+- Where a computer has no keychain FormPortal can use, a key, or the GitHub sign-in, is kept in a file in FormPortal's folder that only you can read, and the panel says so; it moves to the keychain the first time it is used once one is there. Before, such a key was refused.
+- Profile shows who is connected to GitHub without asking the keychain or GitHub; the sign-in is read when sharing or the fork needs it. The outside-agents seal is read from the keychain once per run instead of on every check.
+
+### Known issues
+
+- A key or GitHub sign-in saved by 0.71.0 to 0.71.2 shows as not kept until you save it again (or connect again) in this version, because FormPortal no longer searches the keychain at start to find it.
+
 ## v0.71.2 · 2026-11-22
 
 ### Improved

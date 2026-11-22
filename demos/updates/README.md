@@ -21,7 +21,7 @@ The other demos: `../../demo/index.html` (installs and files) and `../library/in
 - The page signs its catalogue with an Ed25519 key it makes on load (WebCrypto) and trusts it for the session. The key compiled into FormPortal belongs to the publisher and cannot sign this catalogue, so the signature proves the checking, not who published.
 - Release notes for FormVis, FormLit and FormSkills are shortened from their own CHANGELOG.md files; FormCut's 2.6.2 note summarises its release page.
 - Automatic updates start off so the page opens still. Installed apps are remembered in local storage; Reset the demo clears them.
-- Nothing on the page asks the outside world. The pages that would (the extension registry, Connect to GitHub) show their real screens and say that this demo does not connect to them; Check on a supporter code sends nothing and says formai.studio cannot be reached.
+- Nothing on the page asks the outside world. The pages that would (the extension registry, Connect to GitHub) show their real screens and say that this demo does not connect to them; Check on a supporter code sends nothing and says formai.studio cannot be reached. Preferences, Keys keeps a key you save in the page's memory only, and says so.
 
 ## Browser support
 

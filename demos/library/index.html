@@ -1810,14 +1810,7 @@
                     <button class="seg-item" type="button" data-font-src="fontsource" aria-pressed="false">Browse Fontsource</button>
                     <button class="seg-item" type="button" data-font-src="google" aria-pressed="false" hidden>Browse Google Fonts</button>
                   </div>
-                  <button class="link-btn" type="button" data-font-key-toggle aria-expanded="false">Google Fonts key</button>
-                </div>
-                <div class="font-key" data-font-key hidden>
-                  <input class="field font-key-input" type="password" data-font-key-input placeholder="Google Fonts API key" aria-label="Google Fonts API key" autocomplete="off" spellcheck="false" />
-                  <button class="btn btn-primary" type="button" data-font-key-save>Save</button>
-                  <button class="btn" type="button" data-font-key-remove>Remove</button>
-                  <button class="link-btn" type="button" data-font-key-get>Make a key in Google Cloud</button>
-                  <p class="fine font-key-note">The key is kept in this computer's system keychain and sent only to Google's API.</p>
+                  <button class="link-btn" type="button" data-font-key-open>Add a Google Fonts key in Preferences</button>
                 </div>
                 <p class="fine font-web-line" data-font-web-line></p>
                 <div class="font-web-bar" data-font-web-bar hidden>
@@ -1873,11 +1866,6 @@
           <section class="pane" data-pane="stock" data-title="Stock &amp; templates" data-kind="all" aria-label="Stock and templates">
             <div class="page">
               <header class="page-head"><div><h1 class="h1">Stock &amp; templates</h1><p class="sub">Photos, footage, sound and templates you are free to use, saved with their credit.</p></div></header>
-              <section class="block stock-sources" data-stock-sources>
-                <header class="block-head"><h2 class="block-title">Your sources</h2></header>
-                <p class="fine stock-privacy">Keys are kept in the system keychain of this computer, never in a file. A search goes from this computer straight to the source you chose and nowhere else; FormPortal collects nothing.</p>
-                <ul class="stock-src-list" data-stock-src-list></ul>
-              </section>
               <form class="toolbar stock-bar" data-stock-form>
                 <label class="search search-local">
                   <svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -3511,6 +3499,23 @@
           </div>
         </section>
 
+        <section class="cv-prefs-sec" data-prefs-panel="keys" role="tabpanel" aria-labelledby="prefs-head-keys">
+          <button class="cv-prefs-sechead" type="button" id="prefs-head-keys" data-prefs-fold="keys" aria-expanded="true" aria-controls="prefs-body-keys"><span class="cv-prefs-secicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M11.5 12H20"/><path d="M17 12v3"/><path d="M20 12v2.5"/></svg></span><span class="cv-prefs-seclabel">Keys</span><span class="cv-prefs-chev"><svg class="ic ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></span></button>
+          <div class="cv-prefs-secbody" id="prefs-body-keys">
+            <section class="cv-prefs-group" data-keys>
+              <h3 class="cv-prefs-label">Your own API keys</h3>
+              <p class="fine">Keys are kept in this computer's system keychain, or, where it has none, in a file in FormPortal's folder that only you can read. The keychain is asked only when you save or remove a key, or search a source that needs it. A search goes from this computer straight to the source you chose and nowhere else; FormPortal collects nothing.</p>
+              <ul class="stock-src-list keys-list">
+                <li class="stock-src" data-key-row="pexels" data-key-page="https://www.pexels.com/api/"><div class="stock-src-main"><span class="stock-src-name">Pexels</span><span class="stock-src-kinds fine">Photos and video, in Stock &amp; templates</span><span class="stock-src-state" data-key-state>Off</span></div><p class="fine stock-src-why" data-key-why>No key kept.</p><form class="stock-src-key" data-key-form><input type="password" autocomplete="off" spellcheck="false" maxlength="256" placeholder="Paste your Pexels API key" aria-label="Pexels API key" /><button class="btn" type="submit">Save</button><button class="btn" type="button" data-key-remove disabled>Remove</button><button class="link-btn" type="button" data-key-get>Get a free key</button></form></li>
+                <li class="stock-src" data-key-row="pixabay" data-key-page="https://pixabay.com/api/docs/"><div class="stock-src-main"><span class="stock-src-name">Pixabay</span><span class="stock-src-kinds fine">Images and video, in Stock &amp; templates</span><span class="stock-src-state" data-key-state>Off</span></div><p class="fine stock-src-why" data-key-why>No key kept.</p><form class="stock-src-key" data-key-form><input type="password" autocomplete="off" spellcheck="false" maxlength="256" placeholder="Paste your Pixabay API key" aria-label="Pixabay API key" /><button class="btn" type="submit">Save</button><button class="btn" type="button" data-key-remove disabled>Remove</button><button class="link-btn" type="button" data-key-get>Get a free key</button></form></li>
+                <li class="stock-src" data-key-row="freesound" data-key-page="https://freesound.org/apiv2/apply/"><div class="stock-src-main"><span class="stock-src-name">Freesound</span><span class="stock-src-kinds fine">Sounds, in Stock &amp; templates</span><span class="stock-src-state" data-key-state>Off</span></div><p class="fine stock-src-why" data-key-why>No key kept.</p><form class="stock-src-key" data-key-form><input type="password" autocomplete="off" spellcheck="false" maxlength="256" placeholder="Paste your Freesound API key" aria-label="Freesound API key" /><button class="btn" type="submit">Save</button><button class="btn" type="button" data-key-remove disabled>Remove</button><button class="link-btn" type="button" data-key-get>Get a free key</button></form></li>
+                <li class="stock-src" data-key-row="google-fonts" data-key-page="https://console.cloud.google.com/apis/credentials"><div class="stock-src-main"><span class="stock-src-name">Google Fonts</span><span class="stock-src-kinds fine">Fonts, in Fonts</span><span class="stock-src-state" data-key-state>Off</span></div><p class="fine stock-src-why" data-key-why>No key kept.</p><form class="stock-src-key" data-key-form><input type="password" autocomplete="off" spellcheck="false" maxlength="256" placeholder="Paste your Google Fonts API key" aria-label="Google Fonts API key" /><button class="btn" type="submit">Save</button><button class="btn" type="button" data-key-remove disabled>Remove</button><button class="link-btn" type="button" data-key-get>Get a free key</button></form></li>
+              </ul>
+              <p class="fine">Openverse, ccMixter and Fontsource need no key.</p>
+            </section>
+          </div>
+        </section>
+
         <section class="cv-prefs-sec" data-prefs-panel="account" role="tabpanel" aria-labelledby="prefs-head-account">
           <button class="cv-prefs-sechead" type="button" id="prefs-head-account" data-prefs-fold="account" aria-expanded="true" aria-controls="prefs-body-account"><span class="cv-prefs-secicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span><span class="cv-prefs-seclabel">Profile</span><span class="cv-prefs-chev"><svg class="ic ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></span></button>
           <div class="cv-prefs-secbody" id="prefs-body-account">
@@ -3602,6 +3607,7 @@
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="interface" title="Interface"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M3 9h18"/><path d="M6.5 6.5h.01"/><path d="M9 6.5h.01"/><path d="M7 13h10"/><path d="M7 16h6"/></svg></span><span class="cv-prefs-tablabel">Interface</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="apps" title="Apps"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 4.5h6v6h-6z"/><path d="M13.5 4.5h6v6h-6z"/><path d="M4.5 13.5h6v6h-6z"/><path d="M13.5 13.5h6v6h-6z"/></svg></span><span class="cv-prefs-tablabel">Apps</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="catalogue" title="Catalogue"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H19v13H6.5A1.5 1.5 0 0 0 5 18.5z"/><path d="M5 18.5A1.5 1.5 0 0 0 6.5 20H19"/></svg></span><span class="cv-prefs-tablabel">Catalogue</span></button>
+          <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="keys" title="Keys"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M11.5 12H20"/><path d="M17 12v3"/><path d="M20 12v2.5"/></svg></span><span class="cv-prefs-tablabel">Keys</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="account" title="Profile"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span><span class="cv-prefs-tablabel">Profile</span></button>
           <button class="cv-prefs-railtab" type="button" role="tab" aria-selected="false" data-prefs-tab="about" title="About"><span class="cv-prefs-tabicon"><svg class="ic ic-m" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17z"/><path d="M12 11v5.5"/><path d="M12 7.8h.01"/></svg></span><span class="cv-prefs-tablabel">About</span></button>
         </nav>

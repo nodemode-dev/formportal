@@ -4,6 +4,13 @@ Living log for demo 3. Source files stay comment-free; what they would have said
 
 Built against: v0.71.2 · 2026-11-22
 
+## Rebuilt after v0.71.2 {#rebuild-0-71-3}
+- refers-to: demos/library/index.html · demos/library/assets/ · demos/library/README.md
+- kind: change
+- logged: after v0.71.2 · 2026-11-22
+
+Rebuilt with the command in README.md for Preferences, Keys (../../demo/HASHOUT_LOG.md#rebuild-0-71-3). This demo opens on Stock & templates, so it is where the templates part used to be pushed down by the blocks above it; the interface now hides it with them until the media index is read, and the load shift is 0.
+
 ## Rebuilt after v0.71.1 {#rebuild-0-71-2}
 - refers-to: demos/library/vite.config.mjs :: `resolveId` · demos/library/src/env.d.ts · demos/library/index.html · demos/library/assets/ · demos/library/apps/formsubstrate*.webp, formpublisher*.webp (subform*.webp removed)
 - kind: fix

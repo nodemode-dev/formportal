@@ -4,6 +4,13 @@ Living log for demo 2. Source files stay comment-free; what they would have said
 
 Built against: v0.71.2 · 2026-11-22
 
+## Rebuilt after v0.71.2 {#rebuild-0-71-3}
+- refers-to: demos/updates/index.html · demos/updates/assets/ · demos/updates/README.md
+- kind: change
+- logged: after v0.71.2 · 2026-11-22
+
+Rebuilt with the command in README.md for Preferences, Keys (../../demo/HASHOUT_LOG.md#rebuild-0-71-3); the key calls come from demo 1's `outside.ts` and are kept in the page's memory.
+
 ## Rebuilt after v0.71.1 {#rebuild-0-71-2}
 - refers-to: demos/updates/vite.config.mjs :: `resolveId`, the release-notes patch removed · demos/updates/src/bridge.ts :: `demoBridge` · demos/updates/src/demo.css · demos/updates/raw.d.ts · demos/updates/index.html · demos/updates/assets/ · demos/updates/apps/formsubstrate*.webp, formpublisher*.webp (subform*.webp removed)
 - kind: fix
