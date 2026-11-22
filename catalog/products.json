@@ -381,7 +381,7 @@
     },
     {
       "id": "formrec",
-      "name": "FormRec",
+      "name": "FormREC",
       "alt_of": "",
       "note": "Record walkthroughs, podcasts, messages and live feeds",
       "group": "other",
@@ -528,6 +528,18 @@
       "minimum_os": {
         "macos": "macOS 11"
       }
+    },
+    {
+      "id": "formpublisher",
+      "name": "FormPublisher",
+      "note": "In development",
+      "group": "other",
+      "status": "in-development",
+      "kind": "publisher",
+      "summary": "A new member of the Form family, in development.",
+      "identifier": "ai.nodemode.formpublisher",
+      "repository": "https://github.com/nodemode-dev/formpublisher",
+      "licence": "Apache-2.0"
     }
   ]
 }
