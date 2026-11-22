@@ -19,6 +19,7 @@ pub const EXACT: &[&str] = &[
     "https://www.tiktok.com/@nodemode_ai",
     "https://x.com/nodemode_ai",
     "https://discord.gg/uXqSJevSd",
+    "https://console.cloud.google.com/apis/credentials",
 ];
 const GITHUB: &str = "https://github.com/";
 
