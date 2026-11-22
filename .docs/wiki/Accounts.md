@@ -24,7 +24,7 @@ From the command line: `./formportal cli sign-in` prints the address and the cod
 
 ## Where the sign-in is kept
 
-In the system keychain: Keychain on macOS, Credential Manager on Windows, and the Secret Service (GNOME Keyring, KWallet) on Linux, under `FormPortal GitHub`. If the computer has no keychain service, FormPortal refuses to sign in before showing a code, rather than keeping the token in a file. Disconnect removes it. The token is never given to the window, never logged and never put in an error message; every request that carries it goes only to `github.com` or `api.github.com` (or the stand-in on this computer below), with a time limit.
+In the system keychain: Keychain on macOS, Credential Manager on Windows, and the Secret Service (GNOME Keyring, KWallet) on Linux, under `FormPortal GitHub`. If the computer has no keychain service, or it fails, the token is kept in `keys-private.json` in FormPortal's folder, a file only you can read (0600 on macOS and Linux, your own profile folder on Windows), and moves to the keychain the first time sharing or the fork uses it once one is there. Profile shows who is connected from `keys.json`, which holds your GitHub name and never the token, so opening FormPortal or Profile does not ask the keychain; the token is read when sharing or the fork needs it, once a session. Disconnect removes it from both. The token is never given to the window, never logged and never put in an error message; every request that carries it goes only to `github.com` or `api.github.com` (or the stand-in on this computer below), with a time limit.
 
 ## The GitHub app
 
