@@ -234,6 +234,45 @@
        "sha256": "74e931b0450c960820f8bd4d03e77104d54f0958da6cbdad776dc6aae40daf36",
        "minimum_os": "glibc 2.35"
       }
+     ],
+     "history": [
+      {
+       "version": "1.99.0",
+       "published": "2026-10-22T17:00:00Z",
+       "notes": "https://github.com/nodemode-dev/formvis/releases/tag/v1.99.0",
+       "artifacts": [
+        {
+         "platform": "macos",
+         "arch": "arm64",
+         "kind": "dmg",
+         "file": "formvis-1.99.0-macos-arm64.dmg",
+         "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.0/formvis-1.99.0-macos-arm64.dmg",
+         "bytes": 101000000,
+         "sha256": "2fb161a80cb3e7c418f87ec732df98d4b867072a3ffe058d93e82758366ee23c",
+         "minimum_os": "macOS 14"
+        },
+        {
+         "platform": "windows",
+         "arch": "x86_64",
+         "kind": "msi",
+         "file": "formvis-1.99.0-windows-x86_64.msi",
+         "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.0/formvis-1.99.0-windows-x86_64.msi",
+         "bytes": 101000000,
+         "sha256": "230ff04d13201df9efad3cd14e37da0523597e588d9e1f070982558c92d7d608",
+         "minimum_os": "Windows 10"
+        },
+        {
+         "platform": "linux",
+         "arch": "x86_64",
+         "kind": "appimage",
+         "file": "formvis-1.99.0-linux-x86_64.AppImage",
+         "url": "https://github.com/nodemode-dev/formvis/releases/download/v1.99.0/formvis-1.99.0-linux-x86_64.AppImage",
+         "bytes": 101000000,
+         "sha256": "c590ad9629bb0839d72dc0fbe5df015dbfef42218bd6cfc3110feb56085f10f5",
+         "minimum_os": "glibc 2.35"
+        }
+       ]
+      }
      ]
     }
    }
