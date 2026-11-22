@@ -138,8 +138,8 @@ const agentsFor = (product: string, channel: Channel): AgentClient[] =>
   (["claude", "codex", "cursor", "antigravity"] as const).map((client) => ({ client, label: LABELS[client], state: linked.has(`${key(product, channel)}:${client}`) ? "connected" : "not-connected", note: null }));
 
 for (const seed of (new URLSearchParams(window.location.search).get("installed") ?? "").split(",")) {
-  const [product, version] = seed.split(":");
-  if (product && version) installed.set(key(product, "stable"), { product, channel: "stable", version, previous: null });
+  const [product, version, previous] = seed.split(":");
+  if (product && version) installed.set(key(product, "stable"), { product, channel: "stable", version, previous: previous ?? null });
 }
 
 const extInstalled = new Map<string, InstalledExtension>();
