@@ -75,7 +75,7 @@ const CATEGORY: Record<string, string> = {
   formwav: "audio",
   formsculpt: "3d", formsurface: "3d", formfabric: "3d",
   formweb: "web",
-  formext: "code",
+  formext: "code", formsubstrate: "code",
   format: "agentic", formmcp: "agentic", formskills: "agentic",
   formdam: "tools", formtools: "tools", formtray: "tools",
 };

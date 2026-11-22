@@ -11,6 +11,8 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 - A kept supporter code is checked again at start only when Ask formai.studio what is on the way is on. Off, the kept answer is shown for 7 days after the last check (or until the code's end date, if sooner); after that Profile says so, and Check again asks formai.studio once.
 - `apps` on the command line and in the MCP server asks formai.studio only when given `--ask-site` (`ask_site`). `preferences` reads and sets `ask_site`.
 - Connect to GitHub appears in Preferences, Profile: this build carries FormPortal's GitHub app id. Nothing is sent to GitHub until you press Connect to GitHub.
+- SubForm is now FormSubstrate (installed as Substrate), the family's code and text editor in place of VS Code, listed under Code Editor Apps; its id is `formsubstrate`.
+- FormPublisher stands in for Wix and Squarespace, is licensed GPL-3.0-only and has its own green. FormCAD stands in for AutoCAD, SolidWorks and Rhino, and FormMorpheus's line reads "Animation studio: draw frame by frame, keyframe or perform live on a timeline."
 
 ## v0.71.0 · 2026-11-21
 

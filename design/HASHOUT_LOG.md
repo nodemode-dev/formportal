@@ -7,6 +7,19 @@ Last updated: 2026-11-21 · v0.71.0 FormPublisher in the registry, FormREC spell
 
 ---
 
+## after v0.71.0 · SubForm is FormSubstrate; FormPublisher, FormCAD and FormMorpheus follow the owner's words {#substrate}
+- refers-to: catalog/products.json :: `formsubstrate` (was `subform`), `formpublisher`, `formcad`, `formmorpheus` · catalog/apps/formsubstrate.json (git mv from subform.json), formslot.json · catalog/schedule.json :: Group 7 · design/app-hues.json :: `formsubstrate`, `formpublisher` · frontend/public/apps/formsubstrate.webp, formsubstrate-light.webp, frontend/public/heroes/formsubstrate.webp, formsubstrate-light.webp (git mv) · frontend/markup.ts :: `CATEGORY` · LICENSES.md :: the FormPublisher icon row
+- kind: change
+- logged: after v0.71.0 · 2026-11-21
+
+The owner: "SubForm should be renames FormSubstrate and the app name should just be called Substrate.app and it is instead of vs code as the form family code/text editor that is agentically integrated".
+
+- `subform` becomes `formsubstrate` everywhere it was a key: the registry entry (name FormSubstrate, identifier `ai.nodemode.formsubstrate`, repository nodemode-dev/formsubstrate, `alt_of` VS Code, the note and summary the owner gave; the summary keeps "several ... at once" from the old one, which the new sentence would have lost), the app page file and its id, name and repository, the 28 November schedule entry, the hue key (same `#a077e0`), the icon and hero files. FormSlot's page says its panel lives in FormSubstrate. The page's lede says the installed app is called Substrate; no other page shows an installed application's own name. On the Apps page it sits in Code Editor Apps beside form.ext. The install, run and agent commands on its page (`./subform`, `subform_oc_install`, `SUBFORM_PORT`) and the `/media/subform/` screenshot paths are the repository's and the website's own names and were left as they are; they change when those do.
+- FormPublisher: licence GPL-3.0-only (its LICENSE file, so the icon row in LICENSES.md says so too), hue `#5fe07a` (the owner's choice, so its tile is no longer the default colour), `alt_of` Wix and Squarespace, the owner's note and summary; still `in-development`.
+- FormCAD: `alt_of` AutoCAD, SolidWorks and Rhino. FormMorpheus: the owner's summary; `alt_of` stays Procreate Dreams.
+
+`catalog/` is a copy of formai_dev's contract: the same changes belong there (and on the website) so the next copy does not undo them.
+
 ## v0.71.0 · FormPublisher's icon, and each app's "Instead of" line follows its repository {#abouts-and-publisher-icon}
 - refers-to: frontend/public/apps/formpublisher.webp, formpublisher-light.webp; catalog/products.json :: `alt_of` of formtools, formweb, formdesign, formdam, formslide, formsurface, formsculpt; `summary` of formpublisher; LICENSES.md :: the FormPublisher icon row
 - kind: fix
