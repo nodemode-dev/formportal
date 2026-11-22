@@ -9,6 +9,7 @@ pub enum CoreError {
     Catalog(CatalogError),
     Url(String),
     Hash { file: String, expected: String, found: String },
+    NotServed { file: String, answer: Unserved },
     Signature(String),
     Unsupported(String),
     Unavailable(String),
@@ -22,6 +23,13 @@ pub enum CoreError {
     Account(String),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Unserved {
+    Page,
+    Missing,
+    Other,
+}
+
 pub type Result<T> = std::result::Result<T, CoreError>;
 
 impl fmt::Display for CoreError {
@@ -33,6 +41,14 @@ impl fmt::Display for CoreError {
             CoreError::Url(url) => write!(f, "refused address {url:?}: only https, or http on this computer, is fetched"),
             CoreError::Hash { file, expected, found } => {
                 write!(f, "{file} does not match the catalogue: expected SHA-256 {expected}, found {found}. It was not installed")
+            }
+            CoreError::NotServed { file, answer } => {
+                let what = match answer {
+                    Unserved::Page => "It answered with a web page instead of the file",
+                    Unserved::Missing => "It answered that the file is not there",
+                    Unserved::Other => "It answered with something other than the file",
+                };
+                write!(f, "The download server does not have {file} yet. {what}. Nothing was installed. This usually clears within the hour. Try again later")
             }
             CoreError::Unsupported(kind) => write!(f, "this build cannot install a {kind} file yet"),
             CoreError::Signature(why) => write!(f, "the catalogue was refused: {why}"),
