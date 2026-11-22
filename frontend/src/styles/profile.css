@@ -61,7 +61,8 @@
   display: grid;
   gap: var(--sp-1);
   margin: 0;
-  padding-inline-start: 1.25em;
+  padding-inline-start: 1.5em;
+  list-style: decimal;
 }
 
 .fork-acts {
