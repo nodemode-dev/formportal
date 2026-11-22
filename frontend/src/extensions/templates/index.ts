@@ -99,24 +99,32 @@ export const templates: Extension = {
       { rootMargin: "240px 0px" },
     );
 
+    const KIND_TEXT = { demo: t("Demo"), template: t("Template") };
+    const rowTpl = document.createElement("template");
+    rowTpl.innerHTML = `<li class="tpl-item"><div class="tpl-shot" aria-hidden="true"><img alt="" decoding="async" /></div><div class="tpl-text"><p class="tpl-name"><span class="tpl-name-text"></span> <span class="chip"></span></p><p class="row-sub tpl-desc" data-tpl-desc hidden></p><p class="fine tpl-meta" data-tpl-meta></p><p class="fine tpl-state" data-tpl-state></p></div><div class="tpl-acts"><button class="btn" type="button" data-tpl-act="open" hidden></button><button class="btn" type="button" data-tpl-act="show" hidden></button><button class="btn btn-primary" type="button" data-tpl-act="download"></button></div></li>`;
+    write(rowTpl.content.querySelector("[data-tpl-act='download']"), t("Download"));
+    write(rowTpl.content.querySelector("[data-tpl-act='show']"), t("Show in folder"));
+
     const rowState = (node: AppNode, item: TemplateItem, row: HTMLElement) => {
       const path = downloaded[item.id];
-      show(row.querySelector<HTMLElement>("[data-tpl-act='download']"), !path);
-      show(row.querySelector<HTMLElement>("[data-tpl-act='show']"), Boolean(path));
-      const open = row.querySelector<HTMLElement>("[data-tpl-act='open']");
-      write(open, t("Open in {app}", { app: nameOf(node) }));
-      show(open, Boolean(path) && opens(node, path));
+      const acts = row.lastElementChild as HTMLElement;
+      const [open, reveal, get] = Array.from(acts.children) as HTMLElement[];
+      show(get, !path);
+      show(reveal, Boolean(path));
+      const can = Boolean(path) && opens(node, path);
+      if (can) write(open, t("Open in {app}", { app: nameOf(node) }));
+      show(open, can);
       if (path && !row.hasAttribute("data-fault")) write(row.querySelector("[data-tpl-state]"), t("Saved in {path}", { path }));
     };
 
     const fill = (node: AppNode, item: TemplateItem, row: HTMLElement) => {
       write(row.querySelector(".tpl-name-text"), item.name);
-      write(row.querySelector(".chip"), item.kind === "demo" ? t("Demo") : t("Template"));
+      write(row.querySelector(".chip"), KIND_TEXT[item.kind] ?? item.kind);
       const desc = row.querySelector<HTMLElement>("[data-tpl-desc]");
       write(desc, item.description);
       show(desc, Boolean(item.description));
       write(row.querySelector("[data-tpl-meta]"), [size(item.bytes), item.licence, item.credit].filter(Boolean).join(" · "));
-      rowState(node, item, row);
+      if (downloaded[item.id] || row.isConnected) rowState(node, item, row);
     };
 
     const download = async (node: AppNode, item: TemplateItem, quiet = false): Promise<boolean> => {
@@ -151,27 +159,14 @@ export const templates: Extension = {
       }
     };
 
-    const makeRow = (node: AppNode, item: TemplateItem) => {
-      const row = document.createElement("li");
-      row.className = "tpl-item";
+    const makeRow = (item: TemplateItem) => {
+      const row = rowTpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
       row.dataset.tplItem = item.id;
-      row.innerHTML = `<div class="tpl-shot" aria-hidden="true"><img alt="" decoding="async" /></div><div class="tpl-text"><p class="tpl-name"><span class="tpl-name-text"></span> <span class="chip"></span></p><p class="row-sub tpl-desc" data-tpl-desc></p><p class="fine tpl-meta" data-tpl-meta></p><p class="fine tpl-state" data-tpl-state></p></div><div class="tpl-acts"><button class="btn" type="button" data-tpl-act="open" hidden></button><button class="btn" type="button" data-tpl-act="show" hidden></button><button class="btn btn-primary" type="button" data-tpl-act="download"></button></div>`;
-      write(row.querySelector("[data-tpl-act='download']"), t("Download"));
-      write(row.querySelector("[data-tpl-act='show']"), t("Show in folder"));
-      const shot = row.querySelector<HTMLElement>(".tpl-shot")!;
+      const shot = row.firstElementChild as HTMLElement;
       if (item.preview) {
         shot.dataset.preview = item.preview;
         observer.observe(shot);
       } else shot.toggleAttribute("data-none", true);
-      row.querySelector("[data-tpl-act='download']")?.addEventListener("click", () => void download(node, node.data.items.find((i) => i.id === item.id) ?? item));
-      row.querySelector("[data-tpl-act='show']")?.addEventListener("click", () => {
-        const path = downloaded[item.id];
-        if (path) bridge.templatesReveal(path).catch((e) => engine.setNotice(e instanceof Error ? e.message : String(e), "fault", "library"));
-      });
-      row.querySelector("[data-tpl-act='open']")?.addEventListener("click", () => {
-        const path = downloaded[item.id];
-        if (path) bridge.fileOpen(path).catch((e) => engine.setNotice(e instanceof Error ? e.message : String(e), "fault", "library"));
-      });
       return row;
     };
 
@@ -186,7 +181,7 @@ export const templates: Extension = {
       for (const item of node.data.items) {
         let row = node.rows.get(item.id);
         if (!row) {
-          row = makeRow(node, item);
+          row = makeRow(item);
           node.rows.set(item.id, row);
         }
         fill(node, item, row);
@@ -248,6 +243,17 @@ export const templates: Extension = {
         busy: false,
         rows: new Map(),
       };
+      node.list.addEventListener("click", (event) => {
+        const btn = (event.target as Element).closest<HTMLElement>("[data-tpl-act]");
+        const id = btn?.closest<HTMLElement>("[data-tpl-item]")?.dataset.tplItem;
+        const item = id ? node.data.items.find((i) => i.id === id) : undefined;
+        if (!btn || !item) return;
+        const fail = (e: unknown) => engine.setNotice(e instanceof Error ? e.message : String(e), "fault", "library");
+        const path = downloaded[item.id];
+        if (btn.dataset.tplAct === "download") void download(node, item);
+        else if (btn.dataset.tplAct === "show" && path) bridge.templatesReveal(path).catch(fail);
+        else if (btn.dataset.tplAct === "open" && path) bridge.fileOpen(path).catch(fail);
+      });
       node.toggle.addEventListener("click", () => {
         node.byFilter = false;
         setOpen(node, !node.open);
