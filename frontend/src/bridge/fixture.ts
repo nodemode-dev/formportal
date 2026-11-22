@@ -9,6 +9,7 @@ import storeMedia from "../../../core/data/store-media.json";
 import { DEFAULT_PREFS, versionNewer } from "../engine/index.ts";
 import type { AgentAccess, RepairFinding, AgentClient, OwnAgent, MediaItem, SavedMedia, FontFamilyEntry, InstalledFont, WebFontSource, WebFontFamily,FileVersion, FolderView, ProjectFile, Catalog, Channel, ExtensionBlocked, ExtensionIndex, ExtensionTurnedOff, InstalledExtension, InstallRecord, Os, Platform, Preferences, UpdateOutcome, GithubAccount, SharesView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 import { templatesFixture } from "./fixture-templates.ts";
 import { stockFixture } from "./stockfixture.ts";
@@ -34,6 +35,12 @@ for (const item of (new URLSearchParams(window.location.search).get("installed")
   if (version) installed.set(`${product}:stable`, { product, channel: "stable", version, previous: null });
 }
 const pause = (ms: number) => new Promise<void>((done) => window.setTimeout(done, ms));
+const failure = (step: StepReport["step"], file: string, sha256: string): string =>
+  step === "sha256"
+    ? `${file} does not match the catalogue: expected SHA-256 ${sha256}, found ${"0".repeat(64)}. It was not installed (browser mode, ?fail=sha256)`
+    : step === "signature"
+      ? "the catalogue's signature is not valid: it is not signed (browser mode, ?fail=signature)"
+      : `the download did not complete: no network (browser mode, ?fail=${step})`;
 const key = (product: string, channel: Channel) => `${product}:${channel}`;
 const SAMPLE = "/home/you/Documents/Form";
 const folders: FolderView[] = new URLSearchParams(window.location.search).has("files") ? [{ path: SAMPLE, keep_versions: true, exists: true, files: 0, bytes: 0 }] : [];
@@ -280,35 +287,56 @@ export const fixtureBridge: Bridge = {
       const release = [latest, ...(latest?.history ?? [])].find((x) => x?.version === r.version);
       return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: release?.artifacts[0]?.sha256 ?? "0".repeat(64) };
     }),
-  install: async (product, channel, progress, version) => {
+  install: async (product, channel, progress, version, step) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
     const release = version ? [latest, ...(latest?.history ?? [])].find((r) => r?.version === version) : latest;
     if (!release) throw new Error(`the catalogue offers this computer nothing for ${product}${version ? ` ${version}` : ""}`);
-    for (let step = 1; step <= 10; step += 1) {
-      await pause(90);
-      progress(step / 10);
+    const fail = params.get("fail");
+    const report = async (name: StepReport["step"], detail: string, wait: number) => {
+      await pause(step ? wait : 0);
+      if (fail === name) throw new Error(failure(name, artifact.file, artifact.sha256));
+      step?.({ step: name, detail });
+    };
+    const artifact = release.artifacts.find((a) => a.platform === browserPlatform().os) ?? release.artifacts[0];
+    await report("signature", "signed", 500);
+    await report("pick", artifact.file, 400);
+    await report("address", artifact.url, 400);
+    for (let tick = 1; tick <= 10; tick += 1) {
+      await pause(step ? 280 : 90);
+      progress(tick / 10);
     }
+    await report("download", String(artifact.bytes), 0);
+    await report("sha256", artifact.sha256, 600);
+    await report("unpack", `/home/you/.local/share/formportal/apps/${product}/${channel}/${release.version}.tmp`, 700);
     const before = installed.get(key(product, channel));
     if (version && latest && versionNewer(latest.version, release.version) && prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) {
       prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
     }
     const kept = before && before.version !== release.version ? before.version : (before?.previous ?? null);
     const record: InstallRecord = { product, channel, version: release.version, previous: prefs.keep_previous ? kept : null };
+    await pause(step ? 500 : 0);
     installed.set(key(product, channel), record);
+    step?.({ step: "place", detail: record.previous ?? "" });
     return record;
   },
   open: async (product, channel) => {
     if (!installed.has(key(product, channel))) throw missing(product);
   },
-  rollback: async (product, channel) => {
+  rollback: async (product, channel, step) => {
     const record = installed.get(key(product, channel));
     if (!record || !record.previous) throw missing(`an earlier version of ${product}`);
+    await pause(step ? 600 : 0);
+    step?.({ step: "find", detail: `/home/you/.local/share/formportal/apps/${product}/${channel}/${record.previous}` });
     const swapped: InstallRecord = { product, channel, version: record.previous, previous: record.version };
+    await pause(step ? 600 : 0);
+    installed.set(key(product, channel), swapped);
+    step?.({ step: "swap", detail: record.version });
     if (versionNewer(record.version, record.previous)) {
       if (prefs.per_app[product] !== false && (prefs.per_app[product] || prefs.auto_update)) prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
       later.delete(key(product, channel));
+      await pause(step ? 500 : 0);
+      step?.({ step: "hold", detail: "" });
     }
-    installed.set(key(product, channel), swapped);
     return swapped;
   },
   remove: async (product, channel) => {

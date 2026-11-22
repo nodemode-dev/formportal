@@ -1,6 +1,7 @@
 import type { AgentAccess, AgentChoice, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, Source, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import type { SavedMedia, StockKind, StockPage, StockSource } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
 import { fixtureBridge } from "./fixture.ts";
 import { tauriBridge } from "./tauri.ts";
 
@@ -19,9 +20,9 @@ export interface Bridge {
   selfUpdateCheck(): Promise<SelfUpdate>;
   selfUpdateInstall(): Promise<void>;
   installs(): Promise<InstallRecord[]>;
-  install(product: string, channel: Channel, progress: (fraction: number) => void, version?: string): Promise<InstallRecord>;
+  install(product: string, channel: Channel, progress: (fraction: number) => void, version?: string, step?: (report: StepReport) => void): Promise<InstallRecord>;
   open(product: string, channel: Channel): Promise<void>;
-  rollback(product: string, channel: Channel): Promise<InstallRecord>;
+  rollback(product: string, channel: Channel, step?: (report: StepReport) => void): Promise<InstallRecord>;
   remove(product: string, channel: Channel): Promise<void>;
   onLink(handler: (target: string) => void): void;
   stillOpen(product: string, channel: Channel): Promise<number[]>;

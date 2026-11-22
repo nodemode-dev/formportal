@@ -623,3 +623,23 @@ export interface TemplateDownload {
   path: string;
   unpacked: boolean;
 }
+
+export type JobStep = "signature" | "pick" | "address" | "download" | "sha256" | "unpack" | "place" | "find" | "swap" | "hold";
+
+export interface StepReport {
+  step: JobStep;
+  detail: string;
+}
+
+export interface JobEvent {
+  key: string;
+  product: string;
+  channel: Channel;
+  phase: "start" | "step" | "end";
+  kind?: "install" | "rollback";
+  version?: string;
+  newest?: boolean;
+  step?: JobStep;
+  detail?: string;
+  error?: string | null;
+}

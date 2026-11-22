@@ -1,6 +1,7 @@
 import type { AgentAccess, RepairReport, WebPlan, AssistantAgent, LearnView, AgentClient, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ExtensionsView, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, SelfUpdate, UpdateOutcome, GithubStatus, DeviceCode, GithubPoll, GithubFork, SharesView, SyncReport, PublishedFile, UpcomingView, SupporterView } from "../engine/types.ts";
 import type { KeyState } from "../engine/types.ts";
 import type { SavedMedia, StockPage, StockSource } from "../engine/types.ts";
+import type { StepReport } from "../engine/types.ts";
 import type { Bridge } from "./index.ts";
 
 interface TauriGlobal {
@@ -48,6 +49,20 @@ const record = (raw: RawInstall): InstallRecord => ({
   sha256: raw.current.sha256 ?? null,
 });
 
+interface RawStep {
+  product: string;
+  channel: Channel;
+  step: StepReport["step"];
+  detail: string;
+}
+
+const steps = async (product: string, channel: Channel, step?: (report: StepReport) => void): Promise<() => void> =>
+  step
+    ? tauri().event.listen<RawStep>("install-step", ({ payload }) => {
+        if (payload.product === product && payload.channel === channel) step({ step: payload.step, detail: payload.detail });
+      })
+    : () => {};
+
 export const tauriBridge: Bridge = {
   source: "live",
   platform: () => tauri().core.invoke<Platform>("platform"),
@@ -85,20 +100,29 @@ export const tauriBridge: Bridge = {
       });
   },
   installs: async () => (await tauri().core.invoke<RawInstall[]>("installs")).map(record),
-  install: async (product, channel, progress, version) => {
+  install: async (product, channel, progress, version, step) => {
     const stop = await tauri().event.listen<RawProgress>("install-progress", ({ payload }) => {
       if (payload.product === product && payload.channel === channel) progress(payload.total > 0 ? payload.have / payload.total : 0);
     });
+    const unstep = await steps(product, channel, step);
     try {
       return record(await tauri().core.invoke<RawInstall>("install", { product, channel, url: catalogUrl(), allowUnsigned: allowUnsigned(), version: version ?? null }));
     } finally {
       stop();
+      unstep();
     }
   },
   open: async (product, channel) => {
     await tauri().core.invoke<number>("open", { product, channel });
   },
-  rollback: async (product, channel) => record(await tauri().core.invoke<RawInstall>("rollback", { product, channel })),
+  rollback: async (product, channel, step) => {
+    const unstep = await steps(product, channel, step);
+    try {
+      return record(await tauri().core.invoke<RawInstall>("rollback", { product, channel }));
+    } finally {
+      unstep();
+    }
+  },
   remove: async (product, channel) => {
     await tauri().core.invoke<null>("remove", { product, channel });
   },

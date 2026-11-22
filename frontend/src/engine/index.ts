@@ -1,7 +1,10 @@
 import type { Artifact, Release, RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode, SharesView } from "./types.ts";
 
+import type { JobEvent } from "./types.ts";
+
 export interface EngineEvents {
   install: { key: string };
+  job: JobEvent;
   notice: { text: string; tone: "info" | "fault"; category: NoticeCategory; action?: NoticeAction };
   learn: { view: LearnView };
   assistant: { agents: AssistantAgent[] };

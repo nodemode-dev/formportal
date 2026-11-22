@@ -32,6 +32,7 @@ import { home } from "./extensions/home/index.ts";
 import { demos } from "./extensions/demos/index.ts";
 import { popout } from "./extensions/popout/index.ts";
 import { versions } from "./extensions/versions/index.ts";
+import { progress } from "./extensions/progress/index.ts";
 import { revealApp } from "./bridge/reveal.ts";
 import { templates } from "./extensions/templates/index.ts";
 
@@ -45,6 +46,7 @@ engine.state.light = document.documentElement.getAttribute("data-theme") === "li
 engine.setNames(Object.fromEntries(registry.products.map((p) => [p.id, p.id === "formai" ? "FormPortal" : p.name])));
 [live, appIcon, side, route, theme, apps, home, library, settings, notices, prefs, search, agents, ownAgents, files, fonts, stock, learn, assistant, launch, repair, account, share, supporter, demos, popout, versions].forEach(register);
 register(templates);
+register(progress);
 activateAll(engine);
 
 interface Target {
@@ -127,12 +129,20 @@ engine.command("app.install", (arg) =>
   guard(async () => {
     const { product, channel, version } = arg as Target & { version?: string };
     engine.setProgress(product, channel, 0);
+    const job = { key: engine.key(product, channel), product, channel };
+    engine.emit("job", { ...job, phase: "start", kind: "install", version: version ?? engine.view(product, channel).version ?? "", newest: !version });
+    let failed: string | null = null;
     try {
-      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction), version);
+      await bridge.install(product, channel, (fraction) => engine.setProgress(product, channel, fraction), version, (s) => engine.emit("job", { ...job, phase: "step", step: s.step, detail: s.detail }));
+    } catch (e) {
+      failed = e instanceof Error ? e.message : String(e);
+      throw e;
     } finally {
       engine.setProgress(product, channel, null);
+      if (failed !== null) engine.emit("job", { ...job, phase: "end", error: failed });
     }
     await refresh();
+    engine.emit("job", { ...job, phase: "end", error: null });
     const label = engine.name(product);
     const open = await bridge.stillOpen(product, channel);
     const installed = engine.installs.get(engine.key(product, channel))?.version ?? version ?? "";
@@ -264,8 +274,17 @@ engine.command("app.rollback", (arg) =>
   guard(async () => {
     const { product, channel } = arg as Target;
     const before = engine.installs.get(engine.key(product, channel))?.version ?? "";
-    const now = await bridge.rollback(product, channel);
+    const job = { key: engine.key(product, channel), product, channel };
+    engine.emit("job", { ...job, phase: "start", kind: "rollback", version: engine.installs.get(job.key)?.previous ?? "" });
+    let now;
+    try {
+      now = await bridge.rollback(product, channel, (s) => engine.emit("job", { ...job, phase: "step", step: s.step, detail: s.detail }));
+    } catch (e) {
+      engine.emit("job", { ...job, phase: "end", error: e instanceof Error ? e.message : String(e) });
+      throw e;
+    }
     await refresh();
+    engine.emit("job", { ...job, phase: "end", error: null });
     engine.setPrefs(await bridge.preferences());
     const vars = { app: `${engine.name(product)}${channel === "stable" ? "" : ` ${channel}`}`, version: now.version };
     const stays = versionNewer(before, now.version) && !engine.automatic(product, channel);
