@@ -1,0 +1,309 @@
+{
+  "id": "formpublisher",
+  "name": "FormPublisher",
+  "version": "0.10.1",
+  "repo": "https://github.com/nodemode-dev/formpublisher",
+  "kind": "Site publisher",
+  "title": "start a FormWeb site from a template, check it, package it and host it yourself",
+  "summary": "FormPublisher starts FormWeb sites from templates, checks, packages and signs them, and prepares a folder for your own host, on your computer with no account and no monthly subscription.",
+  "lede": "FormPublisher is the do-it-yourself version of a site builder, with no monthly subscription. Start from a template, edit it in FormWeb, then check, package and sign it here, and host it yourself with the guide, paying only your own host and domain. It runs locally with no account, and it hosts nothing, uploads nothing and buys no domain.",
+  "replaces": "Wix and Squarespace",
+  "project": ".fpub",
+  "runs_on": "macOS 13 or newer on Apple silicon, macOS 14 or newer on Intel, Windows and Linux",
+  "checks": [
+    "Starts a site from eight FormWeb templates, each file checked against its SHA-256, or imports a FormWeb export, a .fweb project, a publication folder or the site open in FormWeb, and never changes it.",
+    "Checks the files offline (links, assets, metadata, headings, forms, canonical links, Open Graph, hreflang, a favicon and a 404 page) and, in a deep check, layout shift, largest contentful paint and text contrast.",
+    "Builds a deterministic site.zip with a publish.json that lists every file by SHA-256, reproduces it byte for byte and signs it with an Ed25519 key kept in your system's password store.",
+    "Prepares a folder for Static zip, Netlify, Cloudflare Pages, Vercel, GitHub Pages or nginx with the exact commands to run, and uploads nothing."
+  ],
+  "facts": [
+    {
+      "dt": "Package file",
+      "dd": ".fpub holds a build's publish.json, site.zip and signature, and the same build always saves to the same bytes"
+    },
+    {
+      "dt": "Stack",
+      "dd": "A vanilla TypeScript and Vite interface, a Python and FastAPI engine and a Tauri 2 desktop shell"
+    },
+    {
+      "dt": "Interface",
+      "dd": "26 languages, chosen in Preferences"
+    },
+    {
+      "dt": "Hosts",
+      "dd": "Static zip, Netlify, Cloudflare Pages, Vercel, GitHub Pages and nginx, with a hosting guide for each"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "checks",
+      "kicker": "Checks",
+      "title": "What Wix and Squarespace set up for you, checked",
+      "text": "Static checks run offline on the files: links, assets, redirects, sitemap, robots, metadata, images, headings, forms that post to a local address, canonical links, Open Graph tags, structured data, reciprocal hreflang, a favicon, a 404 page, link names and form labels. A deep check drives the Chrome or Edge you already have and measures layout shift, largest contentful paint and text contrast.",
+      "shot": "checks"
+    },
+    {
+      "id": "package",
+      "kicker": "Package and sign",
+      "title": "One package, the same bytes every time",
+      "text": "Build a deterministic site.zip with a publish.json that lists every file by SHA-256, reproduce it byte for byte, and sign it with an Ed25519 key. The key's private half is kept in your system's password store, and Verify tells you whether a package was signed by one of your own keys.",
+      "shot": "package"
+    },
+    {
+      "id": "publish",
+      "kicker": "Publish",
+      "title": "A folder for your host, and the commands to run",
+      "text": "Prepare a folder for Static zip, Netlify, Cloudflare Pages, Vercel, GitHub Pages or nginx, with the redirects, headers and 404 rule that host expects and the exact commands to run. You pay your host and your domain, nothing else, and nothing is ever uploaded.",
+      "shot": "publish"
+    }
+  ],
+  "features": [
+    {
+      "id": "templates",
+      "icon": "grid",
+      "title": "Start from a template",
+      "text": "The Templates sheet starts a site from eight FormWeb starters, read from a fixed release of formai-templates only when you press Get the templates.",
+      "bullets": [
+        "Business, portfolio, blog, event and shop site types, with a filter",
+        "Every file and preview checked against its SHA-256",
+        "A FormWeb project written into a folder you choose"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "import",
+      "icon": "download",
+      "title": "Reads FormWeb",
+      "text": "Opens a site-export.zip, a .fweb project, a .fpub package, a publication folder, or the site open in a running FormWeb, and never changes it.",
+      "bullets": [
+        "FormWeb's Send to FormPublisher, or its inbox folder when FormPublisher is closed",
+        "Read-only toward FormWeb",
+        "A site that arrives again gains a revision"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "preview",
+      "icon": "laptop",
+      "title": "Preview",
+      "text": "The site is served by a static host on its own origin, as a real host would, with every route in a strip beside the stage.",
+      "bullets": [
+        "Device sizes, dark or light, reduced motion",
+        "Network throttled to Fast or Slow",
+        "The current route opens in your browser"
+      ],
+      "shot": "preview"
+    },
+    {
+      "id": "checks",
+      "icon": "check",
+      "title": "Checks",
+      "text": "Static checks run offline on the files, live checks read the console, failed requests and layout shift from the preview, and a deep check measures speed and contrast.",
+      "bullets": [
+        "Search and sharing: canonical links, Open Graph, structured data, hreflang",
+        "Accessibility: link names and form labels",
+        "Each rule names its source in the manual"
+      ],
+      "shot": "checks"
+    },
+    {
+      "id": "package",
+      "icon": "box",
+      "title": "Package and sign",
+      "text": "A deterministic site.zip with a publish.json, reproduced byte for byte and signed with an Ed25519 key from your system's password store.",
+      "bullets": [
+        "Inspect a build and compare two",
+        "Save a build as one .fpub file",
+        "Keys managed in Preferences, under Signing keys"
+      ],
+      "shot": "package"
+    },
+    {
+      "id": "publish",
+      "icon": "export",
+      "title": "Publish",
+      "text": "A prepared folder for each of six hosts, written from the build's own site.zip, verifiable against publish.json, and never uploaded.",
+      "bullets": [
+        "Static zip, Netlify, Cloudflare Pages, Vercel, GitHub Pages and nginx",
+        "FormWeb's model files left out unless you keep them",
+        "The last Verify result kept beside each folder"
+      ],
+      "shot": "results"
+    },
+    {
+      "id": "hosting",
+      "icon": "globe",
+      "title": "Host it yourself",
+      "text": "The hosting guide takes the folder FormPublisher wrote to your host: the steps, your domain's DNS records, HTTPS, updates, forms and analytics.",
+      "bullets": [
+        "A part for each of the six hosts",
+        "A live-site check after you deployed it, which reads only",
+        "No host recommended over another and no affiliate link"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "agents",
+      "icon": "terminal",
+      "title": "Agent tools",
+      "text": "28 command line commands and 30 MCP tools cover the whole path from a template or an import to a prepared folder and its verify, so Claude Code, Codex, Cursor and Antigravity do what a person does in the window.",
+      "bullets": [
+        "An agent dock in the window with a tab for each agent found",
+        "Each tool says whether it reads, writes in the data folder or writes to a path you named",
+        "Deleting for good stays a person's action"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "trash",
+      "icon": "updates",
+      "title": "Trash and revisions",
+      "text": "Removed sites, builds, keys and prepared folders wait in a Trash on Home, and a site's revisions show the files and routes changed between any two.",
+      "bullets": [
+        "Restore puts an entry back where it came from",
+        "Delete for good and Empty Trash ask first",
+        "Rebindable keyboard shortcuts"
+      ],
+      "shot": ""
+    },
+    {
+      "id": "window",
+      "icon": "settings",
+      "title": "A window you know",
+      "text": "Home, one tab per open site, a menubar, a routes strip, an inspector and a bottom panel, in the Form family's look with dark and light themes and a green accent.",
+      "bullets": [
+        "26 interface languages",
+        "Panels that resize by dragging or by keyboard",
+        "The manual inside the window, with the network off too"
+      ],
+      "shot": ""
+    }
+  ],
+  "parity": {
+    "against": "",
+    "summary": ""
+  },
+  "docs": {
+    "requirements": [
+      "Node 22.12 or newer",
+      "Python 3.12",
+      "git",
+      "Rust 1.97.0 and the Tauri prerequisites, only for the desktop window"
+    ],
+    "install": "git clone git@github.com:nodemode-dev/formpublisher.git\ncd formpublisher\n./formpublisher_oc_install\n./setup/install_compiler\nWindows: formpublisher_oc_install.bat",
+    "run": "./formpublisher\nWindows: formpublisher.bat",
+    "desktop": "./build_app builds the desktop app start to finish and logs to build_app.log; ./formpublisher desktop dev opens the desktop window over the source tree.",
+    "agents": "./formpublisher mcp starts the MCP server on stdio, and ./formpublisher agents install registers it with Claude Code, Codex, Cursor and Antigravity.",
+    "topics": [
+      {
+        "title": "Quick Start",
+        "text": "The interface is at http://localhost:5280 and the engine on 127.0.0.1:8280. ./formpublisher doctor checks the toolchain."
+      },
+      {
+        "title": "Manual",
+        "text": "docs/MANUAL.md is the manual, also in the app under Help > Documentation."
+      },
+      {
+        "title": "Host it yourself",
+        "text": "docs/HOSTING.md takes a prepared folder to Netlify, Cloudflare Pages, Vercel, GitHub Pages, nginx or any static host, with DNS, HTTPS, updates, forms and analytics."
+      },
+      {
+        "title": "Configuration",
+        "text": "FORMPUBLISHER_HOME moves the data folder (~/FormPublisher by default), FORMPUBLISHER_PORT sets the engine port and FORMPUBLISHER_HOST_PORT the preview host port."
+      },
+      {
+        "title": "Status",
+        "text": "In development. Importing from the site open in FormWeb needs FormWeb running on the same computer. Publish prepares folders but never uploads. The deep check needs Chrome and the optional requirements-deep.txt; .fweb projects need formweb-core."
+      }
+    ]
+  },
+  "releases": [
+    {
+      "version": "0.10.1",
+      "date": "2026-11-22",
+      "items": [
+        "The README and the wiki say what 0.10.0 does, with Templates and Hosting pages",
+        "The pictures in the README and the manual show the window as it is now",
+        "Preferences: the FormWeb address row sits on one line again"
+      ]
+    },
+    {
+      "version": "0.10.0",
+      "date": "2026-11-22",
+      "items": [
+        "Eight whole sites to start from, read from a fixed release of formai-templates",
+        "Forms that work on a static host, and the hosting guide's Forms and Analytics parts",
+        "A live-site check that reads your own public address only when you press the button"
+      ]
+    },
+    {
+      "version": "0.9.0",
+      "date": "2026-11-22",
+      "items": [
+        "The checks cover what Wix and Squarespace set up for you for search and sharing",
+        "Link names and form labels are checked for accessibility",
+        "The deep check measures text contrast and the largest contentful paint"
+      ]
+    }
+  ],
+  "shots_wanted": [],
+  "sources": [
+    "README.md",
+    "CHANGELOG.md",
+    "docs/MANUAL.md",
+    "docs/HOSTING.md",
+    "src-tauri/tauri.conf.json",
+    "LICENSE"
+  ],
+  "captures": {
+    "editor": {
+      "file": "/media/formpublisher/ui-hero-1.webp",
+      "light": "/media/formpublisher/ui-hero-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "FormPublisher's Home: a drop zone for a site zip beside Open zip, Open folder, Import from FormWeb and Start from a template, the Northwind Notes site in Recent and the four demo cards",
+      "size": ""
+    },
+    "preview": {
+      "file": "/media/formpublisher/ui-preview-1.webp",
+      "light": "/media/formpublisher/ui-preview-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The sample site in the preview stage with the routes strip and the inspector",
+      "size": ""
+    },
+    "checks": {
+      "file": "/media/formpublisher/ui-checks-1.webp",
+      "light": "/media/formpublisher/ui-checks-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Problems panel listing a broken link, the missing favicon and two heading warnings",
+      "size": ""
+    },
+    "package": {
+      "file": "/media/formpublisher/ui-package-1.webp",
+      "light": "/media/formpublisher/ui-package-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Package sheet with a built, signed and verified package",
+      "size": ""
+    },
+    "publish": {
+      "file": "/media/formpublisher/ui-publish-1.webp",
+      "light": "/media/formpublisher/ui-publish-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "The Publish sheet with all six hosts ticked and prepared",
+      "size": ""
+    },
+    "results": {
+      "file": "/media/formpublisher/ui-results-1.webp",
+      "light": "/media/formpublisher/ui-results-light-1.webp",
+      "width": 2400,
+      "height": 1500,
+      "alt": "Prepared folders for Static zip and Netlify with their commands",
+      "size": ""
+    }
+  },
+  "credit": ""
+}
