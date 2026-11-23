@@ -1,14 +1,16 @@
 .job {
   position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
+  top: 12px;
+  right: 16px;
   z-index: var(--z-popover);
-  display: grid;
-  gap: 10px;
-  inline-size: min(360px, calc(100vw - 24px));
-  max-block-size: calc(100vh - 24px);
-  overflow: auto;
-  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  overflow: hidden;
+  padding: 14px 0 0;
   border: 1px solid var(--fp-edge-2);
   border-radius: var(--radius-xl);
   background: var(--fp-raise);
@@ -225,4 +227,186 @@ html[data-rail="mini"] .side-app .side-bar {
   font-size: 11px;
   line-height: 15px;
   overflow-wrap: anywhere;
+}
+
+.appwin > .job-head {
+  flex: none;
+  padding: 0 14px 10px;
+  border-bottom: 1px solid var(--fp-edge);
+}
+
+.appwin:not([data-state]) .job-pill {
+  display: none;
+}
+
+.appwin:not([data-state]) > .job-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.appwin-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.appwin-job {
+  display: none;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--fp-edge);
+}
+
+.appwin[data-job-on] .appwin-job {
+  display: grid;
+}
+
+.appwin-sec {
+  display: grid;
+  gap: 2px;
+  padding: 10px 8px 12px;
+}
+
+.appwin-sec + .appwin-sec {
+  border-top: 1px solid var(--fp-edge);
+}
+
+.appwin-h {
+  margin: 0 6px 6px;
+  color: var(--fp-ink-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 16px;
+  text-transform: uppercase;
+}
+
+.appwin .drop-item {
+  min-height: 30px;
+  padding: 0 8px;
+  border-radius: 6px;
+  color: var(--fp-ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.appwin .drop-item:hover,
+.appwin .drop-item:focus-visible,
+.appwin .menu-check:focus-within {
+  outline: none;
+  background: var(--fp-ctl);
+}
+
+.appwin .menu-danger,
+.appwin .menu-ask {
+  color: var(--fault);
+}
+
+.appwin .menu-ask {
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 0 0 8px;
+}
+
+.appwin .menu-ask > .btn {
+  width: auto;
+  height: 26px;
+  min-height: 26px;
+  padding: 0 9px;
+}
+
+.appwin .switch {
+  width: 26px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--fp-ctl);
+  box-shadow: inset 0 0 0 1px var(--fp-edge-2);
+}
+
+.appwin .switch::after {
+  top: 3px;
+  left: 3px;
+  width: 10px;
+  height: 10px;
+  background: var(--fp-ink-2);
+  box-shadow: none;
+}
+
+.appwin .switch:checked {
+  background: var(--accent-color);
+  box-shadow: none;
+}
+
+.appwin .switch:checked::after {
+  background: var(--text-on-accent);
+  transform: translateX(10px);
+}
+
+.appwin-none {
+  display: none;
+  margin: 0 8px;
+  color: var(--fp-ink-3);
+}
+
+.appwin[data-install="none"] .appwin-none {
+  display: block;
+}
+
+.appwin[data-install="busy"] .appwin-sec.menu {
+  display: none;
+}
+
+.appwin-vers {
+  gap: 8px;
+  padding-inline: 14px;
+}
+
+.appwin-vers > .appwin-h {
+  margin-inline: 0;
+  margin-bottom: 0;
+}
+
+.appwin-vers > .fine {
+  margin: 0;
+  color: var(--fp-ink-3);
+}
+
+.appwin:not([data-previous]) .vers-kept {
+  display: none;
+}
+
+.appwin .vers-kept {
+  font-size: 12px;
+}
+
+.appwin .ver {
+  padding: 8px 0;
+}
+
+.appwin .ver-head {
+  grid-template-columns: max-content max-content max-content minmax(0, 1fr) auto;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.appwin .ver-head > .btn {
+  min-width: 64px;
+}
+
+.drop-more > .more-btn {
+  padding: 0;
+  font: inherit;
+}
+
+.drop-more > .more-btn:hover,
+.drop-more > .more-btn[aria-expanded="true"] {
+  background: var(--fp-ctl);
+  color: var(--fp-ink);
+}
+
+.drop-more > .more-btn:focus-visible {
+  outline: 2px solid var(--accent-color-dim);
+  outline-offset: 2px;
 }
