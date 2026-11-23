@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.5 · 2026-11-23
+
+### Fixed
+
+- FormPublisher's page shows FormPublisher's preview stage, with a sample site, its routes and the inspector, instead of the app's Home screen.
+
 ## v0.71.4 · 2026-11-23
 
 ### Fixed

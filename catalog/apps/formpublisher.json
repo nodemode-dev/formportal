@@ -256,14 +256,6 @@
     "LICENSE"
   ],
   "captures": {
-    "editor": {
-      "file": "/media/formpublisher/ui-hero-1.webp",
-      "light": "/media/formpublisher/ui-hero-light-1.webp",
-      "width": 2400,
-      "height": 1500,
-      "alt": "FormPublisher's Home: a drop zone for a site zip beside Open zip, Open folder, Import from FormWeb and Start from a template, the Northwind Notes site in Recent and the four demo cards",
-      "size": ""
-    },
     "preview": {
       "file": "/media/formpublisher/ui-preview-1.webp",
       "light": "/media/formpublisher/ui-preview-light-1.webp",
