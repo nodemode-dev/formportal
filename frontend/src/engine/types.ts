@@ -563,6 +563,7 @@ export interface InstallRecord {
   previous: string | null;
   path?: string | null;
   sha256?: string | null;
+  installed_at?: number | null;
 }
 
 export interface ChannelView {

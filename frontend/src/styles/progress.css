@@ -253,34 +253,163 @@ html[data-rail="mini"] .side-app .side-bar {
 }
 
 .appwin-job {
-  display: none;
+  display: grid;
+  grid-template-areas: "steps" "now" "more" "panel";
   gap: 10px;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--fp-edge);
+  padding: 12px 14px 14px;
 }
 
-.appwin[data-job-on] .appwin-job {
+.appwin .appwin-job > .job-steps {
   display: grid;
+  grid-area: steps;
+  gap: 6px;
+  align-content: start;
+  visibility: hidden;
 }
 
-.appwin-sec {
+.appwin[data-kind="install"] .appwin-job > .job-steps[data-kind="install"],
+.appwin[data-kind="rollback"] .appwin-job > .job-steps[data-kind="rollback"] {
+  visibility: visible;
+}
+
+.appwin .appwin-job > .job-now {
+  grid-area: now;
+}
+
+.appwin .appwin-job > .job-more {
+  grid-area: more;
+}
+
+.appwin .appwin-job > .job-panel {
+  grid-area: panel;
+}
+
+.appwin-backs {
   display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0 10px;
+  list-style: none;
+}
+
+.appwin-backs:empty {
+  display: none;
+}
+
+.bcard,
+.appwin-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--fp-edge);
+  border-radius: var(--radius-l, 12px);
+  background: color-mix(in oklab, var(--fp-ctl) 45%, transparent);
+}
+
+.bcard-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+}
+
+.pill-stack {
+  display: inline-grid;
+}
+
+.pill-stack > * {
+  grid-area: 1 / 1;
+  text-align: center;
+}
+
+.pill-stack > .pill-room {
+  visibility: hidden;
+}
+
+.appwin .bcard .job-pill {
+  color: var(--fp-ink-2);
+}
+
+.appwin .bcard[data-kind="here"] .job-pill {
+  color: var(--fp-ok);
+}
+
+.appwin .bcard[data-kind="kept"] .job-pill {
+  color: var(--accent-color);
+}
+
+.bcard-meta {
+  font-size: 11px;
+}
+
+.bcard:is([data-kind="here"], [data-kind="gone"]) .bcard-go {
+  visibility: hidden;
+}
+
+.bcard[data-kind="gone"] {
+  opacity: 0.5;
+}
+
+.bcard-go:disabled {
+  opacity: 0.5;
+}
+
+.bcard-fold {
+  justify-self: start;
+  color: var(--fp-ink-3);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bcard:not([data-notes]) .bcard-fold,
+.bcard:not([data-notes]) .bcard-notes {
+  display: none;
+}
+
+.appwin .appwin-set [data-remove-ask] {
+  justify-self: start;
+  width: auto;
+  margin: 4px 8px 6px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in oklab, var(--fault) 45%, transparent);
+  border-radius: 8px;
+}
+
+.bcard-notes {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 220ms ease, visibility 0s linear 220ms;
+}
+
+.bcard[data-open] .bcard-notes {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 220ms ease;
+}
+
+.bcard-notes-in {
+  min-height: 0;
+  overflow: hidden;
+  color: var(--fp-ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.appwin-card {
   gap: 2px;
-  padding: 10px 8px 12px;
-}
-
-.appwin-sec + .appwin-sec {
-  border-top: 1px solid var(--fp-edge);
+  margin: 8px 10px 12px;
+  padding: 6px;
 }
 
 .appwin-h {
-  margin: 0 6px 6px;
-  color: var(--fp-ink-3);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  margin: 2px 6px 6px;
+  color: var(--fp-ink-2);
+  font-size: 12px;
+  font-weight: 500;
   line-height: 16px;
-  text-transform: uppercase;
 }
 
 .appwin .drop-item {
@@ -344,55 +473,69 @@ html[data-rail="mini"] .side-app .side-bar {
   transform: translateX(10px);
 }
 
-.appwin-none {
+.appwin .menu .menu-check,
+.appwin .menu:not([data-asking]) [data-remove-ask] {
+  display: flex;
+}
+
+.appwin .menu :disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.appwin .menu .menu-check[data-off] .switch {
+  opacity: 1;
+}
+
+.appwin .menu [data-remove-ask]:disabled:hover,
+.appwin .menu .menu-check[data-off]:hover {
+  background: none;
+}
+
+.appwin .menu .menu-check[data-off] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.appwin[data-install="busy"] .menu [data-later] {
   display: none;
-  margin: 0 8px;
-  color: var(--fp-ink-3);
 }
 
-.appwin[data-install="none"] .appwin-none {
-  display: block;
-}
-
-.appwin[data-install="busy"] .appwin-sec.menu {
+.appwin[data-mode="panel"] .appwin-job,
+.appwin[data-mode="panel"] .appwin-set,
+.appwin[data-mode="panel"] .appwin-backs,
+.appwin:not([data-mode="panel"]) .appwin-panel {
   display: none;
 }
 
-.appwin-vers {
+.appwin-panel-in .facts-menu {
+  max-width: none;
+  padding: 0 6px;
+}
+
+.appwin-panel-in .menu {
+  display: grid;
+  gap: 2px;
+}
+
+.appwin-panel-in .ext-support {
+  margin: 8px 6px 0;
+}
+
+.appwin-panel-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  padding-inline: 14px;
+  padding: 0 6px;
 }
 
-.appwin-vers > .appwin-h {
-  margin-inline: 0;
-  margin-bottom: 0;
-}
-
-.appwin-vers > .fine {
-  margin: 0;
-  color: var(--fp-ink-3);
-}
-
-.appwin:not([data-previous]) .vers-kept {
+.appwin-panel-acts > [hidden] {
   display: none;
 }
 
-.appwin .vers-kept {
-  font-size: 12px;
-}
-
-.appwin .ver {
-  padding: 8px 0;
-}
-
-.appwin .ver-head {
-  grid-template-columns: max-content max-content max-content minmax(0, 1fr) auto;
-  gap: 8px;
-  font-size: 12.5px;
-}
-
-.appwin .ver-head > .btn {
-  min-width: 64px;
+.appwin .job-now {
+  min-height: 36px;
 }
 
 .drop-more > .more-btn {
