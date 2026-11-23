@@ -3,6 +3,7 @@ import { t } from "../../i18n/index.ts";
 import { pickBridge } from "../../bridge/index.ts";
 import { CATALOG_KEY, UNSIGNED_KEY } from "../../bridge/tauri.ts";
 import type { Extension } from "../registry.ts";
+import { localDay } from "../versions/index.ts";
 
 const OS: Record<Os, string> = { macos: "macOS", windows: "Windows", linux: "Linux", other: "Unknown" };
 const ARCH: Record<string, string> = { arm64: "ARM64", x86_64: "x86-64" };
@@ -34,7 +35,7 @@ export const settings: Extension = {
     engine.on("source", ({ source: s, generated: when }) => {
       document.documentElement.setAttribute("data-source", s);
       for (const source of sources) if (source.textContent !== SOURCE[s]) source.textContent = SOURCE[s];
-      if (generated) generated.textContent = when ? when.slice(0, 10) : "";
+      if (generated) generated.textContent = when ? localDay(when) : "";
     });
 
     const address = document.querySelector<HTMLInputElement>("[data-setting-input='catalog']");

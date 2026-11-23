@@ -62,7 +62,7 @@ export function onTheWay(engine: Engine, bundled: number[]): void {
     if (heading) heading.dataset.state = title;
   };
   const apps = (n: number) => (n === 1 ? t("1 app") : t("{n} apps", { n }));
-  const day = (at: string) => new Date(at).toLocaleDateString(language(), { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  const day = (at: string) => new Date(at).toLocaleDateString(language(), { weekday: "short", day: "numeric", month: "short" });
 
   const tile = (d: UpcomingDay): HTMLElement => {
     const li = document.createElement("li");

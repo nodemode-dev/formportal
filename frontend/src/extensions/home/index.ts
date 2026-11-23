@@ -29,6 +29,10 @@ export const home: Extension = {
 
     const hour = new Date().getHours();
     write(greet, hour < 5 ? t("Good evening") : hour < 12 ? t("Good morning") : hour < 18 ? t("Good afternoon") : t("Good evening"));
+    for (const node of document.querySelectorAll<HTMLElement>("[data-soon-at] > .wave-head > .soon-date")) {
+      const at = Date.parse(node.closest<HTMLElement>("[data-soon-at]")?.dataset.soonAt ?? "");
+      if (!Number.isNaN(at)) write(node, new Date(at).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }));
+    }
 
     const apps = (n: number) => (n === 1 ? t("1 app") : t("{n} apps", { n }));
     const left = () => Number(root.getAttribute("data-soon-left")) || 0;
