@@ -55,6 +55,10 @@ export const svg = (name: string, cls = "ic") =>
 
 const esc = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+const GROUPS: [string, string][] = [
+  ["adobe", "Instead of Adobe"],
+  ["canvas", "A tool for every canvas"],
+];
 const CATEGORIES: [string, string][] = [
   ["image", "Image Editor Apps"],
   ["design", "Design Editor Apps"],
@@ -74,7 +78,10 @@ const CATEGORY: Record<string, string> = {
   formcut: "video", formvfx: "video", formencoder: "video",
   formwav: "audio",
   formsculpt: "3d", formsurface: "3d", formfabric: "3d",
+  formcad: "3d",
+  formmorpheus: "video",
   formweb: "web",
+  formpublisher: "web",
   formext: "code", formsubstrate: "code",
   format: "agentic", formmcp: "agentic", formskills: "agentic",
   formdam: "tools", formtools: "tools", formtray: "tools",
@@ -133,8 +140,8 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const state = '<span class="st-text" data-field="status"></span><span class="st-ver mono" data-field="version"></span>';
   const bar = '<span class="bar" aria-hidden="true"><i></i></span>';
   const more = "<!-- @include more-menu.html -->";
-  const acts = (withMore: boolean) =>
-    `<div class="acts"><button class="btn" type="button" data-act="update">Update</button><button class="btn" type="button" data-act="install">Install</button><button class="btn btn-primary" type="button" data-act="open">Open</button><span class="acts-wait">Release being prepared</span>${withMore ? more : ""}</div>`;
+  const acts = (withMore: boolean, lead = "") =>
+    `<div class="acts">${lead}<button class="btn" type="button" data-act="update">Update</button><button class="btn" type="button" data-act="install">Install</button><button class="btn btn-primary" type="button" data-act="open">Open</button><span class="acts-wait">Release being prepared</span>${withMore ? more : ""}</div>`;
 
   const sidemine = apps.map(
     (p) =>
@@ -180,13 +187,16 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
   const category = (p: App) => CATEGORY[p.id] ?? CATEGORY_FALLBACK;
   const placed = Object.keys(CATEGORY);
   const rank = (p: App) => (placed.includes(p.id) ? placed.indexOf(p.id) : placed.length);
+  const section = (p: App) => (group(p) === "adobe" ? "adobe" : "canvas");
+  const pill = '<span class="row-pill" data-field="pill"><span class="pill-in"><span data-pill="lead"></span><span class="pill-ver" data-pill="ver"></span><span data-pill="tail"></span></span></span>';
   const rows = (p: App, channel: "stable" | "beta") =>
-    `<li class="row app-row" data-row="${channel}" data-product="${p.id}" data-group="${category(p)}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub" title="${line(p)}">${line(p)}</p></div><p class="row-sum" title="${esc(p.summary)}">${esc(p.summary)}</p><p class="row-state">${state}${changed}${bar}</p><span class="row-pill" data-field="pill"><span class="pill-in"><span data-pill="lead"></span><span class="pill-ver" data-pill="ver"></span><span data-pill="tail"></span></span></span>${acts(true)}<div class="row-notes"><div class="row-notes-in notes-text" data-field="notes"></div></div></li>`;
+    `<li class="row app-row" data-row="${channel}" data-product="${p.id}" data-group="${section(p) === "adobe" ? "adobe" : `canvas ${category(p)}`}" data-search="${searchable(p)}"${style(p)}>${icon(p.id, 40)}<div class="row-id"><button class="row-name" type="button" data-route-to="app-${p.id}">${name(p)}${channel === "beta" ? ' <span class="chip">BETA</span>' : ""}</button><p class="sub" title="${line(p)}">${line(p)}</p></div><p class="row-sum" title="${esc(p.summary)}">${esc(p.summary)}</p><p class="row-state">${state}${changed}${bar}</p>${acts(true, pill)}<div class="row-notes"><div class="row-notes-in notes-text" data-field="notes"></div></div></li>`;
 
   const sorted = [...apps].sort((a, b) => rank(a) - rank(b));
-  const filled = CATEGORIES.filter(([c]) => sorted.some((p) => category(p) === c));
+  const filled = CATEGORIES.filter(([c]) => sorted.some((p) => section(p) === "canvas" && category(p) === c));
   const list = [
-    `<section class="group canvas"><h2 class="canvas-title">A tool for every canvas</h2>${filled.map(([c, title]) => `<section class="canvas-cat" data-group-head="${c}"><h3 class="group-title canvas-cat-title">${esc(title)}</h3><ul class="rows">${sorted.filter((p) => category(p) === c).map((p) => rows(p, "stable")).join("")}</ul></section>`).join("")}</section>`,
+    `<section class="group" data-group-head="adobe"><h2 class="group-title">${GROUPS[0][1]}</h2><ul class="rows">${apps.filter((p) => section(p) === "adobe").map((p) => rows(p, "stable")).join("")}</ul></section>`,
+    `<section class="group canvas" data-group-head="canvas"><h2 class="group-title canvas-title">${GROUPS[1][1]}</h2>${filled.map(([c, title]) => `<section class="canvas-cat" data-group-head="${c}"><h3 class="group-title canvas-cat-title">${esc(title)}</h3><ul class="rows">${sorted.filter((p) => section(p) === "canvas" && category(p) === c).map((p) => rows(p, "stable")).join("")}</ul></section>`).join("")}</section>`,
   ];
   const updates = apps.flatMap((p) => (["stable", "beta"] as const).map((channel) => rows(p, channel)));
 
@@ -210,7 +220,7 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
 <div class="hero-acts"><p class="row-state">${state}${bar}</p>${acts(true)}</div>${hero}</div></header>
 <div class="page page-app"><nav class="tabs" role="tablist" aria-label="${esc(p.name)}"><button type="button" role="tab" data-tab-to="overview">Overview</button><button type="button" role="tab" data-tab-to="new">What's new</button><button type="button" role="tab" data-tab-to="versions">Versions and beta</button><button type="button" role="tab" data-tab-to="ai">AI tools</button></nav>
 <div class="tab" data-tab-pane="overview"><div class="ov"><div class="ov-main"><p class="lede">${esc(c.lede ?? p.summary)}</p>${does ? `<h3 class="h3">What it does</h3><ul class="does">${does}</ul>` : ""}${chapters ? `<h3 class="h3">How it works</h3><ul class="chapters">${chapters}</ul>` : ""}</div>
-<aside class="facts" data-row="stable" data-product="${p.id}"><dl><div><dt>Released</dt><dd data-field="date"></dd></div><div><dt>Opens</dt><dd class="chips">${opensList.map((e) => `<span>${esc(e.toUpperCase())}</span>`).join("")}</dd></div><div><dt>Runs on</dt><dd>${esc(c.runs_on ?? "macOS, Windows and Linux")}</dd></div><div><dt>Licence</dt><dd>${esc(p.licence ?? "")} · free</dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills">Read them in FormSkills ${svg("arrow")}</button><span class="skills-no">None published yet</span></dd></div><div><dt>Download</dt><dd class="mono" data-field="file"></dd></div><div class="facts-size"><dt>Download size</dt><dd><span class="mono" data-field="size"></span><span class="fine facts-size-note">${sizeNote}</span></dd></div><div><dt>SHA-256</dt><dd class="mono facts-hash" data-field="sha256"></dd></div><div><dt>Installed in</dt><dd class="mono facts-hash facts-path" data-field="path"></dd></div><div><dt>Installed SHA-256</dt><dd class="mono facts-hash facts-own" data-field="installed-sha256"></dd></div></dl></aside></div><p class="links">${links}</p></div>
+<aside class="facts" data-row="stable" data-product="${p.id}"><dl><div><dt>Released</dt><dd data-field="date"></dd></div>${opensList.length ? `<div><dt>Opens</dt><dd class="chips">${opensList.map((e) => `<span>${esc(e.toUpperCase())}</span>`).join("")}</dd></div>` : ""}<div><dt>Runs on</dt><dd>${esc(c.runs_on ?? "macOS, Windows and Linux")}</dd></div><div><dt>Licence</dt><dd>${esc(p.licence ?? "")} · free</dd></div><div><dt>Agent skills</dt><dd class="facts-skills" data-skills><button class="link-btn skills-yes" type="button" data-route-to="app-formskills">Read them in FormSkills ${svg("arrow")}</button><span class="skills-no">None published yet</span></dd></div><div><dt>Download</dt><dd class="mono" data-field="file"></dd></div><div class="facts-size"><dt>Download size</dt><dd><span class="mono" data-field="size"></span><span class="fine facts-size-note">${sizeNote}</span></dd></div><div><dt>SHA-256</dt><dd class="mono facts-hash" data-field="sha256"></dd></div><div><dt>Installed in</dt><dd class="mono facts-hash facts-path" data-field="path"></dd></div><div><dt>Installed SHA-256</dt><dd class="mono facts-hash facts-own" data-field="installed-sha256"></dd></div></dl></aside></div><p class="links">${links}</p></div>
 <div class="tab" data-tab-pane="new"><div class="notes" data-row="stable" data-product="${p.id}"><p class="sub"><span data-field="version" class="mono"></span> · <span data-field="date"></span></p><div class="notes-text" data-field="notes"></div></div></div>
 <div class="tab" data-tab-pane="versions"><section class="vers" data-row="stable" data-product="${p.id}" aria-label="Versions of ${esc(p.name)}"><h3 class="h3">Versions</h3><p class="fine vers-size-note">Each size is the download size, not the space the app takes once installed.</p><p class="vers-kept"><span>Kept to go back to: <b class="mono" data-field="previous"></b></span><button class="btn btn-small" type="button" data-act="rollback">Go back to the version before</button></p><ul class="ver-list" data-ver-list aria-label="Versions of ${esc(p.name)}"></ul></section>${beta}</div>
 <div class="tab" data-tab-pane="ai">${agents}<p class="sub ai-none">${esc(p.name)} has no MCP server of its own yet. <button class="link-btn" type="button" data-route-to="app-formmcp">FormMCP</button> connects your AI tools to every Form app at once.</p></div>
@@ -265,8 +275,12 @@ export function buildPortal(root: string, catalog: string, design: string): Buil
     ...Array.from({ length: MORE - 1 }, (_, k) => `html[data-soon-more="${k + 1}"] [data-soon-extra] .soon-tile:nth-child(n + ${k + 2}) { display: none; }`),
     `html[data-soon-unsealed] [data-soon-sealed], html[data-soon-ask] [data-soon-sealed], html[data-soon-ask] [data-soon-group] { display: none; }`,
     ...extIds.map((id) => `[data-pane="extensions"][data-filter="${id}"] .ext:not([data-product="${id}"]) { display: none; }`),
+    ...GROUPS.map(([g]) => {
+      const none = apps.filter((p) => section(p) === g).map((p) => `:not([data-live~="${p.id}"])`).join("");
+      return `html${none} [data-group-head="${g}"] { display: none; }`;
+    }),
     ...CATEGORIES.map(([c]) => {
-      const none = apps.filter((p) => category(p) === c).map((p) => `:not([data-live~="${p.id}"])`).join("");
+      const none = apps.filter((p) => section(p) === "canvas" && category(p) === c).map((p) => `:not([data-live~="${p.id}"])`).join("");
       return `html${none} [data-group-head="${c}"] { display: none; }`;
     }),
   ].join("\n");
