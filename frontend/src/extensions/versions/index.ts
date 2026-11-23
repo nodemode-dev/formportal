@@ -4,6 +4,13 @@ import type { Extension } from "../registry.ts";
 
 export const sizeText = (bytes: number): string => (bytes >= 1_000_000 ? `${Math.round(bytes / 1_000_000)} MB` : bytes > 0 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : "");
 
+export const localDay = (iso: string): string => {
+  const at = new Date(iso);
+  if (!iso || Number.isNaN(at.getTime())) return iso.slice(0, 10);
+  const two = (n: number) => String(n).padStart(2, "0");
+  return `${at.getFullYear()}-${two(at.getMonth() + 1)}-${two(at.getDate())}`;
+};
+
 export const versions: Extension = {
   id: "versions",
   setup(engine) {
@@ -46,7 +53,7 @@ export const versions: Extension = {
       const here = release.version === installed;
       const field = (name: string) => item.querySelector<HTMLElement>(`[data-ver='${name}']`);
       set(field("version"), release.version);
-      set(field("date"), release.published.slice(0, 10));
+      set(field("date"), localDay(release.published));
       set(field("size"), artifact ? sizeText(artifact.bytes) : "");
       set(field("mark"), here ? t("Installed") : artifact ? "" : t("No file for this computer"));
       set(field("fold"), t("What changed"));

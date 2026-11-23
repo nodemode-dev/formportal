@@ -856,7 +856,8 @@ html[data-rail="mini"] .side-app[data-install="busy"] .nav-item::after {
   display: block;
 }
 
-.drop-more > summary {
+.drop-more > summary,
+.drop-more > .more-btn {
   display: grid;
   place-items: center;
   inline-size: 32px;
@@ -1727,7 +1728,8 @@ html:not([data-installed]) .list-updates {
   font-size: 14px;
 }
 
-.hero-acts > .acts .drop-more > summary {
+.hero-acts > .acts .drop-more > summary,
+.hero-acts > .acts .drop-more > .more-btn {
   inline-size: 40px;
   block-size: 40px;
   border-radius: 9px;

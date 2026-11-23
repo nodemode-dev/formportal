@@ -1,6 +1,6 @@
 import { versionNewer } from "../../engine/index.ts";
 import { t } from "../../i18n/index.ts";
-import { sizeText } from "../versions/index.ts";
+import { localDay, sizeText } from "../versions/index.ts";
 import type { Channel, ChannelView } from "../../engine/types.ts";
 import type { Extension } from "../registry.ts";
 
@@ -162,13 +162,13 @@ export const apps: Extension = {
       write(pill?.querySelector<HTMLElement>("[data-pill='ver']") ?? null, pillVersion ? `v${pillVersion}` : "");
       write(pill?.querySelector<HTMLElement>("[data-pill='tail']") ?? null, tail);
       row.toggleAttribute("data-notes", Boolean(release?.notes));
-      field("date", release ? release.published.slice(0, 10) : "");
+      field("date", release ? localDay(release.published) : "");
       const notesNode = row.querySelector<HTMLElement>("[data-field='notes']");
       if (notesNode?.classList.contains("row-notes-in")) renderNotes(notesNode, release?.notes ?? "");
       else field("notes", release?.notes ?? "");
       const picker = row.querySelector<HTMLSelectElement>("[data-versions]");
       const all = release ? [release, ...(release.history ?? [])].filter((r) => engine.artifactFor(r) !== null) : [];
-      const label = (r: (typeof all)[number]) => `${r.version} · ${r.published.slice(0, 10)}${r.version === record?.version ? ` ${t("(installed)")}` : ""}`;
+      const label = (r: (typeof all)[number]) => `${r.version} · ${localDay(r.published)}${r.version === record?.version ? ` ${t("(installed)")}` : ""}`;
       const list = all.map(label).join("|");
       if (picker && picker.dataset.list !== list) {
         picker.dataset.list = list;

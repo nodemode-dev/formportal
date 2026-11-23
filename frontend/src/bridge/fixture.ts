@@ -314,7 +314,8 @@ export const fixtureBridge: Bridge = {
     Array.from(installed.values()).map((r) => {
       const latest = catalog.products.find((p) => p.id === r.product)?.channels[r.channel];
       const release = [latest, ...(latest?.history ?? [])].find((x) => x?.version === r.version);
-      return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: release?.artifacts[0]?.sha256 ?? "0".repeat(64) };
+      const own = release?.artifacts.find((a) => a.platform === browserPlatform().os) ?? release?.artifacts[0];
+      return { ...r, path: `/home/you/.local/share/formportal/apps/${r.product}/${r.channel}/${r.version}`, sha256: own?.sha256 ?? "0".repeat(64), installed_at: r.installed_at ?? (release ? Math.floor(Date.parse(release.published) / 1000) + 5400 : null) };
     }),
   install: async (product, channel, progress, version, step) => {
     const latest = catalog.products.find((p) => p.id === product)?.channels[channel];
@@ -342,7 +343,7 @@ export const fixtureBridge: Bridge = {
       prefs = { ...prefs, per_app: { ...prefs.per_app, [product]: false } };
     }
     const kept = before && before.version !== release.version ? before.version : (before?.previous ?? null);
-    const record: InstallRecord = { product, channel, version: release.version, previous: prefs.keep_previous ? kept : null };
+    const record: InstallRecord = { product, channel, version: release.version, previous: prefs.keep_previous ? kept : null, installed_at: Math.floor(Date.now() / 1000) };
     await pause(step ? 500 : 0);
     installed.set(key(product, channel), record);
     step?.({ step: "place", detail: record.previous ?? "" });

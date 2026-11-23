@@ -23,7 +23,7 @@ export const search: Extension = {
       }
       for (const head of heads) {
         const group = head.dataset.groupHead;
-        const any = rows.some((r) => r.dataset.group === group && !r.hidden && liveNow(r.dataset.product ?? ""));
+        const any = rows.some((r) => (r.dataset.group ?? "").split(" ").includes(group ?? "") && !r.hidden && liveNow(r.dataset.product ?? ""));
         if (head.hidden === any) head.hidden = !any;
       }
       pane.toggleAttribute("data-searching", words.length > 0);
