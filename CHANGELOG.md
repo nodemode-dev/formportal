@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.6 · 2026-11-23
+
+### Changed
+
+- Preferences is a third button in the top right corner, after Ask your agent and the notifications bell, with the same gear and the same size. It opens the same Preferences window as before. The Preferences entry is gone from the side panel and from its collapsed rail, which now end with the row of links.
+
 ## v0.71.5 · 2026-11-23
 
 ### Fixed

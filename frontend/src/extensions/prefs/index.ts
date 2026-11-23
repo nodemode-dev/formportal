@@ -183,9 +183,17 @@ export const prefs: Extension = {
     new ResizeObserver(wire).observe(dialog);
     window.addEventListener("resize", wire);
 
+    const opener = document.querySelector<HTMLElement>("[data-prefs-open]");
+    const press = () => {
+      const on = String(dialog.open);
+      if (opener && opener.getAttribute("aria-expanded") !== on) opener.setAttribute("aria-expanded", on);
+    };
+    dialog.addEventListener("close", press);
+
     engine.command("prefs.open", (arg) => {
       const name = typeof arg === "string" && cards.has(arg) ? arg : "";
       if (!dialog.open) dialog.showModal();
+      press();
       if (name) {
         mark(name);
         scrollTo(name, "auto");
