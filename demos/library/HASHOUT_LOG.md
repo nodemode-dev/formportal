@@ -2,7 +2,7 @@
 
 Living log for demo 3. Source files stay comment-free; what they would have said lives here.
 
-Built against: v0.71.4 · 2026-11-23
+Built against: v0.71.5 · 2026-11-23
 
 ## Rebuilt after v0.71.3 {#rebuild-0-71-4}
 - refers-to: demos/library/index.html · demos/library/assets/
