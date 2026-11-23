@@ -45,6 +45,7 @@ fn a_saved_file_that_cannot_be_read_counts_as_ask_and_says_so() {
 
 #[test]
 fn allowed_without_a_valid_seal_never_lets_an_agent_through() {
+    let _env = env_lock();
     let dir = Scratch::new("access-unsealed-allowed");
     write_unsealed(dir.path(), "allowed");
     let view = access::read(dir.path());
