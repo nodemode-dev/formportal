@@ -4,6 +4,13 @@ Living log for demo 2. Source files stay comment-free; what they would have said
 
 Built against: v0.71.5 · 2026-11-23
 
+## Rebuilt after v0.71.5 {#rebuild-0-71-6}
+- refers-to: demos/updates/index.html · demos/updates/assets/portal.js
+- kind: change
+- logged: after v0.71.5 · 2026-11-23
+
+Rebuilt with the command in README.md for the Preferences button in the top bar and its removal from the side panel and the rail (../../demo/HASHOUT_LOG.md#rebuild-0-71-6, ../../frontend/HASHOUT_LOG.md#prefs-top). Opened from file:// under 4x throttle on its own first page, then Preferences from the new button: layout shift 0, no console error.
+
 ## Rebuilt after v0.71.3 {#rebuild-0-71-4}
 - refers-to: demos/updates/index.html · demos/updates/assets/
 - kind: change
