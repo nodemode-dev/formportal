@@ -666,10 +666,10 @@
                     <button class="btn btn-primary" type="button" data-font-act="update">Update</button>
                     <button class="btn btn-primary" type="button" data-font-act="install">Install family</button>
                     <button class="btn" type="button" data-font-act="remove">Remove</button>
-                    <details class="drop drop-styles">
-                      <summary class="icon-btn" aria-label="Styles"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
-                      <div class="drop-panel menu" data-font-styles></div>
-                    </details>
+                    <span class="drop-styles">
+                      <button class="icon-btn" type="button" aria-label="Styles" aria-haspopup="dialog" aria-expanded="false" data-more-panel><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></button>
+                      <span class="more-hold" hidden><span class="menu" data-font-styles></span></span>
+                    </span>
                   </div>
                 </li>
               </template>
@@ -795,9 +795,9 @@
                     <label class="menu-check ext-on"><span>On</span><input type="checkbox" class="switch" data-ext-enabled /></label>
                     <button class="btn" type="button" data-ext-act="remove">Remove</button>
                     <button class="btn btn-primary" type="button" data-ext-act="install">Install</button>
-                    <details class="drop drop-more">
-                      <summary class="icon-btn" aria-label="What it can use"><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></summary>
-                      <div class="drop-panel menu">
+                    <span class="drop-more">
+                      <button class="icon-btn more-btn" type="button" aria-label="What it can use" aria-haspopup="dialog" aria-expanded="false" data-more-panel><svg class="ic ic-m" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></svg></button>
+                      <div class="more-hold" hidden>
                         <dl class="facts facts-menu">
                           <div><dt>Goes to</dt><dd data-field="app"></dd></div>
                           <div><dt>Panels</dt><dd data-field="panels"></dd></div>
@@ -812,7 +812,7 @@
                         <p class="ext-support" data-ext-source hidden><a class="link" href="#" data-web><svg class="ic ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 7L3.5 12l5 5"/><path d="M15.5 7l5 5-5 5"/><path d="M13.5 5l-3 14"/></svg><span>Source in form.ext-registry</span></a></p>
                         <p class="ext-support" data-ext-support hidden><a class="link" href="#" data-web><svg class="ic ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.2 4.5 4.5 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg><span>Support the maker</span></a><span class="fine">Free to use either way.</span></p>
                       </div>
-                    </details>
+                    </span>
                   </div>
                 </li>
               </template>
@@ -1732,23 +1732,24 @@
     </div>
 
     <section class="job appwin" data-app-window data-row="stable" data-product="" role="dialog" aria-labelledby="appwin-title" hidden>
-      <header class="job-head"><span class="job-pill" data-job="pill"> </span><div class="job-titles"><p class="job-title" id="appwin-title" data-job="title"> </p><p class="job-sub" data-job="sub"> </p></div><button class="job-x" type="button" aria-label="Close" data-appwin-close><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
+      <header class="job-head"><span class="job-pill pill-stack"><span data-job="pill"> </span><span class="pill-room" aria-hidden="true">Checking</span><span class="pill-room" aria-hidden="true">Passed</span><span class="pill-room" aria-hidden="true">Failed</span></span><div class="job-titles"><p class="job-title" id="appwin-title" data-job="title"> </p><p class="job-sub" data-job="sub"> </p></div><button class="job-x" type="button" aria-label="Close" data-appwin-close><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
       <div class="appwin-body">
         <div class="appwin-job" data-job-run></div>
-        <section class="appwin-sec menu" aria-labelledby="appwin-h-app">
-          <h3 class="appwin-h" id="appwin-h-app">This app</h3>
+        <ol class="appwin-backs" data-appwin-backs aria-label="Versions"></ol>
+        <section class="appwin-card appwin-set menu" aria-label="Settings">
           <label class="drop-item menu-check"><span>Update automatically</span><input type="checkbox" class="switch" data-auto /></label>
           <button class="drop-item" type="button" data-later="on">Update when I close it</button>
           <button class="drop-item" type="button" data-later="off">Cancel the later update</button>
           <button class="drop-item menu-danger" type="button" data-remove-ask aria-expanded="false">Remove from this computer</button>
           <div class="menu-ask" role="group" aria-label="Remove from this computer"><span class="menu-ask-q">Remove it?</span><button class="btn btn-small drop-item drop-go menu-danger" type="button" data-act="remove">Remove</button><button class="btn btn-small" type="button" data-remove-keep>Keep</button></div>
-          <p class="appwin-none fine">Nothing to change until it is installed.</p>
         </section>
-        <section class="appwin-sec appwin-vers" aria-labelledby="appwin-h-vers">
-          <h3 class="appwin-h" id="appwin-h-vers">Versions</h3>
-          <p class="vers-kept"><span>Kept to go back to: <b class="mono" data-field="previous"></b></span><button class="btn btn-small" type="button" data-act="rollback">Go back to the version before</button></p>
-          <ul class="ver-list" data-ver-list aria-labelledby="appwin-h-vers"></ul>
-          <p class="fine">Each size is the download size, not the space the app takes once installed.</p>
+        <section class="appwin-card appwin-panel" aria-labelledby="appwin-h-panel">
+          <h3 class="appwin-h" id="appwin-h-panel" data-appwin-panel-title> </h3>
+          <div class="appwin-panel-in" data-appwin-panel></div>
+        </section>
+        <section class="appwin-card appwin-panel" aria-labelledby="appwin-h-panel-acts">
+          <h3 class="appwin-h" id="appwin-h-panel-acts">Actions</h3>
+          <div class="appwin-panel-acts" data-appwin-panel-acts></div>
         </section>
       </div>
     </section>

@@ -7,13 +7,13 @@ FormPortal's own release notes. Each Form app publishes its own; FormPortal show
 ### Fixed
 
 - Apps has its "Instead of Adobe" section back, first, as in 0.70.2. Every other app is under "A tool for every canvas", in its sub-sections: FormCAD under 3D Editor Apps, FormMorpheus under Video Editor Apps, FormPublisher under Web Editor Apps.
-- On Apps and Updates the text between an app's name and its buttons starts at the same place in every row and moves toward the middle as the window widens, instead of hugging the name. The version pill stays directly left of the first button.
+- On Apps and Updates the text between an app's name and its buttons starts at the same place in every row and moves toward the middle as the window widens, instead of hugging the name. "Available", "Update to" and "Installing" start at the same place in every row, left aligned. The version pill stays directly left of the first button.
 - Dates (a release, each version, the catalogue, the opening days) are shown in your own time zone. A release made on the evening of 22 November in New York no longer reads 23 November.
 - An app page no longer says "Opens: Not yet" for a released app; the line appears when the catalogue names the files the app opens.
 
 ### Changed
 
-- Every `···` opens the app's side window, the one an install shows its steps in. It holds the running job's steps when there is one, the app's settings (Update automatically, Update when I close it, Remove from this computer), and below them every version with Install and Go back. It closes with its cross, Escape or a click outside. The small dropdown is gone.
+- Every `···` opens the app's side window, the same window an install shows its steps in. With nothing running it shows the installed copy: PASSED, when it was installed, and the install's steps with what FormPortal kept about each ("not kept" where nothing was kept). Below are a card per version (Back to, with its date, size, What changed and Go back or Install) and one card with Update automatically and Remove from this computer. A job started from it shows its steps in the same place. It closes with its cross, Escape or a click outside. The `···` on Extensions and on Fonts open the same window with what they held; no dropdown is left.
 - FormPublisher's page has its text, what it does, how it works and a screenshot.
 
 ## v0.71.3 · 2026-11-22

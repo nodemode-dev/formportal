@@ -10,7 +10,7 @@ Last updated: 2026-11-22 · v0.71.3 releases the entry headed "after v0.71.2" (h
 - kind: change
 - logged: after v0.71.3 · 2026-11-23
 
-Rebuilt with `npm run build` for the Apps sections, the row columns, the side window and local dates (../frontend/HASHOUT_LOG.md#apps-sections, #row-columns, #app-window, #local-dates), in all three demos. The fixture's FormPublisher 0.10.1 is in the catalogue the demo signs. Opened from file:// under 4x throttle: layout shift 0, no console error.
+Rebuilt with `npm run build` for the Apps sections, the row columns, the side window and local dates (../frontend/HASHOUT_LOG.md#apps-sections, #row-columns, #app-window, #local-dates), in all three demos. The fixture's FormPublisher 0.10.1 is in the catalogue the demo signs. Rebuilt again for the status column (../frontend/HASHOUT_LOG.md#row-status) and the install-window layout of the side window, with Extensions and Fonts opening it (#app-window-2). Opened from file:// under 4x throttle: layout shift 0, no console error, no `details.drop` left.
 
 ## Rebuilt after v0.71.2: Preferences, Keys {#rebuild-0-71-3}
 - refers-to: demo/src/outside.ts :: `providerKeys`, `setProviderKey`, `clearProviderKey` · demo/index.html · demo/assets/ · demo/README.md

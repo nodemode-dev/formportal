@@ -9,7 +9,7 @@ Built against: v0.71.3 · 2026-11-22
 - kind: change
 - logged: after v0.71.3 · 2026-11-23
 
-Rebuilt with the command in README.md for the Apps sections, the row columns, the side window and local dates (../../frontend/HASHOUT_LOG.md#apps-sections, #row-columns, #app-window, #local-dates), and FormPublisher in the fixture. Opened from file:// under 4x throttle: the `···` on a row opens the side window for that app, layout shift 0, no console error.
+Rebuilt with the command in README.md for the Apps sections, the row columns, the side window and local dates (../../frontend/HASHOUT_LOG.md#apps-sections, #row-columns, #app-window, #local-dates), and FormPublisher in the fixture; rebuilt again for the status column and the install-window layout (#row-status, #app-window-2). Opened from file:// under 4x throttle: the `···` on a row opens the side window for that app, layout shift 0, no console error.
 
 ## Rebuilt after v0.71.2 {#rebuild-0-71-3}
 - refers-to: demos/updates/index.html · demos/updates/assets/ · demos/updates/README.md
