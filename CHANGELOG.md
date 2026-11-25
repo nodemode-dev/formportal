@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.7 · 2026-11-25
+
+### Changed
+
+- The schedule built into FormPortal follows the new dates: FormNET, FormSlot and FormSubstrate on 25 November, and FormPromo, FormRig and FormCraft on 28 November. On the way shows the same two dates as before; the three apps counted under each have changed places. An app still appears only once it is in the signed catalogue.
+
 ## v0.71.6 · 2026-11-23
 
 ### Changed
