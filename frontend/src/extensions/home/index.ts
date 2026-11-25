@@ -17,6 +17,7 @@ export const home: Extension = {
     const say = document.querySelector<HTMLElement>("[data-drop-say]");
     const appsSay = document.querySelector("[data-apps-say]");
     const slots = Array.from(document.querySelectorAll<HTMLElement>(".dk[data-slot]"));
+    const own = document.querySelectorAll(".dk.dk-self").length;
     const waves = Array.from(document.querySelectorAll<HTMLElement>(".wave"));
     const allButton = document.querySelector<HTMLButtonElement>("[data-install-all]");
     const restSay = say?.textContent ?? "";
@@ -37,7 +38,7 @@ export const home: Extension = {
     const apps = (n: number) => (n === 1 ? t("1 app") : t("{n} apps", { n }));
     const left = () => Number(root.getAttribute("data-soon-left")) || 0;
     const counts = () => {
-      const live = slots.filter((s) => liveNow(s.dataset.slot ?? "")).length;
+      const live = slots.filter((s) => liveNow(s.dataset.slot ?? "")).length + own;
       let next = "";
       for (const wave of waves) {
         const at = wave.dataset.soonAt;
@@ -49,7 +50,7 @@ export const home: Extension = {
           next = t("next {n} open {day}", { n, day }).toUpperCase();
         }
       }
-      write(count, [t("{live} of {total} out", { live, total: slots.length }).toUpperCase(), next].filter(Boolean).join(" · "));
+      write(count, [t("{live} of {total} out", { live, total: slots.length + own }).toUpperCase(), next].filter(Boolean).join(" · "));
       write(appsSay, left() ? t("{live} Form apps are out. {left} more open on the dates shown on Home.", { live, left: left() }) : t("{live} Form apps are out.", { live }));
     };
     const observer = new MutationObserver(counts);

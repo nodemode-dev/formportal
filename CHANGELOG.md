@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.8 · 2026-11-25
+
+### Fixed
+
+- Home counts FormPortal itself among the Form apps that are out. With 32 apps out it said "31 of 36 out" above a grid of 37 tiles; it now says "32 of 37 out", and the first line of Apps says 32 as well.
+
 ## v0.71.7 · 2026-11-25
 
 ### Changed
