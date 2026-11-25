@@ -2,6 +2,24 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.71.7 · 2026-11-25
+
+### Changed
+
+- The schedule built into FormPortal follows the new dates: FormNET, FormSlot and FormSubstrate on 25 November, and FormPromo, FormRig and FormCraft on 28 November. On the way shows the same two dates as before; the three apps counted under each have changed places. An app still appears only once it is in the signed catalogue.
+
+## v0.71.6 · 2026-11-23
+
+### Changed
+
+- Preferences is a third button in the top right corner, after Ask your agent and the notifications bell, with the same gear and the same size. It opens the same Preferences window as before. The Preferences entry is gone from the side panel and from its collapsed rail, which now end with the row of links.
+
+## v0.71.5 · 2026-11-23
+
+### Fixed
+
+- FormPublisher's page shows FormPublisher's preview stage, with a sample site, its routes and the inspector, instead of the app's Home screen.
+
 ## v0.71.4 · 2026-11-23
 
 ### Fixed
