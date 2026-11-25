@@ -4,6 +4,13 @@ Living log for demo 2. Source files stay comment-free; what they would have said
 
 Built against: v0.71.6 · 2026-11-23
 
+## Rebuilt after v0.71.6 {#rebuild-0-71-7}
+- refers-to: demos/updates/assets/portal.js
+- kind: change
+- logged: after v0.71.6 · 2026-11-25
+
+Rebuilt with the command in README.md for the two groups that changed places in the built-in schedule (../../demo/HASHOUT_LOG.md#rebuild-0-71-7, ../../core/HASHOUT_LOG.md#schedule-25-november). Only the script changed; `index.html` is as before.
+
 ## Rebuilt after v0.71.5 {#rebuild-0-71-6}
 - refers-to: demos/updates/index.html · demos/updates/assets/portal.js
 - kind: change
