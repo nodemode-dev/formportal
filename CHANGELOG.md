@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.73.1 · 2026-11-26
+
+### Fixed
+
+- On Linux, an app installed from a deb or an rpm no longer closes when FormPortal's AppImage starts it. FormPortal's AppImage carries its own copy of the system's window toolkit and tells its own window where to find it; every app it started was told the same, and an app using the system's own copy then closed as soon as it had to draw an icon. FormVis from its rpm closed at once ("it closed right after starting"); others would have closed when a system file window appeared. FormPortal now starts apps, terminals, the file manager, the browser and agent programs without those settings. Apps installed as AppImages were not affected, nor was FormPortal installed from its own deb or rpm.
+
 ## v0.73.0 · 2026-11-26
 
 ### Added
