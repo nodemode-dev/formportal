@@ -65,6 +65,12 @@ fn attach(file: &Path, mount: &Path) -> Result<()> {
     Err(CoreError::Archive(format!("hdiutil could not open the disk image{}", if said.is_empty() { String::new() } else { format!(": {said}") })))
 }
 
+fn visible(path: &Path) -> bool {
+    let hidden = path.file_name().map(|n| n.to_string_lossy().starts_with('.')).unwrap_or(true);
+    let link = fs::symlink_metadata(path).map(|m| m.file_type().is_symlink()).unwrap_or(true);
+    !hidden && !link
+}
+
 pub fn dmg(file: &Path, into: &Path) -> Result<()> {
     let mount = into.with_extension("mount");
     if mount.exists() {
@@ -73,13 +79,15 @@ pub fn dmg(file: &Path, into: &Path) -> Result<()> {
     fs::create_dir_all(&mount)?;
     attach(file, &mount)?;
     let copied = (|| -> Result<()> {
-        let apps: Vec<PathBuf> = fs::read_dir(&mount)?.flatten().map(|e| e.path()).filter(|p| p.extension().map(|x| x == "app").unwrap_or(false)).collect();
-        if apps.is_empty() {
-            return Err(CoreError::Archive("the disk image holds no .app".to_string()));
+        let shown: Vec<PathBuf> = fs::read_dir(&mount)?.flatten().map(|e| e.path()).filter(|p| visible(p)).collect();
+        let apps: Vec<PathBuf> = shown.iter().filter(|p| p.extension().map(|x| x == "app").unwrap_or(false)).cloned().collect();
+        let wanted = if apps.is_empty() { shown } else { apps };
+        if wanted.is_empty() {
+            return Err(CoreError::Archive("the disk image holds nothing to install".to_string()));
         }
-        for app in apps {
-            let name = app.file_name().map(|n| n.to_os_string()).unwrap_or_default();
-            run(Command::new("ditto").arg(&app).arg(into.join(name)), "disk image", "ditto")?;
+        for item in wanted {
+            let name = item.file_name().map(|n| n.to_os_string()).unwrap_or_default();
+            run(Command::new("ditto").arg(&item).arg(into.join(name)), "disk image", "ditto")?;
         }
         Ok(())
     })();

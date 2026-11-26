@@ -2,7 +2,7 @@
 
 Living log for demo 2. Source files stay comment-free; what they would have said lives here.
 
-Built against: v0.71.8 · 2026-11-25
+Built against: v0.72.0 · 2026-11-25
 
 ## Rebuilt after v0.71.7 {#rebuild-0-71-8}
 - refers-to: demos/updates/assets/portal.js

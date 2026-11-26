@@ -14,7 +14,42 @@ pub const UNINSTALLER_PREFIX: &str = "unins";
 pub const WINDOW_PROGRAM: u16 = 2;
 pub const CONSOLE_PROGRAM: u16 = 3;
 pub const NO_CONSOLE_WINDOW: u32 = 0x0800_0000;
+pub const NEW_CONSOLE_WINDOW: u32 = 0x0000_0010;
 pub const SETTLE: Duration = Duration::from_secs(8);
+pub const GUIDE_DEPTH: usize = 3;
+pub const TERMINALS: [(&str, &str); 5] = [("x-terminal-emulator", "-e"), ("gnome-terminal", "--"), ("konsole", "-e"), ("xfce4-terminal", "-x"), ("xterm", "-e")];
+
+pub fn guide_name(product: &str) -> String {
+    format!("install {}.{}", product.to_lowercase(), if cfg!(target_os = "windows") { "bat" } else { "command" })
+}
+
+pub fn guide(folder: &Path, product: &str) -> Option<PathBuf> {
+    let wanted = guide_name(product);
+    let mut at = folder.to_path_buf();
+    for _ in 0..GUIDE_DEPTH {
+        let entries: Vec<PathBuf> = fs::read_dir(&at).ok()?.flatten().map(|e| e.path()).collect();
+        if let Some(found) = entries.iter().find(|p| p.is_file() && p.file_name().is_some_and(|n| n.to_string_lossy().to_lowercase() == wanted)) {
+            return Some(found.clone());
+        }
+        let mut folders = entries.into_iter().filter(|p| p.is_dir() && !p.extension().is_some_and(|x| x.eq_ignore_ascii_case("app")));
+        match (folders.next(), folders.next()) {
+            (Some(only), None) => at = only,
+            _ => return None,
+        }
+    }
+    None
+}
+
+pub fn in_terminal(script: &Path) -> Result<std::process::Command> {
+    let dirs: Vec<PathBuf> = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).collect()).unwrap_or_default();
+    let found = TERMINALS.iter().find_map(|(name, flag)| dirs.iter().map(|d| d.join(name)).find(|p| p.is_file()).map(|p| (p, *flag)));
+    let Some((terminal, flag)) = found else {
+        return Err(CoreError::Invalid(format!("FormPortal found no terminal program to run this in. Nothing was started. Open a terminal and run {}", script.display())));
+    };
+    let mut command = std::process::Command::new(terminal);
+    command.arg(flag).arg(script);
+    Ok(command)
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Choice {

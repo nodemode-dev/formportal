@@ -2,6 +2,16 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.72.0 · 2026-11-25
+
+### Added
+
+- FormSlot installs from FormPortal. FormSlot is a command line program with a plugin for coding agents, not an app with a window, and on a Mac its install stopped at "the disk image holds no .app". FormPortal now unpacks a disk image that holds a program instead of an app, and Open starts the program's own guided installer in a terminal window: Terminal on a Mac, a console window on Windows. Linux has no FormSlot file in the catalogue yet.
+
+### Fixed
+
+- On the way no longer names an app that is already out. After the dates of two groups changed places, 28 November still showed FormNET, FormSlot and FormSubstrate, from names FormPortal had kept from an earlier answer by formai.studio. A kept name that belongs to an app that is out is now left off; Check again in Preferences brings the current names.
+
 ## v0.71.8 · 2026-11-25
 
 ### Fixed
