@@ -567,13 +567,16 @@ impl Portal {
 
     pub fn preferences(&self) -> Result<Preferences> {
         let own = Preferences::load(&self.root)?;
-        Ok(match self.policy()? {
+        let prefs = match self.policy()? {
             Some(managed) => managed.policy.apply(own),
             None => own,
-        })
+        };
+        prefs.linux_package.prefer();
+        Ok(prefs)
     }
 
     pub fn set_preferences(&self, prefs: &Preferences) -> Result<()> {
+        prefs.linux_package.prefer();
         let Some(managed) = self.policy()? else { return prefs.save(&self.root) };
         let own = Preferences::load(&self.root)?;
         let locked = managed.policy.locked();

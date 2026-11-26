@@ -22,7 +22,7 @@ const USAGE: &str = "formportal-cli: FormPortal without the window
                                   formvfx formmcp formtray formskills formportal; the app picks changes up live
   updates [--source S]            what has a newer version, and whether it would update itself
   update [<product>] [--channel C] [--automatic-only]
-  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...] [--ask-site ...]
+  preferences [--auto-update true|false] [--auto-update-beta ...] [--only-when-closed ...] [--notices ...] [--open-at-login ...] [--ask-site ...] [--linux-package auto|appimage|deb|rpm]
   open <product> [--channel C]
   rollback <product> [--channel C]
   remove <product> [--channel C]

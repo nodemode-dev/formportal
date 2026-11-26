@@ -79,7 +79,9 @@ impl Ctx {
     pub fn from_env() -> Self {
         let source = std::env::var("FORMPORTAL_CATALOG").ok().filter(|s| !s.trim().is_empty()).unwrap_or_else(|| DEFAULT_SOURCE.to_string());
         let allow_unsigned = matches!(std::env::var("FORMPORTAL_ALLOW_UNSIGNED").as_deref(), Ok("1") | Ok("true"));
-        Ctx { portal: Portal::new(Portal::default_root()), source, allow_unsigned }
+        let portal = Portal::new(Portal::default_root());
+        let _ = portal.preferences();
+        Ctx { portal, source, allow_unsigned }
     }
 }
 
@@ -796,6 +798,10 @@ pub fn preferences(ctx: &Ctx, args: &Value) -> Result<Value, CoreError> {
     set("keep_previous", &mut prefs.keep_previous);
     set("open_at_login", &mut prefs.open_at_login);
     set("ask_site", &mut prefs.ask_site);
+    if let Some(wanted) = args.get("linux_package").and_then(Value::as_str) {
+        prefs.linux_package = formportal_core::LinuxPackage::parse(wanted).ok_or_else(|| fail("linux_package is one of auto, appimage, deb or rpm"))?;
+        changed = true;
+    }
     if let Some(map) = args.get("per_app").and_then(Value::as_object) {
         for (id, v) in map {
             match v.as_bool() {

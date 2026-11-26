@@ -61,7 +61,7 @@ impl Portal {
             known.insert(base.join(&install.current.version));
             let name = format!("{} {}{}", install.product, install.current.version, if install.channel == Channel::Stable { String::new() } else { format!(" ({})", channel_name(install.channel)) });
             let release = catalog.and_then(|c| c.release_of(&install.product, install.channel, &install.current.version));
-            let artifact = release.and_then(|r| r.artifact_for(platform)).filter(|a| a.sha256 == install.current.sha256);
+            let artifact = release.and_then(|r| r.artifact_installed(platform, &install.current.sha256));
             let fix_text = if artifact.is_some() { "install the same version again from the catalogue, checking its SHA-256".to_string() } else { "forget the record; the catalogue no longer offers this exact file, so install the app again from Apps".to_string() };
             if !install.current.path.exists() {
                 findings.push(finding("missing", Some(&install.product), Some(install.channel), &install.current.path, format!("{name} is recorded as installed but its folder is gone"), fix_text));
@@ -119,8 +119,7 @@ impl Portal {
                         Some(record) => {
                             let artifact = catalog
                                 .and_then(|c| c.release_of(&product, channel, &record.current.version))
-                                .and_then(|r| r.artifact_for(platform))
-                                .filter(|a| a.sha256 == record.current.sha256)
+                                .and_then(|r| r.artifact_installed(platform, &record.current.sha256))
                                 .cloned();
                             match artifact {
                                 Some(artifact) => {

@@ -5,7 +5,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{CoreError, Result};
-use crate::Channel;
+use crate::{Channel, LinuxPackage};
 
 pub const PREFS_FILE: &str = "preferences.json";
 
@@ -37,6 +37,8 @@ pub struct Preferences {
     pub supporter_code: Option<String>,
     #[serde(default)]
     pub ask_site: bool,
+    #[serde(default)]
+    pub linux_package: LinuxPackage,
 }
 
 pub const LANGUAGES: [&str; 2] = ["en", "es"];
@@ -52,7 +54,7 @@ impl Preferences {
 
 impl Default for Preferences {
     fn default() -> Self {
-        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None, open_at_login: false, supporter_code: None, ask_site: false }
+        Preferences { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: BTreeMap::new(), keep_previous: true, quiet: Vec::new(), language: None, open_at_login: false, supporter_code: None, ask_site: false, linux_package: LinuxPackage::Auto }
     }
 }
 

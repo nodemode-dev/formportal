@@ -154,6 +154,61 @@ pub enum ArtifactKind {
     Ipa,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum LinuxPackage {
+    Appimage,
+    Deb,
+    Rpm,
+    #[default]
+    #[serde(other)]
+    Auto,
+}
+
+static LINUX_PACKAGE: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
+
+impl LinuxPackage {
+    pub const ALL: [LinuxPackage; 4] = [LinuxPackage::Auto, LinuxPackage::Appimage, LinuxPackage::Deb, LinuxPackage::Rpm];
+    pub const ORDER: [ArtifactKind; 3] = [ArtifactKind::Appimage, ArtifactKind::Deb, ArtifactKind::Rpm];
+
+    pub fn name(self) -> &'static str {
+        match self {
+            LinuxPackage::Auto => "auto",
+            LinuxPackage::Appimage => "appimage",
+            LinuxPackage::Deb => "deb",
+            LinuxPackage::Rpm => "rpm",
+        }
+    }
+
+    pub fn parse(text: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|p| p.name() == text.trim().to_lowercase())
+    }
+
+    pub fn kind(self) -> Option<ArtifactKind> {
+        match self {
+            LinuxPackage::Auto => None,
+            LinuxPackage::Appimage => Some(ArtifactKind::Appimage),
+            LinuxPackage::Deb => Some(ArtifactKind::Deb),
+            LinuxPackage::Rpm => Some(ArtifactKind::Rpm),
+        }
+    }
+
+    pub fn rank(self, kind: ArtifactKind) -> usize {
+        if self.kind() == Some(kind) {
+            return 0;
+        }
+        1 + Self::ORDER.iter().position(|k| *k == kind).unwrap_or(Self::ORDER.len())
+    }
+
+    pub fn prefer(self) {
+        LINUX_PACKAGE.store(Self::ALL.iter().position(|p| *p == self).unwrap_or(0) as u8, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn preferred() -> Self {
+        Self::ALL.get(LINUX_PACKAGE.load(std::sync::atomic::Ordering::Relaxed) as usize).copied().unwrap_or_default()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Artifact {
     pub platform: Os,
@@ -337,8 +392,23 @@ impl Platform {
 
 impl Release {
     pub fn artifact_for(&self, platform: Platform) -> Option<&Artifact> {
-        let built_for = |arch: Arch| self.artifacts.iter().find(|a| a.platform == platform.os && a.arch == arch);
+        self.artifact_as(platform, LinuxPackage::preferred())
+    }
+
+    pub fn artifact_as(&self, platform: Platform, package: LinuxPackage) -> Option<&Artifact> {
+        let built_for = |arch: Arch| {
+            let mut fits = self.artifacts.iter().filter(|a| a.platform == platform.os && a.arch == arch);
+            if platform.os == Os::Linux {
+                fits.min_by_key(|a| package.rank(a.kind))
+            } else {
+                fits.next()
+            }
+        };
         built_for(platform.arch).or_else(|| platform.fallback().and_then(built_for))
+    }
+
+    pub fn artifact_installed(&self, platform: Platform, sha256: &str) -> Option<&Artifact> {
+        self.artifacts.iter().find(|a| a.platform == platform.os && a.sha256 == sha256)
     }
 }
 
