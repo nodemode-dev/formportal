@@ -667,6 +667,6 @@ pub fn show_in_folder(path: &Path) -> Result<()> {
     #[cfg(target_os = "windows")]
     let spawned = std::process::Command::new("explorer").arg(format!("/select,{}", path.display())).spawn();
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    let spawned = std::process::Command::new("xdg-open").arg(path.parent().unwrap_or(&lib)).spawn();
+    let spawned = crate::launch::outside(std::process::Command::new("xdg-open").arg(path.parent().unwrap_or(&lib))).spawn();
     spawned.map(|_| ()).map_err(|e| CoreError::Unavailable(format!("the folder could not be shown ({e})")))
 }

@@ -602,7 +602,7 @@ pub fn show_download(path: &Path) -> Result<()> {
     #[cfg(target_os = "windows")]
     let spawned = std::process::Command::new("explorer").arg(format!("/select,{}", real.display())).spawn();
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    let spawned = std::process::Command::new("xdg-open").arg(&dir).spawn();
+    let spawned = crate::launch::outside(std::process::Command::new("xdg-open").arg(&dir)).spawn();
     spawned.map(|_| ()).map_err(|e| CoreError::Unavailable(format!("the folder could not be shown ({e})")))
 }
 
