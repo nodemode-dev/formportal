@@ -21,7 +21,16 @@ export const settings: Extension = {
     const sources = Array.from(document.querySelectorAll<HTMLElement>("[data-setting='source']"));
     const generated = field("generated");
 
+    const packageRows = Array.from(document.querySelectorAll<HTMLElement>("[data-linux-package-row]"));
+    const packageField = document.querySelector<HTMLSelectElement>("[data-linux-package]");
+    engine.on("prefs", ({ prefs }) => {
+      const chosen = prefs.linux_package ?? "auto";
+      if (packageField && packageField.value !== chosen) packageField.value = chosen;
+    });
+    packageField?.addEventListener("change", () => void engine.dispatch("prefs.set", { linux_package: packageField.value }));
+
     engine.on("platform", ({ platform: p }) => {
+      for (const row of packageRows) if (row.hidden !== (p.os !== "linux")) row.hidden = p.os !== "linux";
       if (platform) platform.textContent = `${OS[p.os]}, ${ARCH[p.arch] ?? p.arch}`;
       const folder = field("folder");
       const where: Record<Os, string> = {
