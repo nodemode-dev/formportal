@@ -685,6 +685,9 @@ impl Portal {
     pub fn launch_target(&self, product: &str, channel: Channel) -> Result<PathBuf> {
         let state = self.state()?;
         let install = state.get(product, channel).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
+        if let Some(guide) = launch::guide(&install.current.path, product) {
+            return Ok(guide);
+        }
         if let Some(target) = find_target(&install.current.path, product)? {
             return Ok(target);
         }
@@ -702,9 +705,11 @@ impl Portal {
     pub fn start_with(&self, product: &str, channel: Channel, file: Option<&Path>) -> Result<launch::Started> {
         let target = self.launch_target(product, channel)?;
         let folder = self.state()?.get(product, channel).map(|i| i.current.path.clone()).ok_or_else(|| CoreError::NotInstalled(product.to_string()))?;
+        let guided = launch::guide(&folder, product).is_some_and(|g| g == target);
+        let file = file.filter(|_| !guided);
         let mut quiet_zero = true;
         let mut cleared: Vec<u32> = Vec::new();
-        if cfg!(target_os = "windows") {
+        if cfg!(target_os = "windows") && !guided {
             let running = process::under(&folder);
             quiet_zero = launch::app_open(&running, &folder);
             cleared = launch::strays(&running, &folder).into_iter().filter(|pid| process::stop(*pid)).collect();
@@ -718,7 +723,7 @@ impl Portal {
                 None => Command::new("open").arg(&target).spawn()?,
             }
         } else {
-            let mut command = Command::new(&target);
+            let mut command = if guided && cfg!(target_os = "linux") { launch::in_terminal(&target)? } else { Command::new(&target) };
             if let Some(file) = file {
                 command.arg(file);
             }
@@ -728,7 +733,7 @@ impl Portal {
             #[cfg(target_os = "windows")]
             {
                 use std::os::windows::process::CommandExt;
-                command.creation_flags(launch::NO_CONSOLE_WINDOW);
+                command.creation_flags(if guided { launch::NEW_CONSOLE_WINDOW } else { launch::NO_CONSOLE_WINDOW });
             }
             command.spawn()?
         };
