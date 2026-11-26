@@ -1439,7 +1439,7 @@
             </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Version</h3>
-              <p class="cv-prefs-line">FormPortal 0.72.0<span class="fine" translate="no">by nodemode.ai</span></p>
+              <p class="cv-prefs-line">FormPortal 0.72.0 <span class="fine" translate="no">by nodemode.ai</span></p>
               <div class="self-update"><button class="btn" type="button" data-self-check>Check for a newer FormPortal</button><button class="btn btn-primary" type="button" data-self-install hidden>Install and restart</button><span class="fine" data-self-status></span></div>
             </section>
             <section class="cv-prefs-group">
@@ -1504,6 +1504,8 @@
               <label class="menu-check"><span>Beta builds too</span><input type="checkbox" class="switch" data-pref="auto_update_beta" /></label>
               <label class="menu-check"><span>Only apps that are not open</span><input type="checkbox" class="switch" data-pref="only_when_closed" checked /></label>
               <label class="menu-check"><span>Keep the version before, to go back to</span><input type="checkbox" class="switch" data-pref="keep_previous" checked /></label>
+              <label class="cv-field cv-field-stack" data-linux-package-row hidden><span>Linux package</span><select class="field" data-linux-package><option value="auto">Automatic: AppImage, then deb, then rpm</option><option value="appimage">AppImage</option><option value="deb">deb</option><option value="rpm">rpm</option></select></label>
+              <p class="fine" data-linux-package-row hidden>Which kind of file an install or an update takes when an app offers more than one. An app without the kind you chose takes the next one in the automatic order. An app that is already installed keeps its file until it is next installed or updated.</p>
             </section>
             <section class="cv-prefs-group">
               <h3 class="cv-prefs-label">Outside agents</h3>
