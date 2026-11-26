@@ -727,6 +727,7 @@ impl Portal {
             }
         } else {
             let mut command = if guided && cfg!(target_os = "linux") { launch::in_terminal(&target)? } else { Command::new(&target) };
+            launch::outside(&mut command);
             if let Some(file) = file {
                 command.arg(file);
             }

@@ -78,7 +78,7 @@ pub fn shell_dirs(shell: &Path, limit: Duration) -> Option<Vec<PathBuf>> {
         return None;
     }
     let script = format!("printf '%s%s%s' {OPEN} \"$PATH\" {CLOSE}");
-    let mut child = Command::new(shell).args(["-l", "-i", "-c", &script]).stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::null()).spawn().ok()?;
+    let mut child = crate::launch::outside(Command::new(shell).args(["-l", "-i", "-c", &script]).stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::null())).spawn().ok()?;
     let mut out = child.stdout.take()?;
     let (send, receive) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
@@ -215,6 +215,7 @@ pub fn child_path(exe: &Path, dirs: &[PathBuf]) -> OsString {
 
 pub fn command(exe: &Path) -> Command {
     let mut command = Command::new(exe);
+    crate::launch::outside(&mut command);
     command.env("PATH", child_path(exe, &search_dirs()));
     command
 }

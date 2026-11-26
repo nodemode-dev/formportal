@@ -826,6 +826,7 @@ impl Portal {
     pub fn run_app_mcp(&self, product: &str, channel: Channel) -> Result<i32> {
         let surface = self.agent_surface(product, channel)?.ok_or_else(|| CoreError::Invalid(format!("{product} ({}) has no MCP server, or is not installed", channel_name(channel))))?;
         let mut command = Command::new(&surface.command);
+        crate::launch::outside(&mut command);
         command.args(&surface.args).stdin(Stdio::inherit()).stdout(Stdio::inherit()).stderr(Stdio::inherit());
         if let Some(dir) = surface.command.parent() {
             command.current_dir(dir);

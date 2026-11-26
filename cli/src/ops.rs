@@ -944,6 +944,7 @@ pub fn demo(args: &Value) -> Result<Value, CoreError> {
     } else {
         std::process::Command::new("xdg-open")
     };
+    formportal_core::launch::outside(&mut command);
     command.arg(&link).spawn()?;
     Ok(json!({ "opened": link, "note": "FormPortal shows the demo over its window as a labelled sample; the person's apps, settings and files are not touched." }))
 }

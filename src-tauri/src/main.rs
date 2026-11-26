@@ -487,6 +487,7 @@ fn open_web(url: String) -> Result<(), String> {
     let mut command = std::process::Command::new("explorer");
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     let mut command = std::process::Command::new("xdg-open");
+    formportal_core::launch::outside(&mut command);
     command.arg(&url).spawn().map(|_| ()).map_err(|e| format!("the browser could not be opened: {e}"))
 }
 

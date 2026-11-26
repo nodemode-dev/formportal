@@ -48,7 +48,46 @@ pub fn in_terminal(script: &Path) -> Result<std::process::Command> {
     };
     let mut command = std::process::Command::new(terminal);
     command.arg(flag).arg(script);
+    outside(&mut command);
     Ok(command)
+}
+
+pub const APPIMAGE_FOLDER: &str = "APPDIR";
+pub const APPIMAGE_MARKERS: [&str; 4] = ["APPDIR", "APPIMAGE", "OWD", "ARGV0"];
+pub const APPIMAGE_LISTS: [&str; 3] = ["XDG_DATA_DIRS", "PATH", "LD_LIBRARY_PATH"];
+pub const SYSTEM_DATA: &str = "/usr/share";
+
+pub fn outside_changes(vars: &[(String, String)], folder: &str) -> Vec<(String, Option<String>)> {
+    let root = folder.trim_end_matches('/');
+    let mut changes = Vec::new();
+    if root.is_empty() {
+        return changes;
+    }
+    for (name, value) in vars {
+        if APPIMAGE_MARKERS.contains(&name.as_str()) || (name == "GTK_THEME" && value.is_empty()) {
+            changes.push((name.clone(), None));
+        } else if value.contains(root) {
+            let kept: Vec<&str> = if APPIMAGE_LISTS.contains(&name.as_str()) { value.split(':').filter(|e| !e.is_empty() && !e.contains(root)).collect() } else { Vec::new() };
+            let only_default = name == "XDG_DATA_DIRS" && kept == [SYSTEM_DATA];
+            changes.push((name.clone(), (!kept.is_empty() && !only_default).then(|| kept.join(":"))));
+        }
+    }
+    changes
+}
+
+pub fn outside(command: &mut std::process::Command) -> &mut std::process::Command {
+    if !cfg!(target_os = "linux") {
+        return command;
+    }
+    let Some(folder) = std::env::var(APPIMAGE_FOLDER).ok().filter(|f| !f.trim().is_empty()) else { return command };
+    let vars: Vec<(String, String)> = std::env::vars_os().filter_map(|(k, v)| Some((k.into_string().ok()?, v.into_string().ok()?))).collect();
+    for (name, value) in outside_changes(&vars, &folder) {
+        match value {
+            Some(value) => command.env(name, value),
+            None => command.env_remove(name),
+        };
+    }
+    command
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
