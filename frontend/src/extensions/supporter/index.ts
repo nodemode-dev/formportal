@@ -4,7 +4,7 @@ import type { Engine } from "../../engine/index.ts";
 import type { SupporterTile, SupporterView, UpcomingView } from "../../engine/types.ts";
 import { language, t } from "../../i18n/index.ts";
 import type { Extension } from "../registry.ts";
-import { UNDATED } from "../live/index.ts";
+import { UNDATED, isLive, liveNow } from "../live/index.ts";
 import { askSite, upcomingOnce } from "../live/soon.ts";
 
 const NAMES_KEY = "formportal.site";
@@ -69,7 +69,15 @@ export const supporter: Extension = {
       });
     };
 
-    const place = (tiles: SupporterTile[]) => {
+    let placed: SupporterTile[] = [];
+    const out = (name: string) => {
+      const app = known(name);
+      return app !== undefined && (liveNow(app.id) || isLive(engine, app.id));
+    };
+
+    const place = (given: SupporterTile[]) => {
+      placed = given;
+      const tiles = given.filter((tile) => !out(tile.name));
       for (const group of document.querySelectorAll<HTMLElement>("[data-soon-at]")) {
         const when = stamp(group.getAttribute("data-soon-at"));
         names(
@@ -155,6 +163,9 @@ export const supporter: Extension = {
       const kept = JSON.parse(localStorage.getItem(NAMES_KEY) ?? "null");
       if (Array.isArray(kept)) place(kept.filter((tile): tile is SupporterTile => typeof tile?.name === "string" && (tile.at === null || typeof tile.at === "string")));
     } catch {}
+
+    engine.on("source", () => place(placed));
+    engine.on("install", () => place(placed));
 
     check?.addEventListener("click", () => void run(input && input.value.trim() !== "" ? input.value.trim() : null));
     forget?.addEventListener("click", () => {
