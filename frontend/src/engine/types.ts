@@ -487,7 +487,11 @@ export interface Preferences {
   open_at_login: boolean;
   supporter_code?: string | null;
   ask_site?: boolean;
+  linux_package?: LinuxPackage;
 }
+
+export type LinuxPackage = "auto" | "appimage" | "deb" | "rpm";
+export const LINUX_ORDER: string[] = ["appimage", "deb", "rpm"];
 
 export type NoticeCategory = "updates" | "installs" | "library" | "agents" | "learn" | "system";
 

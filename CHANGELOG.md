@@ -2,6 +2,17 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.73.0 · 2026-11-26
+
+### Added
+
+- On Linux, Preferences, Updates has a Linux package choice: Automatic, AppImage, deb or rpm. It decides which kind of file an install or an update takes when an app offers more than one. An app without the kind you chose takes the next one in the automatic order, and an app that is already installed keeps its file until it is next installed or updated. On the command line it is `preferences --linux-package`.
+
+### Fixed
+
+- On Linux, FormPortal no longer takes whichever file happens to come first in the catalogue. Automatic means the AppImage, then the deb, then the rpm. FormVis was installed from its rpm on every Linux computer, because of how its file names sort; it now installs from its AppImage unless you choose otherwise.
+- Repair recognises an installed app's file whatever kind it is.
+
 ## v0.72.0 · 2026-11-25
 
 ### Added

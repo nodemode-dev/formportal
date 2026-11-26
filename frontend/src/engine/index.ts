@@ -1,6 +1,7 @@
 import type { Artifact, Release, RepairReport, WebPlan, AssistantAgent, LearnView, NoticeCategory, AgentsView, FontsView, MediaView, FilesScan, FileVersion, StorageView, Catalog, Channel, ChannelView, ExtensionIndex, InstalledExtension, InstallRecord, Platform, PolicyView, Preferences, Product, Route, Source, GithubStatus, DeviceCode, SharesView } from "./types.ts";
 
 import type { JobEvent } from "./types.ts";
+import { LINUX_ORDER } from "./types.ts";
 
 export interface EngineEvents {
   install: { key: string };
@@ -40,7 +41,7 @@ export interface NoticeAction {
   arg?: unknown;
 }
 
-export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false, ask_site: false };
+export const DEFAULT_PREFS: Preferences = { auto_update: true, auto_update_beta: false, only_when_closed: true, notices: true, per_app: {}, keep_previous: true, quiet: [], language: null, open_at_login: false, ask_site: false, linux_package: "auto" };
 
 export function versionNewer(candidate: string, current: string): boolean {
   const split = (v: string): [number[], string | null] => {
@@ -250,7 +251,12 @@ export class Engine {
 
   artifactFor(release: Release): Artifact | null {
     const { os, arch } = this.state.platform;
-    const builtFor = (want: string) => release.artifacts.find((a) => a.platform === os && a.arch === want);
+    const chosen = this.state.prefs.linux_package ?? "auto";
+    const rank = (kind: string) => (kind === chosen ? 0 : 1 + (LINUX_ORDER.includes(kind) ? LINUX_ORDER.indexOf(kind) : LINUX_ORDER.length));
+    const builtFor = (want: string) => {
+      const fits = release.artifacts.filter((a) => a.platform === os && a.arch === want);
+      return os === "linux" ? fits.reduce<Artifact | undefined>((best, a) => (best === undefined || rank(a.kind) < rank(best.kind) ? a : best), undefined) : fits[0];
+    };
     const translates = arch === "arm64" && (os === "macos" || os === "windows");
     return builtFor(arch) ?? (translates ? builtFor("x86_64") : undefined) ?? null;
   }
