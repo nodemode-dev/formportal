@@ -56,6 +56,7 @@ pub const APPIMAGE_FOLDER: &str = "APPDIR";
 pub const APPIMAGE_MARKERS: [&str; 4] = ["APPDIR", "APPIMAGE", "OWD", "ARGV0"];
 pub const APPIMAGE_LISTS: [&str; 3] = ["XDG_DATA_DIRS", "PATH", "LD_LIBRARY_PATH"];
 pub const SYSTEM_DATA: &str = "/usr/share";
+pub const APPIMAGE_THEME: &str = "GTK_THEME";
 
 pub fn outside_changes(vars: &[(String, String)], folder: &str) -> Vec<(String, Option<String>)> {
     let root = folder.trim_end_matches('/');
@@ -64,12 +65,15 @@ pub fn outside_changes(vars: &[(String, String)], folder: &str) -> Vec<(String, 
         return changes;
     }
     for (name, value) in vars {
-        if APPIMAGE_MARKERS.contains(&name.as_str()) || (name == "GTK_THEME" && value.is_empty()) {
+        if APPIMAGE_MARKERS.contains(&name.as_str()) || name == APPIMAGE_THEME {
             changes.push((name.clone(), None));
         } else if value.contains(root) {
-            let kept: Vec<&str> = if APPIMAGE_LISTS.contains(&name.as_str()) { value.split(':').filter(|e| !e.is_empty() && !e.contains(root)).collect() } else { Vec::new() };
-            let only_default = name == "XDG_DATA_DIRS" && kept == [SYSTEM_DATA];
-            changes.push((name.clone(), (!kept.is_empty() && !only_default).then(|| kept.join(":"))));
+            let mut kept: Vec<&str> = if APPIMAGE_LISTS.contains(&name.as_str()) { value.split(':').filter(|e| !e.is_empty() && !e.contains(root)).collect() } else { Vec::new() };
+            let added = value.strip_prefix(root).and_then(|rest| rest.strip_prefix(SYSTEM_DATA)).and_then(|rest| rest.strip_prefix(':')).and_then(|rest| rest.strip_prefix(SYSTEM_DATA));
+            if name == "XDG_DATA_DIRS" && added.is_some_and(|rest| rest.is_empty() || rest.starts_with(':')) && kept.first() == Some(&SYSTEM_DATA) {
+                kept.remove(0);
+            }
+            changes.push((name.clone(), (!kept.is_empty()).then(|| kept.join(":"))));
         }
     }
     changes
