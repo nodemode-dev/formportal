@@ -2,6 +2,12 @@
 
 FormPortal's own release notes. Each Form app publishes its own; FormPortal shows them under Details.
 
+## v0.73.2 · 2026-11-26
+
+### Fixed
+
+- On Linux, nothing that FormPortal's AppImage sets for its own window reaches the apps it starts any more. 0.73.1 stopped apps from closing; two settings were still passed on. An app opened from FormPortal now draws its system parts (title bar, file windows) in your desktop's theme and no longer in the AppImage's light or dark Adwaita, and it reads the system's data folders in their usual order.
+
 ## v0.73.1 · 2026-11-26
 
 ### Fixed
